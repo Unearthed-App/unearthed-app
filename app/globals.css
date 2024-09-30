@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  :root {
+    --background: 10, 100%, 93%;
+    --foreground: 337 65% 3%;
+    --muted: 0 0% 45%;
+    --muted-foreground: 157 5% 40%;
+    --popover: 337 68% 97%;
+    --popover-foreground: 337 65% 2%;
+    --card: 337 68% 97%;
+    --card-foreground: 337 65% 2%;
+    --border: 0 0% 0%;
+    --input: 337 14% 91%;
+    --primary: 175 65% 42%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 175, 60%, 20%;
+    --secondary-foreground: 10, 60%, 20%;
+    --accent: 175 65% 42%;
+    --accent-foreground: 157 65% 2%;
+    --destructive: 12 81% 35%;
+    --destructive-foreground: 12 81% 95%;
+    --ring: 337 65% 42%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 248.6 11.5% 12%;
+    --foreground: 337 24% 99%;
+    --muted: 0 0% 45%;
+    --muted-foreground: 157 5% 60%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+    --card: 169.4, 43.6%, 7.6%;
+    --card-foreground: 0 0% 100%;
+    --border: 175 40% 50%;
+    --input: 337 14% 12%;
+    --primary: 175 65% 42%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 175, 60%, 50%;
+    --secondary-foreground: 10, 60%, 20%;
+    --accent: 175 65% 42%;
+    --accent-foreground: 157 65% 2%;
+    --destructive: 12 81% 49%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 337 65% 42%;
+  }
+}
+
+/* 
+@layer base {
+  :root {
+    --background: 34 69% 98%;
+    --foreground: 34 76% 0%;
+    --muted: 154 33% 92%;
+    --muted-foreground: 154 7% 37%;
+    --popover: 34 69% 98%;
+    --popover-foreground: 34 76% 0%;
+    --card: 34 69% 97%;
+    --card-foreground: 0 0% 0%;
+    --border: 34 4% 88%;
+    --input: 34 4% 88%;
+    --primary: 34 44% 79%;
+    --primary-foreground: 34 44% 19%;
+    --secondary: 154 44% 79%;
+    --secondary-foreground: 154 44% 19%;
+    --accent: 274 44% 79%;
+    --accent-foreground: 274 44% 19%;
+    --destructive: 19 89% 21%;
+    --destructive-foreground: 19 89% 81%;
+    --ring: 34 44% 79%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 34 48% 0%;
+    --foreground: 34 39% 99%;
+    --muted: 154 33% 8%;
+    --muted-foreground: 154 7% 63%;
+    --popover: 34 48% 0%;
+    --popover-foreground: 34 39% 99%;
+    --card: 0 0% 1%;
+    --card-foreground: 0 0% 100%;
+    --border: 34 4% 11%;
+    --input: 34 4% 11%;
+    --primary: 34 44% 79%;
+    --primary-foreground: 34 44% 19%;
+    --secondary: 154 44% 79%;
+    --secondary-foreground: 154 44% 19%;
+    --accent: 274 44% 79%;
+    --accent-foreground: 274 44% 19%;
+    --destructive: 19 89% 60%;
+    --destructive-foreground: 0 0% 0%;
+    --ring: 34 44% 79%;
+  }
+} */
+
+/* @layer base {
+  :root {
+    --background: 153 53% 98%;
+    --foreground: 153 55% 4%;
+    --muted: 333 18% 90%;
+    --muted-foreground: 333 14% 36%;
+    --popover: 153 53% 98%;
+    --popover-foreground: 153 55% 4%;
+    --card: 153 53% 98%;
+    --card-foreground: 153 55% 4%;
+    --border: 153 5% 90%;
+    --input: 153 5% 90%;
+    --primary: 153 18% 74%;
+    --primary-foreground: 153 18% 14%;
+    --secondary: 333 18% 74%;
+    --secondary-foreground: 333 18% 14%;
+    --accent: 333 18% 74%;
+    --accent-foreground: 333 18% 14%;
+    --destructive: 19 91% 34%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 153 18% 74%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 153 60% 4%;
+    --foreground: 153 36% 98%;
+    --muted: 333 18% 10%;
+    --muted-foreground: 333 14% 64%;
+    --popover: 153 60% 4%;
+    --popover-foreground: 153 36% 98%;
+    --card: 153 60% 4%;
+    --card-foreground: 153 36% 98%;
+    --border: 153 5% 14%;
+    --input: 153 5% 14%;
+    --primary: 153 18% 74%;
+    --primary-foreground: 153 18% 14%;
+    --secondary: 333 18% 74%;
+    --secondary-foreground: 333 18% 14%;
+    --accent: 333 18% 74%;
+    --accent-foreground: 333 18% 14%;
+    --destructive: 19 91% 47%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 153 18% 74%;
+  }
+} */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
