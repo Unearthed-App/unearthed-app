@@ -218,9 +218,9 @@ export default function Book({
         </div>
       </div>
 
-      <div className="flex flex-wrap">
-        <div className="w-full xl:w-1/6 pr-2">
-          {book && !("error" in book) && (
+      {book && !("error" in book) && (
+        <div className="flex flex-wrap">
+          <div className="w-full xl:w-1/6 pr-2">
             <BookHeader
               title={book.title}
               subtitle={book.subtitle as string}
@@ -228,39 +228,41 @@ export default function Book({
               imageUrl={book.imageUrl as string}
               ignored={book.ignored as boolean}
             />
-          )}
-        </div>
+          </div>
 
-        <div className="w-full xl:w-5/6 pt-4 xl:pt-0 flex">
-          {displayQuotes.length === 0 ? (
-            <h3 className="text-xl text-center my-4 text-secondary">
-              {/* No quotes in the selected book. */}
-            </h3>
-          ) : (
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="columns-1 md:columns-2 xl:columns-3 gap-4"
-            >
-              {displayQuotes.map((quote) => (
-                <motion.div
-                  className="mb-4 break-inside-avoid-column"
-                  key={quote.id}
-                  variants={itemVariants}
-                >
-                  <QuoteCardBrutal
-                    quote={quote.content}
-                    note={quote.note ?? ""}
-                    location={quote.location ?? ""}
-                    color={quote.color || "Blue highlight"}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
+          <div className="w-full xl:w-5/6 pt-4 xl:pt-0 flex">
+            {displayQuotes.length === 0 ? (
+              <h3 className="text-xl text-center my-4 text-secondary">
+                {/* No quotes in the selected book. */}
+              </h3>
+            ) : (
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="columns-1 md:columns-2 xl:columns-3 gap-4"
+              >
+                {displayQuotes.map((quote) => (
+                  <motion.div
+                    className="mb-4 break-inside-avoid-column"
+                    key={quote.id}
+                    variants={itemVariants}
+                  >
+                    <QuoteCardBrutal
+                      bookTitle={book.title}
+                      bookAuthor={book.author as string}
+                      quote={quote.content}
+                      note={quote.note ?? ""}
+                      location={quote.location ?? ""}
+                      color={quote.color || "Blue highlight"}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
