@@ -66,17 +66,12 @@ export function SearchDialog() {
   });
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
-    console.log("onSubmit", data);
     setIsLoading(true);
     try {
-      console.log("data.searchQuery", data);
       if (data && data.searchQuery) {
-        console.log("fetchSearchData");
-
         const searchReturned = await search(data.searchQuery);
 
         if (searchReturned) {
-          console.log("data", searchReturned);
           setSearchResults(searchReturned);
         }
       } else {
@@ -253,6 +248,7 @@ export function SearchDialog() {
                   <QuoteBookCardBrutal
                     bookId={quote.book.id}
                     bookTitle={quote.book.title}
+                    bookAuthor={quote.book.author as string}
                     quote={quote.content}
                     note={quote.note ?? ""}
                     location={quote.location ?? ""}
@@ -356,6 +352,7 @@ export function SearchDialog() {
                   <QuoteBookCardBrutal
                     bookId={quote.book.id}
                     bookTitle={quote.book.title}
+                    bookAuthor={quote.book.author as string}
                     quote={quote.content}
                     note={quote.note ?? ""}
                     location={quote.location ?? ""}

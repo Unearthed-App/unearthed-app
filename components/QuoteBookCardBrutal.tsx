@@ -1,10 +1,19 @@
 import { Badge } from "@/components/ui/badge";
 
 import Link from "next/link";
+import { toast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Copy } from "lucide-react";
 
 interface QuoteCardProps {
   bookId: string;
   bookTitle: string;
+  bookAuthor: string;
   quote: string;
   note?: string;
   location: string;
@@ -60,6 +69,7 @@ type ColorKey = keyof typeof colorLookup;
 export function QuoteBookCardBrutal({
   bookId,
   bookTitle,
+  bookAuthor,
   quote,
   note,
   location,
@@ -72,13 +82,37 @@ export function QuoteBookCardBrutal({
 
   const colorScheme = colorLookup[matchingColor || "grey"];
 
+  const copyQuote = () => {
+    const textCopied = `"${quote}" — ${bookTitle}, ${bookAuthor}`;
+    navigator.clipboard.writeText(textCopied);
+    toast({
+      title: "Text Copied to Clipboard",
+      description: textCopied,
+    });
+  };
+
   return (
     <div className="flex flex-col justify-between">
       <div>
         <div
-          className={`shadow-xl ${colorScheme.shadow} ${colorScheme.border} h-full p-4 flex ${colorScheme.background} rounded-lg`}
+          className={`shadow-xl ${colorScheme.shadow} ${colorScheme.border} h-full p-4 flex ${colorScheme.background} rounded-lg relative py-8`}
         >
           <div className={`border-l-4 ${colorScheme.line} pl-4 h-full`}>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div
+                    onClick={copyQuote}
+                    className={`cursor-pointer -mt-6 mr-2 right-0 absolute w-6 h-6 p-1 bordersdf-2 ${colorScheme.border} ${colorScheme.background} flex items-center justify-center rounded-lg hover:bg-primary/90`}
+                  >
+                    <Copy />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                  <p>Copy the Quote</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <p className={`text-sm md:text-base ${colorScheme.text}`}>
               {quote}
             </p>
