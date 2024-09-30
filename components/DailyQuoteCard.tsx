@@ -100,6 +100,8 @@ export function DailyQuoteCard({ initialData }: DailyQuoteCardProps) {
                 </div>
                 <div className="bg-card p-4 rounded-lg">
                   <QuoteCardBrutal
+                    bookTitle={dailyQuote.book.title}
+                    bookAuthor={dailyQuote.book.author as string}
                     quote={dailyQuote?.quote.content}
                     note={dailyQuote?.quote.note ?? ""}
                     location={dailyQuote?.quote.location ?? ""}
