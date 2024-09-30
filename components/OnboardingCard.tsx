@@ -20,7 +20,7 @@ export function OnboardingCard() {
                 rel="noopener noreferrer"
                 href="https://chromewebstore.google.com/detail/aneeklbnnklhdaipicoakebmbedcgmfb/preview?hl=en&authuser=0"
               >
-                <Button className="w-full md:w-auto md:min-w-96 p-4 md:p-12 border-2 rounded-lg text-lg md:text-2xl">
+                <Button className="w-full md:w-auto md:min-w-96 p-4 md:p-8 border-2 rounded-lg text-lg md:text-2xl">
                   Install Chrome Extension
                 </Button>
               </Link>
@@ -31,7 +31,7 @@ export function OnboardingCard() {
                 rel="noopener noreferrer"
                 href="https://addons.mozilla.org/en-US/firefox/addon/unearthed-app/"
               >
-                <Button className="w-full md:w-auto md:min-w-96 p-4 md:p-12 border-2 rounded-lg text-lg md:text-2xl">
+                <Button className="w-full md:w-auto md:min-w-96 p-4 md:p-8 border-2 rounded-lg text-lg md:text-2xl">
                   Install Firefox Extension
                 </Button>
               </Link>
