@@ -16,14 +16,10 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const deleteResult = await db
-      .delete(books)
-      .where(and(eq(books.status, "PENDING"), eq(books.userId, userId)));
-
     const BooksArraySchema = z.array(insertBookSchema);
     const toInsert: BookInsert[] = BooksArraySchema.parse(body).map((row) => ({
       ...row,
-      status: "PENDING", // No need to explicitly cast, TypeScript knows it's valid
+      status: "ACTIVE", // No need to explicitly cast, TypeScript knows it's valid
       userId,
     }));
 
