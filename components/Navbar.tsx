@@ -73,6 +73,7 @@ export function Navbar() {
           </div>
           <div className="flex space-x-4 items-center justify-end">
             <SearchDialog />
+            <DropdownMenuNav />
             <ModeToggle />
             <ProfileDialog />
             <SignOutButton>
