@@ -55,7 +55,7 @@ export function DropdownMenuNav() {
           <Link
             target="_blank"
             rel="noopener noreferrer"
-            href="https://chromewebstore.google.com/detail/aneeklbnnklhdaipicoakebmbedcgmfb/preview?hl=en&authuser=0"
+            href="https://chromewebstore.google.com/detail/unearthed-app/aneeklbnnklhdaipicoakebmbedcgmfb?authuser=0&hl=en"
           >
             <DropdownMenuItem>
               <span>Install Chrome Extension</span>

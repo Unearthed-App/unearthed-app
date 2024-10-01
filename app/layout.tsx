@@ -2,14 +2,18 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import QueryClientContextProvider from "@/components/QueryClientContextProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
-
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import { neobrutalism } from "@clerk/themes";
-
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { ModeToggle } from "@/components/ModeToggle";
+import dynamic from "next/dynamic";
+import CookieConsent from "@/components/CookieConsent";
+
+const ConditionalPH = dynamic(() => import("@/components/ConditionalPH"), {
+  ssr: false,
+});
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -49,7 +53,8 @@ export default function RootLayout({
                   <ModeToggle />
                 </div>
               </SignedOut>
-              {children}
+              <ConditionalPH>{children}</ConditionalPH>
+              <CookieConsent />
               <Toaster />
             </ThemeProvider>
           </body>
