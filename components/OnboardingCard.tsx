@@ -18,7 +18,7 @@ export function OnboardingCard() {
               <Link
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://chromewebstore.google.com/detail/aneeklbnnklhdaipicoakebmbedcgmfb/preview?hl=en&authuser=0"
+                href="https://chromewebstore.google.com/detail/unearthed-app/aneeklbnnklhdaipicoakebmbedcgmfb?authuser=0&hl=en"
               >
                 <Button className="w-full md:w-auto md:min-w-96 p-4 md:p-8 border-2 rounded-lg text-lg md:text-2xl">
                   Install Chrome Extension
