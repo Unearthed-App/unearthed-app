@@ -111,27 +111,6 @@ export function DropdownMenuNav() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://chromewebstore.google.com/detail/unearthed-app/aneeklbnnklhdaipicoakebmbedcgmfb?authuser=0&hl=en"
-              >
-                <DropdownMenuItem>
-                  <span>Install Chrome Extension</span>
-                </DropdownMenuItem>
-              </Link>
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://addons.mozilla.org/en-US/firefox/addon/unearthed-app/"
-              >
-                <DropdownMenuItem>
-                  <span>Install Firefox Extension</span>
-                </DropdownMenuItem>
-              </Link>
-            </DropdownMenuGroup>{" "}
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
               <Link href="/privacy">
                 <DropdownMenuItem>
                   <span>Privacy Policy</span>
