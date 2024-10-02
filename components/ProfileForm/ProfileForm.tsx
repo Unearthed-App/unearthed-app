@@ -99,7 +99,6 @@ export function ProfileForm() {
     setIsSaving(true);
     try {
       const utcOffset = await getUserUtcOffset();
-      console.log("utcOffset", utcOffset);
       const onSubmitActionResults = await onSubmitAction(data, utcOffset);
 
       if (onSubmitActionResults.success) {
@@ -124,7 +123,7 @@ export function ProfileForm() {
     } finally {
       setIsSaving(false);
 
-      if (form.getValues("capacitiesSpaceId")) {
+      if (form.getValues("capacitiesApiKey")) {
         fetchProfileData();
       }
     }
