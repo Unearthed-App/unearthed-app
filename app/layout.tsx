@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ModeToggle } from "@/components/ModeToggle";
 import dynamic from "next/dynamic";
 import CookieConsent from "@/components/CookieConsent";
+import { DropdownMenuNav } from "@/components/DropdownMenuNav";
 
 const ConditionalPH = dynamic(() => import("@/components/ConditionalPH"), {
   ssr: false,
@@ -49,8 +50,9 @@ export default function RootLayout({
                 <Navbar />
               </SignedIn>
               <SignedOut>
-                <div className="fixed mt-2 ml-2">
+                <div className="fixed mt-2 ml-2 flex space-x-2">
                   <ModeToggle />
+                  <DropdownMenuNav />
                 </div>
               </SignedOut>
               <ConditionalPH>{children}</ConditionalPH>
