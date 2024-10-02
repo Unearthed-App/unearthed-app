@@ -100,24 +100,35 @@ export async function decrypt(
   ciphertext: string,
   key: string
 ): Promise<string> {
-  const data = Buffer.from(ciphertext, "base64");
-  const iv = data.slice(0, 12); // Extract IV (first 12 bytes)
-  const encryptedData = data.slice(12); // Remaining bytes are the encrypted data
-  const keyUint8Array = new Uint8Array(Buffer.from(key, "base64"));
-  const cryptoKey = await subtle.importKey(
-    "raw",
-    keyUint8Array,
-    { name: "AES-GCM" },
-    false,
-    ["decrypt"]
-  );
-  const decrypted = await subtle.decrypt(
-    {
-      name: "AES-GCM",
-      iv: iv,
-    },
-    cryptoKey,
-    encryptedData
-  );
-  return decoder.decode(decrypted); // Return the decrypted text
+  console.log("DECRYPT");
+  try {
+    const data = Buffer.from(ciphertext, "base64");
+    if (data.length <= 12) {
+      throw new Error("Ciphertext is too short");
+    }
+    const iv = data.slice(0, 12);
+    const encryptedData = data.slice(12);
+    const keyUint8Array = new Uint8Array(Buffer.from(key, "base64"));
+    const cryptoKey = await subtle.importKey(
+      "raw",
+      keyUint8Array,
+      { name: "AES-GCM" },
+      false,
+      ["decrypt"]
+    );
+    const decrypted = await subtle.decrypt(
+      {
+        name: "AES-GCM",
+        iv: iv,
+      },
+      cryptoKey,
+      encryptedData
+    );
+    return decoder.decode(decrypted);
+  } catch (error) {
+    console.error("Decryption error:", error);
+    console.log("Ciphertext length:", ciphertext.length);
+    console.log("Key length:", key.length);
+    throw error;
+  }
 }
