@@ -603,7 +603,13 @@ export const addPassedDailyToCapacities = async (dailyReflection: {
 }) => {
   const { userId }: { userId: string | null } = auth();
   if (!userId) {
-    throw new Error("User not authenticated");
+    return false;
+  }
+
+  const profile = await getProfile();
+
+  if (!profile.capacitiesSpaceId) {
+    return false;
   }
 
   const encryptionKey = await getOrCreateEncryptionKey();
@@ -615,16 +621,17 @@ export const addPassedDailyToCapacities = async (dailyReflection: {
   const bookTitle = book.title;
   const bookAuthor = book.author;
   const quoteContent = quote.content;
-  const quoteNote = quote.note
-    ? await decrypt(quote.note as string, encryptionKey)
-    : "";
+  let quoteNote = quote.note;
+  try {
+    quoteNote = quote.note
+      ? await decrypt(quote.note as string, encryptionKey)
+      : "";
+  } catch (decryptError) {
+    console.error("Decryption error:", decryptError);
+  }
+
   const quoteLocation = quote.location;
 
-  const profile = await getProfile();
-
-  if (!profile.capacitiesSpaceId) {
-    return false;
-  }
   const mdText = await capacitiesFormatDaily(
     bookTitle as string,
     bookAuthor as string,

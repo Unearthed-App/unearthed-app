@@ -50,7 +50,7 @@ export function DailyQuoteCard({ initialData }: DailyQuoteCardProps) {
         utcOffset: utcOffset ?? 0,
       }),
     onSuccess: (newQuote) => {
-      queryClient.setQueryData(["dailyQuote", utcOffset], newQuote);
+      queryClient.setQueryData(["dailyQuote"], newQuote);
     },
   });
 

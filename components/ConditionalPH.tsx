@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { PHProvider } from "@/app/providers";
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { checkCookieConsent } from "./CookieConsent";
+import { useEffect } from "react";
 
 interface ConditionalPHProps {
   children: React.ReactNode;
@@ -18,8 +18,14 @@ const ConditionalPH: React.FC<ConditionalPHProps> = ({ children }) => {
   useEffect(() => {
     if (consentGiven) {
       // Check if posthog is available (it should be initialized in PHProvider)
-      if (posthog) {
-        posthog.capture("$pageview");
+      if (pathname && posthog) {
+        let url = window.origin + pathname;
+        if (searchParams.toString()) {
+          url = url + `?${searchParams.toString()}`;
+        }
+        posthog.capture("$pageview", {
+          $current_url: url,
+        });
       }
     }
   }, [pathname, searchParams, consentGiven]);
