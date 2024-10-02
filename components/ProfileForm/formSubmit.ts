@@ -7,6 +7,7 @@ import { profiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
+import { generateNewUnearthedApiKey } from "@/server/actions";
 
 export async function onSubmitAction(data: any, utcOffset: number) {
   const { userId }: { userId: string | null } = auth();
@@ -35,6 +36,13 @@ export async function onSubmitAction(data: any, utcOffset: number) {
       success: false,
       message: "No encryption key found",
     };
+  }
+
+  if (!parsed.data.unearthedApiKey) {
+    const newApiKey = await generateNewUnearthedApiKey();
+    if (newApiKey) {
+      parsed.data.unearthedApiKey = newApiKey as string;
+    }
   }
 
   const capacitiesApiKeyEncyrpted = parsed.data.capacitiesApiKey
@@ -86,7 +94,7 @@ export async function onSubmitAction(data: any, utcOffset: number) {
       console.error(error);
       return {
         success: false,
-        message: "Coud not update or insert profile",
+        message: "Could not update or insert profile",
       };
     }
   }
