@@ -56,6 +56,7 @@ export async function onSubmitAction(data: any, utcOffset: number) {
         capacitiesApiKey: capacitiesApiKeyEncyrpted,
         unearthedApiKey: unearthedApiKeyEncyrpted,
         capacitiesSpaceId: capacitiesSpaceIdEncyrpted,
+        utcOffset,
       })
       .where(eq(profiles.userId, userId));
     console.log(result);

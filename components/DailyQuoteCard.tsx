@@ -13,6 +13,7 @@ import { selectQuoteSchema, selectBookSchema } from "@/db/schema";
 import { AnimatedLoader } from "./AnimatedLoader";
 type Quote = z.infer<typeof selectQuoteSchema>;
 type Book = z.infer<typeof selectBookSchema>;
+import { getUserUtcOffset } from "@/lib/utils";
 
 import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
@@ -28,30 +29,38 @@ interface DailyQuoteCardProps {
 
 export function DailyQuoteCard({ initialData }: DailyQuoteCardProps) {
   const queryClient = useQueryClient();
-
+  const { data: utcOffset, isLoading: isUtcOffsetLoading } = useQuery({
+    queryKey: ["utcOffset"],
+    queryFn: getUserUtcOffset,
+  });
   const {
     data: dailyQuote,
     isLoading,
     isError,
   } = useQuery({
     queryKey: ["dailyQuote"],
-    queryFn: () => getOrCreateDailyReflection({}),
+    queryFn: () => getOrCreateDailyReflection({ utcOffset: utcOffset ?? 0 }),
     initialData: initialData,
   });
 
   const { mutate: getNewQuote, isPending } = useMutation({
-    mutationFn: () => getOrCreateDailyReflection({ replaceDailyQuote: true }),
+    mutationFn: () =>
+      getOrCreateDailyReflection({
+        replaceDailyQuote: true,
+        utcOffset: utcOffset ?? 0,
+      }),
     onSuccess: (newQuote) => {
-      queryClient.setQueryData(["dailyQuote"], newQuote);
+      queryClient.setQueryData(["dailyQuote", utcOffset], newQuote);
     },
   });
 
-  if (isLoading)
+  if (isLoading || isUtcOffsetLoading)
     return (
       <div className="pt-32 flex items-center justify-center">
         <AnimatedLoader />
       </div>
     );
+
   if (isError) return <div>Error fetching quote</div>;
 
   return (

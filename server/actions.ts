@@ -384,8 +384,10 @@ export const getSettings = async () => {
 
 export const getOrCreateDailyReflection = async ({
   replaceDailyQuote = false,
+  utcOffset = 0,
 }: {
   replaceDailyQuote?: true | false;
+  utcOffset?: number;
 } = {}) => {
   const { userId }: { userId: string | null } = auth();
   if (!userId) {
@@ -401,12 +403,21 @@ export const getOrCreateDailyReflection = async ({
     let randomBook: Book;
     let randomQuote: QuoteWithRelations;
 
-    const profile = await db.query.profiles.findFirst({
+    let profile = await db.query.profiles.findFirst({
       where: eq(profiles.userId, userId),
     });
 
     if (!profile) {
-      throw new Error("Profile not found");
+      const newProfile = await db
+        .insert(profiles)
+        .values({
+          utcOffset,
+          userId,
+        })
+        .onConflictDoNothing()
+        .returning();
+
+      profile = newProfile[0];
     }
 
     const todaysDate = await getTodaysDate(
@@ -600,7 +611,6 @@ export const addPassedDailyToCapacities = async (dailyReflection: {
     throw new Error("No encryption key");
   }
 
-  // const dailyReflection = await getOrCreateDailyReflection();
   const { book, quote } = dailyReflection;
   const bookTitle = book.title;
   const bookAuthor = book.author;
