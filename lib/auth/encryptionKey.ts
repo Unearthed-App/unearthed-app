@@ -100,7 +100,6 @@ export async function decrypt(
   ciphertext: string,
   key: string
 ): Promise<string> {
-  console.log("DECRYPT");
   try {
     const data = Buffer.from(ciphertext, "base64");
     if (data.length <= 12) {
@@ -127,8 +126,6 @@ export async function decrypt(
     return decoder.decode(decrypted);
   } catch (error) {
     console.error("Decryption error:", error);
-    console.log("Ciphertext length:", ciphertext.length);
-    console.log("Key length:", key.length);
     throw error;
   }
 }
