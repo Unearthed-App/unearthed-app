@@ -48,7 +48,6 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let toReturn = {} as any;
   try {
     const dbResult = await db.query.profiles.findMany({
       where: and(
@@ -57,38 +56,39 @@ export async function GET() {
       ),
     });
 
-    toReturn.dbResult = dbResult;
-
     for (const profile of dbResult) {
-      const user = await clerkClient.users.getUser(profile.userId);
-      const encryptionKey = user.privateMetadata.encryptionKey as string;
+      try {
+        const user = await clerkClient.users.getUser(profile.userId);
 
-      const dailyReflectionExisting = await getDailyReflection(
-        profile.userId,
-        profile.utcOffset as number,
-        encryptionKey
-      );
+        const encryptionKey = user.privateMetadata.encryptionKey as string;
 
-      toReturn.dailyReflectionExisting = dailyReflectionExisting;
+        const dailyReflectionExisting = await getDailyReflection(
+          profile.userId,
+          profile.utcOffset as number,
+          encryptionKey
+        );
 
-      if (dailyReflectionExisting) {
+        if (dailyReflectionExisting) {
+          continue;
+        }
+
+        const dailyReflection = (await createDailyReflection(
+          profile,
+          encryptionKey
+        )) as DailyReflection;
+
+        profile.capacitiesApiKey = profile.capacitiesApiKey
+          ? await decrypt(profile.capacitiesApiKey as string, encryptionKey)
+          : "";
+
+        profile.capacitiesSpaceId = profile.capacitiesSpaceId
+          ? await decrypt(profile.capacitiesSpaceId as string, encryptionKey)
+          : "";
+
+        await addDailyToCapacities(profile, dailyReflection);
+      } catch (error) {
         continue;
       }
-
-      const dailyReflection = (await createDailyReflection(
-        profile.userId,
-        encryptionKey
-      )) as DailyReflection;
-
-      profile.capacitiesApiKey = profile.capacitiesApiKey
-        ? await decrypt(profile.capacitiesApiKey as string, encryptionKey)
-        : "";
-
-      profile.capacitiesSpaceId = profile.capacitiesSpaceId
-        ? await decrypt(profile.capacitiesSpaceId as string, encryptionKey)
-        : "";
-
-      await addDailyToCapacities(profile, dailyReflection);
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
@@ -141,16 +141,15 @@ const getDailyReflection = async (
   }
 };
 
-const createDailyReflection = async (userId: string, encryptionKey: string) => {
+const createDailyReflection = async (
+  profile: Profile,
+  encryptionKey: string
+) => {
   try {
     let randomBook: Book;
     let randomQuote: QuoteWithRelations;
 
-    const profile = await db.query.profiles.findFirst({
-      where: eq(profiles.userId, userId),
-    });
-
-    if (!profile) {
+    if (!profile.userId) {
       throw new Error("Profile not found");
     }
 
@@ -162,7 +161,7 @@ const createDailyReflection = async (userId: string, encryptionKey: string) => {
       with: {
         book: true,
       },
-      where: and(eq(quotes.userId, userId)),
+      where: and(eq(quotes.userId, profile.userId)),
     });
 
     // remove any quotes that have books that are not status:'ACTIVE' and are not ignored:true
@@ -186,7 +185,7 @@ const createDailyReflection = async (userId: string, encryptionKey: string) => {
     const toInsert = {
       quoteId: randomQuote.id,
       day: todaysDate,
-      userId: userId,
+      userId: profile.userId,
     } as DailyQuote;
 
     const newDailyQuote = await db
