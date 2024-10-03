@@ -4,8 +4,36 @@ import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - Unearthed App",
-  description: "Privacy policy for Unearthed App",
+  title: "Unearthed - Privacy Policy",
+  description:
+    "Privacy policy for Unearthed App. Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Search, tag, and connect your insights across platforms.",
+  keywords: [
+    "Kindle highlights",
+    "digital notes",
+    "knowledge management",
+    "personal library",
+    "daily reflections",
+    "open source",
+    "productivity tool",
+  ],
+  openGraph: {
+    title: "Unearthed - Rediscover Your Digital Wisdom",
+    description:
+      "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source.",
+    type: "website",
+    url: "https://unearthed.app",
+    images: [
+      {
+        url: "https://unearthed.app/search.png",
+        width: 1200,
+        height: 630,
+        alt: "Unearthed app interface showing Kindle highlights and daily reflections",
+      },
+    ],
+  },
+  alternates: {
+    canonical: "https://unearthed.app/privacy",
+  },
 };
 
 const PrivacyPolicy = () => {
