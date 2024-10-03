@@ -22,8 +22,33 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Unearthed",
-  description: "Unearthed",
+  title: "Unearthed - Your Personal Knowledge Curator",
+  description:
+    "Unearthed: Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Search, tag, and connect your insights across platforms.",
+  keywords: [
+    "Kindle highlights",
+    "digital notes",
+    "knowledge management",
+    "personal library",
+    "daily reflections",
+    "open source",
+    "productivity tool",
+  ],
+  openGraph: {
+    title: "Unearthed - Rediscover Your Digital Wisdom",
+    description:
+      "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source.",
+    type: "website",
+    url: "https://unearthed.app",
+    images: [
+      {
+        url: "https://unearthed.app/daily-reflection.png",
+        width: 1200,
+        height: 630,
+        alt: "Unearthed app interface showing Kindle highlights and daily reflections",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({

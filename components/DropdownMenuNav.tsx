@@ -77,10 +77,8 @@ export function DropdownMenuNav() {
             </DropdownMenuGroup>{" "}
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link href="/privacy">
-                <DropdownMenuItem>
-                  <span>Privacy Policy</span>
-                </DropdownMenuItem>
+              <Link href="/privacy" passHref>
+                <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
               </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -111,10 +109,8 @@ export function DropdownMenuNav() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link href="/privacy">
-                <DropdownMenuItem>
-                  <span>Privacy Policy</span>
-                </DropdownMenuItem>
+              <Link href="/privacy" passHref>
+                <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
               </Link>
             </DropdownMenuGroup>
           </DropdownMenuContent>
