@@ -5,10 +5,10 @@ import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { selectBookSchema, selectQuoteSchema } from "@/db/schema";
+import { selectSourceSchema, selectQuoteSchema } from "@/db/schema";
 import { getBook, getBookTitles } from "@/server/actions";
 
-type Book = z.infer<typeof selectBookSchema>;
+type Source = z.infer<typeof selectSourceSchema>;
 const QuotesArraySchema = z.array(selectQuoteSchema);
 
 import { Button } from "@/components/ui/button";
@@ -32,21 +32,10 @@ import { BookHeader } from "@/components/BookHeader";
 import { QuoteCardBrutal } from "@/components/QuoteCardBrutal";
 import { AnimatedLoader } from "@/components/AnimatedLoader";
 
-export default function Book({
-  params,
-}: {
-  params: { bookId: string; status: string };
-}) {
+export default function Book({ params }: { params: { bookId: string } }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  let statusToCheck = "ACTIVE";
-  if (
-    params.status.toUpperCase() === "PENDING" ||
-    params.status.toUpperCase() === "ACTIVE"
-  ) {
-    statusToCheck = params.status;
-  }
   const {
     data: book,
     mutate: server_getBook,
@@ -77,7 +66,7 @@ export default function Book({
 
   const displayQuotes =
     book && "quotes" in book ? QuotesArraySchema.parse(book.quotes) : [];
-  const transformBookTitles = (books: Book[]) => {
+  const transformBookTitles = (books: Source[]) => {
     return books.map((book) => ({
       id: book.id,
       value: book.title.toLowerCase(),
@@ -88,7 +77,7 @@ export default function Book({
 
   useEffect(() => {
     // Load book titles
-    server_getBookTitles(statusToCheck.toUpperCase() as "PENDING" | "ACTIVE");
+    server_getBookTitles();
 
     // Load quotes for the current book
     if (params.bookId) {
@@ -103,7 +92,7 @@ export default function Book({
     );
     if (selectedBook) {
       // Reload the page with the new book ID in the URL
-      router.push(`/dashboard/book/${selectedBook.id}/${params.status}`);
+      router.push(`/dashboard/book/${selectedBook.id}`);
     }
     setOpen(false);
   };
@@ -140,37 +129,11 @@ export default function Book({
 
   return (
     <div className="pt-32 px-4 md:px-12 lg:px-24 xl:px-12 2xl:px-24">
-      <div className="mb-2 ">
-        <div>
-          {params.status.toUpperCase() === "PENDING" && (
-            <h2 className="text-base text-secondary font-semibold">
-              These are the books and quotes from the pending Kindle import
-            </h2>
-          )}
-          {params.status.toUpperCase() === "ACTIVE" && (
-            <h2 className="text-lg text-secondary">
-              These are the books and quotes on Unearthed already.
-            </h2>
-          )}
-        </div>
-      </div>
       <div className="flex flex-wrap items-center mb-4">
-        {(params.status.toUpperCase() === "PENDING" ||
-          params.status.toUpperCase() === "ACTIVE") && (
-          <div className="mr-2 mb-2">
-            <Link href="/dashboard/kindle-import">
-              <Button variant="brutalprimary" className="flex space-x-2">
-                <ArrowBigLeft />
-                Back to Kindle Import
-              </Button>
-            </Link>
-          </div>
-        )}
         <div className="mb-2">
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
-                // variant="outline"
                 role="combobox"
                 aria-expanded={open}
                 className="justify-between"

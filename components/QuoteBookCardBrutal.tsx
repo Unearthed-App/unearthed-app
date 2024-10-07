@@ -122,7 +122,7 @@ export function QuoteBookCardBrutal({
         <div className="relative -top-6 flex justify-between py-2">
           <div className="ml-4">
             <Link
-              href={`/dashboard/book/${bookId}/view`}
+              href={`/dashboard/book/${bookId}`}
               className="w-full text-lg block"
               onClick={(e) => {
                 setOpen(false);

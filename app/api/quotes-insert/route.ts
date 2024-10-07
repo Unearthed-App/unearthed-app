@@ -19,8 +19,15 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
+    let body = await request.json();
 
+    body = body.map((row: any) => {
+      const { bookId, ...rest } = row;
+      return {
+        ...rest,
+        sourceId: bookId,
+      };
+    });
     const QuotesArraySchema = z.array(insertQuoteSchema);
 
     const toInsert = await Promise.all(
@@ -52,7 +59,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error(error);
     return NextResponse.json({ error: "Error" }, { status: 500 });
   }
 }

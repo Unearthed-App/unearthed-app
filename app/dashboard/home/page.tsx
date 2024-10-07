@@ -3,7 +3,7 @@ import { OnboardingCard } from "@/components/OnboardingCard";
 import { getBookTitles } from "@/server/actions";
 
 export default async function Home() {
-  const books = await getBookTitles("ACTIVE");
+  const books = await getBookTitles();
 
   return (
     <div className="pt-32 p-4">

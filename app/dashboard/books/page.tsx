@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import React from "react";
 import { getBooks, toggleIgnoredBook } from "@/server/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { Frown } from "lucide-react";
 import Image from "next/image";
 import {
@@ -20,7 +19,6 @@ import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 export default function Books() {
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const {
@@ -31,7 +29,6 @@ export default function Books() {
     queryKey: ["books"],
     queryFn: () =>
       getBooks({
-        status: "ACTIVE",
         ignored: false,
       }),
   });
@@ -108,7 +105,7 @@ export default function Books() {
                       <div className="flex items-center">
                         {book.imageUrl ? (
                           <Link
-                            href={`/dashboard/book/${book.id}/view`}
+                            href={`/dashboard/book/${book.id}`}
                             className="w-[90px] md:w-[100px]"
                           >
                             <Image
@@ -166,7 +163,7 @@ export default function Books() {
                           </div>
                           <div className="flex w-full md:w-auto">
                             <Link
-                              href={`/dashboard/book/${book.id}/view`}
+                              href={`/dashboard/book/${book.id}`}
                               className="w-full text-lg block"
                             >
                               <Button className="w-full md:w-36">

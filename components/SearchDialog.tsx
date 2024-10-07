@@ -27,12 +27,12 @@ import { search } from "@/server/actions";
 import { Skeleton } from "./ui/skeleton";
 import { QuoteBookCardBrutal } from "@/components/QuoteBookCardBrutal";
 
-import { selectBookSchema, selectQuoteWithRelationsSchema } from "@/db/schema";
+import { selectSourceSchema, selectQuoteWithRelationsSchema } from "@/db/schema";
 import { Input } from "./ui/input";
 import { BookCard } from "./BookCard";
 import { z } from "zod";
 type QuoteWithRelations = z.infer<typeof selectQuoteWithRelationsSchema>;
-type Book = z.infer<typeof selectBookSchema>;
+type Source = z.infer<typeof selectSourceSchema>;
 
 import { useForm } from "react-hook-form";
 import {
@@ -48,7 +48,7 @@ import { toast } from "@/hooks/use-toast";
 export function SearchDialog() {
   const [open, setOpen] = useState(false);
   const [searchResults, setSearchResults] = useState<{
-    books: Book[];
+    books: Source[];
     quotes: QuoteWithRelations[];
   }>({ books: [], quotes: [] });
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -246,9 +246,9 @@ export function SearchDialog() {
                   variants={itemVariants}
                 >
                   <QuoteBookCardBrutal
-                    bookId={quote.book.id}
-                    bookTitle={quote.book.title}
-                    bookAuthor={quote.book.author as string}
+                    bookId={quote.source.id}
+                    bookTitle={quote.source.title}
+                    bookAuthor={quote.source.author as string}
                     quote={quote.content}
                     note={quote.note ?? ""}
                     location={quote.location ?? ""}
@@ -350,9 +350,9 @@ export function SearchDialog() {
                   variants={itemVariants}
                 >
                   <QuoteBookCardBrutal
-                    bookId={quote.book.id}
-                    bookTitle={quote.book.title}
-                    bookAuthor={quote.book.author as string}
+                    bookId={quote.source.id}
+                    bookTitle={quote.source.title}
+                    bookAuthor={quote.source.author as string}
                     quote={quote.content}
                     note={quote.note ?? ""}
                     location={quote.location ?? ""}

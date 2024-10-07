@@ -13,17 +13,16 @@ import { relations } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const books = pgTable(
-  "books",
+export const sources = pgTable(
+  "sources",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     title: text("title").notNull(),
     subtitle: text("subtitle"),
     author: text("author").default(""),
     imageUrl: text("image_url"),
-    status: text("status", { enum: ["PENDING", "ACTIVE"] })
-      .notNull()
-      .default("PENDING"),
+    type: text("type"),
+    origin: text("origin"),
     userId: text("user_id")
       .default(sql`requesting_user_id()`)
       .notNull(),
@@ -32,11 +31,12 @@ export const books = pgTable(
   },
   (table) => {
     return {
-      uniqueBookContent: unique("uniqueBookContent").on(
+      uniqueSourceContent: unique("uniqueSourceContent").on(
         table.title,
         table.author,
-        table.status,
-        table.userId
+        table.userId,
+        table.type,
+        table.origin
       ),
     };
   }
@@ -50,11 +50,8 @@ export const quotes = pgTable(
     note: text("note").default(""), // Default empty string instead of allowing null
     color: text("color"),
     location: text("location"),
-    status: text("status", { enum: ["PENDING", "ACTIVE"] })
-      .notNull()
-      .default("ACTIVE"),
-    bookId: uuid("book_id")
-      .references(() => books.id, { onDelete: "cascade" })
+    sourceId: uuid("source_id")
+      .references(() => sources.id, { onDelete: "cascade" })
       .notNull(),
     userId: text("user_id")
       .default(sql`requesting_user_id()`)
@@ -64,7 +61,7 @@ export const quotes = pgTable(
   (table) => {
     return {
       uniqueQuoteContent: unique("uniqueQuoteContent").on(
-        table.bookId,
+        table.sourceId,
         table.content,
         // table.note,
         table.userId
@@ -109,14 +106,14 @@ export const dailyQuotes = pgTable(
 );
 
 // Relations
-export const booksRelations = relations(books, ({ many }) => ({
+export const sourcesRelations = relations(sources, ({ many }) => ({
   quotes: many(quotes),
 }));
 
 export const quotesRelations = relations(quotes, ({ one }) => ({
-  book: one(books, {
-    fields: [quotes.bookId],
-    references: [books.id],
+  source: one(sources, {
+    fields: [quotes.sourceId],
+    references: [sources.id],
   }),
 }));
 
@@ -128,10 +125,10 @@ export const dailyQuotesRelations = relations(dailyQuotes, ({ one }) => ({
 }));
 
 // Types for zod
-export const insertBookSchema = createInsertSchema(books);
+export const insertSourceSchema = createInsertSchema(sources);
 export const insertQuoteSchema = createInsertSchema(quotes);
 
-export const selectBookSchema = createSelectSchema(books, {
+export const selectSourceSchema = createSelectSchema(sources, {
   createdAt: z.coerce.date(),
 });
 
@@ -139,9 +136,9 @@ export const selectQuoteSchema = createSelectSchema(quotes, {
   createdAt: z.coerce.date(),
 });
 export const selectQuoteWithRelationsSchema = selectQuoteSchema.extend({
-  book: selectBookSchema,
+  source: selectSourceSchema,
 });
-export const selectBookWithRelationsSchema = selectBookSchema.extend({
+export const selectSourceWithRelationsSchema = selectSourceSchema.extend({
   quotes: z.array(selectQuoteSchema),
 });
 

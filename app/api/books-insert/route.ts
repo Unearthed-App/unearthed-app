@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/index";
-import { books, insertBookSchema } from "@/db/schema";
+import { sources, insertSourceSchema } from "@/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
-import { and, eq, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 
-type BookInsert = z.infer<typeof insertBookSchema>;
+type SourceInsert = z.infer<typeof insertSourceSchema>;
 
 export async function POST(request: NextRequest) {
   const { userId }: { userId: string | null } = auth();
@@ -16,24 +16,27 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const BooksArraySchema = z.array(insertBookSchema);
-    const toInsert: BookInsert[] = BooksArraySchema.parse(body).map((row) => ({
-      ...row,
-      status: "ACTIVE", // No need to explicitly cast, TypeScript knows it's valid
-      userId,
-    }));
+    const SourcesArraySchema = z.array(insertSourceSchema);
+    const toInsert: SourceInsert[] = SourcesArraySchema.parse(body).map(
+      (row) => ({
+        ...row,
+        type: "BOOK",
+        origin: "KINDLE",
+        userId,
+      })
+    );
 
     const result = await db
-      .insert(books)
+      .insert(sources)
       .values(toInsert)
       .onConflictDoNothing()
       .returning();
 
     const insertedRecords = result;
     let existingRecords = toInsert.filter(
-      (book) =>
+      (source) =>
         !insertedRecords.some(
-          (insertedBook) => insertedBook.title === book.title
+          (insertedSource) => insertedSource.title === source.title
         )
     );
 
@@ -42,15 +45,15 @@ export async function POST(request: NextRequest) {
       const titles = toInsert.map((item) => item.title);
       detailsForDuplicates = await db
         .select()
-        .from(books)
+        .from(sources)
         .where((row) => inArray(row.title, titles));
     }
 
     existingRecords = detailsForDuplicates.filter((row: { title: string }) => {
-      const existingBook = existingRecords.find(
-        (book) => book.title === row.title
+      const existingSource = existingRecords.find(
+        (source) => source.title === row.title
       );
-      return existingBook !== undefined;
+      return existingSource !== undefined;
     });
 
     return NextResponse.json(
