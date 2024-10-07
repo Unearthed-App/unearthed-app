@@ -31,7 +31,6 @@ export default function BooksIgnored() {
     queryKey: ["books"],
     queryFn: () =>
       getBooks({
-        status: "ACTIVE",
         ignored: true,
       }),
   });
@@ -105,7 +104,7 @@ export default function BooksIgnored() {
                       <div className="flex items-center">
                         {book.imageUrl ? (
                           <Link
-                            href={`/dashboard/book/${book.id}/view`}
+                            href={`/dashboard/book/${book.id}`}
                             className="w-[90px] md:w-[100px]"
                           >
                             <Image
@@ -163,7 +162,7 @@ export default function BooksIgnored() {
                           </div>
                           <div className="flex w-full md:w-auto">
                             <Link
-                              href={`/dashboard/book/${book.id}/view`}
+                              href={`/dashboard/book/${book.id}`}
                               className="w-full text-lg block"
                             >
                               <Button className="w-full md:w-36">

@@ -61,7 +61,7 @@ export function BookCard({
       <div className="flex items-center">
         {imageUrl ? (
           <Link
-            href={`/dashboard/book/${id}/view`}
+            href={`/dashboard/book/${id}`}
             className=""
             onClick={(e) => {
               setOpen(false);
@@ -119,7 +119,7 @@ export function BookCard({
           </div>
           <div className="w-1/2 flex">
             <Link
-              href={`/dashboard/book/${id}/view`}
+              href={`/dashboard/book/${id}`}
               className="w-full text-lg block"
               onClick={(e) => {
                 setOpen(false);

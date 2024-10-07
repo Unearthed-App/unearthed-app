@@ -9,17 +9,17 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 import { z } from "zod";
-import { selectQuoteSchema, selectBookSchema } from "@/db/schema";
+import { selectQuoteSchema, selectSourceSchema } from "@/db/schema";
 import { AnimatedLoader } from "./AnimatedLoader";
 type Quote = z.infer<typeof selectQuoteSchema>;
-type Book = z.infer<typeof selectBookSchema>;
+type Source = z.infer<typeof selectSourceSchema>;
 import { getUserUtcOffset } from "@/lib/utils";
 
 import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 interface DailyQuote {
-  book: Book;
+  book: Source;
   quote: Quote;
 }
 
@@ -76,7 +76,7 @@ export function DailyQuoteCard({ initialData }: DailyQuoteCardProps) {
               <div className="hidden md:block -mr-2 w-[100px]">
                 {dailyQuote.book.imageUrl && (
                   <Link
-                    href={`/dashboard/book/${dailyQuote.book.id}/view`}
+                    href={`/dashboard/book/${dailyQuote.book.id}`}
                     className="w-[90px] md:w-[100px]"
                   >
                     <Image
@@ -93,7 +93,7 @@ export function DailyQuoteCard({ initialData }: DailyQuoteCardProps) {
                 <div className="">
                   <div className="rounded-t-lg  bg-black text-white p-4 text-center">
                     <Link
-                      href={`/dashboard/book/${dailyQuote.book.id}/view`}
+                      href={`/dashboard/book/${dailyQuote.book.id}`}
                       className="w-[90px] md:w-[100px]"
                     >
                       <h2
@@ -119,7 +119,7 @@ export function DailyQuoteCard({ initialData }: DailyQuoteCardProps) {
                   <div className="flex md:hidden justify-center">
                     {dailyQuote.book.imageUrl && (
                       <Link
-                        href={`/dashboard/book/${dailyQuote.book.id}/view`}
+                        href={`/dashboard/book/${dailyQuote.book.id}`}
                         className="w-[90px] md:w-[100px]"
                       >
                         <Image

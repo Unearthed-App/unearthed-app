@@ -3,21 +3,21 @@ import { headers } from "next/headers";
 
 import { db } from "@/db";
 import {
-  books,
+  sources,
   selectQuoteSchema,
   insertDailyQuotesSchema,
   quotes,
   profiles,
   dailyQuotes,
   selectQuoteWithRelationsSchema,
-  selectBookSchema,
+  selectSourceSchema,
   selectProfileSchema,
 } from "@/db/schema";
 import { decrypt } from "@/lib/auth/encryptionKey";
 import { z } from "zod";
 
 type QuoteWithRelations = z.infer<typeof selectQuoteWithRelationsSchema>;
-type Book = z.infer<typeof selectBookSchema>;
+type Source = z.infer<typeof selectSourceSchema>;
 type Quote = z.infer<typeof selectQuoteSchema>;
 type Profile = z.infer<typeof selectProfileSchema>;
 type DailyQuote = z.infer<typeof insertDailyQuotesSchema>;
@@ -28,7 +28,7 @@ import { capacitiesFormatDaily } from "@/server/actions";
 import { getTodaysDate } from "@/lib/utils";
 
 interface DailyReflection {
-  book: Book;
+  source: Source;
   quote: Quote;
 }
 
@@ -109,9 +109,9 @@ const getDailyReflection = async (
     let dailyQuoteWithRelationsResult = (await db
       .select()
       .from(dailyQuotes)
-      .where(and(eq(dailyQuotes.day, todaysDate), eq(books.userId, userId)))
+      .where(and(eq(dailyQuotes.day, todaysDate), eq(sources.userId, userId)))
       .leftJoin(quotes, eq(quotes.id, dailyQuotes.quoteId))
-      .leftJoin(books, eq(books.id, quotes.bookId))) as any;
+      .leftJoin(sources, eq(sources.id, quotes.sourceId))) as any;
 
     if (dailyQuoteWithRelationsResult.length > 0) {
       dailyQuoteWithRelationsResult = dailyQuoteWithRelationsResult[0];
@@ -129,7 +129,7 @@ const getDailyReflection = async (
         : "";
 
       return {
-        book: dailyQuoteWithRelationsResult.books,
+        source: dailyQuoteWithRelationsResult.sources,
         quote: dailyQuoteWithRelationsResult.quotes,
       };
     } else {
@@ -146,7 +146,7 @@ const createDailyReflection = async (
   encryptionKey: string
 ) => {
   try {
-    let randomBook: Book;
+    let randomSource: Source;
     let randomQuote: QuoteWithRelations;
 
     if (!profile.userId) {
@@ -159,15 +159,15 @@ const createDailyReflection = async (
 
     const quotesResult = await db.query.quotes.findMany({
       with: {
-        book: true,
+        source: true,
       },
       where: and(eq(quotes.userId, profile.userId)),
     });
 
-    // remove any quotes that have books that are not status:'ACTIVE' and are not ignored:true
+    // remove any quotes that have sources that are not ignored:true
     const quotesResultFiltered = quotesResult.filter((quote) => {
-      if (quote.book) {
-        return quote.book.status === "ACTIVE" && quote.book.ignored === false;
+      if (quote.source) {
+        return quote.source.ignored === false;
       }
     });
 
@@ -180,7 +180,7 @@ const createDailyReflection = async (
     );
 
     randomQuote = quotesResultFiltered[randomQuoteIndex] as QuoteWithRelations;
-    randomBook = randomQuote.book;
+    randomSource = randomQuote.source;
 
     const toInsert = {
       quoteId: randomQuote.id,
@@ -197,7 +197,7 @@ const createDailyReflection = async (
     randomQuote.note = randomQuote.note
       ? await decrypt(randomQuote.note, encryptionKey)
       : "";
-    return { book: randomBook, quote: randomQuote };
+    return { source: randomSource, quote: randomQuote };
   } catch (error) {
     console.error(error);
     return {};
@@ -208,9 +208,9 @@ const addDailyToCapacities = async (
   profile: Profile,
   dailyReflection: DailyReflection
 ) => {
-  const { book, quote } = dailyReflection;
-  const bookTitle = book.title;
-  const bookAuthor = book.author;
+  const { source, quote } = dailyReflection;
+  const sourceTitle = source.title;
+  const sourceAuthor = source.author;
   const quoteContent = quote.content;
   const quoteNote = quote.note;
   const quoteLocation = quote.location;
@@ -220,8 +220,8 @@ const addDailyToCapacities = async (
   }
 
   const mdText = await capacitiesFormatDaily(
-    bookTitle as string,
-    bookAuthor as string,
+    sourceTitle as string,
+    sourceAuthor as string,
     quoteContent as string,
     quoteNote as string,
     quoteLocation as string

@@ -2,14 +2,12 @@
 
 import { db } from "@/db";
 import {
-  books,
-  insertBookSchema,
-  insertQuoteSchema,
-  selectBookWithRelationsSchema,
+  sources,
+  selectSourceWithRelationsSchema,
   selectQuoteSchema,
   insertDailyQuotesSchema,
   quotes,
-  selectBookSchema,
+  selectSourceSchema,
   insertProfileSchema,
   profiles,
   selectProfileSchema,
@@ -18,28 +16,24 @@ import {
 } from "@/db/schema";
 import {
   decrypt,
-  encrypt,
   generateApiKey,
   getOrCreateEncryptionKey,
 } from "@/lib/auth/encryptionKey";
 import { getTodaysDate } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
-import { and, eq, ilike, like, or } from "drizzle-orm";
+import { and, eq, ilike, or } from "drizzle-orm";
 import { z } from "zod";
 
-type BookWithRelations = z.infer<typeof selectBookWithRelationsSchema>;
+type SourceWithRelations = z.infer<typeof selectSourceWithRelationsSchema>;
 type QuoteWithRelations = z.infer<typeof selectQuoteWithRelationsSchema>;
 type Quote = z.infer<typeof selectQuoteSchema>;
-type Book = z.infer<typeof selectBookSchema>;
+type Source = z.infer<typeof selectSourceSchema>;
 type Profile = z.infer<typeof insertProfileSchema>;
 type DailyQuote = z.infer<typeof insertDailyQuotesSchema>;
 
-const InsertQuotesArraySchema = z.array(insertQuoteSchema);
-const BATCH_SIZE = 100;
-
 export const getBook = async (
   bookId: string
-): Promise<BookWithRelations | { error: string }> => {
+): Promise<SourceWithRelations | { error: string }> => {
   const { userId }: { userId: string | null } = auth();
   if (!userId) {
     throw new Error("User not authenticated");
@@ -51,11 +45,11 @@ export const getBook = async (
   }
 
   try {
-    const dbResult = await db.query.books.findFirst({
+    const dbResult = await db.query.sources.findFirst({
       with: {
         quotes: true,
       },
-      where: and(eq(books.id, bookId), eq(books.userId, userId)),
+      where: and(eq(sources.id, bookId), eq(sources.userId, userId)),
     });
 
     if (!dbResult) {
@@ -76,7 +70,8 @@ export const getBook = async (
       quotes: decryptedQuotes,
     };
 
-    const validatedData = selectBookWithRelationsSchema.parse(decryptedResult);
+    const validatedData =
+      selectSourceWithRelationsSchema.parse(decryptedResult);
 
     return validatedData;
   } catch (error) {
@@ -85,104 +80,11 @@ export const getBook = async (
   }
 };
 
-export const syncBooks = async () => {
-  const { userId }: { userId: string | null } = auth();
-  if (!userId) {
-    throw new Error("User not authenticated");
-  }
-
-  try {
-    const allBooks = await getBooks({ status: "" });
-
-    const pendingBooks = allBooks.filter(
-      (book) => book.status === "PENDING" && book.userId === userId
-    );
-
-    if (pendingBooks.length == 0) {
-      return { error: "No pending books" };
-    }
-
-    const activeBooks = allBooks.filter(
-      (book) => book.status === "ACTIVE" && book.userId === userId
-    );
-
-    const BooksArraySchema = z.array(insertBookSchema);
-    const pendingBooksStripped = BooksArraySchema.parse(
-      pendingBooks.map(
-        ({ title, subtitle, author, status, imageUrl, ...book }) => ({
-          title,
-          subtitle,
-          author,
-          imageUrl,
-          status: "ACTIVE",
-          userId: userId,
-          ignored: false,
-        })
-      )
-    );
-
-    const result = await db
-      .insert(books)
-      .values(pendingBooksStripped)
-      .onConflictDoNothing()
-      .returning();
-
-    let bookIdLookup: any = [];
-    activeBooks.forEach(async (book) => {
-      let key = `${book.title}|${book.author}`;
-      bookIdLookup[key] = book.id;
-    });
-
-    result.forEach(async (book) => {
-      let key = `${book.title}|${book.author}`;
-      bookIdLookup[key] = book.id;
-    });
-
-    const allQuotes = pendingBooks.flatMap((book) =>
-      book.quotes.map(({ content, note, color, location }) => ({
-        content,
-        note, // note does not need to be encrypted here because it was already encrypted from the quotes-insert api route
-        color,
-        location,
-        bookId: bookIdLookup[`${book.title}|${book.author}`],
-        userId: userId,
-        status: "ACTIVE",
-      }))
-    );
-
-    const validatedQuotes = InsertQuotesArraySchema.parse(allQuotes);
-
-    // Split the quotes into batches
-    const batches: any = [];
-    for (let i = 0; i < validatedQuotes.length; i += BATCH_SIZE) {
-      batches.push(validatedQuotes.slice(i, i + BATCH_SIZE));
-    }
-
-    // Use a transaction for all inserts
-    await db.transaction(async (tx) => {
-      for (const batch of batches) {
-        await tx.insert(quotes).values(batch).onConflictDoNothing();
-      }
-    });
-
-    await db
-      .delete(books)
-      .where(and(eq(books.status, "PENDING"), eq(books.userId, userId)));
-
-    return { status: "OK" };
-  } catch (error) {
-    console.error(error);
-    return { error: "Error occured" };
-  }
-};
-
 export const getBooks = async ({
-  status,
   ignored,
 }: {
-  status?: "PENDING" | "ACTIVE" | "";
   ignored?: true | false | "";
-}): Promise<BookWithRelations[]> => {
+}): Promise<SourceWithRelations[]> => {
   const { userId }: { userId: string | null } = auth();
   if (!userId) {
     throw new Error("User not authenticated");
@@ -193,27 +95,23 @@ export const getBooks = async ({
 
     // Handle the case where 'ignored' is not provided or is an empty string
     if (ignored === "" || ignored === null || ignored === undefined) {
-      where = status
-        ? and(eq(books.status, status), eq(books.userId, userId))
-        : eq(books.userId, userId);
+      where = and(eq(sources.type, "BOOK"), eq(sources.userId, userId));
     } else {
-      where = status
-        ? and(
-            eq(books.status, status),
-            eq(books.ignored, ignored),
-            eq(books.userId, userId)
-          )
-        : and(eq(books.ignored, ignored), eq(books.userId, userId));
+      where = and(
+        eq(sources.type, "BOOK"),
+        eq(sources.ignored, ignored),
+        eq(sources.userId, userId)
+      );
     }
 
-    const dbResult = await db.query.books.findMany({
+    const dbResult = await db.query.sources.findMany({
       with: {
         quotes: true,
       },
       where,
     });
     const validatedData = z
-      .array(selectBookWithRelationsSchema)
+      .array(selectSourceWithRelationsSchema)
       .parse(dbResult);
 
     return validatedData;
@@ -223,22 +121,16 @@ export const getBooks = async ({
   }
 };
 
-export const getBookTitles = async (
-  status?: "PENDING" | "ACTIVE" | ""
-): Promise<Book[]> => {
+export const getBookTitles = async (): Promise<Source[]> => {
   const { userId }: { userId: string | null } = auth();
   if (!userId) {
     return [];
   }
   try {
-    const where = status
-      ? and(eq(books.status, status), eq(books.userId, userId))
-      : eq(books.userId, userId);
-
-    const dbResult = await db.query.books.findMany({
-      where,
+    const dbResult = await db.query.sources.findMany({
+      where: and(eq(sources.type, "BOOK"), eq(sources.userId, userId)),
     });
-    const validatedData = z.array(selectBookSchema).parse(dbResult);
+    const validatedData = z.array(selectSourceSchema).parse(dbResult);
 
     return validatedData;
   } catch (error) {
@@ -261,9 +153,9 @@ export const toggleIgnoredBook = async ({
 
   try {
     await db
-      .update(books)
+      .update(sources)
       .set({ ignored: ignored })
-      .where(and(eq(books.id, bookId), eq(books.userId, userId)));
+      .where(and(eq(sources.id, bookId), eq(sources.userId, userId)));
     return { status: "OK" };
   } catch (error) {
     console.error(error);
@@ -377,11 +269,8 @@ export const getSettings = async () => {
   const profile = await getProfile();
   const capicitiesSpaces = await capicitiesGetSpaces();
 
-  console.log("profile", profile);
-
   return { profile, capicitiesSpaces };
 };
-
 export const getOrCreateDailyReflection = async ({
   replaceDailyQuote = false,
   utcOffset = 0,
@@ -400,7 +289,7 @@ export const getOrCreateDailyReflection = async ({
   }
 
   try {
-    let randomBook: Book;
+    let randomBook: Source;
     let randomQuote: QuoteWithRelations;
 
     let profile = await db.query.profiles.findFirst({
@@ -427,9 +316,9 @@ export const getOrCreateDailyReflection = async ({
     let dailyQuoteWithRelationsResult = (await db
       .select()
       .from(dailyQuotes)
-      .where(and(eq(dailyQuotes.day, todaysDate), eq(books.userId, userId)))
+      .where(and(eq(dailyQuotes.day, todaysDate), eq(sources.userId, userId)))
       .leftJoin(quotes, eq(quotes.id, dailyQuotes.quoteId))
-      .leftJoin(books, eq(books.id, quotes.bookId))) as any;
+      .leftJoin(sources, eq(sources.id, quotes.sourceId))) as any;
 
     if (dailyQuoteWithRelationsResult.length > 0) {
       dailyQuoteWithRelationsResult = dailyQuoteWithRelationsResult[0];
@@ -448,22 +337,22 @@ export const getOrCreateDailyReflection = async ({
         : "";
 
       return {
-        book: dailyQuoteWithRelationsResult.books,
+        book: dailyQuoteWithRelationsResult.sources,
         quote: dailyQuoteWithRelationsResult.quotes,
       };
     }
 
     const quotesResult = await db.query.quotes.findMany({
       with: {
-        book: true,
+        source: true,
       },
       where: and(eq(quotes.userId, userId)),
     });
 
-    // remove any quotes that have books that are not status:'ACTIVE' and are not ignored:true
+    // remove any quotes that have books that are not ignored:true
     const quotesResultFiltered = quotesResult.filter((quote) => {
-      if (quote.book) {
-        return quote.book.status === "ACTIVE" && quote.book.ignored === false;
+      if (quote.source) {
+        return quote.source.ignored === false;
       }
     });
 
@@ -476,7 +365,7 @@ export const getOrCreateDailyReflection = async ({
     );
     randomQuote = quotesResultFiltered[randomQuoteIndex] as QuoteWithRelations;
 
-    randomBook = randomQuote.book;
+    randomBook = randomQuote.source;
 
     if (!dailyQuoteResult) {
       const toInsert = {
@@ -499,6 +388,7 @@ export const getOrCreateDailyReflection = async ({
         book: randomBook,
         quote: randomQuote,
       });
+
       return { book: randomBook, quote: randomQuote };
     }
 
@@ -506,7 +396,6 @@ export const getOrCreateDailyReflection = async ({
     if (dailyQuoteResult && replaceDailyQuote) {
       const toSet = {
         quoteId: randomQuote.id,
-        // userId: userId,
       };
 
       const updatedDailyQuote = await db
@@ -598,7 +487,7 @@ export const addDailyToCapacities = async () => {
 };
 
 export const addPassedDailyToCapacities = async (dailyReflection: {
-  book: Book;
+  book: Source;
   quote: Quote;
 }) => {
   const { userId }: { userId: string | null } = auth();
@@ -700,7 +589,7 @@ export const capacitiesFormatDaily = async (
 export const search = async (
   query: string
 ): Promise<{
-  books: Book[];
+  books: Source[];
   quotes: QuoteWithRelations[];
 }> => {
   const { userId }: { userId: string | null } = auth();
@@ -717,23 +606,23 @@ export const search = async (
 
   const booksResult = await db
     .select()
-    .from(books)
+    .from(sources)
     .where(
       and(
         or(
-          ilike(books.title, `%${query}%`),
-          ilike(books.subtitle, `%${query}%`),
-          ilike(books.author, `%${query}%`)
+          ilike(sources.title, `%${query}%`),
+          ilike(sources.subtitle, `%${query}%`),
+          ilike(sources.author, `%${query}%`)
         ),
-        eq(books.status, "ACTIVE"),
-        eq(books.ignored, false),
-        eq(books.userId, userId)
+        eq(sources.type, "BOOK"),
+        eq(sources.ignored, false),
+        eq(sources.userId, userId)
       )
     );
 
   const dbResult = await db.query.quotes.findMany({
     with: {
-      book: true,
+      source: true,
     },
     where: eq(quotes.userId, userId),
   });
@@ -741,11 +630,7 @@ export const search = async (
   // Decrypt and filter quotes asynchronously based on decrypted note and content
   const filteredResults = await Promise.all(
     dbResult.map(async (quote) => {
-      if (quote.book.ignored) {
-        return null;
-      }
-
-      if (quote.book.status == "PENDING") {
+      if (quote.source.ignored) {
         return null;
       }
 
