@@ -31,7 +31,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     const body = {
       code: code,
       grant_type: "authorization_code",
-      redirect_uri: "http://localhost:3000/api/notion-redirect",
+      redirect_uri: "http://unearthed.app/api/notion-redirect",
     };
 
     const response = await fetch("https://api.notion.com/v1/oauth/token", {
