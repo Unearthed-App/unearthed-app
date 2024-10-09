@@ -113,7 +113,6 @@ export default function App() {
 
           <div className="my-12 w-full flex flex-wrap items-center justify-center">
             <div className="md:grid grid-cols-3 grid-rows-6 gap-4 max-w-[900px]">
-              
               <div className="row-span-3">
                 <div className="w-full h-full p-4 border-2 border-black rounded-lg bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
                   <h3
@@ -121,16 +120,17 @@ export default function App() {
                       crimsonPro.className + " font-extrabold text-3xl"
                     }
                   >
-                    "I <span className="text-secondary italic">know</span> that
-                    I read something about that, but I have no idea{" "}
-                    <span className="text-secondary italic">where</span>."
+                    &quot;I <span className="text-secondary italic">know</span>{" "}
+                    that I read something about that, but I have no idea{" "}
+                    <span className="text-secondary italic">where</span>.&quot;
                   </h3>
                   <p className="text-xs md:text-base mt-2">
-                    Unearthed will help you find it with it's{" "}
+                    Unearthed will help you find it with it&apos;s{" "}
                     <span className="text-secondary font-semibold">
                       global search
-                    </span>{" "} giving you the book, author, page number, and any notes you took on
-                    it.
+                    </span>{" "}
+                    giving you the book, author, page number, and any notes you
+                    took on it.
                   </p>
                   <div className="relative mt-2"></div>
                 </div>
@@ -142,8 +142,9 @@ export default function App() {
                       crimsonPro.className + " font-extrabold text-3xl"
                     }
                   >
-                    "I need{" "}
-                    <span className="text-secondary italic">inspiration</span>"
+                    &quot;I need{" "}
+                    <span className="text-secondary italic">inspiration</span>
+                    &quot;
                   </h3>
                   <p className="text-xs md:text-base mt-2">
                     Unearthed will serve you a{" "}
@@ -172,9 +173,9 @@ export default function App() {
                       crimsonPro.className + " font-extrabold text-3xl"
                     }
                   >
-                    "I love that book, but it was so{" "}
+                    &quot;I love that book, but it was so{" "}
                     <span className="text-secondary italic">overwhelming</span>.
-                    I couldn't take it all in!"
+                    I couldn&apos;t take it all in!&quot;
                   </h3>
                   <p className="text-xs md:text-base mt-2">
                     Unearthed will serve you{" "}
@@ -193,8 +194,10 @@ export default function App() {
                       crimsonPro.className + " font-extrabold text-3xl"
                     }
                   >
-                    "I'm <span className="text-secondary italic">sick</span> of
-                    manually downloading and backing up my kindle highlights"
+                    &quot;I&apos;m{" "}
+                    <span className="text-secondary italic">sick</span> of
+                    manually downloading and backing up my kindle
+                    highlights&quot;
                   </h3>
                   <p className="text-xs md:text-base mt-2">
                     Unearthed will{" "}
@@ -213,9 +216,9 @@ export default function App() {
                       crimsonPro.className + " font-extrabold text-3xl"
                     }
                   >
-                    "My notes are{" "}
+                    &quot;My notes are{" "}
                     <span className="text-secondary italic">all over</span> the
-                    place"
+                    place&quot;
                   </h3>
                   <p className="text-xs md:text-base mt-2">
                     Unearthed can act as a{" "}
@@ -305,7 +308,9 @@ export default function App() {
             >
               Sync to these apps
             </h1>
-            <Badge className="mt-2" variant="brutal">Adding more all the time</Badge>
+            <Badge className="mt-2" variant="brutal">
+              Adding more all the time
+            </Badge>
           </div>
 
           <div className="w-full">
