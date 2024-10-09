@@ -81,7 +81,10 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     syncToNotion({ newConnection: true });
 
-    const redirectUrl = new URL("/dashboard/notion-setup-began", request.url);
+    const redirectUrl = new URL(
+      "https://unearthed.app/dashboard/notion-setup-began",
+      request.url
+    );
     redirectUrl.searchParams.set("redirect", "true");
     return NextResponse.redirect(redirectUrl);
   } catch (error) {
