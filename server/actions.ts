@@ -702,9 +702,7 @@ export const syncToNotion = async ({
 
   let notionBooksDatabaseId;
 
-  if (profile.notionDatabaseId && !newConnection) {
-    notionBooksDatabaseId = profile.notionDatabaseId;
-  } else {
+  if (!profile.notionDatabaseId || newConnection) {
     const newDatabase = await notion.databases.create({
       parent: {
         type: "page_id",
@@ -748,6 +746,8 @@ export const syncToNotion = async ({
         })
         .where(eq(profiles.userId, userId));
     }
+  } else {
+    notionBooksDatabaseId = profile.notionDatabaseId;
   }
 
   if (!notionBooksDatabaseId) {

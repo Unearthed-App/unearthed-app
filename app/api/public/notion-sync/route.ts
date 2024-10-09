@@ -28,10 +28,7 @@ export async function GET(): Promise<NextResponse> {
 
   try {
     const dbResult = await db.query.profiles.findMany({
-      where: and(
-        isNotNull(profiles.notionAuthData),
-        isNotNull(profiles.notionDatabaseId)
-      ),
+      where: and(isNotNull(profiles.notionAuthData)),
     });
 
     for (const profile of dbResult) {
@@ -39,8 +36,6 @@ export async function GET(): Promise<NextResponse> {
         const user = await clerkClient.users.getUser(profile.userId);
         const encryptionKey = user.privateMetadata.encryptionKey as string;
         const userId = profile.userId;
-
-        const newConnection = false;
 
         const notionAuthData = JSON.parse(profile.notionAuthData || "{}");
         if (!notionAuthData || !notionAuthData.access_token) {
@@ -55,7 +50,7 @@ export async function GET(): Promise<NextResponse> {
 
         let notionBooksDatabaseId;
 
-        if (profile.notionDatabaseId && !newConnection) {
+        if (profile.notionDatabaseId) {
           notionBooksDatabaseId = profile.notionDatabaseId;
         } else {
           const newDatabase = await notion.databases.create({
