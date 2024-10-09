@@ -10,6 +10,8 @@ import { LogIn, CheckCircle } from "lucide-react";
 
 import Image from "next/image";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { UnearthedInAndOut } from "@/components/UnearthedInAndOut";
 
 export const metadata: Metadata = {
   title: "Unearthed - Your Personal Knowledge Curator",
@@ -43,8 +45,8 @@ export const metadata: Metadata = {
 export default function App() {
   return (
     <>
-      <main className=" w-full flex flex-wrap items-center justify-center px-4 md:px-24 pt-64 pb-24">
-        <SignedIn>
+      <SignedIn>
+        <main className=" w-full flex flex-wrap items-center justify-center px-4 md:px-24 pt-64 pb-24">
           <div className="flex flex-col justify-center items-center space-y-8">
             <h2
               className={
@@ -68,50 +70,177 @@ export default function App() {
               </Link>
             </div>
           </div>
-        </SignedIn>
-        <SignedOut>
-          <div className=" flex flex-wrap md:flex-nowrap justify-center space-x-8 w-full ">
-            <div className="">
-              <h1
-                className={
-                  crimsonPro.className +
-                  " font-extrabold text-4xl md:text-5xl lg:text-9xl"
-                }
-              >
-                Unearthed...
-              </h1>
-            </div>
-            <div className="h-32 md:h-64 -mt-32 md:-mt-32 lg:-mt-14">
-              <div className="-ml-8 md:ml-20 -mt-12 mb-4">
-                <Link href="/dashboard/home">
-                  <Button variant="brutalprimary" className="flex space-x-2">
-                    Sign In / Up
-                    <LogIn className="ml-2" />
-                  </Button>
-                </Link>
+        </main>
+      </SignedIn>
+      <SignedOut>
+        <main className="w-full flex flex-wrap items-center justify-center px-4 md:px-24 pt-24 pb-24">
+          <div className="w-full">
+            <div className="text-center">
+              <div className="flex items-center justify-center">
+                <div className="relative">
+                  <Badge
+                    className="hidden md:flex absolute top-2 left-24"
+                    variant="brutalinvert"
+                  >
+                    ALPHA
+                  </Badge>
+                  <h1
+                    className={
+                      crimsonPro.className +
+                      " font-extrabold text-6xl md:text-9xl bg-clip-text text-transparent bg-gradient-to-t from-[hsl(337,65%,3%)] to-[hsl(337,65%,20%)] dark:from-primary dark:to-[hsl(337,55%,35%)]"
+                    }
+                  >
+                    Unearthed
+                  </h1>
+                </div>
               </div>
-              <svg
-                width="300"
-                viewBox="0 0 124 87"
-                fill="currentColor"
-                stroke="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-red-400 w-[200px] hidden sm:block"
-              >
-                <path d="M92.7183 82.5137C85.6342 85.5731 78.7803 87 74 87C67.4023 87 56.2604 84.542 48.4229 80.3305C34.7696 84.3071 18.3683 87 0.5 87V86C17.8595 86 33.823 83.4439 47.1987 79.6422C43.8492 77.6692 41.1784 75.3104 40.0027 72.6021C39.3488 71.0958 39.1605 69.487 39.5721 67.8026C39.982 66.1255 40.9782 64.4071 42.637 62.6561C44.9406 60.2246 48.6912 57.645 53.0443 55.3373C57.4049 53.0257 62.4044 50.9689 67.231 49.5965C72.0484 48.2268 76.7359 47.5266 80.4567 47.9656C84.1835 48.4053 87.068 50.0156 87.9824 53.3684C88.5264 55.363 87.8135 57.5954 86.1782 59.8728C84.5368 62.1587 81.9139 64.5677 78.4657 66.9646C71.7814 71.6108 61.9126 76.2684 49.8029 79.9214C57.426 83.764 67.8112 86 74 86C78.6139 86 85.332 84.6144 92.3218 81.5957C99.3067 78.5791 106.528 73.9467 112.169 67.4837C117.805 61.026 121.869 52.737 122.549 42.3813C123.23 32.0205 120.527 19.5513 112.56 4.73683L113.44 4.26317C121.473 19.1987 124.243 31.8545 123.547 42.4468C122.851 53.0442 118.687 61.5365 112.922 68.1413C107.162 74.7408 99.8073 79.4522 92.7183 82.5137ZM48.5383 79.2548C61.0242 75.5811 71.1415 70.8377 77.895 66.1434C81.2917 63.7824 83.8153 61.449 85.3659 59.2896C86.9225 57.1217 87.447 55.206 87.0176 53.6316C86.2557 50.8378 83.8645 49.3746 80.3395 48.9587C76.8084 48.5421 72.268 49.204 67.5045 50.5584C62.7502 51.9102 57.8158 53.9397 53.5127 56.2208C49.2022 58.5059 45.5594 61.0254 43.363 63.3439C41.7882 65.0061 40.9014 66.5757 40.5436 68.04C40.1875 69.4971 40.3466 70.8831 40.92 72.2039C42.0607 74.8316 44.8517 77.2204 48.5383 79.2548Z" />
-                <path d="M110.736 0.558517L116.972 5.4447L111.526 8.44159L110.736 0.558517Z" />
-              </svg>
+              <h3 className="text bold font-bold text-secondary mb-12">
+                Lost wisdom, found again
+              </h3>
             </div>
           </div>
+          <div className="md:mb-12">
+            <Link href="/dashboard/home">
+              <Button
+                variant="brutalprimary"
+                className="flex space-x-2 px-12 py-6"
+              >
+                Sign In / Up
+                <LogIn className="ml-2" />
+              </Button>
+            </Link>
+          </div>
+
+          <div className="my-12 w-full flex flex-wrap items-center justify-center">
+            <div className="md:grid grid-cols-3 grid-rows-6 gap-4 max-w-[900px]">
+              
+              <div className="row-span-3">
+                <div className="w-full h-full p-4 border-2 border-black rounded-lg bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+                  <h3
+                    className={
+                      crimsonPro.className + " font-extrabold text-3xl"
+                    }
+                  >
+                    "I <span className="text-secondary italic">know</span> that
+                    I read something about that, but I have no idea{" "}
+                    <span className="text-secondary italic">where</span>."
+                  </h3>
+                  <p className="text-xs md:text-base mt-2">
+                    Unearthed will help you find it with it's{" "}
+                    <span className="text-secondary font-semibold">
+                      global search
+                    </span>{" "} giving you the book, author, page number, and any notes you took on
+                    it.
+                  </p>
+                  <div className="relative mt-2"></div>
+                </div>
+              </div>
+              <div className="mt-4 md:mt-0 col-span-2 row-span-3">
+                <div className="w-full h-full p-4 border-2 border-black rounded-lg bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+                  <h3
+                    className={
+                      crimsonPro.className + " font-extrabold text-3xl"
+                    }
+                  >
+                    "I need{" "}
+                    <span className="text-secondary italic">inspiration</span>"
+                  </h3>
+                  <p className="text-xs md:text-base mt-2">
+                    Unearthed will serve you a{" "}
+                    <span className="text-secondary font-semibold">
+                      Daily Reflection
+                    </span>
+                    , via the browser extension, web app, Capacities, and the
+                    mobile app (soon).
+                    <br /> <br />
+                    This is not some random quote from the web, this is
+                    something that you have{" "}
+                    <span className="text-secondary font-semibold">
+                      enjoyed
+                    </span>{" "}
+                    in the past enough to highlight and maybe even make a note
+                    about.
+                  </p>
+                  <div className="relative mt-2"></div>
+                </div>
+              </div>
+              <div className="mt-4 md:mt-0 col-span-1 row-span-3 row-start-4">
+                {" "}
+                <div className="w-full h-full p-4 border-2 border-black rounded-lg bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+                  <h3
+                    className={
+                      crimsonPro.className + " font-extrabold text-3xl"
+                    }
+                  >
+                    "I love that book, but it was so{" "}
+                    <span className="text-secondary italic">overwhelming</span>.
+                    I couldn't take it all in!"
+                  </h3>
+                  <p className="text-xs md:text-base mt-2">
+                    Unearthed will serve you{" "}
+                    <span className="text-secondary font-semibold">
+                      daily reflections
+                    </span>{" "}
+                    to help you digest every part of what you read.
+                  </p>
+                  <div className="relative mt-2"></div>
+                </div>
+              </div>
+              <div className="mt-4 md:mt-0 col-span-1 row-span-3 row-start-4">
+                <div className="w-full h-full p-4 border-2 border-black rounded-lg bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+                  <h3
+                    className={
+                      crimsonPro.className + " font-extrabold text-3xl"
+                    }
+                  >
+                    "I'm <span className="text-secondary italic">sick</span> of
+                    manually downloading and backing up my kindle highlights"
+                  </h3>
+                  <p className="text-xs md:text-base mt-2">
+                    Unearthed will{" "}
+                    <span className="text-secondary font-semibold">
+                      automatically
+                    </span>{" "}
+                    download and sync your data for you.
+                  </p>
+                  <div className="relative mt-2"></div>
+                </div>
+              </div>
+              <div className="mt-4 md:mt-0 row-span-3 col-start-3 row-start-4">
+                <div className="w-full h-full p-4 border-2 border-black rounded-lg bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+                  <h3
+                    className={
+                      crimsonPro.className + " font-extrabold text-3xl"
+                    }
+                  >
+                    "My notes are{" "}
+                    <span className="text-secondary italic">all over</span> the
+                    place"
+                  </h3>
+                  <p className="text-xs md:text-base mt-2">
+                    Unearthed can act as a{" "}
+                    <span className="text-secondary font-semibold">bridge</span>{" "}
+                    to get your quotes and notes to whatever note taking app you
+                    use.
+                  </p>
+                  <div className="relative mt-2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="mt-12 w-full flex flex-wrap lg:flex-nowrap justify-center">
-            <div className="mt-2 p-4 border-2 border-black rounded-lg max-w-96 md:max-h-[233px] bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+            <div className="mt-2 p-4 border-2 border-black rounded-lg max-w-96 md:max-h-[279px] bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
               <p className="text-xs md:text-base">
-                Hey! I made this app for myself and I others might find this
-                usefull too...? I wanted a way to search through my kindle
+                Hey! I made this app for myself and I though others might find
+                this usefull too...? I wanted a way to search through my kindle
                 quotes/notes easily and bring back those thoughts. The app is
                 designed to make retrieving accumulated knowledge easier, in the
                 hope that past revelations can be built on rather than
                 forgotten.
+                <br />
+                <br />
+                Contribute to the code here:
               </p>
               <div className="relative mt-2">
                 <Link
@@ -147,6 +276,9 @@ export default function App() {
                 <CheckItem content="A reflection served to you daily" />
               </div>
               <div>
+                <CheckItem content="Notion integration" />
+              </div>
+              <div>
                 <CheckItem content="Capacities daily note integration" />
               </div>
               <div>
@@ -159,9 +291,25 @@ export default function App() {
                 <CheckItem content="Encrypted sensitive data" />
               </div>
               <div>
-                <CheckItem content="Lots more to add" />
+                <CheckItem content="Lots more to add..." />
               </div>
             </div>
+          </div>
+
+          <div className="w-full text-center mt-20">
+            <h1
+              className={
+                crimsonPro.className +
+                " font-extrabold text-5xl md:text-7xl bg-clip-text text-transparent bg-gradient-to-t from-[hsl(337,65%,3%)] to-[hsl(337,65%,20%)] dark:from-primary dark:to-[hsl(337,55%,35%)]"
+              }
+            >
+              Sync to these apps
+            </h1>
+            <Badge className="mt-2" variant="brutal">Adding more all the time</Badge>
+          </div>
+
+          <div className="w-full">
+            <UnearthedInAndOut />
           </div>
 
           <div className="flex flex-wrap">
@@ -248,8 +396,8 @@ export default function App() {
               </Button>
             </Link>
           </div>
-        </SignedOut>
-      </main>
+        </main>
+      </SignedOut>
     </>
   );
 }

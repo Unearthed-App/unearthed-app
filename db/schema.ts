@@ -79,6 +79,8 @@ export const profiles = pgTable("profiles", {
   unearthedApiKey: text("unearthed_api_key").unique(),
   capacitiesApiKey: text("capacities_api_key"),
   capacitiesSpaceId: text("capacities_space_id"),
+  notionDatabaseId: text("notion_database_id"),
+  notionAuthData: text("notion_auth_data"),
   utcOffset: integer("utc_offset"),
   createdAt: timestamp("created_at").defaultNow(),
 });
