@@ -72,7 +72,6 @@ export async function onSubmitAction(data: any, utcOffset: number) {
       couldNotUpdate = true;
     }
   } catch (error) {
-    console.log("222");
     console.error(error);
     couldNotUpdate = true;
   }

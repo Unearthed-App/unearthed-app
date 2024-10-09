@@ -23,12 +23,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { generateNewUnearthedApiKey, getSettings } from "@/server/actions";
+import {
+  generateNewUnearthedApiKey,
+  getSettings,
+  syncToNotion,
+} from "@/server/actions";
 import { Copy } from "lucide-react";
 
 import { schema } from "./formSchema";
 import { onSubmitAction } from "./formSubmit";
 import { getUserUtcOffset } from "@/lib/utils";
+import Link from "next/link";
 
 type CapacitiesSpaceItem = {
   id: string;
@@ -39,6 +44,8 @@ type CapacitiesSpaceItem = {
 export function ProfileForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isForcingNotionSync, setIsForcingNotionSync] = useState(false);
+  const [notionWorkspace, setNotionWorkspace] = useState("");
   const [displayCapacitiesSpaces, setDisplayCapacitiesSpaces] = useState<
     CapacitiesSpaceItem[]
   >([]);
@@ -59,8 +66,10 @@ export function ProfileForm() {
     setIsLoading(true);
     try {
       const data = await getSettings();
+      console.log("data", data);
 
       if (data) {
+        setNotionWorkspace(data.notionWorkspace);
         if (!Array.isArray(data.capicitiesSpaces)) {
           return [];
         }
@@ -141,6 +150,33 @@ export function ProfileForm() {
       toast({
         title: "Error",
         description: "Failed to generate new key. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const forceNotionSync = async () => {
+    try {
+      toast({
+        title: "Notion Sync Started",
+        description:
+          "This will happen in the background, please wait and then check Notion.",
+      });
+      const result = await syncToNotion({newConnection: false});
+
+      if (!result.success) {
+        toast({
+          title: "Error",
+          description:
+            "Failed to connect to Notion. Please check that Notion still has access granted.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          "Failed to connect to Notion. Please check that Notion still has access granted.",
         variant: "destructive",
       });
     }
@@ -257,6 +293,62 @@ export function ProfileForm() {
               )}
             />
           )}
+          <div className="mt-4">
+            {notionWorkspace ? (
+              <div className="border-2 rounded-lg bg-card p-4">
+                <div className="font-semibold">
+                  Syncing to Notion:{" "}
+                  <span className="text-secondary">{notionWorkspace}</span>
+                </div>
+
+                <div className="text-muted">
+                  Unearthed will sync every 24 hours with Notion, but you can also force
+                  a sync here.
+                  <br />
+                  Starting a new connection will replace the old connection, so
+                  be careful.
+                </div>
+                <div className="flex justify-between mt-1">
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setIsForcingNotionSync(true);
+                      forceNotionSync();
+                    }}
+                    disabled={isForcingNotionSync}
+                  >
+                    {isForcingNotionSync ? "Sync Started" : "Force Sync"}
+                  </Button>{" "}
+                  <Link
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={process.env.NEXT_PUBLIC_NOTION_AUTH_URL || ""}
+                  >
+                    <Button
+                      variant="destructivebrutal"
+                      type="button"
+                      onClick={() => {toast({
+                        title: "Notion Re-connection Started",
+                        description:
+                          "Follow the instructions on the Notion page to finish syncing.",
+                      });}}
+                    >
+                      Start New Connection
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <Link
+                className="mt-4"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={process.env.NEXT_PUBLIC_NOTION_AUTH_URL || ""}
+              >
+                <Button type="button">Connect with Notion</Button>
+              </Link>
+            )}
+          </div>
           <div className="w-full flex justify-end">
             <Button
               className="w-24"
