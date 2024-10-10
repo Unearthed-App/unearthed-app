@@ -41,12 +41,7 @@ export function ProfileDialog() {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit Settings</DialogTitle>
-            <DialogDescription>
-              Make changes to your settings.
-              <br />
-              Don&apos;t forget to press Save
-            </DialogDescription>
+            <DialogTitle>Settings</DialogTitle>
           </DialogHeader>
           <ProfileForm />
           <h4 className="text-muted">Version: {packageJson.version}</h4>
@@ -64,8 +59,7 @@ export function ProfileDialog() {
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Edit Settings</DrawerTitle>
-          <DrawerDescription>Don&apos;t forget to press Save</DrawerDescription>
+          <DrawerTitle>Settings</DrawerTitle>
         </DrawerHeader>
         <div className="px-4">
           <ProfileForm />

@@ -33,9 +33,13 @@ export const metadata: Metadata = {
     "daily reflections",
     "open source",
     "productivity tool",
+    "notion",
+    "capacities",
+    "notion integration",
+    "capacities integration",
   ],
   openGraph: {
-    title: "Unearthed - Rediscover Your Digital Wisdom",
+    title: "Unearthed - Lost wisdom, found again",
     description:
       "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source.",
     type: "website",
@@ -75,7 +79,7 @@ export default function RootLayout({
                 <Navbar />
               </SignedIn>
               <SignedOut>
-                <div className="fixed mt-2 ml-2 flex space-x-2">
+                <div className="z-50 fixed mt-2 ml-2 flex space-x-2">
                   <ModeToggle />
                   <DropdownMenuNav />
                 </div>

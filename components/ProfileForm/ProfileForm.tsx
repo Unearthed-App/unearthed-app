@@ -35,6 +35,15 @@ import { onSubmitAction } from "./formSubmit";
 import { getUserUtcOffset } from "@/lib/utils";
 import Link from "next/link";
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 type CapacitiesSpaceItem = {
   id: string;
   value: string;
@@ -162,7 +171,7 @@ export function ProfileForm() {
         description:
           "This will happen in the background, please wait and then check Notion.",
       });
-      const result = await syncToNotion({newConnection: false});
+      const result = await syncToNotion({ newConnection: false });
 
       if (!result.success) {
         toast({
@@ -211,154 +220,193 @@ export function ProfileForm() {
           }}
           className="w-full space-y-6"
         >
-          <div className="flex space-x-2 justify-between items-end">
-            <div className="w-full flex-1">
-              <FormField
-                control={form.control}
-                name="unearthedApiKey"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Unearthed API Key</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled
-                        placeholder="Unearthed API Key"
-                        {...field}
+          <Tabs defaultValue="account" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="account">General</TabsTrigger>
+              <TabsTrigger value="password">Notion</TabsTrigger>
+            </TabsList>
+            <TabsContent value="account">
+              <Card>
+                <CardHeader>
+                  <CardTitle>General</CardTitle>
+                  <CardDescription>
+                    Don&apos;t forget to press Save
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="">
+                  <div className="flex space-x-2 justify-between items-end">
+                    <div className="w-full flex-1">
+                      <FormField
+                        control={form.control}
+                        name="unearthedApiKey"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Unearthed API Key</FormLabel>
+                            <FormControl>
+                              <Input
+                                disabled
+                                placeholder="Unearthed API Key"
+                                {...field}
+                              />
+                            </FormControl>{" "}
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </FormControl>{" "}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="">
-              <Button type="button" onClick={copyUnearthedApiKey}>
-                <Copy />
-              </Button>
-            </div>
-          </div>
-          <div className="w-full">
-            <Button className="w-full" type="button" onClick={generateNewKey}>
-              Generate New Unearthed Key
-            </Button>
-          </div>
-          <FormField
-            control={form.control}
-            name="capacitiesApiKey"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Capacities API Key</FormLabel>
-                <FormControl>
-                  <Input placeholder="Capacities API Key" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Generate an API token in Capacities and paste it here
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {displayCapacitiesSpaces.length > 0 && (
-            <FormField
-              control={form.control}
-              name="capacitiesSpaceId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Capacities Space</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a Capacities Space to link to" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {displayCapacitiesSpaces.map((space) => (
-                        <SelectItem key={space.id} value={space.id}>
-                          {space.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    This will be the Capacities space that we link to.
-                    <br />
-                    It is at the top-left in the Capacities App
-                  </FormDescription>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
-          <div className="mt-4">
-            {notionWorkspace ? (
-              <div className="border-2 rounded-lg bg-card p-4">
-                <div className="font-semibold">
-                  Syncing to Notion:{" "}
-                  <span className="text-secondary">{notionWorkspace}</span>
-                </div>
-
-                <div className="text-muted">
-                  Unearthed will sync every 24 hours with Notion, but you can also force
-                  a sync here.
-                  <br />
-                  Starting a new connection will replace the old connection, so
-                  be careful.
-                </div>
-                <div className="flex justify-between mt-1">
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      setIsForcingNotionSync(true);
-                      forceNotionSync();
-                    }}
-                    disabled={isForcingNotionSync}
-                  >
-                    {isForcingNotionSync ? "Sync Started" : "Force Sync"}
-                  </Button>{" "}
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={process.env.NEXT_PUBLIC_NOTION_AUTH_URL || ""}
-                  >
+                    </div>
+                    <div className="">
+                      <Button type="button" onClick={copyUnearthedApiKey}>
+                        <Copy />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="w-full mt-2 mb-6">
                     <Button
-                      variant="destructivebrutal"
+                      className="w-full"
                       type="button"
-                      onClick={() => {toast({
-                        title: "Notion Re-connection Started",
-                        description:
-                          "Follow the instructions on the Notion page to finish syncing.",
-                      });}}
+                      onClick={generateNewKey}
                     >
-                      Start New Connection
+                      Generate New Unearthed Key
                     </Button>
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <Link
-                className="mt-4"
-                target="_blank"
-                rel="noopener noreferrer"
-                href={process.env.NEXT_PUBLIC_NOTION_AUTH_URL || ""}
-              >
-                <Button type="button">Connect with Notion</Button>
-              </Link>
-            )}
-          </div>
-          <div className="w-full flex justify-end">
-            <Button
-              className="w-24"
-              variant="brutalprimary"
-              type="submit"
-              disabled={isSaving}
-            >
-              {isSaving ? "Saving..." : "Save"}
-            </Button>
-          </div>
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="capacitiesApiKey"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Capacities API Key</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Capacities API Key" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Generate an API token in Capacities and paste it here
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {displayCapacitiesSpaces.length > 0 && (
+                    <FormField
+                      control={form.control}
+                      name="capacitiesSpaceId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Capacities Space</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value || ""}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a Capacities Space to link to" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {displayCapacitiesSpaces.map((space) => (
+                                <SelectItem key={space.id} value={space.id}>
+                                  {space.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            This will be the Capacities space that we link to.
+                            <br />
+                            It is at the top-left in the Capacities App
+                          </FormDescription>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                </CardContent>
+                <CardFooter>
+                  <div className="w-full flex justify-end">
+                    <Button
+                      className="w-24"
+                      variant="brutalprimary"
+                      type="submit"
+                      disabled={isSaving}
+                    >
+                      {isSaving ? "Saving..." : "Save"}
+                    </Button>
+                  </div>{" "}
+                </CardFooter>
+              </Card>
+            </TabsContent>
+            <TabsContent value="password">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Notion</CardTitle>
+                </CardHeader>
+                <CardContent className="">
+                  <div className="">
+                    {notionWorkspace ? (
+                      <>
+                        <div className="font-semibold">
+                          Syncing to:{" "}
+                          <span className="text-secondary">
+                            {notionWorkspace}
+                          </span>
+                        </div>
+
+                        <div className="text-muted">
+                          Unearthed will sync every 24 hours with Notion, but
+                          you can also force a sync here.
+                          <br />
+                          Starting a new connection will replace the old
+                          connection, so be careful.
+                        </div>
+                        <div className="flex justify-between mt-4">
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              setIsForcingNotionSync(true);
+                              forceNotionSync();
+                            }}
+                            disabled={isForcingNotionSync}
+                          >
+                            {isForcingNotionSync
+                              ? "Sync Started"
+                              : "Force Sync"}
+                          </Button>{" "}
+                          <Link
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={process.env.NEXT_PUBLIC_NOTION_AUTH_URL || ""}
+                          >
+                            <Button
+                              variant="destructivebrutal"
+                              type="button"
+                              onClick={() => {
+                                toast({
+                                  title: "Notion Re-connection Started",
+                                  description:
+                                    "Follow the instructions on the Notion page to finish syncing.",
+                                });
+                              }}
+                            >
+                              Start New Connection
+                            </Button>
+                          </Link>
+                        </div>
+                      </>
+                    ) : (
+                      <Link
+                        className="mt-4"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={process.env.NEXT_PUBLIC_NOTION_AUTH_URL || ""}
+                      >
+                        <Button type="button">Connect with Notion</Button>
+                      </Link>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </form>
       </Form>
     </div>

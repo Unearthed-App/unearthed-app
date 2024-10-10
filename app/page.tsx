@@ -12,6 +12,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { UnearthedInAndOut } from "@/components/UnearthedInAndOut";
+import { AnimatedCards } from "@/components/AnimatedCards";
+import { AnimatedGroup } from "@/components/ui/animated-group";
+import { AboutMe } from "@/components/AboutMe";
+import { HomeHeader } from "@/components/HomeHeader";
 
 export const metadata: Metadata = {
   title: "Unearthed - Your Personal Knowledge Curator",
@@ -25,9 +29,13 @@ export const metadata: Metadata = {
     "daily reflections",
     "open source",
     "productivity tool",
+    "notion",
+    "capacities",
+    "notion integration",
+    "capacities integration",
   ],
   openGraph: {
-    title: "Unearthed - Rediscover Your Digital Wisdom",
+    title: "Unearthed - Lost wisdom, found again",
     description:
       "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source.",
     type: "website",
@@ -43,6 +51,8 @@ export const metadata: Metadata = {
   },
 };
 export default function App() {
+
+
   return (
     <>
       <SignedIn>
@@ -74,198 +84,16 @@ export default function App() {
       </SignedIn>
       <SignedOut>
         <main className="w-full flex flex-wrap items-center justify-center px-4 md:px-24 pt-24 pb-24">
-          <div className="w-full">
-            <div className="text-center">
-              <div className="flex items-center justify-center">
-                <div className="relative">
-                  <Badge
-                    className="hidden md:flex absolute top-2 left-24"
-                    variant="brutalinvert"
-                  >
-                    ALPHA
-                  </Badge>
-                  <h1
-                    className={
-                      crimsonPro.className +
-                      " font-extrabold text-6xl md:text-9xl bg-clip-text text-transparent bg-gradient-to-t from-[hsl(337,65%,3%)] to-[hsl(337,65%,20%)] dark:from-primary dark:to-[hsl(337,55%,35%)]"
-                    }
-                  >
-                    Unearthed
-                  </h1>
-                </div>
-              </div>
-              <h3 className="text bold font-bold text-secondary mb-12">
-                Lost wisdom, found again
-              </h3>
-            </div>
-          </div>
-          <div className="md:mb-12">
-            <Link href="/dashboard/home">
-              <Button
-                variant="brutalprimary"
-                className="flex space-x-2 px-12 py-6"
-              >
-                Sign In / Up
-                <LogIn className="ml-2" />
-              </Button>
-            </Link>
-          </div>
+          <HomeHeader />
 
-          <div className="my-12 w-full flex flex-wrap items-center justify-center">
-            <div className="md:grid grid-cols-3 grid-rows-6 gap-4 max-w-[900px]">
-              <div className="row-span-3">
-                <div className="w-full h-full p-4 border-2 border-black rounded-lg bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-                  <h3
-                    className={
-                      crimsonPro.className + " font-extrabold text-3xl"
-                    }
-                  >
-                    &quot;I <span className="text-secondary italic">know</span>{" "}
-                    that I read something about that, but I have no idea{" "}
-                    <span className="text-secondary italic">where</span>.&quot;
-                  </h3>
-                  <p className="text-xs md:text-base mt-2">
-                    Unearthed will help you find it with it&apos;s{" "}
-                    <span className="text-secondary font-semibold">
-                      global search
-                    </span>{" "}
-                    giving you the book, author, page number, and any notes you
-                    took on it.
-                  </p>
-                  <div className="relative mt-2"></div>
-                </div>
-              </div>
-              <div className="mt-4 md:mt-0 col-span-2 row-span-3">
-                <div className="w-full h-full p-4 border-2 border-black rounded-lg bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-                  <h3
-                    className={
-                      crimsonPro.className + " font-extrabold text-3xl"
-                    }
-                  >
-                    &quot;I need{" "}
-                    <span className="text-secondary italic">inspiration</span>
-                    &quot;
-                  </h3>
-                  <p className="text-xs md:text-base mt-2">
-                    Unearthed will serve you a{" "}
-                    <span className="text-secondary font-semibold">
-                      Daily Reflection
-                    </span>
-                    , via the browser extension, web app, Capacities, and the
-                    mobile app (soon).
-                    <br /> <br />
-                    This is not some random quote from the web, this is
-                    something that you have{" "}
-                    <span className="text-secondary font-semibold">
-                      enjoyed
-                    </span>{" "}
-                    in the past enough to highlight and maybe even make a note
-                    about.
-                  </p>
-                  <div className="relative mt-2"></div>
-                </div>
-              </div>
-              <div className="mt-4 md:mt-0 col-span-1 row-span-3 row-start-4">
-                {" "}
-                <div className="w-full h-full p-4 border-2 border-black rounded-lg bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-                  <h3
-                    className={
-                      crimsonPro.className + " font-extrabold text-3xl"
-                    }
-                  >
-                    &quot;I love that book, but it was so{" "}
-                    <span className="text-secondary italic">overwhelming</span>.
-                    I couldn&apos;t take it all in!&quot;
-                  </h3>
-                  <p className="text-xs md:text-base mt-2">
-                    Unearthed will serve you{" "}
-                    <span className="text-secondary font-semibold">
-                      daily reflections
-                    </span>{" "}
-                    to help you digest every part of what you read.
-                  </p>
-                  <div className="relative mt-2"></div>
-                </div>
-              </div>
-              <div className="mt-4 md:mt-0 col-span-1 row-span-3 row-start-4">
-                <div className="w-full h-full p-4 border-2 border-black rounded-lg bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-                  <h3
-                    className={
-                      crimsonPro.className + " font-extrabold text-3xl"
-                    }
-                  >
-                    &quot;I&apos;m{" "}
-                    <span className="text-secondary italic">sick</span> of
-                    manually downloading and backing up my kindle
-                    highlights&quot;
-                  </h3>
-                  <p className="text-xs md:text-base mt-2">
-                    Unearthed will{" "}
-                    <span className="text-secondary font-semibold">
-                      automatically
-                    </span>{" "}
-                    download and sync your data for you.
-                  </p>
-                  <div className="relative mt-2"></div>
-                </div>
-              </div>
-              <div className="mt-4 md:mt-0 row-span-3 col-start-3 row-start-4">
-                <div className="w-full h-full p-4 border-2 border-black rounded-lg bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-                  <h3
-                    className={
-                      crimsonPro.className + " font-extrabold text-3xl"
-                    }
-                  >
-                    &quot;My notes are{" "}
-                    <span className="text-secondary italic">all over</span> the
-                    place&quot;
-                  </h3>
-                  <p className="text-xs md:text-base mt-2">
-                    Unearthed can act as a{" "}
-                    <span className="text-secondary font-semibold">bridge</span>{" "}
-                    to get your quotes and notes to whatever note taking app you
-                    use.
-                  </p>
-                  <div className="relative mt-2"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <AnimatedCards />
 
-          <div className="mt-12 w-full flex flex-wrap lg:flex-nowrap justify-center">
-            <div className="mt-2 p-4 border-2 border-black rounded-lg max-w-96 md:max-h-[279px] bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-              <p className="text-xs md:text-base">
-                Hey! I made this app for myself and I though others might find
-                this usefull too...? I wanted a way to search through my kindle
-                quotes/notes easily and bring back those thoughts. The app is
-                designed to make retrieving accumulated knowledge easier, in the
-                hope that past revelations can be built on rather than
-                forgotten.
-                <br />
-                <br />
-                Contribute to the code here:
-              </p>
-              <div className="relative mt-2">
-                <Link
-                  href="https://github.com/Unearthed-App/unearthed-app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button className="w-full md:w-auto">App Repo</Button>
-                </Link>
-                <Link
-                  href="https://github.com/Unearthed-App/unearthed-web-extension"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button className="w-full md:w-auto ml-0 md:ml-4 mt-2 md:mt-0">
-                    Extension Repo
-                  </Button>
-                </Link>
-              </div>
-              <div className="relative mt-2"></div>
-            </div>
-            <div className="flex flex-col justify-center ml-0 md:ml-12 mt-24 lg:-mt-12">
+          <div className="mt-2 md:mt-12 w-full flex flex-wrap lg:flex-nowrap justify-center">
+            <AboutMe />
+            <AnimatedGroup
+              className="flex flex-col justify-center ml-0 md:ml-12 mt-10 md:mt-24 lg:-mt-12 px-12 md:px-0"
+              preset="blur-slide"
+            >
               <div>
                 <CheckItem content="Free" />
               </div>
@@ -273,7 +101,7 @@ export default function App() {
                 <CheckItem content="Open Source" />
               </div>
               <div>
-                <CheckItem content="Automatically sync Kindle books, highlights, notes, etc" />
+                <CheckItem content="Automatically sync from Kindle" />
               </div>
               <div>
                 <CheckItem content="A reflection served to you daily" />
@@ -296,10 +124,10 @@ export default function App() {
               <div>
                 <CheckItem content="Lots more to add..." />
               </div>
-            </div>
+            </AnimatedGroup>
           </div>
 
-          <div className="w-full text-center mt-20">
+          <div className="w-full text-center mt-10 md:mt-20">
             <h1
               className={
                 crimsonPro.className +

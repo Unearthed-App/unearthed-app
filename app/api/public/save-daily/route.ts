@@ -58,7 +58,7 @@ export async function GET() {
 
     for (const profile of dbResult) {
       try {
-        const user = await clerkClient.users.getUser(profile.userId);
+        const user = await clerkClient().users.getUser(profile.userId);
 
         const encryptionKey = user.privateMetadata.encryptionKey as string;
 

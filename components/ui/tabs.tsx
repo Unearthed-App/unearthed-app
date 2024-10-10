@@ -14,12 +14,12 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+      "inline-flex h-10 items-center justify-center rounded-md bg-[hsl(169.4,43.6%,7.6%)] dark:bg-[hsl(169,40%,27%)] p-1 text-muted-foreground",
       className
     )}
     {...props}
   />
-))
+));
 TabsList.displayName = TabsPrimitive.List.displayName
 
 const TabsTrigger = React.forwardRef<

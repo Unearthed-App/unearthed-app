@@ -33,10 +33,13 @@ export async function GET(): Promise<NextResponse> {
 
     for (const profile of dbResult) {
       try {
-        const user = await clerkClient.users.getUser(profile.userId);
+        const user = await clerkClient().users.getUser(profile.userId);
         const encryptionKey = user.privateMetadata.encryptionKey as string;
         const userId = profile.userId;
 
+        profile.notionAuthData = profile.notionAuthData
+          ? await decrypt(profile.notionAuthData as string, encryptionKey)
+          : "";
         const notionAuthData = JSON.parse(profile.notionAuthData || "{}");
         if (!notionAuthData || !notionAuthData.access_token) {
           continue;
@@ -49,7 +52,6 @@ export async function GET(): Promise<NextResponse> {
         }
 
         let notionBooksDatabaseId;
-
         if (profile.notionDatabaseId) {
           notionBooksDatabaseId = profile.notionDatabaseId;
         } else {
