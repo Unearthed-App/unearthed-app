@@ -12,7 +12,7 @@ type Source = z.infer<typeof selectSourceSchema>;
 const QuotesArraySchema = z.array(selectQuoteSchema);
 
 import { Button } from "@/components/ui/button";
-import { ArrowBigLeft, Check, ChevronsUpDown, Frown } from "lucide-react";
+import {  Check, ChevronsUpDown, Frown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Command,
@@ -27,7 +27,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import Link from "next/link";
 import { BookHeader } from "@/components/BookHeader";
 import { QuoteCardBrutal } from "@/components/QuoteCardBrutal";
 import { AnimatedLoader } from "@/components/AnimatedLoader";

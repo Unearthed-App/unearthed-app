@@ -31,8 +31,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     const body = {
       code: code,
       grant_type: "authorization_code",
-      redirect_uri:
-        process.env.NEXT_PUBLIC_DOMAIN + "/api/notion-redirect"
+      redirect_uri: process.env.DOMAIN + "/api/notion-redirect",
     };
 
     const response = await fetch("https://api.notion.com/v1/oauth/token", {
@@ -83,7 +82,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     syncToNotion({ newConnection: true });
 
     const redirectUrl = new URL(
-      process.env.NEXT_PUBLIC_DOMAIN + "/dashboard/notion-setup-began",
+      process.env.DOMAIN + "/dashboard/notion-setup-began",
       request.url
     );
     redirectUrl.searchParams.set("redirect", "true");

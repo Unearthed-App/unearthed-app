@@ -28,13 +28,18 @@ import {
   getSettings,
   syncToNotion,
 } from "@/server/actions";
-import { Copy } from "lucide-react";
+import { Copy, Eye, EyeOff } from "lucide-react";
 
 import { schema } from "./formSchema";
 import { onSubmitAction } from "./formSubmit";
 import { getUserUtcOffset } from "@/lib/utils";
 import Link from "next/link";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   Card,
   CardContent,
@@ -54,6 +59,8 @@ export function ProfileForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isForcingNotionSync, setIsForcingNotionSync] = useState(false);
+  const [showingSecrets, setShowingSecrets] = useState(false);
+
   const [notionWorkspace, setNotionWorkspace] = useState("");
   const [displayCapacitiesSpaces, setDisplayCapacitiesSpaces] = useState<
     CapacitiesSpaceItem[]
@@ -191,6 +198,10 @@ export function ProfileForm() {
     }
   };
 
+  const toggleSecrets = () => {
+    setShowingSecrets(!showingSecrets);
+  };
+
   const copyUnearthedApiKey = () => {
     navigator.clipboard.writeText(form.getValues("unearthedApiKey") as string);
     toast({
@@ -220,22 +231,42 @@ export function ProfileForm() {
           }}
           className="w-full space-y-6"
         >
-          <Tabs defaultValue="account" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="account">General</TabsTrigger>
-              <TabsTrigger value="password">Notion</TabsTrigger>
+          <Tabs defaultValue="general" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="general">General</TabsTrigger>
+              <TabsTrigger value="notion">Notion</TabsTrigger>
+              <TabsTrigger value="capacities">Capacities</TabsTrigger>
             </TabsList>
-            <TabsContent value="account">
+            <TabsContent value="general">
               <Card>
                 <CardHeader>
-                  <CardTitle>General</CardTitle>
-                  <CardDescription>
-                    Don&apos;t forget to press Save
-                  </CardDescription>
+                  <CardTitle className="flex">
+                    <div className="w-full">General</div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            className="-mt-3"
+                            type="button"
+                            onClick={toggleSecrets}
+                          >
+                            {showingSecrets ? <EyeOff /> : <Eye />}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                          <p>
+                            {showingSecrets
+                              ? "Hide all secrets"
+                              : "Show all secrets"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </CardTitle>{" "}
                 </CardHeader>
                 <CardContent className="">
                   <div className="flex space-x-2 justify-between items-end">
-                    <div className="w-full flex-1">
+                    <div className="w-full">
                       <FormField
                         control={form.control}
                         name="unearthedApiKey"
@@ -244,6 +275,7 @@ export function ProfileForm() {
                             <FormLabel>Unearthed API Key</FormLabel>
                             <FormControl>
                               <Input
+                                type={showingSecrets ? "text" : "password"}
                                 disabled
                                 placeholder="Unearthed API Key"
                                 {...field}
@@ -269,57 +301,6 @@ export function ProfileForm() {
                       Generate New Unearthed Key
                     </Button>
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="capacitiesApiKey"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Capacities API Key</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Capacities API Key" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Generate an API token in Capacities and paste it here
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {displayCapacitiesSpaces.length > 0 && (
-                    <FormField
-                      control={form.control}
-                      name="capacitiesSpaceId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Capacities Space</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value || ""}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a Capacities Space to link to" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {displayCapacitiesSpaces.map((space) => (
-                                <SelectItem key={space.id} value={space.id}>
-                                  {space.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormDescription>
-                            This will be the Capacities space that we link to.
-                            <br />
-                            It is at the top-left in the Capacities App
-                          </FormDescription>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
                 </CardContent>
                 <CardFooter>
                   <div className="w-full flex justify-end">
@@ -335,7 +316,7 @@ export function ProfileForm() {
                 </CardFooter>
               </Card>
             </TabsContent>
-            <TabsContent value="password">
+            <TabsContent value="notion">
               <Card>
                 <CardHeader>
                   <CardTitle>Notion</CardTitle>
@@ -404,6 +385,105 @@ export function ProfileForm() {
                     )}
                   </div>
                 </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="capacities">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex">
+                    <div className="w-full">Capacities</div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            className="-mt-3"
+                            type="button"
+                            onClick={toggleSecrets}
+                          >
+                            {showingSecrets ? <EyeOff /> : <Eye />}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                          <p>
+                            {showingSecrets
+                              ? "Hide all secrets"
+                              : "Show all secrets"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="">
+                  <FormField
+                    control={form.control}
+                    name="capacitiesApiKey"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Capacities API Key</FormLabel>
+                        <FormControl>
+                          <Input
+                            type={showingSecrets ? "text" : "password"}
+                            placeholder="Capacities API Key"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Generate an API token in Capacities and paste it here
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {displayCapacitiesSpaces.length > 0 && (
+                    <FormField
+                      control={form.control}
+                      name="capacitiesSpaceId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Capacities Space</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value || ""}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a Capacities Space to link to" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {displayCapacitiesSpaces.map((space) => (
+                                <SelectItem key={space.id} value={space.id}>
+                                  {space.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            This will be the Capacities space that we link to.
+                            <br />
+                            It is at the top-left in the Capacities App
+                          </FormDescription>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                </CardContent>
+                <CardFooter>
+                  <div className="w-full flex justify-end">
+                    <Button
+                      className="w-24"
+                      variant="brutalprimary"
+                      type="submit"
+                      disabled={isSaving}
+                    >
+                      {isSaving ? "Saving..." : "Save"}
+                    </Button>
+                  </div>{" "}
+                </CardFooter>
               </Card>
             </TabsContent>
           </Tabs>
