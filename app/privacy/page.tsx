@@ -3,23 +3,34 @@ import React from "react";
 import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
+
+
 export const metadata: Metadata = {
-  title: "Unearthed - Privacy Policy",
+  title: "Unearthed - Lost wisdom, found again",
   description:
-    "Privacy policy for Unearthed App. Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Search, tag, and connect your insights across platforms.",
+    "Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Search, tag, and connect your insights across platforms. Notion, Obsidian, Capacities.",
   keywords: [
-    "Kindle highlights",
+    "kindle highlights",
     "digital notes",
     "knowledge management",
     "personal library",
     "daily reflections",
     "open source",
     "productivity tool",
+    "notion",
+    "capacities kindle",
+    "notion kindle",
+    "obsidian kindle",
+    "kindle integration",
+    "kindle to notion",
+    "kindle to obsidian",
+    "kindle to capacities",
+    "capacities integration",
   ],
   openGraph: {
-    title: "Unearthed - Rediscover Your Digital Wisdom",
+    title: "Unearthed - Lost wisdom, found again",
     description:
-      "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source.",
+      "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source. Notion, Obsidian, Capacities.",
     type: "website",
     url: "https://unearthed.app",
     images: [
@@ -27,7 +38,7 @@ export const metadata: Metadata = {
         url: "https://unearthed.app/search.png",
         width: 1200,
         height: 630,
-        alt: "Unearthed app interface showing Kindle highlights and daily reflections",
+        alt: "Unearthed app interface showing Kindle highlights and daily reflections. Notion, Obsidian, Capacities.",
       },
     ],
   },

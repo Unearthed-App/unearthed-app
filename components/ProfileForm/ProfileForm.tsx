@@ -60,6 +60,7 @@ export function ProfileForm() {
   const [isSaving, setIsSaving] = useState(false);
   const [isForcingNotionSync, setIsForcingNotionSync] = useState(false);
   const [showingSecrets, setShowingSecrets] = useState(false);
+  const [newUnearthedApiKey, setNewUnearthedApiKey] = useState(false);
 
   const [notionWorkspace, setNotionWorkspace] = useState("");
   const [displayCapacitiesSpaces, setDisplayCapacitiesSpaces] = useState<
@@ -102,7 +103,7 @@ export function ProfileForm() {
         form.reset({
           capacitiesSpaceId: data.profile.capacitiesSpaceId || "",
           capacitiesApiKey: data.profile.capacitiesApiKey || "",
-          unearthedApiKey: data.profile.unearthedApiKey || "",
+          unearthedApiKey: "",
         });
       }
     } catch (error) {
@@ -161,6 +162,8 @@ export function ProfileForm() {
         title: "New API key generated",
         description: "You will need to press Save to apply the changes",
       });
+
+      setNewUnearthedApiKey(true);
     } catch (error) {
       console.error("Failed to generate new key:", error);
       toast({
@@ -242,26 +245,7 @@ export function ProfileForm() {
                 <CardHeader>
                   <CardTitle className="flex">
                     <div className="w-full">General</div>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            className="-mt-3"
-                            type="button"
-                            onClick={toggleSecrets}
-                          >
-                            {showingSecrets ? <EyeOff /> : <Eye />}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
-                          <p>
-                            {showingSecrets
-                              ? "Hide all secrets"
-                              : "Show all secrets"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                   
                   </CardTitle>{" "}
                 </CardHeader>
                 <CardContent className="">
@@ -275,22 +259,25 @@ export function ProfileForm() {
                             <FormLabel>Unearthed API Key</FormLabel>
                             <FormControl>
                               <Input
-                                type={showingSecrets ? "text" : "password"}
+                                type="text"
                                 disabled
-                                placeholder="Unearthed API Key"
+                                placeholder="HIDDEN"
                                 {...field}
                               />
-                            </FormControl>{" "}
+                            </FormControl>
+
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                     </div>
-                    <div className="">
-                      <Button type="button" onClick={copyUnearthedApiKey}>
-                        <Copy />
-                      </Button>
-                    </div>
+                    {newUnearthedApiKey && (
+                      <div className="">
+                        <Button type="button" onClick={copyUnearthedApiKey}>
+                          <Copy />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                   <div className="w-full mt-2 mb-6">
                     <Button
@@ -301,6 +288,16 @@ export function ProfileForm() {
                       Generate New Unearthed Key
                     </Button>
                   </div>
+                  {newUnearthedApiKey && (
+                  <div className="w-full mt-2 text-sm">
+                    <p>
+                      Make sure you save this key somehwere now.
+                      You will not be able to edit it later.
+                      <br />
+                      Instead, you will need to generate a new one.
+                    </p>
+                  </div>
+                  )}
                 </CardContent>
                 <CardFooter>
                   <div className="w-full flex justify-end">

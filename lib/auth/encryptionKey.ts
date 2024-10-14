@@ -1,5 +1,6 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 const { subtle } = crypto;
+import bcrypt from "bcrypt";
 
 export async function setEncryptionKey(encryptionKey: string) {
   const { userId } = auth();
@@ -128,4 +129,11 @@ export async function decrypt(
     console.error("Decryption error:", error);
     throw error;
   }
+}
+
+
+// Function to hash the API key
+export async function hashApiKey(apiKey: string): Promise<string> {
+  const saltRounds = 10;
+  return bcrypt.hash(apiKey, saltRounds);
 }

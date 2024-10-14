@@ -16,13 +16,15 @@ import { AnimatedCards } from "@/components/AnimatedCards";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { AboutMe } from "@/components/AboutMe";
 import { HomeHeader } from "@/components/HomeHeader";
+import { HomeCarousel } from "@/components/HomeCarousel";
+
 
 export const metadata: Metadata = {
-  title: "Unearthed - Your Personal Knowledge Curator",
+  title: "Unearthed - Lost wisdom, found again",
   description:
-    "Unearthed: Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Search, tag, and connect your insights across platforms.",
+    "Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Search, tag, and connect your insights across platforms. Notion, Obsidian, Capacities.",
   keywords: [
-    "Kindle highlights",
+    "kindle highlights",
     "digital notes",
     "knowledge management",
     "personal library",
@@ -30,14 +32,19 @@ export const metadata: Metadata = {
     "open source",
     "productivity tool",
     "notion",
-    "capacities",
-    "notion integration",
+    "capacities kindle",
+    "notion kindle",
+    "obsidian kindle",
+    "kindle integration",
+    "kindle to notion",
+    "kindle to obsidian",
+    "kindle to capacities",
     "capacities integration",
   ],
   openGraph: {
     title: "Unearthed - Lost wisdom, found again",
     description:
-      "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source.",
+      "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source. Notion, Obsidian, Capacities.",
     type: "website",
     url: "https://unearthed.app",
     images: [
@@ -45,14 +52,13 @@ export const metadata: Metadata = {
         url: "https://unearthed.app/daily-reflection.png",
         width: 1200,
         height: 630,
-        alt: "Unearthed app interface showing Kindle highlights and daily reflections",
+        alt: "Unearthed app interface showing Kindle highlights and daily reflections. Notion, Obsidian, Capacities.",
       },
     ],
   },
 };
+
 export default function App() {
-
-
   return (
     <>
       <SignedIn>
@@ -95,10 +101,7 @@ export default function App() {
               preset="blur-slide"
             >
               <div>
-                <CheckItem content="Free" />
-              </div>
-              <div>
-                <CheckItem content="Open Source" />
+                <CheckItem content="Free and Open Source" />
               </div>
               <div>
                 <CheckItem content="Automatically sync from Kindle" />
@@ -110,7 +113,10 @@ export default function App() {
                 <CheckItem content="Notion integration" />
               </div>
               <div>
-                <CheckItem content="Capacities daily note integration" />
+                <CheckItem content="Obsidian integration" />
+              </div>
+              <div>
+                <CheckItem content="Capacities integration" />
               </div>
               <div>
                 <CheckItem content="Easily search and browse it all" />
@@ -122,12 +128,12 @@ export default function App() {
                 <CheckItem content="Encrypted sensitive data" />
               </div>
               <div>
-                <CheckItem content="Lots more to add..." />
+                <CheckItem content="Lots more coming..." />
               </div>
             </AnimatedGroup>
           </div>
 
-          <div className="w-full text-center mt-10 md:mt-20">
+          <div className="w-full text-center mt-10 md:mt-20 rounded">
             <h1
               className={
                 crimsonPro.className +
@@ -145,82 +151,10 @@ export default function App() {
             <UnearthedInAndOut />
           </div>
 
-          <div className="flex flex-wrap">
-            <div className="w-full md:w-1/2 flex justify-center">
-              <div className="max-w-[900px] mt-24 flex justify-center flex-wrap">
-                <div className="w-full flex justify-center">
-                  <Link
-                    href="https://capacities.io"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <div className="relative w-[200px] bg-white hover:bg-neutral-200 rounded-lg border-2 border-black p-4 shadow-[4px_4px_0px_rgba(0,0,0,1)] ">
-                      <Image
-                        src={"/capacities-logo-black-small.png"}
-                        width={200}
-                        height={32}
-                        alt="Capacities Logo"
-                        className=""
-                      />
-                    </div>
-                  </Link>
-                </div>
-
-                <Image
-                  src={"/capacities-daily-mobile-small.webp"}
-                  width={400}
-                  height={677}
-                  alt="Capacities screenshot"
-                  className="border-2 border-black rounded-lg -mt-4"
-                />
-              </div>
-            </div>
-            <div className="w-full md:w-1/2 flex justify-center">
-              <div className="max-w-[900px] mt-24 flex justify-center flex-wrap">
-                <div className="w-full flex justify-center">
-                  <div className="mb-2 md:mb-0 relative p-3 rounded-lg border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] bg-[hsl(354.6,74.2%,62%)] max-w-[500px]">
-                    <h1
-                      className={
-                        crimsonPro.className +
-                        " font-extrabold text-xl md:text-3xl text-center"
-                      }
-                    >
-                      Daily Reflection
-                    </h1>
-                  </div>
-                </div>
-
-                <Image
-                  src={"/daily-reflection.png"}
-                  width={400}
-                  height={677}
-                  alt="Daily Reflection"
-                  className="border-2 border-black rounded-lg -mt-4"
-                />
-              </div>
-            </div>
-          </div>
           <div className="w-full flex justify-center">
-            <div className="max-w-[900px] mt-24 flex justify-center flex-wrap">
-              <div className="mb-2 md:mb-0 relative p-3 rounded-lg border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] bg-[hsl(354.6,74.2%,62%)] max-w-[500px]">
-                <h1
-                  className={
-                    crimsonPro.className +
-                    " font-extrabold text-xl md:text-3xl text-center"
-                  }
-                >
-                  Search For Anything
-                </h1>
-              </div>
-              <Image
-                src={"/search.png"}
-                width={900}
-                height={677}
-                alt="Search For Anything"
-                className="border-2 border-black rounded-lg -mt-4"
-              />
-            </div>
+            <HomeCarousel />
           </div>
+
           <div className="mt-24">
             <Link href="/dashboard/home">
               <Button variant="brutalprimary" className="flex space-x-2">

@@ -23,12 +23,16 @@ export const POST = serve<{ userId: string; newConnection: boolean }>(
     const validToken = process.env.CRON_TOKEN;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      // const response = NextResponse.json({ success: true }, { status: 200 });
+      // context.send(response);
+      // return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     } else {
       const token = authHeader.split(" ")[1];
 
       if (token !== validToken) {
-
+        // return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       } else {
+        // try {
 
         let dbResult;
         let passedUserId: string | null = null;
@@ -39,32 +43,30 @@ export const POST = serve<{ userId: string; newConnection: boolean }>(
           newConnection = context.requestPayload.newConnection;
 
           if (passedUserId) {
-            dbResult = await context.run("get-profile", async () => {
-              if (passedUserId) {
-                return await db.query.profiles.findMany({
-                  where: and(
-                    isNotNull(profiles.notionAuthData),
-                    eq(profiles.userId, passedUserId)
-                  ),
-                });
-              }
+            dbResult = await db.query.profiles.findMany({
+              where: and(
+                isNotNull(profiles.notionAuthData),
+                eq(profiles.userId, passedUserId)
+              ),
             });
           }
         } else {
-          dbResult = await context.run("get-profile", async () => {
-            return await db.query.profiles.findMany({
-              where: isNotNull(profiles.notionAuthData),
-            });
+          dbResult = await db.query.profiles.findMany({
+            where: isNotNull(profiles.notionAuthData),
           });
         }
+        console.log("dbResult", dbResult);
 
         if (dbResult) {
           for (const profile of dbResult) {
+            // try {
             await context.run(`profile-${profile.userId}`, async () => {
               const user = await clerkClient().users.getUser(profile.userId);
               const encryptionKey = user.privateMetadata
                 .encryptionKey as string;
               const userId = profile.userId;
+
+              console.log("userId", userId);
 
               profile.notionAuthData = profile.notionAuthData
                 ? await decrypt(profile.notionAuthData as string, encryptionKey)
@@ -489,9 +491,17 @@ export const POST = serve<{ userId: string; newConnection: boolean }>(
                 }
               }
             });
+            // } catch (error) {
+            //   console.log(error);
+            // }
           }
         }
 
+        // return NextResponse.json({ success: true }, { status: 200 });
+        // } catch (error) {
+        //   console.error(error);
+        // return NextResponse.json({ error: "Error" }, { status: 500 });
+        // }
       }
     }
   }

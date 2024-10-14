@@ -45,7 +45,7 @@ export function DisclosureCard({ title, content, image }: DisclosureCardProps) {
 
   return (
     <div
-      className="max-h-56 md:max-h-64 cursor-pointer relative h-[350px] w-[290px] overflow-hidden rounded-lg hover:opacity-80 transition-opacity duration-700"
+      className="mt-4 max-h-56 md:max-h-64 cursor-pointer relative h-[350px] w-[300px] overflow-hidden rounded-lg hover:opacity-80 transition-opacity duration-700"
       onClick={() => setIsOpen(!isOpen)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
