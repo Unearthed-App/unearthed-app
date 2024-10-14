@@ -1,1 +1,0 @@
-ALTER TABLE "profiles" ADD COLUMN "notion_auth_data" text;

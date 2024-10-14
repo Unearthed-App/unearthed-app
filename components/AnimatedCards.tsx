@@ -54,7 +54,7 @@ const cardContents: CardContent[] = [
   },
   {
     title:
-      '"I\'m <span class="text-secondary italic">sick</span> of manually downloading and backing up my kindle highlights"',
+      '"I\'m sick of <span class="text-secondary italic">manually</span> downloading and backing up my kindle highlights"',
     description:
       'Unearthed will <span class="text-secondary font-semibold">automatically</span> download and sync your data for you.',
   },

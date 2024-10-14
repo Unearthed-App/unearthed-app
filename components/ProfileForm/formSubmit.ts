@@ -1,5 +1,5 @@
 "use server";
-import { encrypt, getOrCreateEncryptionKey } from "@/lib/auth/encryptionKey";
+import { encrypt, getOrCreateEncryptionKey, hashApiKey } from "@/lib/auth/encryptionKey";
 import { schema } from "./formSchema";
 
 import { auth } from "@clerk/nextjs/server";
@@ -48,8 +48,10 @@ export async function onSubmitAction(data: any, utcOffset: number) {
   const capacitiesApiKeyEncyrpted = parsed.data.capacitiesApiKey
     ? await encrypt(parsed.data.capacitiesApiKey as string, encryptionKey)
     : "";
-  const unearthedApiKeyEncyrpted = parsed.data.unearthedApiKey
-    ? await encrypt(parsed.data.unearthedApiKey as string, encryptionKey)
+  const unearthedApiKeyHash = parsed.data.unearthedApiKey
+    ? await hashApiKey(
+        parsed.data.unearthedApiKey as string
+      )
     : "";
   const capacitiesSpaceIdEncyrpted = parsed.data.capacitiesSpaceId
     ? await encrypt(parsed.data.capacitiesSpaceId as string, encryptionKey)
@@ -62,7 +64,7 @@ export async function onSubmitAction(data: any, utcOffset: number) {
       .update(profiles)
       .set({
         capacitiesApiKey: capacitiesApiKeyEncyrpted,
-        unearthedApiKey: unearthedApiKeyEncyrpted,
+        unearthedApiKey: unearthedApiKeyHash,
         capacitiesSpaceId: capacitiesSpaceIdEncyrpted,
         utcOffset,
       })
@@ -82,7 +84,7 @@ export async function onSubmitAction(data: any, utcOffset: number) {
         .insert(profiles)
         .values({
           capacitiesApiKey: capacitiesApiKeyEncyrpted,
-          unearthedApiKey: unearthedApiKeyEncyrpted,
+          unearthedApiKey: unearthedApiKeyHash,
           capacitiesSpaceId: capacitiesSpaceIdEncyrpted,
           utcOffset,
           userId: userId,

@@ -22,11 +22,11 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Unearthed - Your Personal Knowledge Curator",
+  title: "Unearthed - Lost wisdom, found again",
   description:
-    "Unearthed: Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Search, tag, and connect your insights across platforms.",
+    "Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Search, tag, and connect your insights across platforms. Notion, Obsidian, Capacities.",
   keywords: [
-    "Kindle highlights",
+    "kindle highlights",
     "digital notes",
     "knowledge management",
     "personal library",
@@ -34,14 +34,19 @@ export const metadata: Metadata = {
     "open source",
     "productivity tool",
     "notion",
-    "capacities",
-    "notion integration",
+    "capacities kindle",
+    "notion kindle",
+    "obsidian kindle",
+    "kindle integration",
+    "kindle to notion",
+    "kindle to obsidian",
+    "kindle to capacities",
     "capacities integration",
   ],
   openGraph: {
     title: "Unearthed - Lost wisdom, found again",
     description:
-      "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source.",
+      "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source. Notion, Obsidian, Capacities.",
     type: "website",
     url: "https://unearthed.app",
     images: [
@@ -49,7 +54,7 @@ export const metadata: Metadata = {
         url: "https://unearthed.app/daily-reflection.png",
         width: 1200,
         height: 630,
-        alt: "Unearthed app interface showing Kindle highlights and daily reflections",
+        alt: "Unearthed app interface showing Kindle highlights and daily reflections. Notion, Obsidian, Capacities.",
       },
     ],
   },

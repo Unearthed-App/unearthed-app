@@ -2,8 +2,6 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent, clerkClient } from "@clerk/nextjs/server";
 import {
-  encrypt,
-  generateApiKey,
   generateSecureKey,
 } from "@/lib/auth/encryptionKey";
 import { insertProfileSchema, profiles } from "@/db/schema";
@@ -75,11 +73,9 @@ export async function POST(req: Request) {
     }
 
     try {
-      const unearthedApiKey = await generateApiKey();
 
       const toInsert: Profile = {
         userId,
-        unearthedApiKey: await encrypt(unearthedApiKey, newEncryptionKey),
       };
 
       const validatedProfileData = insertProfileSchema.parse(toInsert);

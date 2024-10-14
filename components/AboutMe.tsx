@@ -23,7 +23,7 @@ export const AboutMe = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Button className="w-full md:w-auto">App Repo</Button>
+          <Button className="w-full md:w-auto">Web App</Button>
         </Link>
         <Link
           href="https://github.com/Unearthed-App/unearthed-web-extension"
@@ -31,7 +31,16 @@ export const AboutMe = () => {
           rel="noopener noreferrer"
         >
           <Button className="w-full md:w-auto ml-0 md:ml-4 mt-2 md:mt-0">
-            Extension Repo
+            Extension
+          </Button>
+        </Link>{" "}
+        <Link
+          href="https://github.com/Unearthed-App/unearthed-obsidian"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button className="w-full md:w-auto ml-0 md:ml-4 mt-2 md:mt-0">
+            Obsidian
           </Button>
         </Link>
       </div>
