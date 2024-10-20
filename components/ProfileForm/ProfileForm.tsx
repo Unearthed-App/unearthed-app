@@ -24,11 +24,13 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import {
-  generateNewUnearthedApiKey,
+  createEmptyProfile,
+  deleteUnearthedKey,
+  generateAndSaveUnearthedKey,
   getSettings,
   syncToNotion,
 } from "@/server/actions";
-import { Copy, Eye, EyeOff } from "lucide-react";
+import { Copy, Eye, EyeOff, Trash } from "lucide-react";
 
 import { schema } from "./formSchema";
 import { onSubmitAction } from "./formSubmit";
@@ -49,61 +51,67 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { selectUnearthedKeySchema } from "@/db/schema";
 type CapacitiesSpaceItem = {
   id: string;
   value: string;
   label: string;
 };
 
+type UnearhtedKey = z.infer<typeof selectUnearthedKeySchema>;
+
 export function ProfileForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isForcingNotionSync, setIsForcingNotionSync] = useState(false);
   const [showingSecrets, setShowingSecrets] = useState(false);
-  const [newUnearthedApiKey, setNewUnearthedApiKey] = useState(false);
-
+  const [newUnearthedApiKey, setNewUnearthedApiKey] = useState("");
+  const [newKeyName, setNewKeyName] = useState("");
+  const [unearthedKeys, setUnearthedKeys] = useState<UnearhtedKey[]>([]);
   const [notionWorkspace, setNotionWorkspace] = useState("");
   const [displayCapacitiesSpaces, setDisplayCapacitiesSpaces] = useState<
     CapacitiesSpaceItem[]
   >([]);
   const [loadingDefaultValues, setLoadingDefaultValues] = useState(true);
   let isFetched = false;
+  const [profileExists, setProfileExists] = useState(false);
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
       capacitiesSpaceId: "",
       capacitiesApiKey: "",
-      unearthedApiKey: "",
     },
   });
 
   async function fetchProfileData() {
-    console.log("fetchProfileData");
     setIsLoading(true);
     try {
       const data = await getSettings();
-      console.log("data", data);
 
       if (data) {
         setNotionWorkspace(data.notionWorkspace);
-        if (!Array.isArray(data.capicitiesSpaces)) {
-          return [];
-        }
-        const toSetCapacitiesSpace = data.capicitiesSpaces.map(
-          (space: { id: string; title: string }) => ({
-            id: space.id,
-            value: space.id,
-            label: space.title,
-          })
-        );
 
+        let toSetCapacitiesSpace: CapacitiesSpaceItem[] = [];
+        if (Array.isArray(data.capicitiesSpaces)) {
+          toSetCapacitiesSpace = data.capicitiesSpaces.map(
+            (space: { id: string; title: string }) => ({
+              id: space.id,
+              value: space.id,
+              label: space.title,
+            })
+          );
+        }
         setDisplayCapacitiesSpaces(toSetCapacitiesSpace);
+        setUnearthedKeys(data.unearthedKeys);
+
+        if (data.profile.userId) {
+          setProfileExists(true);
+        }
 
         form.reset({
           capacitiesSpaceId: data.profile.capacitiesSpaceId || "",
           capacitiesApiKey: data.profile.capacitiesApiKey || "",
-          unearthedApiKey: "",
         });
       }
     } catch (error) {
@@ -154,21 +162,55 @@ export function ProfileForm() {
       }
     }
   };
-  const generateNewKey = async () => {
+  const generateNewKey = async (name: string) => {
     try {
-      const newKey = await generateNewUnearthedApiKey();
-      form.setValue("unearthedApiKey", newKey as string);
+      // make sure there is a prolfe first. A profile is needed in certain api routes
+      if (!profileExists) {
+        const utcOffset = await getUserUtcOffset();
+        const { profile } = await createEmptyProfile({ utcOffset });
+
+        if (profile && profile.userId) {
+          setProfileExists(true);
+        } else {
+          toast({
+            title: "Sorry",
+            description: "Something went wrong. Please try again later",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
+      const { newKey } = await generateAndSaveUnearthedKey({ name });
       toast({
         title: "New API key generated",
-        description: "You will need to press Save to apply the changes",
+        description: "This will be your only chance to copy the key.",
       });
-
-      setNewUnearthedApiKey(true);
+      setNewUnearthedApiKey(newKey as string);
+      fetchProfileData();
     } catch (error) {
       console.error("Failed to generate new key:", error);
       toast({
         title: "Error",
         description: "Failed to generate new key. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteUnearthedApiKey = async (id: string) => {
+    try {
+      await deleteUnearthedKey({ id });
+
+      toast({
+        title: "Unearthed API key deleted",
+        description: "",
+      });
+      fetchProfileData();
+    } catch (error) {
+      console.error("Failed to delete key:", error);
+      toast({
+        title: "Error",
         variant: "destructive",
       });
     }
@@ -181,7 +223,7 @@ export function ProfileForm() {
         description:
           "This will happen in the background, please wait and then check Notion.",
       });
-      const result = await syncToNotion({ newConnection: false });
+      const result = await syncToNotion();
 
       if (!result.success) {
         toast({
@@ -206,7 +248,7 @@ export function ProfileForm() {
   };
 
   const copyUnearthedApiKey = () => {
-    navigator.clipboard.writeText(form.getValues("unearthedApiKey") as string);
+    navigator.clipboard.writeText(newUnearthedApiKey as string);
     toast({
       title: "Unearthed API key copied to clipboard",
     });
@@ -245,72 +287,88 @@ export function ProfileForm() {
                 <CardHeader>
                   <CardTitle className="flex">
                     <div className="w-full">General</div>
-                   
                   </CardTitle>{" "}
                 </CardHeader>
                 <CardContent className="">
-                  <div className="flex space-x-2 justify-between items-end">
-                    <div className="w-full">
-                      <FormField
-                        control={form.control}
-                        name="unearthedApiKey"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Unearthed API Key</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="text"
-                                disabled
-                                placeholder="HIDDEN"
-                                {...field}
-                              />
-                            </FormControl>
-
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    {newUnearthedApiKey && (
+                  <CardDescription>
+                    Use these keys to integrate with other apps
+                  </CardDescription>
+                  {unearthedKeys.map((key) => (
+                    <div
+                      key={key.id}
+                      className="mt-1 flex space-x-2 justify-between items-end"
+                    >
+                      <div className="w-full p-2 h-10 select-none border-2 bg-card rounded-lg text-sm">
+                        <p className="font-bold">{key.name}</p>
+                      </div>
                       <div className="">
-                        <Button type="button" onClick={copyUnearthedApiKey}>
-                          <Copy />
+                        <Button
+                          type="button"
+                          variant="destructivebrutal"
+                          onClick={() => deleteUnearthedApiKey(key.id)}
+                        >
+                          <Trash />
                         </Button>
                       </div>
-                    )}
+                    </div>
+                  ))}
+                  <div className="mt-4 space-y-4">
+                    <div className="flex space-x-2 justify-between items-end">
+                      <div className="w-full">
+                        <Input
+                          className="border-secondary bg-white"
+                          type="text"
+                          id="newKeyName"
+                          placeholder="New Key Name"
+                          value={newKeyName}
+                          onChange={(e) => setNewKeyName(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="w-full">
+                      <Button
+                        className="w-full"
+                        type="button"
+                        onClick={() => {
+                          generateNewKey(newKeyName);
+                          setNewKeyName("");
+                        }}
+                        disabled={!newKeyName}
+                      >
+                        {!newKeyName
+                          ? "Enter Key Name"
+                          : "Generate New Unearthed Key"}
+                      </Button>
+                    </div>
                   </div>
-                  <div className="w-full mt-2 mb-6">
-                    <Button
-                      className="w-full"
-                      type="button"
-                      onClick={generateNewKey}
-                    >
-                      Generate New Unearthed Key
-                    </Button>
-                  </div>
+
                   {newUnearthedApiKey && (
-                  <div className="w-full mt-2 text-sm">
-                    <p>
-                      Make sure you save this key somehwere now.
-                      You will not be able to edit it later.
-                      <br />
-                      Instead, you will need to generate a new one.
-                    </p>
-                  </div>
+                    <div className="w-full mt-2 text-sm">
+                      <div className="mt-1 flex space-x-2 justify-between items-end ">
+                        <Input
+                          disabled
+                          type="text"
+                          value={newUnearthedApiKey}
+                        />
+                        <div className="">
+                          <Button
+                            type="button"
+                            variant="brutal"
+                            onClick={copyUnearthedApiKey}
+                          >
+                            <Copy />
+                          </Button>
+                        </div>
+                      </div>
+                      <p className="mt-1">
+                        Make sure you save this key somehwere now. You will not
+                        be able to edit it later.
+                        <br />
+                        Instead, you will need to generate a new one.
+                      </p>
+                    </div>
                   )}
                 </CardContent>
-                <CardFooter>
-                  <div className="w-full flex justify-end">
-                    <Button
-                      className="w-24"
-                      variant="brutalprimary"
-                      type="submit"
-                      disabled={isSaving}
-                    >
-                      {isSaving ? "Saving..." : "Save"}
-                    </Button>
-                  </div>{" "}
-                </CardFooter>
               </Card>
             </TabsContent>
             <TabsContent value="notion">
@@ -410,6 +468,10 @@ export function ProfileForm() {
                       </Tooltip>
                     </TooltipProvider>
                   </CardTitle>
+                  <CardDescription>
+                    Don&apos;t forget to press{" "}
+                    <span className="text-secondary">Save</span>
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="">
                   <FormField

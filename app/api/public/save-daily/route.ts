@@ -62,6 +62,10 @@ export async function GET() {
 
         const encryptionKey = user.privateMetadata.encryptionKey as string;
 
+        if (!profile.utcOffset) {
+          continue;
+        }
+
         const dailyReflectionExisting = await getDailyReflection(
           profile.userId,
           profile.utcOffset as number,

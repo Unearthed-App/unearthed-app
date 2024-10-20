@@ -2,25 +2,23 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/db";
 import { and, eq, isNotNull } from "drizzle-orm";
-import { profiles, sources } from "@/db/schema";
+import { profiles, sources, unearthedKeys } from "@/db/schema";
 import bcrypt from "bcrypt";
 import { decrypt } from "@/lib/auth/encryptionKey";
 import { clerkClient } from "@clerk/nextjs/server";
 
 // Function to verify API key
 async function verifyApiKeyGetProfile(providedApiKey: string) {
-  // Fetch all profiles with non-null API keys
-  const potentialProfiles = await db.query.profiles.findMany({
-    where: and(isNotNull(profiles.userId), isNotNull(profiles.unearthedApiKey)),
+  const potentialProfiles = await db.query.unearthedKeys.findMany({
+    where: and(isNotNull(unearthedKeys.userId), isNotNull(unearthedKeys.key)),
   });
 
-  // Check the provided key against each stored hash
-  for (const profile of potentialProfiles) {
-    const isMatch = await bcrypt.compare(
-      providedApiKey,
-      profile.unearthedApiKey!
-    );
+  for (const unearthedKey of potentialProfiles) {
+    const isMatch = await bcrypt.compare(providedApiKey, unearthedKey.key!);
     if (isMatch) {
+      const profile = await db.query.profiles.findFirst({
+        where: eq(profiles.userId, unearthedKey.userId),
+      });
       return profile;
     }
   }

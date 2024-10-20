@@ -1,5 +1,5 @@
 "use server";
-import { encrypt, getOrCreateEncryptionKey, hashApiKey } from "@/lib/auth/encryptionKey";
+import { encrypt, getOrCreateEncryptionKey } from "@/lib/auth/encryptionKey";
 import { schema } from "./formSchema";
 
 import { auth } from "@clerk/nextjs/server";
@@ -7,7 +7,6 @@ import { profiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { generateNewUnearthedApiKey } from "@/server/actions";
 
 export async function onSubmitAction(data: any, utcOffset: number) {
   const { userId }: { userId: string | null } = auth();
@@ -38,21 +37,10 @@ export async function onSubmitAction(data: any, utcOffset: number) {
     };
   }
 
-  if (!parsed.data.unearthedApiKey) {
-    const newApiKey = await generateNewUnearthedApiKey();
-    if (newApiKey) {
-      parsed.data.unearthedApiKey = newApiKey as string;
-    }
-  }
-
   const capacitiesApiKeyEncyrpted = parsed.data.capacitiesApiKey
     ? await encrypt(parsed.data.capacitiesApiKey as string, encryptionKey)
     : "";
-  const unearthedApiKeyHash = parsed.data.unearthedApiKey
-    ? await hashApiKey(
-        parsed.data.unearthedApiKey as string
-      )
-    : "";
+
   const capacitiesSpaceIdEncyrpted = parsed.data.capacitiesSpaceId
     ? await encrypt(parsed.data.capacitiesSpaceId as string, encryptionKey)
     : "";
@@ -64,7 +52,6 @@ export async function onSubmitAction(data: any, utcOffset: number) {
       .update(profiles)
       .set({
         capacitiesApiKey: capacitiesApiKeyEncyrpted,
-        unearthedApiKey: unearthedApiKeyHash,
         capacitiesSpaceId: capacitiesSpaceIdEncyrpted,
         utcOffset,
       })
@@ -84,10 +71,10 @@ export async function onSubmitAction(data: any, utcOffset: number) {
         .insert(profiles)
         .values({
           capacitiesApiKey: capacitiesApiKeyEncyrpted,
-          unearthedApiKey: unearthedApiKeyHash,
           capacitiesSpaceId: capacitiesSpaceIdEncyrpted,
           utcOffset,
           userId: userId,
+          userStatus: "ACTIVE",
         })
         .onConflictDoNothing()
         .returning();
