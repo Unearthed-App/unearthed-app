@@ -42,9 +42,9 @@ export function ProfileDialog() {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Settings</DialogTitle>
-            <DialogDescription>
+            {/* <DialogDescription>
               Don&apos;t forget to press <span className="text-secondary">Save</span>
-            </DialogDescription>
+            </DialogDescription> */}
           </DialogHeader>
           <ProfileForm />
           <h4 className="text-muted">Version: {packageJson.version}</h4>
@@ -63,7 +63,7 @@ export function ProfileDialog() {
       <DrawerContent>
         <DrawerHeader className="text-left">
           <DrawerTitle>Settings</DrawerTitle>
-          <DrawerDescription>Don&apos;t forget to press Save</DrawerDescription>
+          {/* <DrawerDescription>Don&apos;t forget to press Save</DrawerDescription> */}
         </DrawerHeader>
         <div className="px-4">
           <ProfileForm />

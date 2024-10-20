@@ -73,6 +73,7 @@ export default function RootLayout({
     >
       <QueryClientContextProvider>
         <html lang="en" className="h-full">
+          <div className="-z-50 fixed top-0 left-0 right-0 h-screen w-full bg-gradient-to-b  from-background via-card to-background"></div>
           <body className={poppins.className + " h-full"}>
             <ThemeProvider
               attribute="class"

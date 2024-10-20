@@ -8,7 +8,6 @@ const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 import { Button } from "@/components/ui/button";
 import { LogIn, CheckCircle } from "lucide-react";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { UnearthedInAndOut } from "@/components/UnearthedInAndOut";

@@ -57,3 +57,15 @@ export function getUserUtcOffset(): number {
 
   return -standardOffset / 60;
 }
+
+export function splitArray<T>(array: T[] | undefined, parts: number): T[][] {
+  if (!Array.isArray(array) || array.length === 0) {
+    return new Array(parts).fill([]);
+  }
+  const result: T[][] = [];
+  const itemsPerPart = Math.ceil(array.length / parts);
+  for (let i = 0; i < array.length; i += itemsPerPart) {
+    result.push(array.slice(i, i + itemsPerPart));
+  }
+  return result;
+}

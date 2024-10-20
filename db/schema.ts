@@ -69,19 +69,18 @@ export const quotes = pgTable(
     };
   }
 );
-
 export const profiles = pgTable("profiles", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id")
     .default(sql`requesting_user_id()`)
     .notNull()
     .unique(),
-  unearthedApiKey: text("unearthed_api_key").unique(),
   capacitiesApiKey: text("capacities_api_key"),
   capacitiesSpaceId: text("capacities_space_id"),
   notionDatabaseId: text("notion_database_id"),
   notionAuthData: text("notion_auth_data"),
   utcOffset: integer("utc_offset"),
+  userStatus: text("user_status", { enum: ["TERMINATED", "PENDING", "ACTIVE"] }),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -93,7 +92,7 @@ export const dailyQuotes = pgTable(
       .default(sql`requesting_user_id()`)
       .notNull(),
     quoteId: uuid("quote_id")
-      .references(() => quotes.id, { onDelete: "cascade" })
+      .references(() => quotes.id)
       .notNull(),
     day: date("day").defaultNow(),
   },
@@ -106,6 +105,55 @@ export const dailyQuotes = pgTable(
     };
   }
 );
+
+export const unearthedKeys = pgTable("unearthed_keys", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .default(sql`requesting_user_id()`)
+    .notNull(),
+  key: text("key").notNull().unique(),
+  name: text("name"),
+});
+
+export const notionSourceJobsOne = pgTable("notion_source_jobs_one", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  sourceId: uuid("source_id")
+    .references(() => sources.id)
+    .notNull(),
+  status: text("status"),
+  newConnection: boolean("new_connection").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const notionSourceJobsTwo = pgTable("notion_source_jobs_two", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  sourceId: uuid("source_id")
+    .references(() => sources.id)
+    .notNull(),
+  status: text("status"),
+  newConnection: boolean("new_connection").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const notionSourceJobsThree = pgTable("notion_source_jobs_three", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  sourceId: uuid("source_id")
+    .references(() => sources.id)
+    .notNull(),
+  status: text("status"),
+  newConnection: boolean("new_connection").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const notionSourceJobsFour = pgTable("notion_source_jobs_four", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  sourceId: uuid("source_id")
+    .references(() => sources.id)
+    .notNull(),
+  status: text("status"),
+  newConnection: boolean("new_connection").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
 
 // Relations
 export const sourcesRelations = relations(sources, ({ many }) => ({
@@ -126,7 +174,87 @@ export const dailyQuotesRelations = relations(dailyQuotes, ({ one }) => ({
   }),
 }));
 
+export const notionSourceJobsOneRelations = relations(
+  notionSourceJobsOne,
+  ({ one }) => ({
+    source: one(sources, {
+      fields: [notionSourceJobsOne.sourceId],
+      references: [sources.id],
+    }),
+  })
+);
+
+export const notionSourceJobsTwoRelations = relations(
+  notionSourceJobsTwo,
+  ({ one }) => ({
+    source: one(sources, {
+      fields: [notionSourceJobsTwo.sourceId],
+      references: [sources.id],
+    }),
+  })
+);
+
+export const notionSourceJobsThreeRelations = relations(
+  notionSourceJobsThree,
+  ({ one }) => ({
+    source: one(sources, {
+      fields: [notionSourceJobsThree.sourceId],
+      references: [sources.id],
+    }),
+  })
+);
+
+export const notionSourceJobsFourRelations = relations(
+  notionSourceJobsFour,
+  ({ one }) => ({
+    source: one(sources, {
+      fields: [notionSourceJobsFour.sourceId],
+      references: [sources.id],
+    }),
+  })
+);
+
 // Types for zod
+export const insertNotionSourceJobsOneSchema =
+  createInsertSchema(notionSourceJobsOne);
+export const selectNotionSourceJobsOneSchema = createSelectSchema(
+  notionSourceJobsOne,
+  {
+    createdAt: z.coerce.date(),
+  }
+);
+
+export const insertNotionSourceJobsTwoSchema =
+  createInsertSchema(notionSourceJobsTwo);
+export const selectNotionSourceJobsTwoSchema = createSelectSchema(
+  notionSourceJobsTwo,
+  {
+    createdAt: z.coerce.date(),
+  }
+);
+
+export const insertNotionSourceJobsThreeSchema = createInsertSchema(
+  notionSourceJobsThree
+);
+export const selectNotionSourceJobsThreeSchema = createSelectSchema(
+  notionSourceJobsThree,
+  {
+    createdAt: z.coerce.date(),
+  }
+);
+
+export const insertNotionSourceJobsFourSchema =
+  createInsertSchema(notionSourceJobsFour);
+export const selectNotionSourceJobsFourSchema = createSelectSchema(
+  notionSourceJobsFour,
+  {
+    createdAt: z.coerce.date(),
+  }
+);
+
+export const insertUnearthedKeySchema = createInsertSchema(unearthedKeys);
+export const selectUnearthedKeySchema = createSelectSchema(unearthedKeys);
+
 export const insertSourceSchema = createInsertSchema(sources);
 export const insertQuoteSchema = createInsertSchema(quotes);
 

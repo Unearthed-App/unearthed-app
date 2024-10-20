@@ -51,6 +51,7 @@
     "next-themes": "^0.3.0",
     "postgres": "^3.4.4",
     "posthog-js": "^1.165.1",
+    "posthog-node": "^4.2.1",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",

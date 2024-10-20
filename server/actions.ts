@@ -13,15 +13,23 @@ import {
   selectProfileSchema,
   dailyQuotes,
   selectQuoteWithRelationsSchema,
+  selectUnearthedKeySchema,
+  unearthedKeys,
+  notionSourceJobsOne,
+  notionSourceJobsTwo,
+  notionSourceJobsThree,
+  notionSourceJobsFour,
+  insertNotionSourceJobsOneSchema,
 } from "@/db/schema";
 import {
   decrypt,
   generateApiKey,
   getOrCreateEncryptionKey,
+  hashApiKey,
 } from "@/lib/auth/encryptionKey";
-import { getTodaysDate } from "@/lib/utils";
+import { getTodaysDate, splitArray } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
-import { and, eq, ilike, or } from "drizzle-orm";
+import { and, eq, ilike, inArray, isNotNull, not, or } from "drizzle-orm";
 import { z } from "zod";
 
 const { Client } = require("@notionhq/client");
@@ -32,7 +40,9 @@ type Quote = z.infer<typeof selectQuoteSchema>;
 type Source = z.infer<typeof selectSourceSchema>;
 type Profile = z.infer<typeof insertProfileSchema>;
 type DailyQuote = z.infer<typeof insertDailyQuotesSchema>;
-
+type NotionSourceJobsOneInsert = z.infer<
+  typeof insertNotionSourceJobsOneSchema
+>;
 export const getBook = async (
   bookId: string
 ): Promise<SourceWithRelations | { error: string }> => {
@@ -191,7 +201,6 @@ export const getProfile = async (): Promise<Profile> => {
 
     const decryptedResult = {
       ...toReturn,
-      unearthedApiKey: toReturn.unearthedApiKey,
       capacitiesApiKey: toReturn.capacitiesApiKey
         ? await decrypt(toReturn.capacitiesApiKey as string, encryptionKey)
         : "",
@@ -207,22 +216,6 @@ export const getProfile = async (): Promise<Profile> => {
   } catch (error) {
     console.error(error);
     return {};
-  }
-};
-
-export const generateNewUnearthedApiKey = async () => {
-  const { userId }: { userId: string | null } = auth();
-  if (!userId) {
-    throw new Error("User not authenticated");
-  }
-
-  try {
-    const unearthedApiKey = await generateApiKey();
-
-    return unearthedApiKey;
-  } catch (error) {
-    console.error(error);
-    return { error: "Error occurred" };
   }
 };
 
@@ -269,15 +262,18 @@ export const getSettings = async () => {
 
   const profile = await getProfile();
   const capicitiesSpaces = await capicitiesGetSpaces(profile);
+  const unearthedKeys = await getUnearthedKeys(profile);
 
   const notionAuthData = JSON.parse(profile.notionAuthData || "{}");
 
   return {
     profile,
     capicitiesSpaces,
+    unearthedKeys,
     notionWorkspace: notionAuthData.workspace_name || "",
   };
 };
+
 export const getOrCreateDailyReflection = async ({
   replaceDailyQuote = false,
   utcOffset = 0,
@@ -309,11 +305,21 @@ export const getOrCreateDailyReflection = async ({
         .values({
           utcOffset,
           userId,
+          userStatus: "ACTIVE",
         })
         .onConflictDoNothing()
         .returning();
 
       profile = newProfile[0];
+    }
+
+    if (!profile.utcOffset) {
+      const result = await db
+        .update(profiles)
+        .set({
+          utcOffset: utcOffset,
+        })
+        .where(eq(profiles.userId, userId));
     }
 
     const todaysDate = await getTodaysDate(
@@ -323,9 +329,18 @@ export const getOrCreateDailyReflection = async ({
     let dailyQuoteWithRelationsResult = (await db
       .select()
       .from(dailyQuotes)
-      .where(and(eq(dailyQuotes.day, todaysDate), eq(sources.userId, userId)))
+      .where(
+        and(eq(dailyQuotes.day, todaysDate), eq(dailyQuotes.userId, userId))
+      )
       .leftJoin(quotes, eq(quotes.id, dailyQuotes.quoteId))
       .leftJoin(sources, eq(sources.id, quotes.sourceId))) as any;
+
+    let test = (await db
+      .select()
+      .from(dailyQuotes)
+      .where(
+        and(eq(dailyQuotes.day, todaysDate), eq(dailyQuotes.userId, userId))
+      )) as any;
 
     if (dailyQuoteWithRelationsResult.length > 0) {
       dailyQuoteWithRelationsResult = dailyQuoteWithRelationsResult[0];
@@ -666,444 +681,296 @@ export const search = async (
   return { books: booksResult, quotes: quotesResult };
 };
 
-export const syncToNotion = async ({
-  newConnection,
+export const syncToNotion = async () => {
+  const { userId }: { userId: string | null } = auth();
+  if (!userId) {
+    return { success: false };
+  }
+
+  const dbResults = await db
+    .select()
+    .from(sources)
+    .leftJoin(
+      profiles,
+      and(
+        eq(sources.ignored, false),
+        eq(sources.userId, profiles.userId),
+        eq(profiles.userStatus, "ACTIVE"),
+        isNotNull(profiles.notionAuthData),
+        isNotNull(profiles.notionDatabaseId),
+        not(eq(profiles.notionAuthData, "")),
+        not(eq(profiles.notionDatabaseId, ""))
+      )
+    )
+    .where(eq(profiles.userId, userId));
+
+  const sourcesResults: Source[] = dbResults.map((result) => result.sources);
+
+  // delete all existing jobs for that user first
+  const sourceIds = sourcesResults.map((source) => source.id);
+  await db
+    .delete(notionSourceJobsOne)
+    .where(inArray(notionSourceJobsOne.sourceId, sourceIds));
+  await db
+    .delete(notionSourceJobsTwo)
+    .where(inArray(notionSourceJobsTwo.sourceId, sourceIds));
+  await db
+    .delete(notionSourceJobsThree)
+    .where(inArray(notionSourceJobsThree.sourceId, sourceIds));
+  await db
+    .delete(notionSourceJobsFour)
+    .where(inArray(notionSourceJobsFour.sourceId, sourceIds));
+
+  const [sourcesOne, sourcesTwo, sourcesThree, sourcesFour] = splitArray(
+    sourcesResults,
+    4
+  );
+
+  const tables = [
+    notionSourceJobsOne,
+    notionSourceJobsTwo,
+    notionSourceJobsThree,
+    notionSourceJobsFour,
+  ];
+  const sourceChunks = [sourcesOne, sourcesTwo, sourcesThree, sourcesFour];
+  const nonEmptyChunks = sourceChunks.filter(
+    (chunk): chunk is NonNullable<typeof chunk> =>
+      Array.isArray(chunk) && chunk.length > 0
+  );
+  for (let i = 0; i < nonEmptyChunks.length; i++) {
+    const toInsert: NotionSourceJobsOneInsert[] = nonEmptyChunks[i].map(
+      (source) => ({
+        sourceId: source.id,
+        status: "PENDING",
+        newConnection: false,
+      })
+    );
+
+    if (tables[i] && toInsert.length > 0) {
+      await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
+    } else {
+      console.error(`Table at index ${i} is undefined`);
+    }
+  }
+
+  return { success: true };
+};
+
+export const syncSourceToNotion = async (sourceId: string) => {
+  const { userId }: { userId: string | null } = auth();
+  if (!userId) {
+    return { success: false };
+  }
+
+  // delete all existing jobs for first
+  await db
+    .delete(notionSourceJobsOne)
+    .where(eq(notionSourceJobsOne.sourceId, sourceId));
+  await db
+    .delete(notionSourceJobsTwo)
+    .where(eq(notionSourceJobsTwo.sourceId, sourceId));
+  await db
+    .delete(notionSourceJobsThree)
+    .where(eq(notionSourceJobsThree.sourceId, sourceId));
+  await db
+    .delete(notionSourceJobsFour)
+    .where(eq(notionSourceJobsFour.sourceId, sourceId));
+
+  // insert job
+  await db
+    .insert(notionSourceJobsOne)
+    .values({ sourceId: sourceId, status: "PENDING", newConnection: false })
+    .onConflictDoNothing();
+
+  return { success: true };
+};
+
+const MAX_RETRIES = 3;
+const INITIAL_RETRY_DELAY = 1000; // 1 second
+async function retryOperation<T>(
+  operation: () => Promise<T>,
+  maxRetries: number = MAX_RETRIES,
+  delay: number = INITIAL_RETRY_DELAY
+): Promise<T> {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      console.error(`Attempt ${attempt + 1} failed:`, error);
+      if (attempt === maxRetries - 1) throw error;
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      delay *= 2; // Exponential backoff
+    }
+  }
+  throw new Error("Max retries reached");
+}
+
+export const firstNotionSync = async (): Promise<{
+  success: boolean;
+  error?: string;
+  sources?: z.infer<typeof selectSourceWithRelationsSchema>[];
+}> => {
+  const { userId } = await auth();
+  if (!userId) return { success: false, error: "No user ID" };
+
+  const profile = await getProfile();
+  const notionAuthData = JSON.parse(profile.notionAuthData || "{}");
+  if (!notionAuthData || !notionAuthData.access_token) {
+    return { success: false, error: "No valid Notion auth data" };
+  }
+
+  const notion = new Client({ auth: notionAuthData.access_token });
+  const notionUserId = notionAuthData.owner?.user?.id;
+  if (!notionUserId) return { success: false, error: "No Notion user ID" };
+
+  let notionBooksDatabaseId: string;
+
+  try {
+    const newDatabase = await retryOperation(async () =>
+      notion.databases.create({
+        parent: {
+          type: "page_id",
+          page_id: notionAuthData.duplicated_template_id,
+        },
+        icon: { type: "emoji", emoji: "📚" },
+        cover: {
+          type: "external",
+          external: {
+            url: "https://images.unsplash.com/photo-1512820790803-83ca734da794",
+          },
+        },
+        title: [{ type: "text", text: { content: "Sources", link: null } }],
+        properties: {
+          Title: { title: {} },
+          Subtitle: { rich_text: {} },
+          Author: { rich_text: {} },
+          Image: { files: {} },
+          Origin: { rich_text: {} },
+        },
+      })
+    );
+
+    if (newDatabase.id) {
+      notionBooksDatabaseId = newDatabase.id;
+      await db
+        .update(profiles)
+        .set({ notionDatabaseId: notionBooksDatabaseId })
+        .where(eq(profiles.userId, userId));
+    } else {
+      throw new Error("Failed to get Notion database ID");
+    }
+  } catch (error) {
+    console.error("Failed to create Notion database:", error);
+    return { success: false, error: "Failed to create Notion database" };
+  }
+
+  try {
+    const dbResult = await db.query.sources.findMany({
+      with: { quotes: true },
+      where: and(
+        eq(sources.type, "BOOK"),
+        eq(sources.ignored, false),
+        eq(sources.userId, userId)
+      ),
+    });
+
+    const sourcesResult = z
+      .array(selectSourceWithRelationsSchema)
+      .parse(dbResult);
+
+    if (!sourcesResult || sourcesResult.length === 0) {
+      return { success: false, error: "No sources found" };
+    }
+
+    return { success: true, sources: sourcesResult };
+  } catch (error) {
+    console.error("Error querying sources:", error);
+    return { success: false, error: "Failed to query sources" };
+  }
+};
+
+const getUnearthedKeys = async (profile: Profile) => {
+  const dbResult = await db.query.unearthedKeys.findMany({
+    where: eq(unearthedKeys.userId, profile.userId!),
+  });
+  const validatedData = z.array(selectUnearthedKeySchema).parse(dbResult);
+
+  return validatedData;
+};
+
+export const deleteUnearthedKey = async ({ id }: { id: string }) => {
+  const { userId }: { userId: string | null } = auth();
+  if (!userId) {
+    return { success: false };
+  }
+
+  try {
+    const result = await db
+      .delete(unearthedKeys)
+      .where(and(eq(unearthedKeys.id, id), eq(unearthedKeys.userId, userId)));
+
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false };
+  }
+};
+
+export const generateAndSaveUnearthedKey = async ({
+  name,
 }: {
-  newConnection?: true | false | "";
+  name: string;
 }) => {
   const { userId }: { userId: string | null } = auth();
   if (!userId) {
     return { success: false };
   }
 
-  const result = await fetch(process.env.DOMAIN + "/api/public/notion-sync", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.CRON_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      userId: userId,
-      newConnection: newConnection,
-    }),
-  });
+  const newKey = await generateApiKey();
+  const newKeyHash = await hashApiKey(newKey as string);
 
-  return { success: true };
+  try {
+    const newKeyEntry = await db
+      .insert(unearthedKeys)
+      .values({
+        userId,
+        key: newKeyHash,
+        name,
+      })
+      .onConflictDoNothing()
+      .returning();
 
-  // const profile = await getProfile();
-  // if (!profile) {
-  //   return { success: false };
-  // }
+    return { success: true, newKey };
+  } catch (error) {
+    console.error(error);
+    return { success: false };
+  }
+};
 
-  // const encryptionKey = await getOrCreateEncryptionKey();
-  // if (!encryptionKey) {
-  //   return { success: false };
-  // }
+export const createEmptyProfile = async ({
+  utcOffset = 0,
+}: {
+  utcOffset?: number;
+} = {}) => {
+  const { userId }: { userId: string | null } = auth();
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
 
-  // const notionAuthData = JSON.parse(profile.notionAuthData || "{}");
-  // if (!notionAuthData || !notionAuthData.access_token) {
-  //   return { success: false };
-  // }
+  try {
+    const newProfile = await db
+      .insert(profiles)
+      .values({
+        utcOffset,
+        userId,
+        userStatus: "ACTIVE",
+      })
+      .onConflictDoNothing()
+      .returning();
 
-  // const notion = new Client({ auth: notionAuthData.access_token });
-  // const notionUserId = notionAuthData.owner?.user?.id;
-  // if (!notionUserId) {
-  //   return { success: false };
-  // }
-
-  // let notionBooksDatabaseId;
-
-  // if (!profile.notionDatabaseId || newConnection) {
-  //   const newDatabase = await notion.databases.create({
-  //     parent: {
-  //       type: "page_id",
-  //       page_id: notionAuthData.duplicated_template_id,
-  //     },
-  //     icon: {
-  //       type: "emoji",
-  //       emoji: "📚",
-  //     },
-  //     cover: {
-  //       type: "external",
-  //       external: {
-  //         url: "https://images.unsplash.com/photo-1512820790803-83ca734da794",
-  //       },
-  //     },
-  //     title: [
-  //       {
-  //         type: "text",
-  //         text: {
-  //           content: "Sources",
-  //           link: null,
-  //         },
-  //       },
-  //     ],
-  //     properties: {
-  //       Title: { title: {} },
-  //       Subtitle: { rich_text: {} },
-  //       Author: { rich_text: {} },
-  //       Image: { files: {} },
-  //       Origin: { rich_text: {} },
-  //     },
-  //   });
-
-  //   if (newDatabase.id) {
-  //     notionBooksDatabaseId = newDatabase.id;
-
-  //     const result = await db
-  //       .update(profiles)
-  //       .set({
-  //         notionDatabaseId: notionBooksDatabaseId,
-  //       })
-  //       .where(eq(profiles.userId, userId));
-  //   }
-  // } else {
-  //   notionBooksDatabaseId = profile.notionDatabaseId;
-  // }
-
-  // if (!notionBooksDatabaseId) {
-  //   return { success: false };
-  // }
-
-  // const books = await getBooks({
-  //   ignored: false,
-  // });
-
-  // if (!books || books.length === 0) {
-  //   return { success: true, message: "No books to sync" };
-  // }
-
-  // const response = await notion.databases.query({
-  //   database_id: notionBooksDatabaseId,
-  // });
-
-  // let booksInNotionAlreadyKeys: string[] = [];
-  // let notionBookContentPerBook: any[] = [];
-  // for (const page of response.results) {
-  //   const key: string = `${page.properties.Title.title[0].plain_text} ${page.properties.Subtitle.rich_text[0].plain_text}`;
-  //   booksInNotionAlreadyKeys.push(key);
-
-  //   let allQuotePlainText: string[] = [];
-  //   let hasMore = true;
-  //   let startCursor = undefined;
-
-  //   while (hasMore) {
-  //     const {
-  //       results,
-  //       has_more,
-  //       next_cursor,
-  //     }: {
-  //       results: any[];
-  //       has_more: boolean;
-  //       next_cursor: string | undefined;
-  //     } = await notion.blocks.children.list({
-  //       block_id: page.id,
-  //       start_cursor: startCursor,
-  //       page_size: 100,
-  //     });
-
-  //     const quotePlainText = results
-  //       .filter((block) => block.type === "quote")
-  //       .map((block) =>
-  //         block.quote.rich_text
-  //           .map(
-  //             (richTextObject: { plain_text: string }) =>
-  //               richTextObject.plain_text
-  //           )
-  //           .join("")
-  //       );
-  //     allQuotePlainText = allQuotePlainText.concat(quotePlainText);
-
-  //     hasMore = has_more;
-  //     startCursor = next_cursor;
-  //   }
-
-  //   notionBookContentPerBook.push({
-  //     blockId: page.id,
-  //     key: key,
-  //     allQuotePlainText: allQuotePlainText,
-  //   });
-  // }
-
-  // const booksInNotionAlready = [];
-
-  // const MAX_CHILDREN = 100; // Notion child block limit
-
-  // for (const book of books) {
-  //   if (booksInNotionAlreadyKeys.includes(`${book.title} ${book.subtitle}`)) {
-  //     booksInNotionAlready.push(book);
-  //     continue;
-  //   }
-
-  //   let childQuotes = [];
-
-  //   childQuotes.push({
-  //     type: "heading_2",
-  //     heading_2: {
-  //       rich_text: [
-  //         {
-  //           type: "text",
-  //           text: {
-  //             content: "Quotes and Notes",
-  //           },
-  //         },
-  //       ],
-  //     },
-  //   });
-
-  //   for (const quote of book.quotes) {
-  //     let notionColor = "gray";
-  //     const lowerCaseColor = quote.color?.toLowerCase();
-
-  //     if (lowerCaseColor?.includes("grey")) {
-  //       notionColor = "gray";
-  //     } else if (lowerCaseColor?.includes("yellow")) {
-  //       notionColor = "yellow";
-  //     } else if (lowerCaseColor?.includes("blue")) {
-  //       notionColor = "blue";
-  //     } else if (lowerCaseColor?.includes("pink")) {
-  //       notionColor = "pink";
-  //     } else if (lowerCaseColor?.includes("orange")) {
-  //       notionColor = "orange";
-  //     }
-
-  //     childQuotes.push({
-  //       type: "quote",
-  //       quote: {
-  //         rich_text: [
-  //           {
-  //             type: "text",
-  //             text: {
-  //               content: quote.content || "No quote...",
-  //             },
-  //           },
-  //         ],
-  //         color: notionColor,
-  //         children: [],
-  //       },
-  //     });
-
-  //     if (quote.note) {
-  //       childQuotes.push({
-  //         type: "callout",
-  //         callout: {
-  //           rich_text: [
-  //             {
-  //               type: "text",
-  //               text: {
-  //                 content: await decrypt(quote.note, encryptionKey),
-  //                 link: null,
-  //               },
-  //             },
-  //           ],
-  //           icon: {
-  //             emoji: "📝",
-  //           },
-  //           color: "default",
-  //         },
-  //       });
-  //     }
-  //     childQuotes.push({
-  //       type: "paragraph",
-  //       paragraph: {
-  //         rich_text: [
-  //           {
-  //             type: "text",
-  //             text: {
-  //               content: ("📍 " + quote.location) as string,
-  //               link: null,
-  //             },
-  //           },
-  //         ],
-  //         color: "gray",
-  //       },
-  //     });
-
-  //     childQuotes.push({
-  //       type: "divider",
-  //       divider: {},
-  //     });
-  //   }
-
-  //   const notionBook = await notion.pages.create({
-  //     parent: { database_id: notionBooksDatabaseId },
-  //     cover: {
-  //       type: "external",
-  //       external: {
-  //         url: book.imageUrl || null,
-  //       },
-  //     },
-  //     properties: {
-  //       Title: {
-  //         title: [
-  //           {
-  //             type: "text",
-  //             text: {
-  //               content: book.title || "Untitled",
-  //             },
-  //           },
-  //         ],
-  //       },
-  //       Subtitle: {
-  //         rich_text: [
-  //           {
-  //             type: "text",
-  //             text: {
-  //               content: book.subtitle || "",
-  //             },
-  //           },
-  //         ],
-  //       },
-  //       Author: {
-  //         rich_text: [
-  //           {
-  //             type: "text",
-  //             text: {
-  //               content: book.author || "Unknown",
-  //             },
-  //           },
-  //         ],
-  //       },
-  //       Image: {
-  //         files: [
-  //           {
-  //             name: "Book Cover",
-  //             type: "external",
-  //             external: {
-  //               url: book.imageUrl || null,
-  //             },
-  //           },
-  //         ],
-  //       },
-  //       Origin: {
-  //         rich_text: [
-  //           {
-  //             type: "text",
-  //             text: {
-  //               content: book.origin || "",
-  //             },
-  //           },
-  //         ],
-  //       },
-  //     },
-  //   });
-
-  //   for (let i = 0; i < childQuotes.length; i += MAX_CHILDREN) {
-  //     const childBatch = childQuotes.slice(i, i + MAX_CHILDREN);
-
-  //     await notion.blocks.children.append({
-  //       block_id: notionBook.id,
-  //       children: childBatch,
-  //     });
-  //   }
-  // }
-
-  // // now check the existing books and add in any quotes that are not there already
-  // for (const book of booksInNotionAlready) {
-  //   // find the corresponding notion book
-  //   const key = `${book.title} ${book.subtitle}`;
-
-  //   let matchingNotionBook: {
-  //     blockId: string;
-  //     key: string;
-  //     allQuotePlainText: string[];
-  //   } = { blockId: "", key: "", allQuotePlainText: [] };
-
-  //   notionBookContentPerBook.forEach((book) => {
-  //     if (key === book.key) {
-  //       matchingNotionBook = book;
-  //       return;
-  //     }
-  //   });
-
-  //   let moreQuotesToAdd = [];
-
-  //   for (const quote of book.quotes) {
-  //     if (matchingNotionBook.allQuotePlainText.includes(quote.content)) {
-  //       continue;
-  //     }
-
-  //     let notionColor = "gray";
-  //     const lowerCaseColor = quote.color?.toLowerCase();
-
-  //     if (lowerCaseColor?.includes("grey")) {
-  //       notionColor = "gray";
-  //     } else if (lowerCaseColor?.includes("yellow")) {
-  //       notionColor = "yellow";
-  //     } else if (lowerCaseColor?.includes("blue")) {
-  //       notionColor = "blue";
-  //     } else if (lowerCaseColor?.includes("pink")) {
-  //       notionColor = "pink";
-  //     } else if (lowerCaseColor?.includes("orange")) {
-  //       notionColor = "orange";
-  //     }
-
-  //     moreQuotesToAdd.push({
-  //       type: "quote",
-  //       quote: {
-  //         rich_text: [
-  //           {
-  //             type: "text",
-  //             text: {
-  //               content: quote.content || "No quote...",
-  //             },
-  //           },
-  //         ],
-  //         color: notionColor,
-  //         children: [],
-  //       },
-  //     });
-
-  //     if (quote.note) {
-  //       moreQuotesToAdd.push({
-  //         type: "callout",
-  //         callout: {
-  //           rich_text: [
-  //             {
-  //               type: "text",
-  //               text: {
-  //                 content: await decrypt(quote.note, encryptionKey),
-  //                 link: null,
-  //               },
-  //             },
-  //           ],
-  //           icon: {
-  //             emoji: "📝",
-  //           },
-  //           color: "default",
-  //         },
-  //       });
-  //     }
-
-  //     moreQuotesToAdd.push({
-  //       type: "paragraph",
-  //       paragraph: {
-  //         rich_text: [
-  //           {
-  //             type: "text",
-  //             text: {
-  //               content: ("📍 " + quote.location) as string,
-  //               link: null,
-  //             },
-  //           },
-  //         ],
-  //         color: "gray",
-  //       },
-  //     });
-
-  //     moreQuotesToAdd.push({
-  //       type: "divider",
-  //       divider: {},
-  //     });
-  //   }
-
-  //   if (moreQuotesToAdd.length > 0) {
-  //     const response = await notion.blocks.children.append({
-  //       block_id: matchingNotionBook.blockId,
-  //       children: moreQuotesToAdd,
-  //     });
-  //   }
-  // }
-
-  // return { success: true };
+    return { success: true, profile: newProfile[0] };
+  } catch (error) {
+    console.error(error);
+    return {};
+  }
 };

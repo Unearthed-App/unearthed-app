@@ -1,9 +1,15 @@
 "use client";
 
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import React from "react";
-import { getBooks, toggleIgnoredBook } from "@/server/actions";
+import {
+  getBooks,
+  getProfile,
+  syncSourceToNotion,
+  toggleIgnoredBook,
+} from "@/server/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Frown } from "lucide-react";
 import Image from "next/image";
@@ -16,10 +22,21 @@ import {
 import Link from "next/link";
 import { AnimatedLoader } from "@/components/AnimatedLoader";
 import { Crimson_Pro } from "next/font/google";
+import { toast } from "@/hooks/use-toast";
+import { selectSourceSchema } from "@/db/schema";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
+type Source = z.infer<typeof selectSourceSchema>;
 
 export default function Books() {
   const queryClient = useQueryClient();
+
+  const {
+    data: profile,
+    isLoading: isLoadingProfile,
+  } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => getProfile(),
+  });
 
   const {
     data: books,
@@ -60,6 +77,26 @@ export default function Books() {
       },
     },
   };
+
+  async function forceNotionSync(book: Source) {
+    try {
+      
+      await syncSourceToNotion(book.id);
+
+      toast({
+        title: `Notion Sync started for ${book.title}`,
+        description: "Please wait and then check Notion.",
+      });
+    } catch (error) {
+      console.error("Failed:", error);
+
+      toast({
+        title: "There was an error",
+        description: error as string,
+        variant: "destructive",
+      });
+    }
+  }
 
   if (isLoading)
     return (
@@ -175,6 +212,26 @@ export default function Books() {
                               </Button>
                             </Link>
                           </div>
+                          {!isLoadingProfile && profile?.notionAuthData &&
+                            profile?.notionDatabaseId && (
+                              <div className="w-full md:w-auto md:pl-2 pb-2 md:pb-0 mt-2 md:mt-0">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        className="w-full md:w-36"
+                                        onClick={() => forceNotionSync(book)}
+                                      >
+                                        Force Notion Sync
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                                      <p>Click to update Notion database</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
+                            )}
                         </div>
                       </div>
                     </div>

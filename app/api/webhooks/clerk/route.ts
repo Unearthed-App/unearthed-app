@@ -59,11 +59,13 @@ export async function POST(req: Request) {
     }
 
     const newEncryptionKey = generateSecureKey(); // Generate a secure encryption key
+    const newSecret = generateSecureKey(); // Generate a secure encryption key
 
     try {
       await clerkClient.users.updateUserMetadata(userId, {
         privateMetadata: {
           encryptionKey: newEncryptionKey,
+          secret: newSecret,
         },
       });
       console.log("Encryption key set successfully");
@@ -73,9 +75,9 @@ export async function POST(req: Request) {
     }
 
     try {
-
       const toInsert: Profile = {
         userId,
+        userStatus: "ACTIVE",
       };
 
       const validatedProfileData = insertProfileSchema.parse(toInsert);
