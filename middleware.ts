@@ -4,7 +4,11 @@ const allowedWebhookRoute = createRouteMatcher([
   "/api/webhooks/(.*)",
   "/api/public/(.*)",
 ]);
-const protectedRoute = createRouteMatcher(["/dashboard(.*)", "/api/(.*)"]);
+const protectedRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/premium(.*)",
+  "/api/(.*)",
+]);
 
 export default clerkMiddleware((auth, req) => {
   // Check if the route is specifically allowed (no protection needed)

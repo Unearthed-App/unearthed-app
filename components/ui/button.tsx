@@ -18,24 +18,31 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        brutal: `hover:bg-accent h-12 border-2 p-2.5 rounded-md transition-shadow duration-200
-          bg-card border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] active:shadow-[1px_1px_0px_rgba(0,0,0,1)]
+        brutal: `h-12 border-2 p-2.5 rounded-md transition-all duration-200
+          bg-card border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
+          hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
+          active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
           dark:hover:bg-accent dark:bg-[rgba(85,88,136,1)] dark:text-black
-          `,
-        brutalprimary: `bg-primary h-12 border-2 p-2.5 rounded-md transition-shadow duration-200
-          hover:bg-muted border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] active:shadow-[1px_1px_0px_rgba(0,0,0,1)]
+        `,
+        brutalprimary: `bg-primary h-12 border-2 p-2.5 rounded-md transition-all duration-200
+          hover:bg-muted border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
+          hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
+          active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
           dark:hover:bg-muted dark:text-black
-          `,
-        destructivebrutal: `bg-destructive h-12 border-2 p-2.5 rounded-md transition-shadow duration-200
-          hover:bg-muted border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] active:shadow-[1px_1px_0px_rgba(0,0,0,1)]
+        `,
+        destructivebrutal: `bg-destructive h-12 border-2 p-2.5 rounded-md transition-all duration-200
+          hover:bg-muted border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
+          hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
+          active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
           dark:hover:bg-muted dark:text-black
-          `,
+        `,
       },
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
+        tiny: "w-6 h-6 p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
       },
     },
     defaultVariants: {

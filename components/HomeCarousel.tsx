@@ -74,7 +74,7 @@ export function HomeCarousel() {
               type="button"
               aria-label={`Go to slide ${idx + 1}`}
               onClick={() => setIndex(idx)}
-              className="w-full md:w-auto -ml-2"
+              className="w-full md:w-auto ml-2 mt-2"
             >
               {item.name}
             </Button>

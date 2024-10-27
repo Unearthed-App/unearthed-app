@@ -4,23 +4,19 @@ import { z } from "zod";
 
 import { db } from "@/db";
 import {
-  insertNotionSourceJobsOneSchema,
-  notionSourceJobsFour,
+  // notionSourceJobsFour,
   notionSourceJobsOne,
-  notionSourceJobsThree,
-  notionSourceJobsTwo,
+  // notionSourceJobsThree,
+  // notionSourceJobsTwo,
   profiles,
-  selectSourceSchema,
   sources,
+  selectProfileSchema,
 } from "@/db/schema";
 import { and, eq, isNotNull, not } from "drizzle-orm";
 import PostHogClient from "@/app/posthog";
 import { splitArray } from "@/lib/utils";
-type NotionSourceJobsOneInsert = z.infer<
-  typeof insertNotionSourceJobsOneSchema
->;
 
-type Source = z.infer<typeof selectSourceSchema>;
+type Profile = z.infer<typeof selectProfileSchema>;
 
 export async function GET() {
   const headersList = headers();
@@ -63,29 +59,36 @@ export async function GET() {
           not(eq(profiles.notionDatabaseId, ""))
         )
       )
-      .where(
-        and(
-          isNotNull(profiles.userId),
-        )
-      );
+      .where(and(isNotNull(profiles.userId)));
 
-    const sourcesResults: Source[] = dbResults.map((result) => result.sources);
+    type SourceResult = {
+      id: string;
+      profile: Profile | null;
+    };
 
-    if (!sourcesResults || sourcesResults.length == 0) {
-      throw new Error("profilesResults failed");
+    const sourcesResults = dbResults.map(
+      (result): SourceResult => ({
+        ...result.sources,
+        profile: result.profiles,
+      })
+    );
+
+    if (!sourcesResults || sourcesResults.length === 0) {
+      throw new Error("sourcesResults failed");
     }
 
     const [sourcesOne, sourcesTwo, sourcesThree, sourcesFour] = splitArray(
       sourcesResults,
-      4
+      1
+      // 4
     );
 
-    const tables = [
-      notionSourceJobsOne,
-      notionSourceJobsTwo,
-      notionSourceJobsThree,
-      notionSourceJobsFour,
-    ];
+    // const tables = [
+    //   notionSourceJobsOne,
+    //   notionSourceJobsTwo,
+    //   notionSourceJobsThree,
+    //   notionSourceJobsFour,
+    // ];
     const sourceChunks = [sourcesOne, sourcesTwo, sourcesThree, sourcesFour];
 
     const nonEmptyChunks = sourceChunks.filter(
@@ -94,19 +97,28 @@ export async function GET() {
     );
 
     for (let i = 0; i < nonEmptyChunks.length; i++) {
-      const toInsert: NotionSourceJobsOneInsert[] = nonEmptyChunks[i].map(
-        (source: { id: string }) => ({
+      const toInsert = nonEmptyChunks[i].map((source: SourceResult) => {
+        if (!source.profile) {
+          throw new Error(`Source ${source.id} has no associated profile`);
+        }
+        return {
           sourceId: source.id,
-          status: "PENDING",
+          profileId: source.profile.id,
+          status: "READY",
           newConnection: false,
-        })
-      );
+        };
+      });
 
-      if (tables[i] && toInsert.length > 0) {
-        await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
-      } else {
-        console.error(`Table at index ${i} is undefined`);
-      }
+      await db
+        .insert(notionSourceJobsOne)
+        .values(toInsert)
+        .onConflictDoNothing();
+
+      // if (tables[i] && toInsert.length > 0) {
+      //   await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
+      // } else {
+      //   console.error(`Table at index ${i} is undefined`);
+      // }
     }
   } catch (error) {
     console.error("Error in Notion redirect handler:", error);

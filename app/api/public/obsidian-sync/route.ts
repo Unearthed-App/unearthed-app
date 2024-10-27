@@ -35,7 +35,6 @@ export async function GET() {
   }
 
   const apiKey = authHeader.split(" ")[1];
-  console.log("apiKey", apiKey);
 
   if (!apiKey) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -43,8 +42,6 @@ export async function GET() {
 
   try {
     const profile = await verifyApiKeyGetProfile(apiKey);
-
-    console.log("profile", profile);
 
     if (!profile) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

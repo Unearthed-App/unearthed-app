@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { motion } from "framer-motion";
@@ -26,13 +26,16 @@ import { Search } from "lucide-react";
 import { search } from "@/server/actions";
 import { Skeleton } from "./ui/skeleton";
 import { QuoteBookCardBrutal } from "@/components/QuoteBookCardBrutal";
+import { QuoteBookCardBrutal as QuoteBookCardBrutalPremium } from "@/components/premium/QuoteBookCardBrutal";
 
 import { selectSourceSchema, selectQuoteWithRelationsSchema } from "@/db/schema";
 import { Input } from "./ui/input";
-import { BookCard } from "./BookCard";
+import { BookCard } from "@/components/BookCard";
+import { BookCard as BookCardPremium } from "@/components/premium/BookCard";
 import { z } from "zod";
 type QuoteWithRelations = z.infer<typeof selectQuoteWithRelationsSchema>;
 type Source = z.infer<typeof selectSourceSchema>;
+import { getIsPremium } from "@/lib/utils";
 
 import { useForm } from "react-hook-form";
 import {
@@ -64,6 +67,18 @@ export function SearchDialog() {
       searchQuery: "",
     },
   });
+
+    const [isPremium, setIsPremium] = useState(false);
+
+    useEffect(() => {
+      const fetchPremiumStatus = async () => {
+        const isPremium = await getIsPremium();
+        setIsPremium(isPremium);
+      };
+
+      fetchPremiumStatus();
+    }, []);
+
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
     setIsLoading(true);
@@ -228,15 +243,27 @@ export function SearchDialog() {
                   key={book.id}
                   variants={itemVariants}
                 >
-                  <BookCard
-                    id={book.id}
-                    title={book.title}
-                    ignored={book.ignored ?? false}
-                    subtitle={book.subtitle ?? ""}
-                    author={book.author ?? ""}
-                    imageUrl={book.imageUrl ?? ""}
-                    setOpen={setOpen}
-                  />
+                  {isPremium ? (
+                    <BookCardPremium
+                      id={book.id}
+                      title={book.title}
+                      ignored={book.ignored ?? false}
+                      subtitle={book.subtitle ?? ""}
+                      author={book.author ?? ""}
+                      imageUrl={book.imageUrl ?? ""}
+                      setOpen={setOpen}
+                    />
+                  ) : (
+                    <BookCard
+                      id={book.id}
+                      title={book.title}
+                      ignored={book.ignored ?? false}
+                      subtitle={book.subtitle ?? ""}
+                      author={book.author ?? ""}
+                      imageUrl={book.imageUrl ?? ""}
+                      setOpen={setOpen}
+                    />
+                  )}
                 </motion.div>
               ))}
               {searchResults.quotes.map((quote) => (
@@ -245,16 +272,29 @@ export function SearchDialog() {
                   key={quote.id}
                   variants={itemVariants}
                 >
-                  <QuoteBookCardBrutal
-                    bookId={quote.source.id}
-                    bookTitle={quote.source.title}
-                    bookAuthor={quote.source.author as string}
-                    quote={quote.content}
-                    note={quote.note ?? ""}
-                    location={quote.location ?? ""}
-                    color={quote.color || "Blue highlight"}
-                    setOpen={setOpen}
-                  />
+                  {isPremium ? (
+                    <QuoteBookCardBrutalPremium
+                      bookId={quote.source.id}
+                      bookTitle={quote.source.title}
+                      bookAuthor={quote.source.author as string}
+                      quote={quote.content}
+                      note={quote.note ?? ""}
+                      location={quote.location ?? ""}
+                      color={quote.color || "Blue highlight"}
+                      setOpen={setOpen}
+                    />
+                  ) : (
+                    <QuoteBookCardBrutal
+                      bookId={quote.source.id}
+                      bookTitle={quote.source.title}
+                      bookAuthor={quote.source.author as string}
+                      quote={quote.content}
+                      note={quote.note ?? ""}
+                      location={quote.location ?? ""}
+                      color={quote.color || "Blue highlight"}
+                      setOpen={setOpen}
+                    />
+                  )}
                 </motion.div>
               ))}
             </motion.div>

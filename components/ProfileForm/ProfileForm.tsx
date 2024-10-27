@@ -164,7 +164,7 @@ export function ProfileForm() {
   };
   const generateNewKey = async (name: string) => {
     try {
-      // make sure there is a prolfe first. A profile is needed in certain api routes
+      // make sure there is a profile first. A profile is needed in certain api routes
       if (!profileExists) {
         const utcOffset = await getUserUtcOffset();
         const { profile } = await createEmptyProfile({ utcOffset });

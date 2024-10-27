@@ -1,8 +1,8 @@
 "use client";
 
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { selectSourceSchema, selectQuoteSchema } from "@/db/schema";
@@ -28,25 +28,22 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { BookHeader } from "@/components/BookHeader";
-import { QuoteCardBrutal } from "@/components/QuoteCardBrutal";
+import { QuoteCardBrutal } from "@/components/premium/QuoteCardBrutal";
 import { AnimatedLoader } from "@/components/AnimatedLoader";
+import { QuoteFormDialog } from "@/components/premium/QuoteForm/QuoteFormDialog";
 
 export default function Book({ params }: { params: { bookId: string } }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const {
     data: book,
-    mutate: server_getBook,
-    isPending: isPendingBook,
-  } = useMutation({
-    mutationFn: getBook,
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
+    isLoading: isLoadingBook,
+    isError,
+  } = useQuery({
+    queryKey: ["book"],
+    queryFn: () => getBook(params.bookId),
   });
 
   const {
@@ -71,17 +68,12 @@ export default function Book({ params }: { params: { bookId: string } }) {
       value: book.title.toLowerCase(),
       label: book.title,
       ignored: book.ignored,
+      origin: book.origin,
     }));
   };
 
   useEffect(() => {
-    // Load book titles
     server_getBookTitles();
-
-    // Load quotes for the current book
-    if (params.bookId) {
-      server_getBook(params.bookId);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -90,8 +82,7 @@ export default function Book({ params }: { params: { bookId: string } }) {
       (book) => book.value === bookValue
     );
     if (selectedBook) {
-      // Reload the page with the new book ID in the URL
-      router.push(`/dashboard/book/${selectedBook.id}`);
+      router.push(`/premium/book/${selectedBook.id}`);
     }
     setOpen(false);
   };
@@ -119,7 +110,11 @@ export default function Book({ params }: { params: { bookId: string } }) {
     },
   };
 
-  if (isPendingBook)
+  const refreshQuotes = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["book"] });
+  }, [queryClient]);
+
+  if (isLoadingBook)
     return (
       <div className="pt-32 flex items-center justify-center">
         <AnimatedLoader />
@@ -129,7 +124,16 @@ export default function Book({ params }: { params: { bookId: string } }) {
   return (
     <div className="pt-32 px-4 md:px-12 lg:px-24 xl:px-12 2xl:px-24">
       <div className="flex flex-wrap items-center mb-4">
-        <div className="mb-2">
+        {book && !("error" in book) && book.origin === "UNEARTHED" && (
+          <div className="mr-2 mb-2 md:mb-0">
+            <QuoteFormDialog
+              buttonText="Add a Quote"
+              onQuoteAdded={refreshQuotes}
+              source={book as Source}
+            />
+          </div>
+        )}
+        <div className="w-full md:w-auto">
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
@@ -211,12 +215,15 @@ export default function Book({ params }: { params: { bookId: string } }) {
                     variants={itemVariants}
                   >
                     <QuoteCardBrutal
+                      origin={book.origin!}
                       bookTitle={book.title}
                       bookAuthor={book.author as string}
                       quote={quote.content}
                       note={quote.note ?? ""}
                       location={quote.location ?? ""}
                       color={quote.color || "Blue highlight"}
+                      id={quote.id}
+                      onQuoteDeleted={refreshQuotes}
                     />
                   </motion.div>
                 ))}

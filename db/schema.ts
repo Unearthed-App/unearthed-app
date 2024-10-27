@@ -80,7 +80,9 @@ export const profiles = pgTable("profiles", {
   notionDatabaseId: text("notion_database_id"),
   notionAuthData: text("notion_auth_data"),
   utcOffset: integer("utc_offset"),
-  userStatus: text("user_status", { enum: ["TERMINATED", "PENDING", "ACTIVE"] }),
+  userStatus: text("user_status", {
+    enum: ["TERMINATED", "PENDING", "ACTIVE"],
+  }),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -120,7 +122,11 @@ export const notionSourceJobsOne = pgTable("notion_source_jobs_one", {
   sourceId: uuid("source_id")
     .references(() => sources.id)
     .notNull(),
+  profileId: uuid("profile_id")
+    .references(() => profiles.id)
+    .notNull(),
   status: text("status"),
+  attempts: integer("attempts"),
   newConnection: boolean("new_connection").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -130,7 +136,12 @@ export const notionSourceJobsTwo = pgTable("notion_source_jobs_two", {
   sourceId: uuid("source_id")
     .references(() => sources.id)
     .notNull(),
+  profileId: uuid("profile_id")
+    .references(() => profiles.id)
+    .notNull(),
+
   status: text("status"),
+  attempts: integer("attempts"),
   newConnection: boolean("new_connection").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -140,7 +151,12 @@ export const notionSourceJobsThree = pgTable("notion_source_jobs_three", {
   sourceId: uuid("source_id")
     .references(() => sources.id)
     .notNull(),
+  profileId: uuid("profile_id")
+    .references(() => profiles.id)
+    .notNull(),
+
   status: text("status"),
+  attempts: integer("attempts"),
   newConnection: boolean("new_connection").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -150,7 +166,11 @@ export const notionSourceJobsFour = pgTable("notion_source_jobs_four", {
   sourceId: uuid("source_id")
     .references(() => sources.id)
     .notNull(),
+  profileId: uuid("profile_id")
+    .references(() => profiles.id)
+    .notNull(),
   status: text("status"),
+  attempts: integer("attempts"),
   newConnection: boolean("new_connection").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -181,6 +201,10 @@ export const notionSourceJobsOneRelations = relations(
       fields: [notionSourceJobsOne.sourceId],
       references: [sources.id],
     }),
+    profile: one(profiles, {
+      fields: [notionSourceJobsOne.profileId],
+      references: [profiles.id],
+    }),
   })
 );
 
@@ -190,6 +214,10 @@ export const notionSourceJobsTwoRelations = relations(
     source: one(sources, {
       fields: [notionSourceJobsTwo.sourceId],
       references: [sources.id],
+    }),
+    profile: one(profiles, {
+      fields: [notionSourceJobsTwo.profileId],
+      references: [profiles.id],
     }),
   })
 );
@@ -201,6 +229,10 @@ export const notionSourceJobsThreeRelations = relations(
       fields: [notionSourceJobsThree.sourceId],
       references: [sources.id],
     }),
+    profile: one(profiles, {
+      fields: [notionSourceJobsThree.profileId],
+      references: [profiles.id],
+    }),
   })
 );
 
@@ -210,6 +242,10 @@ export const notionSourceJobsFourRelations = relations(
     source: one(sources, {
       fields: [notionSourceJobsFour.sourceId],
       references: [sources.id],
+    }),
+    profile: one(profiles, {
+      fields: [notionSourceJobsFour.profileId],
+      references: [profiles.id],
     }),
   })
 );

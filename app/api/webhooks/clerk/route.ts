@@ -52,7 +52,6 @@ export async function POST(req: Request) {
 
   if (evt.type === "user.created") {
     const userId = evt.data.id;
-    console.log("userId:", userId);
 
     if (!userId) {
       return new Response("Error", { status: 500 });

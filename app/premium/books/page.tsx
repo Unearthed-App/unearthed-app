@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import React from "react";
+import { useCallback } from "react";
 import {
   getBooks,
   getProfile,
@@ -11,7 +11,7 @@ import {
   toggleIgnoredBook,
 } from "@/server/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Frown, ImageIcon } from "lucide-react";
+import { Frown, Trash, ImageIcon } from "lucide-react";
 import Image from "next/image";
 import {
   Tooltip,
@@ -24,7 +24,10 @@ import { AnimatedLoader } from "@/components/AnimatedLoader";
 import { Crimson_Pro } from "next/font/google";
 import { toast } from "@/hooks/use-toast";
 import { selectSourceSchema } from "@/db/schema";
+import { deleteSource } from "@/server/actions-premium";
 import { Separator } from "@/components/ui/separator";
+import { SourceFormDialog } from "@/components/premium/SourceForm/SourceFormDialog";
+import { UploadFormDialog } from "@/components/premium/UploadForm/UploadFormDialog";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 type Source = z.infer<typeof selectSourceSchema>;
 
@@ -59,6 +62,17 @@ export default function Books() {
     },
   });
 
+  const deleteBookMutation = useMutation({
+    mutationFn: deleteSource,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["books"] });
+      toast({
+        title: `Removed succesffully`,
+        description: "",
+      });
+    },
+  });
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -79,6 +93,10 @@ export default function Books() {
       },
     },
   };
+
+  const refreshBooks = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["books"] });
+  }, [queryClient]);
 
   async function forceNotionSync(book: Source) {
     try {
@@ -112,7 +130,7 @@ export default function Books() {
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <p className="text-center py-12">
             <b>None found.</b> You might need to check your{" "}
-            <Link href="/dashboard/books-ignored">
+            <Link href="/premium/books-ignored">
               <span className="font-bold text-secondary">Ignored Books</span>
             </Link>
           </p>
@@ -123,6 +141,13 @@ export default function Books() {
 
   return (
     <div className="pt-32 p-4 flex flex-col">
+      <div className="flex items-center justify-center space-x-2">
+        <UploadFormDialog onUpload={refreshBooks} />
+        <SourceFormDialog
+          buttonText="Add a Book"
+          onSourceAdded={refreshBooks}
+        />
+      </div>
       <div>
         <div className="">
           <div className="py-4 w-full flex items-center justify-center">
@@ -170,6 +195,32 @@ export default function Books() {
                               </TooltipProvider>
                             </div>
                           )}
+                        {book.origin == "UNEARTHED" && (
+                          <div className="">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    className="p-1"
+                                    variant="destructivebrutal"
+                                    size={"icon"}
+                                    onClick={() =>
+                                      deleteBookMutation.mutate({
+                                        source: book,
+                                      })
+                                    }
+                                    disabled={deleteBookMutation.isPending}
+                                  >
+                                    <Trash className="w-6 h-6 " />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                                  <p>Remove this completely</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                        )}
                         <div className="">
                           <TooltipProvider>
                             <Tooltip>
@@ -199,7 +250,7 @@ export default function Books() {
                       <div className="flex items-center">
                         {book.imageUrl ? (
                           <Link
-                            href={`/dashboard/book/${book.id}`}
+                            href={`/premium/book/${book.id}`}
                             className="w-[90px] md:w-[100px]"
                           >
                             <Image
@@ -212,7 +263,7 @@ export default function Books() {
                           </Link>
                         ) : (
                           <Link
-                            href={`/dashboard/book/${book.id}`}
+                            href={`/premium/book/${book.id}`}
                             className="w-[90px] md:w-[100px] h-full flex items-center"
                           >
                             <div className="hover:bg-white w-[90px] md:w-[100px] h-full max-h-[160px] rounded-lg border-2 border-black dark:border-white shadow-xl flex items-center justify-center">
@@ -228,7 +279,7 @@ export default function Books() {
                           >
                             <Link
                               className="hover:text-primary"
-                              href={`/dashboard/book/${book.id}`}
+                              href={`/premium/book/${book.id}`}
                             >
                               {book.title}
                             </Link>

@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { encrypt, getOrCreateEncryptionKey } from "@/lib/auth/encryptionKey";
 import {
   insertNotionSourceJobsOneSchema,
   notionSourceJobsOne,
-  insertNotionSourceJobsTwoSchema,
-  notionSourceJobsTwo,
-  insertNotionSourceJobsThreeSchema,
-  notionSourceJobsThree,
-  insertNotionSourceJobsFourSchema,
-  notionSourceJobsFour,
+  // insertNotionSourceJobsTwoSchema,
+  // notionSourceJobsTwo,
+  // insertNotionSourceJobsThreeSchema,
+  // notionSourceJobsThree,
+  // insertNotionSourceJobsFourSchema,
+  // notionSourceJobsFour,
   profiles,
+  selectProfileSchema,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
@@ -19,18 +20,19 @@ import { z } from "zod";
 import PostHogClient from "@/app/posthog";
 import { splitArray } from "@/lib/utils";
 
+type Profile = z.infer<typeof selectProfileSchema>;
 type NotionSourceJobsOneInsert = z.infer<
   typeof insertNotionSourceJobsOneSchema
 >;
-type NotionSourceJobsTwoInsert = z.infer<
-  typeof insertNotionSourceJobsTwoSchema
->;
-type NotionSourceJobsThreeInsert = z.infer<
-  typeof insertNotionSourceJobsThreeSchema
->;
-type NotionSourceJobsFourInsert = z.infer<
-  typeof insertNotionSourceJobsFourSchema
->;
+// type NotionSourceJobsTwoInsert = z.infer<
+//   typeof insertNotionSourceJobsTwoSchema
+// >;
+// type NotionSourceJobsThreeInsert = z.infer<
+//   typeof insertNotionSourceJobsThreeSchema
+// >;
+// type NotionSourceJobsFourInsert = z.infer<
+//   typeof insertNotionSourceJobsFourSchema
+// >;
 
 export async function GET(request: NextRequest): Promise<Response> {
   const url = new URL(request.url);
@@ -40,6 +42,10 @@ export async function GET(request: NextRequest): Promise<Response> {
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const user = await clerkClient().users.getUser(userId!);
+  const isPremium = user.privateMetadata.isPremium as boolean;
+
   const posthogClient = PostHogClient();
 
   posthogClient.capture({
@@ -126,23 +132,31 @@ export async function GET(request: NextRequest): Promise<Response> {
       encryptionKey
     );
 
+    let profile: Profile;
+
     await db.transaction(async (tx) => {
       const result = await tx
         .update(profiles)
         .set({
           notionAuthData: encryptedAuthData,
         })
-        .where(eq(profiles.userId, userId));
+        .where(eq(profiles.userId, userId))
+        .returning();
 
-      if (result.length === 0) {
-        await tx
+      profile = result[0];
+
+      if (!profile) {
+        const resultNew = await tx
           .insert(profiles)
           .values({
             notionAuthData: encryptedAuthData,
             userId: userId,
             userStatus: "ACTIVE",
           })
-          .onConflictDoNothing();
+          .onConflictDoNothing()
+          .returning();
+
+        profile = resultNew[0];
       }
     });
 
@@ -162,15 +176,16 @@ export async function GET(request: NextRequest): Promise<Response> {
 
       const [sourcesOne, sourcesTwo, sourcesThree, sourcesFour] = splitArray(
         sources,
-        4
+        1
+        // 4
       );
 
-      const tables = [
-        notionSourceJobsOne,
-        notionSourceJobsTwo,
-        notionSourceJobsThree,
-        notionSourceJobsFour,
-      ];
+      // const tables = [
+      //   notionSourceJobsOne,
+      //   notionSourceJobsTwo,
+      //   notionSourceJobsThree,
+      //   notionSourceJobsFour,
+      // ];
 
       const sourceChunks = [sourcesOne, sourcesTwo, sourcesThree, sourcesFour];
 
@@ -183,23 +198,29 @@ export async function GET(request: NextRequest): Promise<Response> {
         const toInsert: NotionSourceJobsOneInsert[] = nonEmptyChunks[i].map(
           (source) => ({
             sourceId: source.id,
-            status: "PENDING",
+            profileId: profile.id,
+            status: "READY",
             newConnection: true,
           })
         );
 
-        if (tables[i] && toInsert.length > 0) {
-          await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
-        } else {
-          console.error(`Table at index ${i} is undefined`);
-        }
+        await db
+          .insert(notionSourceJobsOne)
+          .values(toInsert)
+          .onConflictDoNothing();
+
+        // if (tables[i] && toInsert.length > 0) {
+        //   await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
+        // } else {
+        //   console.error(`Table at index ${i} is undefined`);
+        // }
       }
     }
 
-    const redirectUrl = new URL(
-      `${domain}/dashboard/notion-setup-began`,
-      request.url
-    );
+    const redirectUrl = isPremium
+      ? new URL(`${domain}/premium/notion-setup-began`, request.url)
+      : new URL(`${domain}/dashboard/notion-setup-began`, request.url);
+
     redirectUrl.searchParams.set("redirect", "true");
     return NextResponse.redirect(redirectUrl);
   } catch (error) {

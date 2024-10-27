@@ -11,6 +11,8 @@ import { ModeToggle } from "@/components/ModeToggle";
 import dynamic from "next/dynamic";
 import CookieConsent from "@/components/CookieConsent";
 import { DropdownMenuNav } from "@/components/DropdownMenuNav";
+import { auth, clerkClient } from "@clerk/nextjs/server";
+import { IsPremiumSetter } from "@/components/IsPremiumSetter";
 
 const ConditionalPH = dynamic(() => import("@/components/ConditionalPH"), {
   ssr: false,
@@ -60,11 +62,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+    const { userId }: { userId: string | null } = auth();
+    let isPremium = false;
+
+    if (userId) {
+      const user = await clerkClient().users.getUser(userId!);
+      isPremium = user.privateMetadata.isPremium as boolean;
+    }
+
   return (
     <ClerkProvider
       appearance={{
@@ -75,6 +87,7 @@ export default function RootLayout({
         <html lang="en" className="h-full">
           <div className="-z-50 fixed top-0 left-0 right-0 h-screen w-full bg-gradient-to-b  from-background via-card to-background"></div>
           <body className={poppins.className + " h-full"}>
+            <IsPremiumSetter isPremium={isPremium} />
             <ThemeProvider
               attribute="class"
               defaultTheme="system"

@@ -1,5 +1,6 @@
 "use server";
 
+import PostHogClient from "@/app/posthog";
 import { db } from "@/db";
 import {
   sources,
@@ -16,9 +17,9 @@ import {
   selectUnearthedKeySchema,
   unearthedKeys,
   notionSourceJobsOne,
-  notionSourceJobsTwo,
-  notionSourceJobsThree,
-  notionSourceJobsFour,
+  // notionSourceJobsTwo,
+  // notionSourceJobsThree,
+  // notionSourceJobsFour,
   insertNotionSourceJobsOneSchema,
 } from "@/db/schema";
 import {
@@ -704,53 +705,74 @@ export const syncToNotion = async () => {
     )
     .where(eq(profiles.userId, userId));
 
-  const sourcesResults: Source[] = dbResults.map((result) => result.sources);
+  type SourceResult = {
+    id: string;
+    profile: Profile | null;
+  };
+
+  const sourcesResults = dbResults.map(
+    (result): SourceResult => ({
+      ...result.sources,
+      profile: result.profiles,
+    })
+  );
+
+  if (!sourcesResults || sourcesResults.length === 0) {
+    throw new Error("sourcesResults failed");
+  }
 
   // delete all existing jobs for that user first
   const sourceIds = sourcesResults.map((source) => source.id);
   await db
     .delete(notionSourceJobsOne)
     .where(inArray(notionSourceJobsOne.sourceId, sourceIds));
-  await db
-    .delete(notionSourceJobsTwo)
-    .where(inArray(notionSourceJobsTwo.sourceId, sourceIds));
-  await db
-    .delete(notionSourceJobsThree)
-    .where(inArray(notionSourceJobsThree.sourceId, sourceIds));
-  await db
-    .delete(notionSourceJobsFour)
-    .where(inArray(notionSourceJobsFour.sourceId, sourceIds));
+  // await db
+  //   .delete(notionSourceJobsTwo)
+  //   .where(inArray(notionSourceJobsTwo.sourceId, sourceIds));
+  // await db
+  //   .delete(notionSourceJobsThree)
+  //   .where(inArray(notionSourceJobsThree.sourceId, sourceIds));
+  // await db
+  //   .delete(notionSourceJobsFour)
+  //   .where(inArray(notionSourceJobsFour.sourceId, sourceIds));
 
   const [sourcesOne, sourcesTwo, sourcesThree, sourcesFour] = splitArray(
     sourcesResults,
-    4
+    1
+    // 4
   );
 
-  const tables = [
-    notionSourceJobsOne,
-    notionSourceJobsTwo,
-    notionSourceJobsThree,
-    notionSourceJobsFour,
-  ];
+  // const tables = [
+  //   notionSourceJobsOne,
+  //   notionSourceJobsTwo,
+  //   notionSourceJobsThree,
+  //   notionSourceJobsFour,
+  // ];
   const sourceChunks = [sourcesOne, sourcesTwo, sourcesThree, sourcesFour];
   const nonEmptyChunks = sourceChunks.filter(
     (chunk): chunk is NonNullable<typeof chunk> =>
       Array.isArray(chunk) && chunk.length > 0
   );
   for (let i = 0; i < nonEmptyChunks.length; i++) {
-    const toInsert: NotionSourceJobsOneInsert[] = nonEmptyChunks[i].map(
-      (source) => ({
+    const toInsert = nonEmptyChunks[i].map((source: SourceResult) => {
+      if (!source.profile) {
+        throw new Error(`Source ${source.id} has no associated profile`);
+      }
+      return {
         sourceId: source.id,
-        status: "PENDING",
+        profileId: source.profile.id!,
+        status: "READY",
         newConnection: false,
-      })
-    );
+      };
+    });
 
-    if (tables[i] && toInsert.length > 0) {
-      await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
-    } else {
-      console.error(`Table at index ${i} is undefined`);
-    }
+    await db.insert(notionSourceJobsOne).values(toInsert).onConflictDoNothing();
+
+    // if (tables[i] && toInsert.length > 0) {
+    //   await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
+    // } else {
+    //   console.error(`Table at index ${i} is undefined`);
+    // }
   }
 
   return { success: true };
@@ -762,24 +784,31 @@ export const syncSourceToNotion = async (sourceId: string) => {
     return { success: false };
   }
 
+  const profile = await getProfile();
+
   // delete all existing jobs for first
   await db
     .delete(notionSourceJobsOne)
     .where(eq(notionSourceJobsOne.sourceId, sourceId));
-  await db
-    .delete(notionSourceJobsTwo)
-    .where(eq(notionSourceJobsTwo.sourceId, sourceId));
-  await db
-    .delete(notionSourceJobsThree)
-    .where(eq(notionSourceJobsThree.sourceId, sourceId));
-  await db
-    .delete(notionSourceJobsFour)
-    .where(eq(notionSourceJobsFour.sourceId, sourceId));
+  // await db
+  //   .delete(notionSourceJobsTwo)
+  //   .where(eq(notionSourceJobsTwo.sourceId, sourceId));
+  // await db
+  //   .delete(notionSourceJobsThree)
+  //   .where(eq(notionSourceJobsThree.sourceId, sourceId));
+  // await db
+  //   .delete(notionSourceJobsFour)
+  //   .where(eq(notionSourceJobsFour.sourceId, sourceId));
 
   // insert job
   await db
     .insert(notionSourceJobsOne)
-    .values({ sourceId: sourceId, status: "PENDING", newConnection: false })
+    .values({
+      sourceId: sourceId,
+      status: "READY",
+      profileId: profile.id!,
+      newConnection: false,
+    })
     .onConflictDoNothing();
 
   return { success: true };
@@ -822,6 +851,8 @@ export const firstNotionSync = async (): Promise<{
   const notion = new Client({ auth: notionAuthData.access_token });
   const notionUserId = notionAuthData.owner?.user?.id;
   if (!notionUserId) return { success: false, error: "No Notion user ID" };
+
+  const posthogClient = PostHogClient();
 
   let notionBooksDatabaseId: string;
 
@@ -874,6 +905,14 @@ export const firstNotionSync = async (): Promise<{
       ),
     });
 
+    posthogClient.capture({
+      distinctId: userId,
+      event: `firstNotionSync`,
+      properties: {
+        sourcesLength: dbResult ? dbResult.length : 0,
+      },
+    });
+
     const sourcesResult = z
       .array(selectSourceWithRelationsSchema)
       .parse(dbResult);
@@ -885,6 +924,14 @@ export const firstNotionSync = async (): Promise<{
     return { success: true, sources: sourcesResult };
   } catch (error) {
     console.error("Error querying sources:", error);
+    posthogClient.capture({
+      distinctId: userId,
+      event: `firstNotionSync Error`,
+      properties: {
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      },
+    });
     return { success: false, error: "Failed to query sources" };
   }
 };

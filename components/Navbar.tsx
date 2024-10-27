@@ -16,17 +16,29 @@ import { usePathname } from "next/navigation";
 import { SearchDialog } from "./SearchDialog";
 
 import { Crimson_Pro } from "next/font/google";
+import { useEffect, useState } from "react";
+import { getIsPremium } from "@/lib/utils";
 
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 export function Navbar() {
+  const [isPremium, setIsPremium] = useState(false);
+
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const pathname = usePathname();
   const activeStyles =
     "text-foreground text-2xl lg:text-5xl border-b-4 border-primary -mb-[11px] z-5 pb-[16px]";
 
-  // Function to check if the current path is active
   const isActive = (href: string) => pathname === href;
+
+  useEffect(() => {
+    const fetchPremiumStatus = async () => {
+      const isPremium = await getIsPremium();
+      setIsPremium(isPremium);
+    };
+
+    fetchPremiumStatus();
+  }, []);
 
   if (isDesktop) {
     return (
@@ -35,39 +47,83 @@ export function Navbar() {
           <div className="flex flex-wrap">
             <div className="flex space-x-10 items-end text-base text-muted pb-2">
               <SignedIn>
-                <Link href="/dashboard/home">
-                  <h3
-                    className={`${
-                      crimsonPro.className
-                    } transition-all duration-100 animate-all font-semibold hover:text-secondary ${
-                      isActive("/dashboard/home") ? activeStyles : ""
-                    }`}
-                  >
-                    Home
-                  </h3>
-                </Link>
-                <Link href="/dashboard/books">
-                  <h3
-                    className={`${
-                      crimsonPro.className
-                    } transition-all duration-100 font-semibold hover:text-secondary ${
-                      isActive("/dashboard/books") ? activeStyles : ""
-                    }`}
-                  >
-                    Books
-                  </h3>
-                </Link>
-                <Link href="/dashboard/books-ignored">
-                  <h3
-                    className={`${
-                      crimsonPro.className
-                    } transition-all duration-100 font-semibold hover:text-secondary ${
-                      isActive("/dashboard/books-ignored") ? activeStyles : ""
-                    }`}
-                  >
-                    Ignored Books
-                  </h3>
-                </Link>
+                {isPremium ? (
+                  <>
+                    <Link href="/premium/home">
+                      <h3
+                        className={`${
+                          crimsonPro.className
+                        } transition-all duration-100 animate-all font-semibold hover:text-secondary ${
+                          isActive("/premium/home") ? activeStyles : ""
+                        }`}
+                      >
+                        Home
+                      </h3>
+                    </Link>
+                    <Link href="/premium/books">
+                      <h3
+                        className={`${
+                          crimsonPro.className
+                        } transition-all duration-100 font-semibold hover:text-secondary ${
+                          isActive("/premium/books") ? activeStyles : ""
+                        }`}
+                      >
+                        Books
+                      </h3>
+                    </Link>
+                    <Link href="/premium/books-ignored">
+                      <h3
+                        className={`${
+                          crimsonPro.className
+                        } transition-all duration-100 font-semibold hover:text-secondary ${
+                          isActive("/premium/books-ignored")
+                            ? activeStyles
+                            : ""
+                        }`}
+                      >
+                        Ignored Books
+                      </h3>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/dashboard/home">
+                      <h3
+                        className={`${
+                          crimsonPro.className
+                        } transition-all duration-100 animate-all font-semibold hover:text-secondary ${
+                          isActive("/dashboard/home") ? activeStyles : ""
+                        }`}
+                      >
+                        Home
+                      </h3>
+                    </Link>
+                    <Link href="/dashboard/books">
+                      <h3
+                        className={`${
+                          crimsonPro.className
+                        } transition-all duration-100 font-semibold hover:text-secondary ${
+                          isActive("/dashboard/books") ? activeStyles : ""
+                        }`}
+                      >
+                        Books
+                      </h3>
+                    </Link>
+                    <Link href="/dashboard/books-ignored">
+                      <h3
+                        className={`${
+                          crimsonPro.className
+                        } transition-all duration-100 font-semibold hover:text-secondary ${
+                          isActive("/dashboard/books-ignored")
+                            ? activeStyles
+                            : ""
+                        }`}
+                      >
+                        Ignored Books
+                      </h3>
+                    </Link>
+                  </>
+                )}
               </SignedIn>
             </div>
           </div>

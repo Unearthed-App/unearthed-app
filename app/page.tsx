@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
 import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
@@ -16,7 +16,7 @@ import { AnimatedGroup } from "@/components/ui/animated-group";
 import { AboutMe } from "@/components/AboutMe";
 import { HomeHeader } from "@/components/HomeHeader";
 import { HomeCarousel } from "@/components/HomeCarousel";
-
+import { auth, clerkClient } from "@clerk/nextjs/server";
 
 export const metadata: Metadata = {
   title: "Unearthed - Lost wisdom, found again",
@@ -57,7 +57,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function App() {
+export default async function App() {
+  const { userId }: { userId: string | null } = auth();
+  let isPremium = false;
+
+  if (userId) {
+    const user = await clerkClient().users.getUser(userId!);
+    isPremium = user.privateMetadata.isPremium as boolean;
+  }
+
   return (
     <>
       <SignedIn>
@@ -75,7 +83,10 @@ export default function App() {
               <h2 className="w-full md:w-auto text-lg md:text-2xl">
                 Check out your{" "}
               </h2>
-              <Link className="w-full md:w-auto" href="/dashboard/home">
+              <Link
+                className="w-full md:w-auto"
+                href={isPremium ? "/premium/home" : "/dashboard/home"}
+              >
                 <Button
                   className="mt-2 md:-mt-1 w-full md:w-auto"
                   variant="brutalprimary"
@@ -155,12 +166,12 @@ export default function App() {
           </div>
 
           <div className="mt-24">
-            <Link href="/dashboard/home">
+            <SignInButton>
               <Button variant="brutalprimary" className="flex space-x-2">
                 Sign In / Up
                 <LogIn className="ml-2" />
               </Button>
-            </Link>
+            </SignInButton>
           </div>
         </main>
       </SignedOut>

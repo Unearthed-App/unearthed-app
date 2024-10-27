@@ -1,17 +1,15 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { LogIn } from "lucide-react";
 import { Crimson_Pro } from "next/font/google";
+import { SignInButton } from "@clerk/nextjs";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 export const HomeHeader = () => {
   return (
     <>
       <div className="w-full">
-        <div
-          className="text-center"
-        >
+        <div className="text-center">
           <div className="flex items-center justify-center">
             <div className="relative">
               <Badge
@@ -35,18 +33,13 @@ export const HomeHeader = () => {
           </h3>
         </div>
       </div>
-      <div
-        className="md:mb-12"
-      >
-        <Link href="/dashboard/home">
-          <Button
-            variant="brutalprimary"
-            className="flex space-x-2 px-12 py-6"
-          >
+      <div className="md:mb-12">
+        <SignInButton>
+          <Button variant="brutalprimary" className="flex space-x-2 px-12 py-6">
             Sign In / Up
             <LogIn className="ml-2" />
           </Button>
-        </Link>
+        </SignInButton>
       </div>
     </>
   );

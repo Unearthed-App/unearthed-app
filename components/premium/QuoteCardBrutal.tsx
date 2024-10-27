@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Copy } from "lucide-react";
+import { Copy, Trash } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import {
   Tooltip,
@@ -7,15 +7,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
+import { deleteQuote } from "@/server/actions-premium";
 
 interface QuoteCardProps {
+  onQuoteDeleted: () => void;
   bookTitle: string;
   bookAuthor: string;
   quote: string;
   note?: string;
   location: string;
   color: string;
+  id: string;
+  origin: string;
 }
 
 const colorLookup = {
@@ -84,12 +88,15 @@ const colorLookup = {
 type ColorKey = keyof typeof colorLookup;
 
 export function QuoteCardBrutal({
+  onQuoteDeleted,
   bookTitle,
   bookAuthor,
   quote,
   note,
   location,
   color,
+  id,
+  origin,
 }: QuoteCardProps) {
   const matchingColor = Object.keys(colorLookup).find((key) =>
     color.toLowerCase().includes(key)
@@ -104,6 +111,24 @@ export function QuoteCardBrutal({
       title: "Text Copied to Clipboard",
       description: textCopied,
     });
+  };
+
+  const removeQuote = async () => {
+    try {
+      await deleteQuote({ quoteId: id });
+      toast({
+        title: "Quote deleted",
+        description: "",
+      });
+      onQuoteDeleted();
+    } catch (error) {
+      toast({
+        title: "Sorry",
+        description: "Something went wrong. Please try again later",
+        variant: "destructive",
+      });
+      return false;
+    }
   };
 
   return (
@@ -130,9 +155,29 @@ export function QuoteCardBrutal({
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+              {origin == "UNEARTHED" && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        className={`w-6 h-6 p-1 ${colorScheme.background} ${colorScheme.buttonShadow} ${colorScheme.buttonShadowDark} hover:bg-destructive dark:hover:bg-destructive`}
+                        onClick={removeQuote}
+                        size="tiny"
+                      >
+                        <Trash />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                      <p>Delete the Quote</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
 
-            <p className={`text-sm md:text-base ${colorScheme.text}`}>
+            <p
+              className={`whitespace-pre-wrap text-sm md:text-base ${colorScheme.text}`}
+            >
               {quote}
             </p>
           </div>
@@ -144,7 +189,7 @@ export function QuoteCardBrutal({
         </div>
         {note && (
           <div className="-mt-10 flex my-2 px-8">
-            <p className="ml-2 text-sm text-muted-foreground pt-2">
+            <p className="ml-2 text-sm text-muted-foreground pt-2 whitespace-pre-wrap">
               <span className="text-sm md:text-base font-bold text-secondary">
                 Notes:{" "}
               </span>

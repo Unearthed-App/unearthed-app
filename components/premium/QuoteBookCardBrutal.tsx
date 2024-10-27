@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
-import { Copy } from "lucide-react";
+
+import Link from "next/link";
 import { toast } from "@/hooks/use-toast";
 import {
   Tooltip,
@@ -7,15 +8,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
+import { Copy } from "lucide-react";
 
 interface QuoteCardProps {
+  bookId: string;
   bookTitle: string;
   bookAuthor: string;
   quote: string;
   note?: string;
   location: string;
   color: string;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const colorLookup = {
@@ -26,10 +29,6 @@ const colorLookup = {
     line: "border-black dark:border-neutral-500",
     shadow: "",
     border: "border-2 border-black dark:border-white",
-    buttonShadow:
-      "shadow-[2px_2px_0px_rgba(100,100,100,1)] hover:shadow-[1px_1px_0px_rgba(100,100,100,1)] active:shadow-[0px_0px_0px_rgba(100,100,100,1)]",
-    buttonShadowDark:
-      "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
   },
   yellow: {
     foreground: "bg-yellow-300 dark:bg-yellow-500 bg-opacity-100",
@@ -38,10 +37,6 @@ const colorLookup = {
     line: "border-yellow-500 dark:border-yellow-500",
     shadow: "shadow-yellow-500/10 dark:shadow-yellow-700/10",
     border: "border-2 border-yellow-500 dark:border-yellow-500",
-    buttonShadow:
-      "border-yellow-500 shadow-[2px_2px_0px_rgba(234,179,8,1)] hover:shadow-[1px_1px_0px_rgba(234,179,8,1)] active:shadow-[0px_0px_0px_rgba(234,179,8,1)]",
-    buttonShadowDark:
-      "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
   },
   blue: {
     foreground: "bg-blue-300 dark:bg-blue-500 bg-opacity-100",
@@ -50,10 +45,6 @@ const colorLookup = {
     line: "border-blue-500 dark:border-blue-500",
     shadow: "shadow-blue-500/10 dark:shadow-blue-700/10",
     border: "border-2 border-blue-500 dark:border-blue-500",
-    buttonShadow:
-      "border-blue-500 shadow-[2px_2px_0px_rgba(59,130,246,1)] hover:shadow-[1px_1px_0px_rgba(59,130,246,1)] active:shadow-[0px_0px_0px_rgba(59,130,246,1)]",
-    buttonShadowDark:
-      "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
   },
   pink: {
     foreground: "bg-pink-300 dark:bg-pink-500 bg-opacity-100",
@@ -62,10 +53,6 @@ const colorLookup = {
     line: "border-pink-500 dark:border-pink-500",
     shadow: "shadow-pink-500/10 dark:shadow-pink-700/10",
     border: "border-2 border-pink-500 dark:border-pink-500",
-    buttonShadow:
-      "border-pink-500 shadow-[2px_2px_0px_rgba(236,72,153,1)] hover:shadow-[1px_1px_0px_rgba(236,72,153,1)] active:shadow-[0px_0px_0px_rgba(236,72,153,1)]",
-    buttonShadowDark:
-      "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
   },
   orange: {
     foreground: "bg-orange-300 dark:bg-orange-500 bg-opacity-100",
@@ -74,22 +61,20 @@ const colorLookup = {
     line: "border-orange-500 dark:border-orange-500",
     shadow: "shadow-orange-500/10 dark:shadow-orange-700/10",
     border: "border-2 border-orange-500 dark:border-orange-500",
-    buttonShadow:
-      "border-orange-500 shadow-[2px_2px_0px_rgba(249,115,22,1)] hover:shadow-[1px_1px_0px_rgba(249,115,22,1)] active:shadow-[0px_0px_0px_rgba(249,115,22,1)]",
-    buttonShadowDark:
-      "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
   },
 } as const;
 
 type ColorKey = keyof typeof colorLookup;
 
-export function QuoteCardBrutal({
+export function QuoteBookCardBrutal({
+  bookId,
   bookTitle,
   bookAuthor,
   quote,
   note,
   location,
   color,
+  setOpen,
 }: QuoteCardProps) {
   const matchingColor = Object.keys(colorLookup).find((key) =>
     color.toLowerCase().includes(key)
@@ -110,37 +95,49 @@ export function QuoteCardBrutal({
     <div className="flex flex-col justify-between">
       <div>
         <div
-          className={`shadow-xl ${colorScheme.shadow} ${colorScheme.border} h-full p-4 flex ${colorScheme.background} rounded-lg relative py-8 `}
+          className={`shadow-xl ${colorScheme.shadow} ${colorScheme.border} h-full p-4 flex ${colorScheme.background} rounded-lg relative py-8`}
         >
           <div className={`border-l-4 ${colorScheme.line} pl-4 h-full`}>
-            <div className="z-50 -mt-6 mr-2 right-0 absolute flex space-x-1">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      className={`z-50 w-6 h-6 p-1 ${colorScheme.background} ${colorScheme.buttonShadow} ${colorScheme.buttonShadowDark}`}
-                      onClick={copyQuote}
-                      size="tiny"
-                    >
-                      <Copy />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
-                    <p>Copy the Quote</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div
+                    onClick={copyQuote}
+                    className={`cursor-pointer -mt-6 mr-2 right-0 absolute w-6 h-6 p-1 bordersdf-2 ${colorScheme.border} ${colorScheme.background} flex items-center justify-center rounded-lg hover:bg-primary/90`}
+                  >
+                    <Copy />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                  <p>Copy the Quote</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <p className={`text-sm md:text-base ${colorScheme.text}`}>
               {quote}
             </p>
           </div>
         </div>
-        <div className="relative -top-6 right-4 flex justify-end py-2">
-          <Badge className="z-0 " variant="brutal">
-            {location}
-          </Badge>
+
+        <div className="relative -top-6 flex justify-between py-2">
+          <div className="ml-4">
+            <Link
+              href={`/premium/book/${bookId}`}
+              className="w-full text-lg block"
+              onClick={(e) => {
+                setOpen(false);
+              }}
+            >
+              <Badge className="z-0" variant="brutalinvert">
+                {bookTitle}
+              </Badge>{" "}
+            </Link>
+          </div>
+          <div className="mr-4">
+            <Badge className="z-0" variant="brutal">
+              {location}
+            </Badge>
+          </div>
         </div>
         {note && (
           <div className="-mt-10 flex my-2 px-8">

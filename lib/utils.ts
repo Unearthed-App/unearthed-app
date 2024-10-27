@@ -69,3 +69,8 @@ export function splitArray<T>(array: T[] | undefined, parts: number): T[][] {
   }
   return result;
 }
+
+export async function getIsPremium() {
+  const isPremium = localStorage.getItem("isPremium");
+  return isPremium === "true" ? true : false;
+}
