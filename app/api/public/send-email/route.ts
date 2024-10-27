@@ -53,8 +53,6 @@ export async function GET() {
 
   const profileResults = await db.query.profiles.findMany({
     where: and(
-      isNotNull(profiles.capacitiesApiKey),
-      isNotNull(profiles.capacitiesSpaceId),
       eq(profiles.userStatus, "ACTIVE")
     ),
   });
