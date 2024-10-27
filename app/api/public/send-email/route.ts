@@ -1,17 +1,24 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
-
 import { db } from "@/db";
+import { and, eq, isNotNull } from "drizzle-orm";
+import PostHogClient from "@/app/posthog";
+import { clerkClient } from "@clerk/nextjs/server";
+import DailyEmail from "@/emails/daily-email";
+import { Resend } from "resend";
+import { getTodaysDate } from "@/lib/utils";
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 import {
+  profiles,
+  selectProfileSchema,
   sources,
   selectQuoteSchema,
   insertDailyQuotesSchema,
   quotes,
-  profiles,
   dailyQuotes,
   selectQuoteWithRelationsSchema,
   selectSourceSchema,
-  selectProfileSchema,
 } from "@/db/schema";
 import { decrypt } from "@/lib/auth/encryptionKey";
 import { z } from "zod";
@@ -22,17 +29,13 @@ type Quote = z.infer<typeof selectQuoteSchema>;
 type Profile = z.infer<typeof selectProfileSchema>;
 type DailyQuote = z.infer<typeof insertDailyQuotesSchema>;
 
-import { clerkClient } from "@clerk/nextjs/server";
-import { isNotNull, and, eq } from "drizzle-orm";
-import { capacitiesFormatDaily } from "@/server/actions";
-import { getTodaysDate } from "@/lib/utils";
-
 interface DailyReflection {
   source: Source;
   quote: Quote;
 }
 
 export async function GET() {
+  const posthogClient = PostHogClient();
   const headersList = headers();
   const authHeader = headersList.get("authorization");
 
@@ -48,59 +51,103 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const dbResult = await db.query.profiles.findMany({
-      where: and(
-        isNotNull(profiles.capacitiesApiKey),
-        isNotNull(profiles.capacitiesSpaceId),
-        eq(profiles.userStatus, "ACTIVE"),
-      ),
-    });
+  const profileResults = await db.query.profiles.findMany({
+    where: and(
+      isNotNull(profiles.capacitiesApiKey),
+      isNotNull(profiles.capacitiesSpaceId),
+      eq(profiles.userStatus, "ACTIVE")
+    ),
+  });
 
-    for (const profile of dbResult) {
-      try {
-        const user = await clerkClient().users.getUser(profile.userId);
+  const userIds = profileResults.map((profile) => profile.userId);
+  let premiumUsers: any[] = [];
+  for (const userId of userIds) {
+    try {
+      const user = await clerkClient().users.getUser(userId);
+      const isPremium = user.privateMetadata.isPremium as boolean;
 
-        const encryptionKey = user.privateMetadata.encryptionKey as string;
+      if (isPremium) {
+        premiumUsers.push(user);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-        if (!profile.utcOffset) {
-          continue;
-        }
+  console.log("premiumUsers", premiumUsers);
 
-        const dailyReflectionExisting = await getDailyReflection(
-          profile.userId,
-          profile.utcOffset as number,
-          encryptionKey
-        );
+  for (const user of premiumUsers) {
+    console.log("user.emailAddresses", user.emailAddresses);
+    try {
+      const encryptionKey = user.privateMetadata.encryptionKey as string;
 
-        if (dailyReflectionExisting) {
-          continue;
-        }
-
-        const dailyReflection = (await createDailyReflection(
-          profile,
-          encryptionKey
-        )) as DailyReflection;
-
-        profile.capacitiesApiKey = profile.capacitiesApiKey
-          ? await decrypt(profile.capacitiesApiKey as string, encryptionKey)
-          : "";
-
-        profile.capacitiesSpaceId = profile.capacitiesSpaceId
-          ? await decrypt(profile.capacitiesSpaceId as string, encryptionKey)
-          : "";
-
-        await addDailyToCapacities(profile, dailyReflection);
-      } catch (error) {
+      if (!encryptionKey) {
         continue;
       }
-    }
 
-    return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Error" }, { status: 500 });
+      const profile = profileResults.find(
+        (profile) => profile.userId === user.id
+      );
+
+      if (!profile) {
+        continue;
+      }
+
+      const dailyReflectionExisting = await getDailyReflection(
+        profile.userId,
+        profile.utcOffset as number,
+        encryptionKey
+      );
+
+      if (dailyReflectionExisting) {
+        continue;
+      }
+
+      const dailyReflection = (await createDailyReflection(
+        profile,
+        encryptionKey
+      )) as DailyReflection;
+
+
+      const sendData = {
+        from: "Unearthed <contact@unearthed.app>",
+        to: [user.emailAddresses[0].emailAddress],
+        subject: "Daily Reflection",
+        react: DailyEmail({
+          title: dailyReflection.source.title,
+          author: dailyReflection.source.author as string,
+          subtitle: dailyReflection.source.subtitle as string,
+          imageUrl: dailyReflection.source.imageUrl as string,
+          content: dailyReflection.quote.content as string,
+          note: dailyReflection.quote.note as string,
+          location: dailyReflection.quote.location as string,
+          color: dailyReflection.quote.color as string,
+        }),
+      };
+
+      console.log("dailyReflection", dailyReflection);
+      console.log("sendData", sendData);
+      const { data, error } = await resend.emails.send(sendData);
+
+      if (error) {
+        return Response.json({ error }, { status: 500 });
+      }
+
+      return Response.json(data);
+    } catch (error) {
+      posthogClient.capture({
+        distinctId: user.id,
+        event: `send-email ERROR`,
+        properties: {
+          message:
+            error instanceof Error ? error.message : "Unknown error occurred",
+        },
+      });
+      return Response.json({ error }, { status: 500 });
+    }
   }
+
+  return NextResponse.json({ success: true }, { status: 200 });
 }
 
 const getDailyReflection = async (
@@ -203,56 +250,6 @@ const createDailyReflection = async (
       ? await decrypt(randomQuote.note, encryptionKey)
       : "";
     return { source: randomSource, quote: randomQuote };
-  } catch (error) {
-    console.error(error);
-    return {};
-  }
-};
-
-const addDailyToCapacities = async (
-  profile: Profile,
-  dailyReflection: DailyReflection
-) => {
-  const { source, quote } = dailyReflection;
-  const sourceTitle = source.title;
-  const sourceAuthor = source.author;
-  const quoteContent = quote.content;
-  const quoteNote = quote.note;
-  const quoteLocation = quote.location;
-
-  if (!profile.capacitiesSpaceId) {
-    return false;
-  }
-
-  const mdText = await capacitiesFormatDaily(
-    sourceTitle as string,
-    sourceAuthor as string,
-    quoteContent as string,
-    quoteNote as string,
-    quoteLocation as string
-  );
-
-  const body = {
-    spaceId: profile.capacitiesSpaceId,
-    mdText: mdText,
-    origin: "commandPalette",
-    noTimeStamp: true,
-  };
-  try {
-    const response = await fetch(
-      "https://api.capacities.io/save-to-daily-note",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${profile.capacitiesApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    );
-    const data = await response.text();
-    return { mdText: mdText };
   } catch (error) {
     console.error(error);
     return {};

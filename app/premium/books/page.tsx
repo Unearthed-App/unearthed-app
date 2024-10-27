@@ -164,7 +164,18 @@ export default function Books() {
                     key={book.id}
                     className="flex justify-center"
                   >
-                    <div className="pt-14 md:pt-4 relative mb-2 flex w-full p-2 md:p-4 rounded-lg border-2 bg-card">
+                    <motion.div
+                      whileHover={{
+                        scale: 1.03,
+                        zIndex: 1,
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 17,
+                      }}
+                      className="pt-14 md:pt-4 relative mb-2 flex w-full p-2 md:p-4 rounded-lg border-2 bg-card"
+                    >
                       <div className="absolute md:right-0 top-0 flex pt-2 pr-2 space-x-2">
                         {!isLoadingProfile &&
                           profile?.notionAuthData &&
@@ -278,7 +289,7 @@ export default function Books() {
                             className={`${crimsonPro.className} font-extrabold text-xl md:text-3xl`}
                           >
                             <Link
-                              className="hover:text-primary"
+                              className="hover:text-primary md:pr-36"
                               href={`/premium/book/${book.id}`}
                             >
                               {book.title}
@@ -306,7 +317,7 @@ export default function Books() {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   </motion.div>
                 ))}
               </motion.div>

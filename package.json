@@ -10,7 +10,8 @@
     "db:generate": "DRIZZLE_ENV=development npx drizzle-kit generate",
     "db:migrate-dev": "DRIZZLE_ENV=development npx drizzle-kit migrate",
     "db:migrate-prod": "DRIZZLE_ENV=production bash db-migrate.sh",
-    "ngrok": "ngrok http --domain=saving-weasel-polished.ngrok-free.app 3000"
+    "ngrok": "ngrok http --domain=saving-weasel-polished.ngrok-free.app 3000",
+    "email": "email dev"
   },
   "dependencies": {
     "@clerk/nextjs": "^5.2.13",
@@ -32,6 +33,7 @@
     "@radix-ui/react-toggle": "^1.1.0",
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
+    "@react-email/components": "0.0.25",
     "@react-three/fiber": "^8.16.8",
     "@supabase/supabase-js": "^2.45.1",
     "@tanstack/react-query": "^5.51.23",
@@ -54,9 +56,10 @@
     "postgres": "^3.4.4",
     "posthog-js": "^1.165.1",
     "posthog-node": "^4.2.1",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-hook-form": "^7.53.0",
+    "resend": "^4.0.0",
     "svix": "^1.32.0",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
@@ -75,6 +78,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8.4.40",
+    "react-email": "3.0.1",
     "tailwindcss": "^3.4.7",
     "typescript": "^5"
   }

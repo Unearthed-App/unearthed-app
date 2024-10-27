@@ -7,7 +7,7 @@ frontend:
     build:
       commands:
         # https://docs.aws.amazon.com/amplify/latest/userguide/ssr-environment-variables.html
-        - env | grep -e CLERK_SECRET_KEY -e PROD_DATABASE_URL -e DEV_DATABASE_URL -e DRIZZLE_ENV -e WEBHOOK_SECRET -e CRON_TOKEN -e NOTION_CLIENT_ID -e NOTION_SECRET -e DOMAIN -e QSTASH_TOKEN -e QSTASH_URL -e UPSTASH_WORKFLOW_URL -e ENCRYPTION_KEY >> .env.production
+        - env | grep -e CLERK_SECRET_KEY -e PROD_DATABASE_URL -e DEV_DATABASE_URL -e DRIZZLE_ENV -e WEBHOOK_SECRET -e CRON_TOKEN -e NOTION_CLIENT_ID -e NOTION_SECRET -e DOMAIN -e QSTASH_TOKEN -e QSTASH_URL -e UPSTASH_WORKFLOW_URL -e ENCRYPTION_KEY -e RESEND_API_KEY >> .env.production
         - env | grep -e NEXT_PUBLIC_ >> .env.production
         - npm run build
   artifacts:
