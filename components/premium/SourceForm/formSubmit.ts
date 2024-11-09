@@ -14,8 +14,15 @@ export async function onSubmitAction(data: any) {
     throw new Error("Unauthorized");
   }
 
-  const user = await clerkClient().users.getUser(userId!);
-  const isPremium = user.privateMetadata.isPremium as boolean;
+  let isPremium = false;
+  try {
+    if (userId) {
+      const user = await clerkClient().users.getUser(userId);
+      isPremium = user.privateMetadata.isPremium as boolean;
+    }
+  } catch (error) {
+    isPremium = false;
+  }
 
   if (!isPremium) {
     throw new Error("User not allowed");

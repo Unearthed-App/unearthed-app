@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/db";
-import { and, eq, isNotNull } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import PostHogClient from "@/app/posthog";
 import { clerkClient } from "@clerk/nextjs/server";
 import DailyEmail from "@/emails/daily-email";
@@ -18,24 +18,28 @@ import {
   quotes,
   dailyQuotes,
   selectQuoteWithRelationsSchema,
-  selectSourceSchema,
+  selectSourceWithRelationsSchema,
+  media,
 } from "@/db/schema";
 import { decrypt } from "@/lib/auth/encryptionKey";
 import { z } from "zod";
 
 type QuoteWithRelations = z.infer<typeof selectQuoteWithRelationsSchema>;
-type Source = z.infer<typeof selectSourceSchema>;
+type Source = z.infer<typeof selectSourceWithRelationsSchema>;
 type Quote = z.infer<typeof selectQuoteSchema>;
 type Profile = z.infer<typeof selectProfileSchema>;
 type DailyQuote = z.infer<typeof insertDailyQuotesSchema>;
 
 interface DailyReflection {
+  id: string;
+  emailSent: boolean;
   source: Source;
   quote: Quote;
 }
 
 export async function GET() {
   const posthogClient = PostHogClient();
+
   const headersList = headers();
   const authHeader = headersList.get("authorization");
 
@@ -52,9 +56,7 @@ export async function GET() {
   }
 
   const profileResults = await db.query.profiles.findMany({
-    where: and(
-      eq(profiles.userStatus, "ACTIVE")
-    ),
+    where: and(eq(profiles.userStatus, "ACTIVE")),
   });
 
   const userIds = profileResults.map((profile) => profile.userId);
@@ -72,10 +74,9 @@ export async function GET() {
     }
   }
 
-  console.log("premiumUsers", premiumUsers);
+  let dailyQuoteIdsToUpdate: string[] = [];
 
   for (const user of premiumUsers) {
-    console.log("user.emailAddresses", user.emailAddresses);
     try {
       const encryptionKey = user.privateMetadata.encryptionKey as string;
 
@@ -83,29 +84,41 @@ export async function GET() {
         continue;
       }
 
+      posthogClient.capture({
+        distinctId: user.id,
+        event: `send-email ATTEMPTING`,
+        properties: {
+          sendTo: user.emailAddresses[0].emailAddress,
+        },
+      });
+
       const profile = profileResults.find(
         (profile) => profile.userId === user.id
       );
 
-      if (!profile) {
+      if (!profile || !profile.utcOffset) {
         continue;
       }
 
-      const dailyReflectionExisting = await getDailyReflection(
+      const dailyReflectionExisting = (await getDailyReflection(
         profile.userId,
         profile.utcOffset as number,
         encryptionKey
-      );
+      )) as DailyReflection;
 
-      if (dailyReflectionExisting) {
+      if (dailyReflectionExisting && dailyReflectionExisting.emailSent) {
         continue;
       }
 
-      const dailyReflection = (await createDailyReflection(
-        profile,
-        encryptionKey
-      )) as DailyReflection;
-
+      let dailyReflection;
+      if (dailyReflectionExisting) {
+        dailyReflection = dailyReflectionExisting;
+      } else {
+        dailyReflection = (await createDailyReflection(
+          profile,
+          encryptionKey
+        )) as DailyReflection;
+      }
 
       const sendData = {
         from: "Unearthed <contact@unearthed.app>",
@@ -115,7 +128,9 @@ export async function GET() {
           title: dailyReflection.source.title,
           author: dailyReflection.source.author as string,
           subtitle: dailyReflection.source.subtitle as string,
-          imageUrl: dailyReflection.source.imageUrl as string,
+          imageUrl: dailyReflection.source.media
+            ? (dailyReflection.source.media.url as string)
+            : "",
           content: dailyReflection.quote.content as string,
           note: dailyReflection.quote.note as string,
           location: dailyReflection.quote.location as string,
@@ -123,26 +138,50 @@ export async function GET() {
         }),
       };
 
-      console.log("dailyReflection", dailyReflection);
-      console.log("sendData", sendData);
       const { data, error } = await resend.emails.send(sendData);
 
+      dailyQuoteIdsToUpdate.push(dailyReflection.id);
       if (error) {
-        return Response.json({ error }, { status: 500 });
+        posthogClient.capture({
+          distinctId: user.id,
+          event: `send-email ERROR 1`,
+          properties: {
+            message:
+              error instanceof Error ? error.message : "Unknown error occurred",
+          },
+        });
+        continue;
+      } else {
+        posthogClient.capture({
+          distinctId: user.id,
+          event: `send-email SENT`,
+          properties: {
+            sendTo: user.emailAddresses[0].emailAddress,
+          },
+        });
       }
-
-      return Response.json(data);
     } catch (error) {
+      console.log("error", error);
+
       posthogClient.capture({
         distinctId: user.id,
-        event: `send-email ERROR`,
+        event: `send-email ERROR 2`,
         properties: {
           message:
             error instanceof Error ? error.message : "Unknown error occurred",
         },
       });
-      return Response.json({ error }, { status: 500 });
+      continue;
     }
+  }
+
+  if (dailyQuoteIdsToUpdate.length > 0) {
+    await db
+      .update(dailyQuotes)
+      .set({
+        emailSent: true,
+      })
+      .where(inArray(dailyQuotes.id, dailyQuoteIdsToUpdate));
   }
 
   return NextResponse.json({ success: true }, { status: 200 });
@@ -161,7 +200,8 @@ const getDailyReflection = async (
       .from(dailyQuotes)
       .where(and(eq(dailyQuotes.day, todaysDate), eq(sources.userId, userId)))
       .leftJoin(quotes, eq(quotes.id, dailyQuotes.quoteId))
-      .leftJoin(sources, eq(sources.id, quotes.sourceId))) as any;
+      .leftJoin(sources, eq(sources.id, quotes.sourceId))
+      .leftJoin(media, eq(media.id, sources.mediaId))) as any;
 
     if (dailyQuoteWithRelationsResult.length > 0) {
       dailyQuoteWithRelationsResult = dailyQuoteWithRelationsResult[0];
@@ -179,6 +219,8 @@ const getDailyReflection = async (
         : "";
 
       return {
+        id: dailyQuoteResult.id,
+        emailSent: dailyQuoteResult.emailSent,
         source: dailyQuoteWithRelationsResult.sources,
         quote: dailyQuoteWithRelationsResult.quotes,
       };
@@ -209,7 +251,11 @@ const createDailyReflection = async (
 
     const quotesResult = await db.query.quotes.findMany({
       with: {
-        source: true,
+        source: {
+          with: {
+            media: true,
+          },
+        },
       },
       where: and(eq(quotes.userId, profile.userId)),
     });
@@ -230,7 +276,7 @@ const createDailyReflection = async (
     );
 
     randomQuote = quotesResultFiltered[randomQuoteIndex] as QuoteWithRelations;
-    randomSource = randomQuote.source;
+    randomSource = randomQuote.source as Source;
 
     const toInsert = {
       quoteId: randomQuote.id,
@@ -247,7 +293,12 @@ const createDailyReflection = async (
     randomQuote.note = randomQuote.note
       ? await decrypt(randomQuote.note, encryptionKey)
       : "";
-    return { source: randomSource, quote: randomQuote };
+    return {
+      id: newDailyQuote[0].id,
+      emailSent: newDailyQuote[0].emailSent,
+      source: randomSource,
+      quote: randomQuote,
+    };
   } catch (error) {
     console.error(error);
     return {};

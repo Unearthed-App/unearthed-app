@@ -5,9 +5,9 @@ import {
   insertNotionSourceJobsOneSchema,
   notionSourceJobsOne,
   // insertNotionSourceJobsTwoSchema,
-  // notionSourceJobsTwo,
+  notionSourceJobsTwo,
   // insertNotionSourceJobsThreeSchema,
-  // notionSourceJobsThree,
+  notionSourceJobsThree,
   // insertNotionSourceJobsFourSchema,
   // notionSourceJobsFour,
   profiles,
@@ -43,8 +43,15 @@ export async function GET(request: NextRequest): Promise<Response> {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = await clerkClient().users.getUser(userId!);
-  const isPremium = user.privateMetadata.isPremium as boolean;
+  let isPremium = false;
+  try {
+    if (userId) {
+      const user = await clerkClient().users.getUser(userId);
+      isPremium = user.privateMetadata.isPremium as boolean;
+    }
+  } catch (error) {
+    isPremium = false;
+  }
 
   const posthogClient = PostHogClient();
 
@@ -160,12 +167,13 @@ export async function GET(request: NextRequest): Promise<Response> {
       }
     });
 
-    let { success, sources } = await firstNotionSync();
+    let { success, error, sources } = await firstNotionSync();
     posthogClient.capture({
       distinctId: userId,
       event: `notion-redirect firstNotionSync`,
       properties: {
         success,
+        error,
         sourcesLength: sources ? sources.length : 0,
       },
     });
@@ -176,23 +184,27 @@ export async function GET(request: NextRequest): Promise<Response> {
 
       const [sourcesOne, sourcesTwo, sourcesThree, sourcesFour] = splitArray(
         sources,
-        1
-        // 4
+        // 1
+        3
       );
 
-      // const tables = [
-      //   notionSourceJobsOne,
-      //   notionSourceJobsTwo,
-      //   notionSourceJobsThree,
-      //   notionSourceJobsFour,
-      // ];
+      const tables = [
+        notionSourceJobsOne,
+        notionSourceJobsTwo,
+        notionSourceJobsThree,
+        // notionSourceJobsFour,
+      ];
 
       const sourceChunks = [sourcesOne, sourcesTwo, sourcesThree, sourcesFour];
+
+      console.log("sourceChunks", sourceChunks);
 
       const nonEmptyChunks = sourceChunks.filter(
         (chunk): chunk is NonNullable<typeof chunk> =>
           Array.isArray(chunk) && chunk.length > 0
       );
+
+      console.log("nonEmptyChunks", nonEmptyChunks);
 
       for (let i = 0; i < nonEmptyChunks.length; i++) {
         const toInsert: NotionSourceJobsOneInsert[] = nonEmptyChunks[i].map(
@@ -204,16 +216,16 @@ export async function GET(request: NextRequest): Promise<Response> {
           })
         );
 
-        await db
-          .insert(notionSourceJobsOne)
-          .values(toInsert)
-          .onConflictDoNothing();
+        // await db
+        //   .insert(notionSourceJobsOne)
+        //   .values(toInsert)
+        //   .onConflictDoNothing();
 
-        // if (tables[i] && toInsert.length > 0) {
-        //   await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
-        // } else {
-        //   console.error(`Table at index ${i} is undefined`);
-        // }
+        if (tables[i] && toInsert.length > 0) {
+          await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
+        } else {
+          console.error(`Table at index ${i} is undefined`);
+        }
       }
     }
 

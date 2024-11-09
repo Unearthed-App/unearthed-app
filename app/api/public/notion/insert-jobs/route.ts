@@ -4,10 +4,10 @@ import { z } from "zod";
 
 import { db } from "@/db";
 import {
-  // notionSourceJobsFour,
   notionSourceJobsOne,
-  // notionSourceJobsThree,
-  // notionSourceJobsTwo,
+  notionSourceJobsThree,
+  notionSourceJobsTwo,
+  // notionSourceJobsFour,
   profiles,
   sources,
   selectProfileSchema,
@@ -74,21 +74,25 @@ export async function GET() {
     );
 
     if (!sourcesResults || sourcesResults.length === 0) {
-      throw new Error("sourcesResults failed");
+      posthogClient.capture({
+        distinctId: "notion-insert-jobs cron",
+        event: `No sources found`,
+      });
+      return NextResponse.json({ success: true }, { status: 200 });
     }
 
     const [sourcesOne, sourcesTwo, sourcesThree, sourcesFour] = splitArray(
       sourcesResults,
-      1
-      // 4
+      // 1
+      3
     );
 
-    // const tables = [
-    //   notionSourceJobsOne,
-    //   notionSourceJobsTwo,
-    //   notionSourceJobsThree,
-    //   notionSourceJobsFour,
-    // ];
+    const tables = [
+      notionSourceJobsOne,
+      notionSourceJobsTwo,
+      notionSourceJobsThree,
+      // notionSourceJobsFour,
+    ];
     const sourceChunks = [sourcesOne, sourcesTwo, sourcesThree, sourcesFour];
 
     const nonEmptyChunks = sourceChunks.filter(
@@ -109,16 +113,16 @@ export async function GET() {
         };
       });
 
-      await db
-        .insert(notionSourceJobsOne)
-        .values(toInsert)
-        .onConflictDoNothing();
+      // await db
+      //   .insert(notionSourceJobsOne)
+      //   .values(toInsert)
+      //   .onConflictDoNothing();
 
-      // if (tables[i] && toInsert.length > 0) {
-      //   await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
-      // } else {
-      //   console.error(`Table at index ${i} is undefined`);
-      // }
+      if (tables[i] && toInsert.length > 0) {
+        await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
+      } else {
+        console.error(`Table at index ${i} is undefined`);
+      }
     }
   } catch (error) {
     console.error("Error in Notion redirect handler:", error);

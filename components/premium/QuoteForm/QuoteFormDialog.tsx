@@ -28,7 +28,7 @@ type Source = z.infer<typeof selectSourceSchema>;
 
 interface AddQuoteFormProps {
   onQuoteAdded: () => void;
-  source: Source;
+  source?: Source;
   buttonText?: string;
 }
 

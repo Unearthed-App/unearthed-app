@@ -18,15 +18,20 @@ export default function App() {
           >
             Success! 👍
           </h2>
-          <div className="flex flex-wrap md:space-x-4 item-center justicy-center lg:px-64 xl:px-96 text-center">
-            <h2 className="w-full text-lg md:text-2xl text-secondary">
+          <div className="flex flex-wrap md:space-x-4 item-center justicy-center px-4 text-center max-w-[900px]">
+            <h2 className="w-full text-lg md:text-2xl text-secondary font-bold">
+              Please wait patiently while the sync completes
+              <br />
+              The first time can take a while.
+            </h2>
+            <h2 className="w-full text-base text-alternate font-bold mt-4">
               Notion is currently syncing to Unearthed in the background. You
               should have a new Private Page in Notion with the Unearthed
               sources, quotes, and notes
             </h2>
 
-            <p className="w-full text-base">
-              The syncing process with happen every 24 hours, but you can force
+            <p className="w-full text-sm mt-4">
+              The syncing process will happen every 24 hours, but you can force
               a sync in the settings any time. New sources will be added along
               with any new quotes for each existing source.
             </p>

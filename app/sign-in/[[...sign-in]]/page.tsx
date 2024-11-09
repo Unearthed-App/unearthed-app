@@ -1,4 +1,6 @@
 import { SignIn } from "@clerk/nextjs";
+import { Crimson_Pro } from "next/font/google";
+const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 export default function SignInPage() {
   return (
@@ -7,11 +9,17 @@ export default function SignInPage() {
         <SignIn
           appearance={{
             elements: {
-              rootBox: "rounded-none ",
-              cardBox: "rounded-lg shadow border border-black border-2",
-              card: "rounded-none ",
-              formButtonPrimary:
-                "bg-white hover:bg-neutral-100 text-black rounded-xl px-8 py-4 font-semibold uppercase border-primary-700 border leading-none transition-all duration-[250ms] ease-in-out hover:rounded-2xl",
+              card: "bg-card rounded-lg text-foreground",
+              header: "text-foreground",
+              headerTitle: `${crimsonPro.className} font-extrabold text-3xl text-foreground`,
+              headerSubtitle: "text-foreground",
+              dividerRow: "text-foreground",
+              dividerText: "text-foreground",
+              formFieldLabel: "text-foreground",
+              socialButtonsBlockButtonText: "text-foreground",
+              footer: "bg-card rounded-lg text-foreground",
+              footerActionText: "text-foreground",
+              formButtonPrimary: "bg-white text-black hover:bg-secondary ",
             },
           }}
         />

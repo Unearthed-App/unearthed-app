@@ -4,6 +4,7 @@ import { insertQuoteSchema, quotes } from "@/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { encrypt, getOrCreateEncryptionKey } from "@/lib/auth/encryptionKey";
+import PostHogClient from "@/app/posthog";
 
 const BATCH_SIZE = 100;
 
@@ -17,15 +18,21 @@ export async function POST(request: NextRequest) {
   if (!encryptionKey) {
     throw new Error("User not authenticated");
   }
+  const posthogClient = PostHogClient();
+
+  posthogClient.capture({
+    distinctId: userId,
+    event: `quotes-insert BEGIN`,
+  });
 
   try {
     let body = await request.json();
 
     body = body.map((row: any) => {
-      const { bookId, ...rest } = row;
+      const { sourceId, ...rest } = row;
       return {
         ...rest,
-        sourceId: bookId,
+        sourceId: sourceId,
       };
     });
     const QuotesArraySchema = z.array(insertQuoteSchema);
@@ -44,6 +51,15 @@ export async function POST(request: NextRequest) {
       batches.push(toInsert.slice(i, i + BATCH_SIZE));
     }
 
+    posthogClient.capture({
+      distinctId: userId,
+      event: `quotes-insert uploading quotes in batches`,
+      properties: {
+        quoteCount: toInsert.length,
+        batchCount: batches.length,
+      },
+    });
+
     const result = await db.transaction(async (tx) => {
       for (const batch of batches) {
         await tx.insert(quotes).values(batch).onConflictDoNothing();
@@ -52,6 +68,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ result }, { status: 200 });
   } catch (error) {
+    posthogClient.capture({
+      distinctId: userId,
+      event: `quotes-insert ERROR`,
+      properties: {
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      },
+    });
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request body" },

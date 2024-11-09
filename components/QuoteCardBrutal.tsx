@@ -98,7 +98,19 @@ export function QuoteCardBrutal({
   const colorScheme = colorLookup[matchingColor || "grey"];
 
   const copyQuote = () => {
-    const textCopied = `"${quote}" — ${bookTitle}, ${bookAuthor}`;
+    let textCopied = `"${quote}"`;
+
+    if (bookTitle || bookAuthor) {
+      textCopied += " — ";
+    }
+
+    if (bookTitle) {
+      textCopied += `${bookTitle}`;
+    }
+
+    if (bookAuthor && bookAuthor != bookTitle) {
+      textCopied += `, ${bookAuthor}`;
+    }
     navigator.clipboard.writeText(textCopied);
     toast({
       title: "Text Copied to Clipboard",
@@ -113,7 +125,7 @@ export function QuoteCardBrutal({
           className={`shadow-xl ${colorScheme.shadow} ${colorScheme.border} h-full p-4 flex ${colorScheme.background} rounded-lg relative py-8 `}
         >
           <div className={`border-l-4 ${colorScheme.line} pl-4 h-full`}>
-            <div className="z-50 -mt-6 mr-2 right-0 absolute flex space-x-1">
+            <div className="z-20 -mt-6 mr-2 right-0 absolute flex space-x-1">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>

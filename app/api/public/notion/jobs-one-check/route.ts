@@ -1,18 +1,13 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { and, eq, inArray, isNull, lte, or, sql } from "drizzle-orm";
-import {
-  notionSourceJobsOne,
-  selectProfileSchema,
-  selectSourceWithRelationsSchema,
-} from "@/db/schema";
+import { notionSourceJobsOne, selectProfileSchema } from "@/db/schema";
 import { db } from "@/db";
 import { z } from "zod";
 import PostHogClient from "@/app/posthog";
 import { clerkClient } from "@clerk/nextjs/server";
 import { decrypt } from "@/lib/auth/encryptionKey";
 const { Client } = require("@notionhq/client");
-type Source = z.infer<typeof selectSourceWithRelationsSchema>;
 type Profile = z.infer<typeof selectProfileSchema>;
 
 const MAX_CHILDREN = 100; // Notion child block limit
@@ -168,6 +163,7 @@ export async function GET() {
       source: {
         with: {
           quotes: true,
+          media: true,
         },
       },
       profile: true,
@@ -176,7 +172,7 @@ export async function GET() {
   });
 
   if (notionSourceJobs.length === 0) {
-    return NextResponse.json({ message: "No jobs found" });
+    return NextResponse.json({ message: "No jobs found" }, { status: 200 });
   }
 
   const sourceIds = notionSourceJobs.map((row) => row.sourceId);
@@ -211,7 +207,7 @@ export async function GET() {
 
       try {
         const profile: Profile = row.profile;
-        const source: Source = row.source;
+        const source = row.source;
 
         const user = await clerkClient().users.getUser(profile.userId);
         const encryptionKey = user.privateMetadata.encryptionKey as string;
@@ -462,14 +458,14 @@ export async function GET() {
             },
           };
 
-          if (source.imageUrl) {
+          if (source.media && source.media.url) {
             pageObject.properties.Image = {
               files: [
                 {
                   name: "Book Cover",
                   type: "external",
                   external: {
-                    url: source.imageUrl || "",
+                    url: source.media.url || "",
                   },
                 },
               ],
@@ -478,7 +474,7 @@ export async function GET() {
             pageObject.cover = {
               type: "external",
               external: {
-                url: source.imageUrl || "",
+                url: source.media.url || "",
               },
             };
           }

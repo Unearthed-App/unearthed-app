@@ -7,9 +7,11 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { selectSourceSchema, selectQuoteSchema } from "@/db/schema";
 import { getBook, getBookTitles } from "@/server/actions";
+import { updateBookImage } from "@/server/actions-premium";
 
 type Source = z.infer<typeof selectSourceSchema>;
 const QuotesArraySchema = z.array(selectQuoteSchema);
+import { toast } from "@/hooks/use-toast";
 
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown, Frown } from "lucide-react";
@@ -31,6 +33,7 @@ import { BookHeader } from "@/components/BookHeader";
 import { QuoteCardBrutal } from "@/components/premium/QuoteCardBrutal";
 import { AnimatedLoader } from "@/components/AnimatedLoader";
 import { QuoteFormDialog } from "@/components/premium/QuoteForm/QuoteFormDialog";
+import { UploadButton } from "@/utils/uploadthing";
 
 export default function Book({ params }: { params: { bookId: string } }) {
   const [open, setOpen] = useState(false);
@@ -186,16 +189,63 @@ export default function Book({ params }: { params: { bookId: string } }) {
 
       {book && !("error" in book) && (
         <div className="flex flex-wrap">
-          <div className="w-full xl:w-1/6 pr-2">
+          <div className="w-full xl:w-1/6 pr-4">
             <BookHeader
               title={book.title}
               subtitle={book.subtitle as string}
               author={book.author as string}
-              imageUrl={book.imageUrl as string}
+              imageUrl={book.media ? (book.media.url as string) : ""}
               ignored={book.ignored as boolean}
             />
-          </div>
+            {book.origin == "UNEARTHED" && (
+              <div className="w-64 xl:w-full mt-4">
+                <h4 className="font-semibold mb-1 block">Change the image:</h4>
+                <UploadButton
+                  appearance={{
+                    button: `w-full ut-ready:bg-card ut-ready:text-black ut-uploading:text-black ut-uploading:cursor-not-allowed
+                    h-12 border-2 p-2.5 rounded-md transition-all duration-200
+                    bg-card border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
+                    hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
+                    active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
+                    dark:hover:bg-accent dark:bg-[rgb(238,157,138)] dark:text-black`,
+                    container: "flex justify-start",
+                    allowedContent:
+                      "flex h-8 flex-col items-center justify-center px-2 text-muted dark:text-white mt-2",
+                  }}
+                  endpoint="imageUploader"
+                  onClientUploadComplete={async (res) => {
+                    const firstFile = res[0];
 
+                    const fileToUpload = {
+                      appUrl: firstFile.appUrl,
+                      key: firstFile.key,
+                      name: firstFile.name,
+                      userId: firstFile.serverData.uploadedBy,
+                      url: firstFile.url,
+                      uploadedBy: firstFile.serverData.uploadedBy,
+                    };
+
+                    if (firstFile) {
+                      await updateBookImage(fileToUpload, book);
+                      toast({
+                        title: `Uploaded image successfully`,
+                        description: `Reloading the page, please wait`,
+                      });
+                      router.refresh();
+                    }
+                  }}
+                  onUploadError={(error: Error) => {
+                    console.log(`ERROR! ${error.message}`);
+                    toast({
+                      title: `Error`,
+                      description: `Make sure the file is an Image under the file size limit`,
+                      variant: "destructive",
+                    });
+                  }}
+                />
+              </div>
+            )}
+          </div>
           <div className="w-full xl:w-5/6 pt-4 xl:pt-0 flex">
             {displayQuotes.length === 0 ? (
               <h3 className="text-xl text-center my-4 text-secondary">
@@ -221,7 +271,7 @@ export default function Book({ params }: { params: { bookId: string } }) {
                       quote={quote.content}
                       note={quote.note ?? ""}
                       location={quote.location ?? ""}
-                      color={quote.color || "Blue highlight"}
+                      color={quote.color || ""}
                       id={quote.id}
                       onQuoteDeleted={refreshQuotes}
                     />

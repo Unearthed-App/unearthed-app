@@ -187,7 +187,7 @@ export default function Book({ params }: { params: { bookId: string } }) {
               title={book.title}
               subtitle={book.subtitle as string}
               author={book.author as string}
-              imageUrl={book.imageUrl as string}
+              imageUrl={book.media ? (book.media.url as string) : ""}
               ignored={book.ignored as boolean}
             />
           </div>
@@ -216,7 +216,7 @@ export default function Book({ params }: { params: { bookId: string } }) {
                       quote={quote.content}
                       note={quote.note ?? ""}
                       location={quote.location ?? ""}
-                      color={quote.color || "Blue highlight"}
+                      color={quote.color || ""}
                     />
                   </motion.div>
                 ))}

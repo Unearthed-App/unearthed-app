@@ -11,5 +11,7 @@ export async function GET() {
 
   const dailyReflection = await getOrCreateDailyReflection();
 
+  dailyReflection.book.imageUrl = dailyReflection.book.media.url;
+
   return NextResponse.json({ dailyReflection }, { status: 200 });
 }

@@ -9,7 +9,7 @@ export async function setEncryptionKey(encryptionKey: string) {
   }
 
   try {
-    await clerkClient.users.updateUserMetadata(userId, {
+    await clerkClient().users.updateUserMetadata(userId, {
       privateMetadata: {
         encryptionKey: encryptionKey,
       },

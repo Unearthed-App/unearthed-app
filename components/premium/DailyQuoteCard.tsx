@@ -15,7 +15,11 @@ type Quote = z.infer<typeof selectQuoteSchema>;
 type Source = z.infer<typeof selectSourceSchema>;
 import { getUserUtcOffset } from "@/lib/utils";
 
+import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import ConfirmationDialog from "@/components/ConfirmationDialog"; // Import the ConfirmationDialog we created
+
 import { Crimson_Pro } from "next/font/google";
+import { useState } from "react";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 interface DailyQuote {
@@ -28,6 +32,8 @@ interface DailyQuoteCardProps {
 }
 
 export function DailyQuoteCard({ initialData }: DailyQuoteCardProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const queryClient = useQueryClient();
   const { data: utcOffset, isLoading: isUtcOffsetLoading } = useQuery({
     queryKey: ["utcOffset"],
@@ -74,13 +80,13 @@ export function DailyQuoteCard({ initialData }: DailyQuoteCardProps) {
           {dailyQuote.book && (
             <div className="flex">
               <div className="hidden md:block -mr-2 w-[100px]">
-                {dailyQuote.book.imageUrl && (
+                {dailyQuote.book.media && dailyQuote.book.media.url && (
                   <Link
                     href={`/premium/book/${dailyQuote.book.id}`}
                     className="w-[90px] md:w-[100px]"
                   >
                     <Image
-                      src={dailyQuote.book.imageUrl}
+                      src={dailyQuote.book.media.url}
                       width={100}
                       height={100}
                       alt="Picture of the book"
@@ -114,16 +120,16 @@ export function DailyQuoteCard({ initialData }: DailyQuoteCardProps) {
                     quote={dailyQuote?.quote.content}
                     note={dailyQuote?.quote.note ?? ""}
                     location={dailyQuote?.quote.location ?? ""}
-                    color={dailyQuote?.quote.color || "Blue highlight"}
+                    color={dailyQuote?.quote.color || ""}
                   />
                   <div className="flex md:hidden justify-center">
-                    {dailyQuote.book.imageUrl && (
+                    {dailyQuote.book.media && dailyQuote.book.media.url && (
                       <Link
                         href={`/premium/book/${dailyQuote.book.id}`}
                         className="w-[90px] md:w-[100px]"
                       >
                         <Image
-                          src={dailyQuote.book.imageUrl}
+                          src={dailyQuote.book.media.url}
                           width={100}
                           height={100}
                           alt="Picture of the book"
@@ -132,15 +138,31 @@ export function DailyQuoteCard({ initialData }: DailyQuoteCardProps) {
                       </Link>
                     )}
                   </div>
-                  <Button
-                    id="newQuoteButton"
-                    className="mt-4 w-full"
-                    type="button"
-                    onClick={() => getNewQuote()}
-                    disabled={isPending}
+                  <ConfirmationDialog
+                    isOpen={isDialogOpen}
+                    onOpenChange={(open) => {
+                      setIsDialogOpen(open);
+                    }}
+                    onConfirm={getNewQuote}
+                    title="Replace Daily Reflection"
+                    description={`Are you sure you want to replace this Daily Reflection with a new one? This action cannot be undone.`}
+                    confirmText="Yes"
+                    cancelText="Cancel"
                   >
-                    {isPending ? "Loading..." : "Get a new Daily Reflection"}
-                  </Button>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        id="newQuoteButton"
+                        className="mt-4 w-full"
+                        type="button"
+                        onClick={() => setIsDialogOpen(true)}
+                        disabled={isPending}
+                      >
+                        {isPending
+                          ? "Loading..."
+                          : "Get a new Daily Reflection"}
+                      </Button>
+                    </AlertDialogTrigger>
+                  </ConfirmationDialog>
                 </div>
               </div>
               <div className="hidden md:block -ml-2 w-[100px]"></div>

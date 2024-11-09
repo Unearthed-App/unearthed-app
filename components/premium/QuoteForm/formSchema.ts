@@ -5,4 +5,7 @@ export const schema = z.object({
   note: z.string().optional(),
   color: z.string().min(1, "Color is required"),
   location: z.string().min(1, "Location is required"),
+  sourceId: z.string({
+    required_error: "Please select a source.",
+  }),
 });

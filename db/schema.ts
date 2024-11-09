@@ -20,9 +20,9 @@ export const sources = pgTable(
     title: text("title").notNull(),
     subtitle: text("subtitle"),
     author: text("author").default(""),
-    imageUrl: text("image_url"),
     type: text("type"),
     origin: text("origin"),
+    mediaId: uuid("media_id").references(() => media.id),
     userId: text("user_id")
       .default(sql`requesting_user_id()`)
       .notNull(),
@@ -69,6 +69,7 @@ export const quotes = pgTable(
     };
   }
 );
+
 export const profiles = pgTable("profiles", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id")
@@ -79,10 +80,28 @@ export const profiles = pgTable("profiles", {
   capacitiesSpaceId: text("capacities_space_id"),
   notionDatabaseId: text("notion_database_id"),
   notionAuthData: text("notion_auth_data"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  stripePriceId: text("stripe_price_id"),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeCreatedTimestamp: integer("stripe_created_timestamp"),
+  stripeExpireTimestamp: integer("stripe_expire_timestamp"),
   utcOffset: integer("utc_offset"),
   userStatus: text("user_status", {
     enum: ["TERMINATED", "PENDING", "ACTIVE"],
   }),
+  createdAt: timestamp("created_at").defaultNow(),
+  expiredAt: timestamp("expired_at"),
+  lastWebhookError: text("last_webhook_error"),
+});
+
+export const media = pgTable("media", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  appUrl: text("app_url"),
+  key: text("key"),
+  name: text("name"),
+  uploadedBy: text("uploaded_by"),
+  url: text("url"),
+  userId: text("user_id").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -97,6 +116,8 @@ export const dailyQuotes = pgTable(
       .references(() => quotes.id)
       .notNull(),
     day: date("day").defaultNow(),
+    emailSent: boolean("email_sent").default(false),
+    capacitiesUpdated: boolean("capacities_updated").default(false),
   },
   (table) => {
     return {
@@ -176,8 +197,12 @@ export const notionSourceJobsFour = pgTable("notion_source_jobs_four", {
 });
 
 // Relations
-export const sourcesRelations = relations(sources, ({ many }) => ({
+export const sourcesRelations = relations(sources, ({ many, one }) => ({
   quotes: many(quotes),
+  media: one(media, {
+    fields: [sources.mediaId],
+    references: [media.id],
+  }),
 }));
 
 export const quotesRelations = relations(quotes, ({ one }) => ({
@@ -304,9 +329,6 @@ export const selectQuoteSchema = createSelectSchema(quotes, {
 export const selectQuoteWithRelationsSchema = selectQuoteSchema.extend({
   source: selectSourceSchema,
 });
-export const selectSourceWithRelationsSchema = selectSourceSchema.extend({
-  quotes: z.array(selectQuoteSchema),
-});
 
 export const insertProfileSchema = createInsertSchema(profiles);
 export const selectProfileSchema = createSelectSchema(profiles, {
@@ -316,4 +338,18 @@ export const selectProfileSchema = createSelectSchema(profiles, {
 export const insertDailyQuotesSchema = createInsertSchema(dailyQuotes);
 export const selectDailyQuotesSchema = createSelectSchema(dailyQuotes, {
   day: z.coerce.date(),
+});
+
+export const insertMediaSchema = createInsertSchema(media);
+export const selectMediaSchema = createSelectSchema(media, {
+  createdAt: z.coerce.date(),
+});
+
+export const selectSourceWithRelationsSchema = selectSourceSchema.extend({
+  quotes: z.array(selectQuoteSchema),
+  media: selectMediaSchema.nullable(),
+});
+
+export const selectMediaWithRelationsSchema = selectMediaSchema.extend({
+  sources: z.array(selectSourceSchema),
 });

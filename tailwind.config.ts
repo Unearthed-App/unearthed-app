@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 const defaultTheme = require("tailwindcss/defaultTheme");
+import { withUt } from "uploadthing/tw";
 
 const colors = require("tailwindcss/colors");
 const {
@@ -58,6 +59,10 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        alternate: {
+          DEFAULT: "hsl(var(--alternate))",
+          foreground: "hsl(var(--alternate))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -87,10 +92,14 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), addVariablesForColors],
+  plugins: [
+    require("tailwindcss-animate"),
+    addVariablesForColors,
+    require("tailwindcss-motion"),
+  ],
 } satisfies Config;
 
-export default config;
+export default withUt(config);
 
 // const defaultTheme = require("tailwindcss/defaultTheme");
 

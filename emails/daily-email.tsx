@@ -75,6 +75,10 @@ export const DailyEmail = ({
 }: DailyEmailProps) => {
   const previewText = `Unearthed Daily Reflection`;
 
+  if (!color || color == "") {
+    color = "grey";
+  }
+
   const matchingColor = Object.keys(colorLookup).find((key) =>
     color.toLowerCase().includes(key)
   ) as ColorKey | undefined;

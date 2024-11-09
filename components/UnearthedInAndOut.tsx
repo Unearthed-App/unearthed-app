@@ -1,16 +1,17 @@
 "use client";
 
 import { DisclosureCard } from "./DisclosureCard";
-import { Crimson_Pro } from "next/font/google";
-const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
+import { HeadingBlur } from "./HeadingBlur";
 
 export function UnearthedInAndOut() {
   return (
     <div className="w-full flex flex-wrap">
       <div className="w-full">
-        <div className="relative flex flex-col items-center justify-center rounded-md px-5 py-2">
+        <div className=" flex flex-col items-center justify-center px-5 py-2">
+          <div className="-mt-20">
+            <HeadingBlur content="Sync your Kindle to these apps" />
+          </div>
           <div className="w-full flex flex-wrap md:flex-nowrap space-x-2 p-4 justify-center">
-            
             <DisclosureCard
               title="Notion"
               content="Send all of your books to Notion with ease. The sync will happen every 24 hours but you can also force a sync whenever you like."

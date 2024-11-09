@@ -46,6 +46,22 @@ export function HomeCarousel() {
 
   return (
     <div className="relative w-full py-8 max-w-[1100px]">
+      <div className="flex flex-wrap w-full justify-center px-4">
+        {items.map((item, idx) => {
+          return (
+            <Button
+              variant={index === idx ? "brutalprimary" : "brutal"}
+              key={idx}
+              type="button"
+              aria-label={`Go to slide ${idx + 1}`}
+              onClick={() => setIndex(idx)}
+              className="w-full md:w-auto ml-2 mt-2"
+            >
+              {item.name}
+            </Button>
+          );
+        })}
+      </div>
       <Carousel index={index} onIndexChange={setIndex}>
         <CarouselContent className="relative">
           {items.map((item, idx) => {
@@ -65,22 +81,6 @@ export function HomeCarousel() {
           })}
         </CarouselContent>
       </Carousel>
-      <div className="flex flex-wrap w-full justify-center px-4">
-        {items.map((item, idx) => {
-          return (
-            <Button
-              variant={index === idx ? "brutalprimary" : "brutal"}
-              key={idx}
-              type="button"
-              aria-label={`Go to slide ${idx + 1}`}
-              onClick={() => setIndex(idx)}
-              className="w-full md:w-auto ml-2 mt-2"
-            >
-              {item.name}
-            </Button>
-          );
-        })}
-      </div>
     </div>
   );
 }

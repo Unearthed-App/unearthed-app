@@ -9,6 +9,9 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "../ui/button";
 import { deleteQuote } from "@/server/actions-premium";
+import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import ConfirmationDialog from "@/components/ConfirmationDialog";
+import { useState } from "react";
 
 interface QuoteCardProps {
   onQuoteDeleted: () => void;
@@ -98,6 +101,8 @@ export function QuoteCardBrutal({
   id,
   origin,
 }: QuoteCardProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const matchingColor = Object.keys(colorLookup).find((key) =>
     color.toLowerCase().includes(key)
   ) as ColorKey | undefined;
@@ -105,7 +110,20 @@ export function QuoteCardBrutal({
   const colorScheme = colorLookup[matchingColor || "grey"];
 
   const copyQuote = () => {
-    const textCopied = `"${quote}" — ${bookTitle}, ${bookAuthor}`;
+    let textCopied = `"${quote}"`;
+
+    if (bookTitle || bookAuthor) {
+      textCopied += " — ";
+    }
+
+    if (bookTitle) {
+      textCopied += `${bookTitle}`;
+    }
+
+    if (bookAuthor && bookAuthor != bookTitle) {
+      textCopied += `, ${bookAuthor}`;
+    }
+
     navigator.clipboard.writeText(textCopied);
     toast({
       title: "Text Copied to Clipboard",
@@ -127,7 +145,6 @@ export function QuoteCardBrutal({
         description: "Something went wrong. Please try again later",
         variant: "destructive",
       });
-      return false;
     }
   };
 
@@ -138,7 +155,7 @@ export function QuoteCardBrutal({
           className={`shadow-xl ${colorScheme.shadow} ${colorScheme.border} h-full p-4 flex ${colorScheme.background} rounded-lg relative py-8 `}
         >
           <div className={`border-l-4 ${colorScheme.line} pl-4 h-full`}>
-            <div className="z-50 -mt-6 mr-2 right-0 absolute flex space-x-1">
+            <div className="z-20 -mt-6 mr-2 right-0 absolute flex space-x-1">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -156,22 +173,36 @@ export function QuoteCardBrutal({
                 </Tooltip>
               </TooltipProvider>
               {origin == "UNEARTHED" && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        className={`w-6 h-6 p-1 ${colorScheme.background} ${colorScheme.buttonShadow} ${colorScheme.buttonShadowDark} hover:bg-destructive dark:hover:bg-destructive`}
-                        onClick={removeQuote}
-                        size="tiny"
-                      >
-                        <Trash />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
-                      <p>Delete the Quote</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <ConfirmationDialog
+                  isOpen={isDialogOpen}
+                  onOpenChange={(open) => {
+                    setIsDialogOpen(open);
+                  }}
+                  onConfirm={removeQuote}
+                  title="Delete Quote"
+                  description={`Are you sure you want to delete this quote? This action cannot be undone.`}
+                  confirmText="Yes"
+                  cancelText="Cancel"
+                >
+                  <AlertDialogTrigger asChild>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            className={`w-6 h-6 p-1 ${colorScheme.background} ${colorScheme.buttonShadow} ${colorScheme.buttonShadowDark} hover:bg-destructive dark:hover:bg-destructive`}
+                            onClick={() => setIsDialogOpen(true)}
+                            size="tiny"
+                          >
+                            <Trash />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                          <p>Delete the Quote</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </AlertDialogTrigger>
+                </ConfirmationDialog>
               )}
             </div>
 

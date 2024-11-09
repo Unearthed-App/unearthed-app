@@ -24,17 +24,25 @@ import {
 } from "@/components/ui/drawer";
 import { Search } from "lucide-react";
 import { search } from "@/server/actions";
+import { search as searchPremium } from "@/server/actions-premium";
 import { Skeleton } from "./ui/skeleton";
 import { QuoteBookCardBrutal } from "@/components/QuoteBookCardBrutal";
 import { QuoteBookCardBrutal as QuoteBookCardBrutalPremium } from "@/components/premium/QuoteBookCardBrutal";
 
-import { selectSourceSchema, selectQuoteWithRelationsSchema } from "@/db/schema";
+import {
+  selectSourceWithRelationsSchema,
+  selectQuoteWithRelationsSchema,
+} from "@/db/schema";
 import { Input } from "./ui/input";
 import { BookCard } from "@/components/BookCard";
 import { BookCard as BookCardPremium } from "@/components/premium/BookCard";
 import { z } from "zod";
-type QuoteWithRelations = z.infer<typeof selectQuoteWithRelationsSchema>;
-type Source = z.infer<typeof selectSourceSchema>;
+
+type SearchResults = {
+  books: Array<z.infer<typeof selectSourceWithRelationsSchema>>;
+  quotes: Array<z.infer<typeof selectQuoteWithRelationsSchema>>;
+};
+
 import { getIsPremium } from "@/lib/utils";
 
 import { useForm } from "react-hook-form";
@@ -50,10 +58,11 @@ import { toast } from "@/hooks/use-toast";
 
 export function SearchDialog() {
   const [open, setOpen] = useState(false);
-  const [searchResults, setSearchResults] = useState<{
-    books: Source[];
-    quotes: QuoteWithRelations[];
-  }>({ books: [], quotes: [] });
+
+  const [searchResults, setSearchResults] = useState<SearchResults>({
+    books: [],
+    quotes: [],
+  });
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -68,26 +77,31 @@ export function SearchDialog() {
     },
   });
 
-    const [isPremium, setIsPremium] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
 
-    useEffect(() => {
-      const fetchPremiumStatus = async () => {
-        const isPremium = await getIsPremium();
-        setIsPremium(isPremium);
-      };
+  useEffect(() => {
+    const fetchPremiumStatus = async () => {
+      const isPremium = await getIsPremium();
+      setIsPremium(isPremium);
+    };
 
-      fetchPremiumStatus();
-    }, []);
-
+    fetchPremiumStatus();
+  }, []);
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
     setIsLoading(true);
     try {
       if (data && data.searchQuery) {
-        const searchReturned = await search(data.searchQuery);
+        let searchReturned;
+
+        if (isPremium) {
+          searchReturned = await searchPremium(data.searchQuery);
+        } else {
+          searchReturned = await search(data.searchQuery);
+        }
 
         if (searchReturned) {
-          setSearchResults(searchReturned);
+          setSearchResults(searchReturned as SearchResults);
         }
       } else {
         setSearchResults({ books: [], quotes: [] });
@@ -237,66 +251,79 @@ export function SearchDialog() {
               animate="visible"
               className="max-h-[500px] overflow-y-auto overflow-x-auto"
             >
-              {searchResults.books.map((book) => (
-                <motion.div
-                  className="mb-4"
-                  key={book.id}
-                  variants={itemVariants}
-                >
-                  {isPremium ? (
-                    <BookCardPremium
-                      id={book.id}
-                      title={book.title}
-                      ignored={book.ignored ?? false}
-                      subtitle={book.subtitle ?? ""}
-                      author={book.author ?? ""}
-                      imageUrl={book.imageUrl ?? ""}
-                      setOpen={setOpen}
-                    />
-                  ) : (
-                    <BookCard
-                      id={book.id}
-                      title={book.title}
-                      ignored={book.ignored ?? false}
-                      subtitle={book.subtitle ?? ""}
-                      author={book.author ?? ""}
-                      imageUrl={book.imageUrl ?? ""}
-                      setOpen={setOpen}
-                    />
-                  )}
-                </motion.div>
-              ))}
-              {searchResults.quotes.map((quote) => (
-                <motion.div
-                  className="mb-4"
-                  key={quote.id}
-                  variants={itemVariants}
-                >
-                  {isPremium ? (
-                    <QuoteBookCardBrutalPremium
-                      bookId={quote.source.id}
-                      bookTitle={quote.source.title}
-                      bookAuthor={quote.source.author as string}
-                      quote={quote.content}
-                      note={quote.note ?? ""}
-                      location={quote.location ?? ""}
-                      color={quote.color || "Blue highlight"}
-                      setOpen={setOpen}
-                    />
-                  ) : (
-                    <QuoteBookCardBrutal
-                      bookId={quote.source.id}
-                      bookTitle={quote.source.title}
-                      bookAuthor={quote.source.author as string}
-                      quote={quote.content}
-                      note={quote.note ?? ""}
-                      location={quote.location ?? ""}
-                      color={quote.color || "Blue highlight"}
-                      setOpen={setOpen}
-                    />
-                  )}
-                </motion.div>
-              ))}
+              {searchResults.books && searchResults.books.length > 0 && (
+                <div>
+                  {searchResults.books.map((book) => (
+                    <motion.div
+                      className="mb-4"
+                      key={book.id}
+                      variants={itemVariants}
+                    >
+                      {isPremium ? (
+                        <BookCardPremium
+                          id={book.id}
+                          title={book.title}
+                          ignored={book.ignored ?? false}
+                          subtitle={book.subtitle ?? ""}
+                          author={book.author ?? ""}
+                          imageUrl={
+                            book.media && book.media.url ? book.media.url : ""
+                          }
+                          setOpen={setOpen}
+                        />
+                      ) : (
+                        <BookCard
+                          id={book.id}
+                          title={book.title}
+                          ignored={book.ignored ?? false}
+                          subtitle={book.subtitle ?? ""}
+                          author={book.author ?? ""}
+                          imageUrl={
+                            book.media && book.media.url ? book.media.url : ""
+                          }
+                          setOpen={setOpen}
+                        />
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+
+              {searchResults.quotes && searchResults.quotes.length > 0 && (
+                <div>
+                  {searchResults.quotes.map((quote) => (
+                    <motion.div
+                      className="mb-4"
+                      key={quote.id}
+                      variants={itemVariants}
+                    >
+                      {isPremium ? (
+                        <QuoteBookCardBrutalPremium
+                          bookId={quote.source.id}
+                          bookTitle={quote.source.title}
+                          bookAuthor={quote.source.author as string}
+                          quote={quote.content}
+                          note={quote.note ?? ""}
+                          location={quote.location ?? ""}
+                          color={quote.color || ""}
+                          setOpen={setOpen}
+                        />
+                      ) : (
+                        <QuoteBookCardBrutal
+                          bookId={quote.source.id}
+                          bookTitle={quote.source.title}
+                          bookAuthor={quote.source.author as string}
+                          quote={quote.content}
+                          note={quote.note ?? ""}
+                          location={quote.location ?? ""}
+                          color={quote.color || ""}
+                          setOpen={setOpen}
+                        />
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </motion.div>
           )}
         </DialogContent>
@@ -378,7 +405,9 @@ export function SearchDialog() {
                     ignored={quote.ignored ?? false}
                     subtitle={quote.subtitle ?? ""}
                     author={quote.author ?? ""}
-                    imageUrl={quote.imageUrl ?? ""}
+                    imageUrl={
+                      quote.media && quote.media.url ? quote.media.url : ""
+                    }
                     setOpen={setOpen}
                   />
                 </motion.div>
@@ -396,7 +425,7 @@ export function SearchDialog() {
                     quote={quote.content}
                     note={quote.note ?? ""}
                     location={quote.location ?? ""}
-                    color={quote.color || "Blue highlight"}
+                    color={quote.color || ""}
                     setOpen={setOpen}
                   />
                 </motion.div>

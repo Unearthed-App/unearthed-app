@@ -35,7 +35,7 @@ export function BookHeader({
               src={imageUrl}
               width={150}
               height={150}
-              alt="Picture of the author"
+              alt="Picture of the Book"
               className="rounded-lg border-2 shadow-xl"
             />
           ) : (

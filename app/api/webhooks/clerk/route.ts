@@ -1,17 +1,27 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent, clerkClient } from "@clerk/nextjs/server";
+import { generateSecureKey } from "@/lib/auth/encryptionKey";
 import {
-  generateSecureKey,
-} from "@/lib/auth/encryptionKey";
-import { insertProfileSchema, profiles } from "@/db/schema";
+  dailyQuotes,
+  insertProfileSchema,
+  media,
+  profiles,
+  quotes,
+  sources,
+  unearthedKeys,
+} from "@/db/schema";
 import { z } from "zod";
 import { db } from "@/db";
+import { eq } from "drizzle-orm";
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+import PostHogClient from "@/app/posthog";
 
 type Profile = z.infer<typeof insertProfileSchema>;
 
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+  const posthogClient = PostHogClient();
 
   if (!WEBHOOK_SECRET) {
     throw new Error(
@@ -50,6 +60,11 @@ export async function POST(req: Request) {
     });
   }
 
+  posthogClient.capture({
+    distinctId: `"clerk webhook START"`,
+    event: `${evt.type}`,
+  });
+
   if (evt.type === "user.created") {
     const userId = evt.data.id;
 
@@ -57,11 +72,11 @@ export async function POST(req: Request) {
       return new Response("Error", { status: 500 });
     }
 
-    const newEncryptionKey = generateSecureKey(); // Generate a secure encryption key
-    const newSecret = generateSecureKey(); // Generate a secure encryption key
+    const newEncryptionKey = generateSecureKey();
+    const newSecret = generateSecureKey();
 
     try {
-      await clerkClient.users.updateUserMetadata(userId, {
+      await clerkClient().users.updateUserMetadata(userId, {
         privateMetadata: {
           encryptionKey: newEncryptionKey,
           secret: newSecret,
@@ -87,6 +102,37 @@ export async function POST(req: Request) {
         .onConflictDoNothing();
 
       console.log("API key set successfully");
+    } catch (error) {
+      console.error("Error setting API key:", error);
+      return new Response("Error", { status: 500 });
+    }
+  } else if (evt.type === "user.deleted") {
+    const userId = evt.data.id;
+
+    if (!userId) {
+      return new Response("Error", { status: 500 });
+    }
+
+    try {
+      const profile = await db
+        .update(profiles)
+        .set({
+          userStatus: "TERMINATED",
+        })
+        .where(eq(profiles.userId, userId))
+        .returning();
+
+      if (profile[0] && profile[0].stripeSubscriptionId) {
+        await stripe.subscriptions.cancel(
+          profile[0].stripeSubscriptionId as string
+        );
+      }
+
+      await db.delete(dailyQuotes).where(eq(dailyQuotes.userId, userId));
+      await db.delete(sources).where(eq(sources.userId, userId));
+      await db.delete(quotes).where(eq(quotes.userId, userId));
+      await db.delete(unearthedKeys).where(eq(unearthedKeys.userId, userId));
+      await db.delete(media).where(eq(media.userId, userId));
     } catch (error) {
       console.error("Error setting API key:", error);
       return new Response("Error", { status: 500 });

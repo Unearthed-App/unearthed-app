@@ -5,12 +5,16 @@
   :root {
     --background: 10, 100%, 93%;
     --foreground: 337 65% 3%;
+    /* --foreground: 5.92 44.1% 31.57%; */
+
     --muted: 0 0% 45%;
     --muted-foreground: 157 5% 40%;
     --popover: 337 68% 97%;
     --popover-foreground: 337 65% 2%;
     --card: 337 68% 97%;
     --card-foreground: 337 65% 2%;
+    --alternate: 5.92 44.1% 31.57%;
+
     --border: 0 0% 0%;
     --input: 337 14% 91%;
     --primary: 175 65% 42%;
@@ -32,6 +36,8 @@
     --muted-foreground: 157 5% 60%;
     --popover: 0 0% 0%;
     --popover-foreground: 0 0% 100%;
+    --alternate: 337 24% 99%;
+
     --card: 169.4, 43.6%, 7.6%;
     --card-foreground: 0 0% 100%;
     --border: 175 40% 50%;

@@ -171,8 +171,16 @@ export async function onSubmitAction(formData: FormData) {
     throw new Error("Unauthorized");
   }
 
-  const user = await clerkClient().users.getUser(userId);
-  const isPremium = user.privateMetadata.isPremium as boolean;
+  let isPremium = false;
+  try {
+    if (userId) {
+      const user = await clerkClient().users.getUser(userId);
+      isPremium = user.privateMetadata.isPremium as boolean;
+    }
+  } catch (error) {
+    isPremium = false;
+  }
+  
   if (!isPremium) {
     throw new Error("User not allowed");
   }
@@ -234,7 +242,9 @@ export async function onSubmitAction(formData: FormData) {
       detailsForDuplicates = await db
         .select()
         .from(sources)
-        .where((row) => inArray(row.title, titles));
+        .where((row) =>
+          and(inArray(row.title, titles), eq(row.userId, userId))
+        );
     }
 
     existingRecords = detailsForDuplicates.filter((row: { title: string }) => {

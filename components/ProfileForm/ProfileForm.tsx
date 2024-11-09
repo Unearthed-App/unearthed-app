@@ -52,6 +52,9 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { selectUnearthedKeySchema } from "@/db/schema";
+import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import ConfirmationDialog from "@/components/ConfirmationDialog"; // Import the ConfirmationDialog we created
+
 type CapacitiesSpaceItem = {
   id: string;
   value: string;
@@ -61,6 +64,8 @@ type CapacitiesSpaceItem = {
 type UnearhtedKey = z.infer<typeof selectUnearthedKeySchema>;
 
 export function ProfileForm() {
+  const [isDialogNotionOpen, setIsDialogNotionOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isForcingNotionSync, setIsForcingNotionSync] = useState(false);
@@ -247,6 +252,20 @@ export function ProfileForm() {
     setShowingSecrets(!showingSecrets);
   };
 
+  const startNewNotionConnection = () => {
+    toast({
+      title: "Notion Re-connection Started",
+      description:
+        "Follow the instructions on the Notion page to finish syncing.",
+    });
+
+    window.open(
+      process.env.NEXT_PUBLIC_NOTION_AUTH_URL,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
   const copyUnearthedApiKey = () => {
     navigator.clipboard.writeText(newUnearthedApiKey as string);
     toast({
@@ -302,13 +321,36 @@ export function ProfileForm() {
                         <p className="font-bold">{key.name}</p>
                       </div>
                       <div className="">
-                        <Button
-                          type="button"
-                          variant="destructivebrutal"
-                          onClick={() => deleteUnearthedApiKey(key.id)}
+                        <ConfirmationDialog
+                          isOpen={isDialogOpen}
+                          onOpenChange={(open) => {
+                            setIsDialogOpen(open);
+                          }}
+                          onConfirm={() => deleteUnearthedApiKey(key.id)}
+                          title="Delete Key"
+                          description={`Are you sure you want to delete this key? This action cannot be undone.`}
+                          confirmText="Yes"
+                          cancelText="Cancel"
                         >
-                          <Trash />
-                        </Button>
+                          <AlertDialogTrigger asChild>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    type="button"
+                                    variant="destructivebrutal"
+                                    onClick={() => setIsDialogOpen(true)}
+                                  >
+                                    <Trash />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                                  <p>Delete the Quote</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </AlertDialogTrigger>
+                        </ConfirmationDialog>
                       </div>
                     </div>
                   ))}
@@ -316,7 +358,7 @@ export function ProfileForm() {
                     <div className="flex space-x-2 justify-between items-end">
                       <div className="w-full">
                         <Input
-                          className="border-secondary bg-white"
+                          className="border-secondary bg-white dark:bg-card"
                           type="text"
                           id="newKeyName"
                           placeholder="New Key Name"
@@ -395,37 +437,66 @@ export function ProfileForm() {
                           connection, so be careful.
                         </div>
                         <div className="flex justify-between mt-4">
-                          <Button
-                            type="button"
-                            onClick={() => {
-                              setIsForcingNotionSync(true);
-                              forceNotionSync();
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  type="button"
+                                  onClick={() => {
+                                    setIsForcingNotionSync(true);
+                                    forceNotionSync();
+                                  }}
+                                  disabled={isForcingNotionSync}
+                                >
+                                  {isForcingNotionSync
+                                    ? "Sync Started"
+                                    : "Force Sync"}
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                                <p>
+                                  Start a sync to Notion. Nothing on Notion will
+                                  be removed
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          <ConfirmationDialog
+                            isOpen={isDialogNotionOpen}
+                            onOpenChange={(open) => {
+                              setIsDialogNotionOpen(open);
                             }}
-                            disabled={isForcingNotionSync}
+                            onConfirm={startNewNotionConnection}
+                            title="Are you sure?"
+                            description={`A new Notion page and database will be created. Unearthed will sync to that from now on. There old page will not be deleted.`}
+                            confirmText="Yes"
+                            cancelText="Cancel"
                           >
-                            {isForcingNotionSync
-                              ? "Sync Started"
-                              : "Force Sync"}
-                          </Button>{" "}
-                          <Link
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            href={process.env.NEXT_PUBLIC_NOTION_AUTH_URL || ""}
-                          >
-                            <Button
-                              variant="destructivebrutal"
-                              type="button"
-                              onClick={() => {
-                                toast({
-                                  title: "Notion Re-connection Started",
-                                  description:
-                                    "Follow the instructions on the Notion page to finish syncing.",
-                                });
-                              }}
-                            >
-                              Start New Connection
-                            </Button>
-                          </Link>
+                            <AlertDialogTrigger asChild>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="destructivebrutal"
+                                      type="button"
+                                      onClick={() =>
+                                        setIsDialogNotionOpen(true)
+                                      }
+                                      disabled={isForcingNotionSync}
+                                    >
+                                      Start New Connection
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                                    <p>
+                                      Create a new page and database in Notion
+                                    </p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </AlertDialogTrigger>
+                          </ConfirmationDialog>
                         </div>
                       </>
                     ) : (

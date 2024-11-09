@@ -1,20 +1,27 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
-
 import { db } from "@/db";
+import { and, eq, inArray, isNotNull } from "drizzle-orm";
+import PostHogClient from "@/app/posthog";
+import { clerkClient } from "@clerk/nextjs/server";
+import { Resend } from "resend";
+import { getTodaysDate } from "@/lib/utils";
+
 import {
+  profiles,
+  selectProfileSchema,
   sources,
   selectQuoteSchema,
   insertDailyQuotesSchema,
   quotes,
-  profiles,
   dailyQuotes,
   selectQuoteWithRelationsSchema,
   selectSourceSchema,
-  selectProfileSchema,
+  media,
 } from "@/db/schema";
 import { decrypt } from "@/lib/auth/encryptionKey";
 import { z } from "zod";
+import { capacitiesFormatDaily } from "@/server/actions";
 
 type QuoteWithRelations = z.infer<typeof selectQuoteWithRelationsSchema>;
 type Source = z.infer<typeof selectSourceSchema>;
@@ -22,17 +29,15 @@ type Quote = z.infer<typeof selectQuoteSchema>;
 type Profile = z.infer<typeof selectProfileSchema>;
 type DailyQuote = z.infer<typeof insertDailyQuotesSchema>;
 
-import { clerkClient } from "@clerk/nextjs/server";
-import { isNotNull, and, eq } from "drizzle-orm";
-import { capacitiesFormatDaily } from "@/server/actions";
-import { getTodaysDate } from "@/lib/utils";
-
 interface DailyReflection {
+  id: string;
+  capacitiesUpdated: boolean;
   source: Source;
   quote: Quote;
 }
 
 export async function GET() {
+  const posthogClient = PostHogClient();
   const headersList = headers();
   const authHeader = headersList.get("authorization");
 
@@ -48,59 +53,88 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const dbResult = await db.query.profiles.findMany({
-      where: and(
-        isNotNull(profiles.capacitiesApiKey),
-        isNotNull(profiles.capacitiesSpaceId),
-        eq(profiles.userStatus, "ACTIVE"),
-      ),
-    });
+  const profileResults = await db.query.profiles.findMany({
+    where: and(
+      isNotNull(profiles.capacitiesApiKey),
+      isNotNull(profiles.capacitiesSpaceId),
+      eq(profiles.userStatus, "ACTIVE")
+    ),
+  });
 
-    for (const profile of dbResult) {
-      try {
-        const user = await clerkClient().users.getUser(profile.userId);
+  let dailyQuoteIdsToUpdate: string[] = [];
 
-        const encryptionKey = user.privateMetadata.encryptionKey as string;
+  for (const profile of profileResults) {
+    try {
+      const user = await clerkClient().users.getUser(profile.userId);
 
-        if (!profile.utcOffset) {
-          continue;
-        }
+      const encryptionKey = user.privateMetadata.encryptionKey as string;
 
-        const dailyReflectionExisting = await getDailyReflection(
-          profile.userId,
-          profile.utcOffset as number,
-          encryptionKey
-        );
+      if (!encryptionKey) {
+        continue;
+      }
 
-        if (dailyReflectionExisting) {
-          continue;
-        }
+      if (!profile || !profile.utcOffset) {
+        continue;
+      }
 
-        const dailyReflection = (await createDailyReflection(
+      const dailyReflectionExisting = (await getDailyReflection(
+        profile.userId,
+        profile.utcOffset as number,
+        encryptionKey
+      )) as DailyReflection;
+
+      if (
+        dailyReflectionExisting &&
+        dailyReflectionExisting.capacitiesUpdated
+      ) {
+        continue;
+      }
+
+      let dailyReflection;
+      if (dailyReflectionExisting) {
+        dailyReflection = dailyReflectionExisting;
+      } else {
+        dailyReflection = (await createDailyReflection(
           profile,
           encryptionKey
         )) as DailyReflection;
-
-        profile.capacitiesApiKey = profile.capacitiesApiKey
-          ? await decrypt(profile.capacitiesApiKey as string, encryptionKey)
-          : "";
-
-        profile.capacitiesSpaceId = profile.capacitiesSpaceId
-          ? await decrypt(profile.capacitiesSpaceId as string, encryptionKey)
-          : "";
-
-        await addDailyToCapacities(profile, dailyReflection);
-      } catch (error) {
-        continue;
       }
-    }
 
-    return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Error" }, { status: 500 });
+      profile.capacitiesApiKey = profile.capacitiesApiKey
+        ? await decrypt(profile.capacitiesApiKey as string, encryptionKey)
+        : "";
+
+      profile.capacitiesSpaceId = profile.capacitiesSpaceId
+        ? await decrypt(profile.capacitiesSpaceId as string, encryptionKey)
+        : "";
+
+      await addDailyToCapacities(profile, dailyReflection);
+
+      dailyQuoteIdsToUpdate.push(dailyReflection.id);
+    } catch (error) {
+      console.log("error", error);
+
+      posthogClient.capture({
+        distinctId: profile.userId,
+        event: `send-email ERROR`,
+        properties: {
+          message:
+            error instanceof Error ? error.message : "Unknown error occurred",
+        },
+      });
+      continue;
+    }
   }
+  if (dailyQuoteIdsToUpdate.length > 0) {
+    await db
+      .update(dailyQuotes)
+      .set({
+        capacitiesUpdated: true,
+      })
+      .where(inArray(dailyQuotes.id, dailyQuoteIdsToUpdate));
+  }
+
+  return NextResponse.json({ success: true }, { status: 200 });
 }
 
 const getDailyReflection = async (
@@ -116,9 +150,22 @@ const getDailyReflection = async (
       .from(dailyQuotes)
       .where(and(eq(dailyQuotes.day, todaysDate), eq(sources.userId, userId)))
       .leftJoin(quotes, eq(quotes.id, dailyQuotes.quoteId))
-      .leftJoin(sources, eq(sources.id, quotes.sourceId))) as any;
+      .leftJoin(sources, eq(sources.id, quotes.sourceId))
+      .leftJoin(media, eq(media.id, sources.mediaId))) as any;
 
     if (dailyQuoteWithRelationsResult.length > 0) {
+      dailyQuoteWithRelationsResult = dailyQuoteWithRelationsResult.map(
+        (item: any) => {
+          const { media, ...rest } = item;
+          return {
+            ...rest,
+            sources: {
+              ...rest.sources,
+              media: media || {},
+            },
+          };
+        }
+      );
       dailyQuoteWithRelationsResult = dailyQuoteWithRelationsResult[0];
     }
 
@@ -134,6 +181,8 @@ const getDailyReflection = async (
         : "";
 
       return {
+        id: dailyQuoteResult.id,
+        capacitiesUpdated: dailyQuoteResult.capacitiesUpdated,
         source: dailyQuoteWithRelationsResult.sources,
         quote: dailyQuoteWithRelationsResult.quotes,
       };
@@ -202,7 +251,12 @@ const createDailyReflection = async (
     randomQuote.note = randomQuote.note
       ? await decrypt(randomQuote.note, encryptionKey)
       : "";
-    return { source: randomSource, quote: randomQuote };
+    return {
+      id: newDailyQuote[0].id,
+      capacitiesUpdated: newDailyQuote[0].capacitiesUpdated,
+      source: randomSource,
+      quote: randomQuote,
+    };
   } catch (error) {
     console.error(error);
     return {};

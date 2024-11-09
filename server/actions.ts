@@ -17,10 +17,11 @@ import {
   selectUnearthedKeySchema,
   unearthedKeys,
   notionSourceJobsOne,
-  // notionSourceJobsTwo,
-  // notionSourceJobsThree,
+  notionSourceJobsTwo,
+  notionSourceJobsThree,
   // notionSourceJobsFour,
   insertNotionSourceJobsOneSchema,
+  media,
 } from "@/db/schema";
 import {
   decrypt,
@@ -61,6 +62,7 @@ export const getBook = async (
     const dbResult = await db.query.sources.findFirst({
       with: {
         quotes: true,
+        media: true,
       },
       where: and(eq(sources.id, bookId), eq(sources.userId, userId)),
     });
@@ -120,6 +122,7 @@ export const getBooks = async ({
     const dbResult = await db.query.sources.findMany({
       with: {
         quotes: true,
+        media: true,
       },
       where,
     });
@@ -334,16 +337,24 @@ export const getOrCreateDailyReflection = async ({
         and(eq(dailyQuotes.day, todaysDate), eq(dailyQuotes.userId, userId))
       )
       .leftJoin(quotes, eq(quotes.id, dailyQuotes.quoteId))
-      .leftJoin(sources, eq(sources.id, quotes.sourceId))) as any;
+      .leftJoin(sources, eq(sources.id, quotes.sourceId))
+      .leftJoin(media, eq(media.id, sources.mediaId))) as any;
 
-    let test = (await db
-      .select()
-      .from(dailyQuotes)
-      .where(
-        and(eq(dailyQuotes.day, todaysDate), eq(dailyQuotes.userId, userId))
-      )) as any;
 
     if (dailyQuoteWithRelationsResult.length > 0) {
+      dailyQuoteWithRelationsResult = dailyQuoteWithRelationsResult.map(
+        (item: any) => {
+          const { media, ...rest } = item;
+          return {
+            ...rest,
+            sources: {
+              ...rest.sources,
+              media: media || {},
+            },
+          };
+        }
+      );
+
       dailyQuoteWithRelationsResult = dailyQuoteWithRelationsResult[0];
     }
 
@@ -367,7 +378,7 @@ export const getOrCreateDailyReflection = async ({
 
     const quotesResult = await db.query.quotes.findMany({
       with: {
-        source: true,
+        source: {with: {media: true}},
       },
       where: and(eq(quotes.userId, userId)),
     });
@@ -627,57 +638,34 @@ export const search = async (
 
   query = query.toLowerCase();
 
-  const booksResult = await db
-    .select()
-    .from(sources)
-    .where(
-      and(
-        or(
-          ilike(sources.title, `%${query}%`),
-          ilike(sources.subtitle, `%${query}%`),
-          ilike(sources.author, `%${query}%`)
-        ),
-        eq(sources.type, "BOOK"),
-        eq(sources.ignored, false),
-        eq(sources.userId, userId)
-      )
-    );
+  const booksResult = await db.query.sources.findMany({
+    with: {
+      media: true,
+    },
+    where: and(
+      or(
+        ilike(sources.title, `%${query}%`),
+        ilike(sources.subtitle, `%${query}%`),
+        ilike(sources.author, `%${query}%`)
+      ),
+      eq(sources.type, "BOOK"),
+      eq(sources.ignored, false),
+      eq(sources.userId, userId)
+    ),
+  });
 
-  const dbResult = await db.query.quotes.findMany({
+  const quotesResult = await db.query.quotes.findMany({
     with: {
       source: true,
     },
-    where: eq(quotes.userId, userId),
+    where: and(
+      or(
+        ilike(quotes.content, `%${query}%`),
+        ilike(quotes.location, `%${query}%`)
+      ),
+      eq(quotes.userId, userId)
+    ),
   });
-
-  // Decrypt and filter quotes asynchronously based on decrypted note and content
-  const filteredResults = await Promise.all(
-    dbResult.map(async (quote) => {
-      if (quote.source.ignored) {
-        return null;
-      }
-
-      if (quote.note) {
-        quote.note = await decrypt(quote.note as string, encryptionKey);
-        if (quote.note.toLowerCase().includes(query)) {
-          return quote;
-        }
-      }
-
-      if (quote.content.toLowerCase().includes(query)) {
-        return quote;
-      }
-
-      if (quote.location && quote.location.toLowerCase().includes(query)) {
-        return quote;
-      }
-
-      return null; // Return null for non-matching quotes
-    })
-  );
-
-  // Filter out the null values (non-matching quotes)
-  const quotesResult = filteredResults.filter((quote) => quote !== null);
 
   return { books: booksResult, quotes: quotesResult };
 };
@@ -726,28 +714,28 @@ export const syncToNotion = async () => {
   await db
     .delete(notionSourceJobsOne)
     .where(inArray(notionSourceJobsOne.sourceId, sourceIds));
-  // await db
-  //   .delete(notionSourceJobsTwo)
-  //   .where(inArray(notionSourceJobsTwo.sourceId, sourceIds));
-  // await db
-  //   .delete(notionSourceJobsThree)
-  //   .where(inArray(notionSourceJobsThree.sourceId, sourceIds));
+  await db
+    .delete(notionSourceJobsTwo)
+    .where(inArray(notionSourceJobsTwo.sourceId, sourceIds));
+  await db
+    .delete(notionSourceJobsThree)
+    .where(inArray(notionSourceJobsThree.sourceId, sourceIds));
   // await db
   //   .delete(notionSourceJobsFour)
   //   .where(inArray(notionSourceJobsFour.sourceId, sourceIds));
 
   const [sourcesOne, sourcesTwo, sourcesThree, sourcesFour] = splitArray(
     sourcesResults,
-    1
-    // 4
+    // 1
+    3
   );
 
-  // const tables = [
-  //   notionSourceJobsOne,
-  //   notionSourceJobsTwo,
-  //   notionSourceJobsThree,
-  //   notionSourceJobsFour,
-  // ];
+  const tables = [
+    notionSourceJobsOne,
+    notionSourceJobsTwo,
+    notionSourceJobsThree,
+    //   notionSourceJobsFour,
+  ];
   const sourceChunks = [sourcesOne, sourcesTwo, sourcesThree, sourcesFour];
   const nonEmptyChunks = sourceChunks.filter(
     (chunk): chunk is NonNullable<typeof chunk> =>
@@ -766,13 +754,13 @@ export const syncToNotion = async () => {
       };
     });
 
-    await db.insert(notionSourceJobsOne).values(toInsert).onConflictDoNothing();
+    // await db.insert(notionSourceJobsOne).values(toInsert).onConflictDoNothing();
 
-    // if (tables[i] && toInsert.length > 0) {
-    //   await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
-    // } else {
-    //   console.error(`Table at index ${i} is undefined`);
-    // }
+    if (tables[i] && toInsert.length > 0) {
+      await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
+    } else {
+      console.error(`Table at index ${i} is undefined`);
+    }
   }
 
   return { success: true };
@@ -790,12 +778,12 @@ export const syncSourceToNotion = async (sourceId: string) => {
   await db
     .delete(notionSourceJobsOne)
     .where(eq(notionSourceJobsOne.sourceId, sourceId));
-  // await db
-  //   .delete(notionSourceJobsTwo)
-  //   .where(eq(notionSourceJobsTwo.sourceId, sourceId));
-  // await db
-  //   .delete(notionSourceJobsThree)
-  //   .where(eq(notionSourceJobsThree.sourceId, sourceId));
+  await db
+    .delete(notionSourceJobsTwo)
+    .where(eq(notionSourceJobsTwo.sourceId, sourceId));
+  await db
+    .delete(notionSourceJobsThree)
+    .where(eq(notionSourceJobsThree.sourceId, sourceId));
   // await db
   //   .delete(notionSourceJobsFour)
   //   .where(eq(notionSourceJobsFour.sourceId, sourceId));
@@ -897,7 +885,7 @@ export const firstNotionSync = async (): Promise<{
 
   try {
     const dbResult = await db.query.sources.findMany({
-      with: { quotes: true },
+      with: { quotes: true, media: true },
       where: and(
         eq(sources.type, "BOOK"),
         eq(sources.ignored, false),
@@ -1019,5 +1007,65 @@ export const createEmptyProfile = async ({
   } catch (error) {
     console.error(error);
     return {};
+  }
+};
+
+export const deleteSource = async ({ source }: { source: Source }) => {
+  const { userId }: { userId: string | null } = auth();
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  try {
+    await db
+      .delete(notionSourceJobsOne)
+      .where(eq(notionSourceJobsOne.sourceId, source.id));
+
+    await db
+      .delete(notionSourceJobsTwo)
+      .where(eq(notionSourceJobsTwo.sourceId, source.id));
+
+    await db
+      .delete(notionSourceJobsThree)
+      .where(eq(notionSourceJobsThree.sourceId, source.id));
+    // await db
+    //   .delete(notionSourceJobsFour)
+    //   .where(eq(notionSourceJobsFour.sourceId, source.id));
+
+    // delete daily quotes associated with the source
+    const quoteIds = await db
+      .select({ id: quotes.id })
+      .from(quotes)
+      .where(and(eq(quotes.sourceId, source.id), eq(quotes.userId, userId)));
+
+    const quoteIdArray = quoteIds.map((q) => q.id);
+
+    if (quoteIdArray.length > 0) {
+      await db
+        .delete(dailyQuotes)
+        .where(
+          and(
+            inArray(dailyQuotes.quoteId, quoteIdArray),
+            eq(dailyQuotes.userId, userId)
+          )
+        );
+    }
+
+    // delete the source
+    await db
+      .delete(sources)
+      .where(and(eq(sources.id, source.id), eq(sources.userId, userId)));
+
+    // delete any media associated with the source
+    if (source.mediaId) {
+      await db
+        .delete(media)
+        .where(and(eq(media.id, source.mediaId), eq(media.userId, userId)));
+    }
+
+    return {};
+  } catch (error) {
+    console.error(error);
+    return false;
   }
 };

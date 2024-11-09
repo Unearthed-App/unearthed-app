@@ -102,13 +102,13 @@ export default function BooksIgnored() {
                   >
                     <div className="mb-2 flex w-full p-2 md:p-4 rounded-lg border-2 bg-card">
                       <div className="flex items-center">
-                        {book.imageUrl ? (
+                        {book.media && book.media.url ? (
                           <Link
                             href={`/dashboard/book/${book.id}`}
                             className="w-[90px] md:w-[100px]"
                           >
                             <Image
-                              src={book.imageUrl}
+                              src={book.media.url}
                               width={100}
                               height={100}
                               alt="Picture of the book"

@@ -55,7 +55,6 @@ export async function GET() {
         quotes: true,
       },
       where: and(
-        eq(sources.type, "BOOK"),
         eq(sources.ignored, false),
         eq(sources.userId, profile.userId)
       ),

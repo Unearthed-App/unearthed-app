@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import QueryClientContextProvider from "@/components/QueryClientContextProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+} from "@clerk/nextjs";
 import { neobrutalism } from "@clerk/themes";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
@@ -13,6 +18,12 @@ import CookieConsent from "@/components/CookieConsent";
 import { DropdownMenuNav } from "@/components/DropdownMenuNav";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { IsPremiumSetter } from "@/components/IsPremiumSetter";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { NoiseBackground } from "@/components/NoiseBackground";
+import { Button } from "@/components/ui/button";
+import { LogIn } from "lucide-react";
 
 const ConditionalPH = dynamic(() => import("@/components/ConditionalPH"), {
   ssr: false,
@@ -67,15 +78,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { userId }: { userId: string | null } = auth();
 
-
-    const { userId }: { userId: string | null } = auth();
-    let isPremium = false;
-
+  let isPremium = false;
+  try {
     if (userId) {
-      const user = await clerkClient().users.getUser(userId!);
+      const user = await clerkClient().users.getUser(userId);
       isPremium = user.privateMetadata.isPremium as boolean;
     }
+  } catch (error) {
+    isPremium = false;
+  }
 
   return (
     <ClerkProvider
@@ -85,7 +98,7 @@ export default async function RootLayout({
     >
       <QueryClientContextProvider>
         <html lang="en" className="h-full">
-          <div className="-z-50 fixed top-0 left-0 right-0 h-screen w-full bg-gradient-to-b  from-background via-card to-background"></div>
+          <NoiseBackground />
           <body className={poppins.className + " h-full"}>
             <IsPremiumSetter isPremium={isPremium} />
             <ThemeProvider
@@ -101,9 +114,19 @@ export default async function RootLayout({
                 <div className="z-50 fixed mt-2 ml-2 flex space-x-2">
                   <ModeToggle />
                   <DropdownMenuNav />
+                  <SignInButton>
+                    <Button size="icon">
+                      <LogIn />
+                    </Button>
+                  </SignInButton>
                 </div>
               </SignedOut>
-              <ConditionalPH>{children}</ConditionalPH>
+              <ConditionalPH>
+                <NextSSRPlugin
+                  routerConfig={extractRouterConfig(ourFileRouter)}
+                />
+                {children}
+              </ConditionalPH>
               <CookieConsent />
               <Toaster />
             </ThemeProvider>

@@ -6,6 +6,7 @@ import { and, eq, isNotNull } from "drizzle-orm";
 import {
   dailyQuotes,
   insertDailyQuotesSchema,
+  media,
   profiles,
   quotes,
   selectProfileSchema,
@@ -36,10 +37,7 @@ async function verifyApiKeyGetProfile(providedApiKey: string) {
   });
 
   for (const unearthedKey of potentialProfiles) {
-    const isMatch = await bcrypt.compare(
-      providedApiKey,
-      unearthedKey.key!
-    );
+    const isMatch = await bcrypt.compare(providedApiKey, unearthedKey.key!);
     if (isMatch) {
       const profile = await db.query.profiles.findFirst({
         where: eq(profiles.userId, unearthedKey.userId),
@@ -114,9 +112,23 @@ const getDailyReflection = async (
       .from(dailyQuotes)
       .where(and(eq(dailyQuotes.day, todaysDate), eq(sources.userId, userId)))
       .leftJoin(quotes, eq(quotes.id, dailyQuotes.quoteId))
-      .leftJoin(sources, eq(sources.id, quotes.sourceId))) as any;
+      .leftJoin(sources, eq(sources.id, quotes.sourceId))
+      .leftJoin(media, eq(media.id, sources.mediaId))) as any;
 
     if (dailyQuoteWithRelationsResult.length > 0) {
+      dailyQuoteWithRelationsResult = dailyQuoteWithRelationsResult.map(
+        (item: any) => {
+          const { media, ...rest } = item;
+          return {
+            ...rest,
+            sources: {
+              ...rest.sources,
+              media: media || {},
+            },
+          };
+        }
+      );
+
       dailyQuoteWithRelationsResult = dailyQuoteWithRelationsResult[0];
     }
 

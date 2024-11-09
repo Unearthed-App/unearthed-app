@@ -8,17 +8,18 @@ import {
 import { DropdownMenuNav } from "@/components/DropdownMenuNav";
 import { ModeToggle } from "@/components/ModeToggle";
 import { ProfileDialog } from "./ProfileDialog";
-import { LogOut } from "lucide-react";
+import { Crown, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { usePathname } from "next/navigation";
 import { SearchDialog } from "./SearchDialog";
 
-import { Crimson_Pro } from "next/font/google";
 import { useEffect, useState } from "react";
 import { getIsPremium } from "@/lib/utils";
+import { QuoteFormDialog } from "./premium/QuoteForm/QuoteFormDialog";
 
+import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 export function Navbar() {
@@ -43,7 +44,7 @@ export function Navbar() {
   if (isDesktop) {
     return (
       <div className="z-50 fixed w-full">
-        <div className="px-12 flex border-b-2 border-muted h-24 justify-between bg-background">
+        <div className="px-12 flex h-24 justify-between bg-white/50 dark:bg-black/40 backdrop-blur-md shadow-2xl shadow-card dark:shadow-black/20 dark:shadow-xl">
           <div className="flex flex-wrap">
             <div className="flex space-x-10 items-end text-base text-muted pb-2">
               <SignedIn>
@@ -76,12 +77,10 @@ export function Navbar() {
                         className={`${
                           crimsonPro.className
                         } transition-all duration-100 font-semibold hover:text-secondary ${
-                          isActive("/premium/books-ignored")
-                            ? activeStyles
-                            : ""
+                          isActive("/premium/books-ignored") ? activeStyles : ""
                         }`}
                       >
-                        Ignored Books
+                        Ignored
                       </h3>
                     </Link>
                   </>
@@ -128,7 +127,16 @@ export function Navbar() {
             </div>
           </div>
           <div className="flex space-x-4 items-center justify-end">
+            {!isPremium && pathname !== "/dashboard/get-premium" && (
+              <Link href="/dashboard/get-premium">
+                <Button variant="brutalprimary">
+                  <Crown className="mr-0 md:mr-2" />
+                  <span className="">Get Premium</span>
+                </Button>
+              </Link>
+            )}
             <SearchDialog />
+            {isPremium && <QuoteFormDialog onQuoteAdded={() => {}} />}
             <DropdownMenuNav />
             <ModeToggle />
             <ProfileDialog />
@@ -137,9 +145,6 @@ export function Navbar() {
                 <LogOut />
               </Button>
             </SignOutButton>
-            <SignedOut>
-              <SignInButton />
-            </SignedOut>
           </div>
         </div>
       </div>
@@ -151,16 +156,19 @@ export function Navbar() {
       <div className=" flex justify-center">
         <div className="mt-2 bg-card rounded-lg border-2 border-black inset-0 flex space-x-4 p-4 justify-center">
           <SignedIn>
-            <SearchDialog />
+            {!isPremium && (
+              <Link href="/dashboard/get-premium">
+                <Button size="icon" className="" variant="brutalprimary">
+                  <Crown />
+                </Button>
+              </Link>
+            )}
 
+            <SearchDialog />
+            {isPremium && <QuoteFormDialog onQuoteAdded={() => {}} />}
             <DropdownMenuNav />
             <ModeToggle />
             <ProfileDialog />
-            <SignOutButton>
-              <Button size="icon">
-                <LogOut />
-              </Button>
-            </SignOutButton>
           </SignedIn>
           <SignedOut>
             <SignInButton />

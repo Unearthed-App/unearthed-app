@@ -1,8 +1,16 @@
 "use client";
 
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
-import { LogOut, BookOpenText, Frown, Menu, Home } from "lucide-react";
+import {
+  LogOut,
+  BookOpenText,
+  Frown,
+  Menu,
+  Home,
+  User,
+  LogIn,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -59,7 +67,7 @@ export function DropdownMenuNav() {
                   <Link href="/premium/books-ignored">
                     <DropdownMenuItem>
                       <Frown className="mr-2 h-4 w-4" />
-                      <span>Ignored Books</span>
+                      <span>Ignored</span>
                     </DropdownMenuItem>
                   </Link>
                 </DropdownMenuGroup>
@@ -83,7 +91,7 @@ export function DropdownMenuNav() {
                       <span>Install Firefox Extension</span>
                     </DropdownMenuItem>
                   </Link>
-                </DropdownMenuGroup>{" "}
+                </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                   <Link href="/privacy" passHref>
@@ -91,12 +99,20 @@ export function DropdownMenuNav() {
                   </Link>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <SignOutButton>
-                  <DropdownMenuItem>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </SignOutButton>{" "}
+                <DropdownMenuGroup>
+                  <Link href="/dashboard/user-profile">
+                    <DropdownMenuItem>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <SignOutButton>
+                    <DropdownMenuItem>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Sign out</span>
+                    </DropdownMenuItem>
+                  </SignOutButton>{" "}
+                </DropdownMenuGroup>
               </>
             ) : (
               <>
@@ -148,12 +164,20 @@ export function DropdownMenuNav() {
                   </Link>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <SignOutButton>
-                  <DropdownMenuItem>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </SignOutButton>
+                <DropdownMenuGroup>
+                  <Link href="/dashboard/user-profile">
+                    <DropdownMenuItem>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <SignOutButton>
+                    <DropdownMenuItem>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Sign out</span>
+                    </DropdownMenuItem>
+                  </SignOutButton>
+                </DropdownMenuGroup>
               </>
             )}
           </DropdownMenuContent>
@@ -175,6 +199,15 @@ export function DropdownMenuNav() {
                 </DropdownMenuItem>
               </Link>
             </DropdownMenuGroup>
+            <DropdownMenuGroup>
+              <SignInButton>
+                <DropdownMenuItem>
+                  <LogIn className="mr-2 h-4 w-4" />
+                  <span>Sign In</span>
+                </DropdownMenuItem>
+              </SignInButton>
+            </DropdownMenuGroup>
+
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <Link href="/privacy" passHref>
