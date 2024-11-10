@@ -1,20 +1,19 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 import { Webhook } from "svix";
 import { headers } from "next/headers";
@@ -47,7 +46,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const headerPayload = headers();
+  const headerPayload = await headers();
   const svix_id = headerPayload.get("svix-id");
   const svix_timestamp = headerPayload.get("svix-timestamp");
   const svix_signature = headerPayload.get("svix-signature");
@@ -94,7 +93,8 @@ export async function POST(req: Request) {
     const newSecret = generateSecureKey();
 
     try {
-      await clerkClient().users.updateUserMetadata(userId, {
+      const client = await clerkClient();
+      await client.users.updateUserMetadata(userId, {
         privateMetadata: {
           encryptionKey: newEncryptionKey,
           secret: newSecret,

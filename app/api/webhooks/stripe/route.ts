@@ -1,20 +1,19 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,7 +40,7 @@ type ProfileSelect = z.infer<typeof selectProfileSchema>;
 export async function POST(req: NextRequest) {
   const posthogClient = PostHogClient();
 
-  const headersList = headers();
+  const headersList = await headers();
   const sig = headersList.get("stripe-signature");
 
   if (!sig || !endpointSecret) {
@@ -51,6 +50,8 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
+
+  const client = await clerkClient();
 
   let event: Stripe.Event;
 
@@ -84,7 +85,7 @@ export async function POST(req: NextRequest) {
           }
 
           console.log(`Processing completed checkout for user ${userId}`);
-          const clerkUser = await clerkClient().users.getUser(userId);
+          const clerkUser = await client.users.getUser(userId);
 
           posthogClient.capture({
             distinctId: userId,
@@ -93,7 +94,7 @@ export async function POST(req: NextRequest) {
 
           try {
             if (clerkUser) {
-              await clerkClient().users.updateUserMetadata(userId!, {
+              await client.users.updateUserMetadata(userId!, {
                 privateMetadata: {
                   isPremium: true,
                 },
@@ -223,10 +224,10 @@ export async function POST(req: NextRequest) {
           subscription.status === "incomplete_expired"
         ) {
           try {
-            const clerkUser = await clerkClient().users.getUser(userId);
+            const clerkUser = await client.users.getUser(userId);
 
             if (clerkUser) {
-              await clerkClient().users.updateUserMetadata(userId, {
+              await client.users.updateUserMetadata(userId, {
                 privateMetadata: {
                   isPremium: false,
                 },
@@ -260,7 +261,7 @@ export async function POST(req: NextRequest) {
           let clerkUserGone = false;
 
           try {
-            await clerkClient().users.updateUserMetadata(userId, {
+            await client.users.updateUserMetadata(userId, {
               privateMetadata: {
                 isPremium,
               },
@@ -301,7 +302,7 @@ export async function POST(req: NextRequest) {
           let clerkUserGone = false;
 
           try {
-            await clerkClient().users.updateUserMetadata(userId, {
+            await client.users.updateUserMetadata(userId, {
               privateMetadata: {
                 isPremium,
               },
@@ -375,10 +376,10 @@ export async function POST(req: NextRequest) {
         });
 
         try {
-          const clerkUser = await clerkClient().users.getUser(userId);
+          const clerkUser = await client.users.getUser(userId);
 
           if (clerkUser) {
-            await clerkClient().users.updateUserMetadata(userId, {
+            await client.users.updateUserMetadata(userId, {
               privateMetadata: {
                 isPremium: false,
               },

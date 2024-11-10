@@ -1,20 +1,19 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 "use server";
 
@@ -66,7 +65,7 @@ type NotionSourceJobsOneInsert = z.infer<
 export const getBook = async (
   bookId: string
 ): Promise<SourceWithRelations | { error: string }> => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -118,7 +117,7 @@ export const getBooks = async ({
 }: {
   ignored?: true | false | "";
 }): Promise<SourceWithRelations[]> => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -156,7 +155,7 @@ export const getBooks = async ({
 };
 
 export const getBookTitles = async (): Promise<Source[]> => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     return [];
   }
@@ -180,7 +179,7 @@ export const toggleIgnoredBook = async ({
   bookId: string;
   ignored: boolean;
 }): Promise<{ status: string } | { error: string }> => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -198,7 +197,7 @@ export const toggleIgnoredBook = async ({
 };
 
 export const getProfile = async (): Promise<Profile> => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -242,7 +241,7 @@ export const getProfile = async (): Promise<Profile> => {
 };
 
 const capicitiesGetSpaces = async (profile: Profile) => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -277,7 +276,7 @@ const capicitiesGetSpaces = async (profile: Profile) => {
 };
 
 export const getSettings = async () => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -303,7 +302,7 @@ export const getOrCreateDailyReflection = async ({
   replaceDailyQuote?: true | false;
   utcOffset?: number;
 } = {}) => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -358,7 +357,6 @@ export const getOrCreateDailyReflection = async ({
       .leftJoin(sources, eq(sources.id, quotes.sourceId))
       .leftJoin(media, eq(media.id, sources.mediaId))) as any;
 
-
     if (dailyQuoteWithRelationsResult.length > 0) {
       dailyQuoteWithRelationsResult = dailyQuoteWithRelationsResult.map(
         (item: any) => {
@@ -396,7 +394,7 @@ export const getOrCreateDailyReflection = async ({
 
     const quotesResult = await db.query.quotes.findMany({
       with: {
-        source: {with: {media: true}},
+        source: { with: { media: true } },
       },
       where: and(eq(quotes.userId, userId)),
     });
@@ -481,7 +479,7 @@ export const getOrCreateDailyReflection = async ({
 };
 
 export const addDailyToCapacities = async () => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -542,7 +540,7 @@ export const addPassedDailyToCapacities = async (dailyReflection: {
   book: Source;
   quote: Quote;
 }) => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     return false;
   }
@@ -644,7 +642,7 @@ export const search = async (
   books: Source[];
   quotes: QuoteWithRelations[];
 }> => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -689,7 +687,7 @@ export const search = async (
 };
 
 export const syncToNotion = async () => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     return { success: false };
   }
@@ -785,7 +783,7 @@ export const syncToNotion = async () => {
 };
 
 export const syncSourceToNotion = async (sourceId: string) => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     return { success: false };
   }
@@ -952,7 +950,7 @@ const getUnearthedKeys = async (profile: Profile) => {
 };
 
 export const deleteUnearthedKey = async ({ id }: { id: string }) => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     return { success: false };
   }
@@ -974,7 +972,7 @@ export const generateAndSaveUnearthedKey = async ({
 }: {
   name: string;
 }) => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     return { success: false };
   }
@@ -1005,7 +1003,7 @@ export const createEmptyProfile = async ({
 }: {
   utcOffset?: number;
 } = {}) => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -1029,7 +1027,7 @@ export const createEmptyProfile = async ({
 };
 
 export const deleteSource = async ({ source }: { source: Source }) => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }

@@ -20,7 +20,7 @@
 
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { selectSourceSchema, selectQuoteSchema } from "@/db/schema";
@@ -53,7 +53,8 @@ import { AnimatedLoader } from "@/components/AnimatedLoader";
 import { QuoteFormDialog } from "@/components/premium/QuoteForm/QuoteFormDialog";
 import { UploadButton } from "@/utils/uploadthing";
 
-export default function Book({ params }: { params: { bookId: string } }) {
+export default function Book(props: { params: Promise<{ bookId: string }> }) {
+  const params = use(props.params);
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();

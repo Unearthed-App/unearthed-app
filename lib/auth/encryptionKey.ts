@@ -1,33 +1,33 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
 const { subtle } = crypto;
 import bcrypt from "bcrypt";
 
 export async function setEncryptionKey(encryptionKey: string) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
 
   try {
-    await clerkClient().users.updateUserMetadata(userId, {
+    const client = await clerkClient();
+    await client.users.updateUserMetadata(userId, {
       privateMetadata: {
         encryptionKey: encryptionKey,
       },
@@ -40,13 +40,14 @@ export async function setEncryptionKey(encryptionKey: string) {
 }
 
 export async function getEncryptionKey() {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
 
   try {
-    const user = await clerkClient().users.getUser(userId);
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
     return user.privateMetadata.encryptionKey as string | undefined;
   } catch (error) {
     console.error("Error retrieving encryption key:", error);
@@ -55,7 +56,7 @@ export async function getEncryptionKey() {
 }
 
 export async function getOrCreateEncryptionKey() {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -148,7 +149,6 @@ export async function decrypt(
     throw error;
   }
 }
-
 
 // Function to hash the API key
 export async function hashApiKey(apiKey: string): Promise<string> {

@@ -1,20 +1,19 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 "use server";
 
@@ -45,7 +44,7 @@ interface ImageFile {
 }
 
 export const search = async (query: string) => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -53,7 +52,8 @@ export const search = async (query: string) => {
   let isPremium = false;
   try {
     if (userId) {
-      const user = await clerkClient().users.getUser(userId);
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
       isPremium = user.privateMetadata.isPremium as boolean;
     }
   } catch (error) {
@@ -127,7 +127,7 @@ export const search = async (query: string) => {
 };
 
 export const deleteQuote = async ({ quoteId }: { quoteId: string }) => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -135,7 +135,8 @@ export const deleteQuote = async ({ quoteId }: { quoteId: string }) => {
   let isPremium = false;
   try {
     if (userId) {
-      const user = await clerkClient().users.getUser(userId);
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
       isPremium = user.privateMetadata.isPremium as boolean;
     }
   } catch (error) {
@@ -158,7 +159,7 @@ export const deleteQuote = async ({ quoteId }: { quoteId: string }) => {
 };
 
 export const getQuotesStandalone = async (): Promise<Quote[]> => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -166,7 +167,8 @@ export const getQuotesStandalone = async (): Promise<Quote[]> => {
   let isPremium = false;
   try {
     if (userId) {
-      const user = await clerkClient().users.getUser(userId);
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
       isPremium = user.privateMetadata.isPremium as boolean;
     }
   } catch (error) {
@@ -212,7 +214,7 @@ export const getQuotesStandalone = async (): Promise<Quote[]> => {
 };
 
 export const getSourceTitles = async (): Promise<Source[]> => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -220,7 +222,8 @@ export const getSourceTitles = async (): Promise<Source[]> => {
   let isPremium = false;
   try {
     if (userId) {
-      const user = await clerkClient().users.getUser(userId);
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
       isPremium = user.privateMetadata.isPremium as boolean;
     }
   } catch (error) {
@@ -245,7 +248,7 @@ export const getSourceTitles = async (): Promise<Source[]> => {
 };
 
 export const updateBookImage = async (file: ImageFile, source: Source) => {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -253,7 +256,8 @@ export const updateBookImage = async (file: ImageFile, source: Source) => {
   let isPremium = false;
   try {
     if (userId) {
-      const user = await clerkClient().users.getUser(userId);
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
       isPremium = user.privateMetadata.isPremium as boolean;
     }
   } catch (error) {

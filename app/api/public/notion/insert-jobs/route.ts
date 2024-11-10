@@ -37,7 +37,7 @@ import { splitArray } from "@/lib/utils";
 type Profile = z.infer<typeof selectProfileSchema>;
 
 export async function GET() {
-  const headersList = headers();
+  const headersList = await headers();
   const authHeader = headersList.get("authorization");
 
   const validToken = process.env.CRON_TOKEN;

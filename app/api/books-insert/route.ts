@@ -36,7 +36,7 @@ type BodyItem = SourceInsert & {
 };
 
 export async function POST(request: NextRequest) {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

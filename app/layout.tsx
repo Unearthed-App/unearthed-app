@@ -1,20 +1,19 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
@@ -43,9 +42,7 @@ import { NoiseBackground } from "@/components/NoiseBackground";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
 
-const ConditionalPH = dynamic(() => import("@/components/ConditionalPH"), {
-  ssr: false,
-});
+const ConditionalPH = dynamic(() => import("@/components/ConditionalPH"));
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -56,6 +53,11 @@ export const metadata: Metadata = {
   title: "Unearthed - Lost wisdom, found again",
   description:
     "Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Search, tag, and connect your insights across platforms. Notion, Obsidian, Capacities.",
+  icons: {
+    icon: [{ url: "/favicon.ico" }, { url: "/icon.png" }],
+    apple: [{ url: "/apple-icon.png" }],
+    shortcut: ["/shortcut-icon.png"],
+  },
   keywords: [
     "kindle highlights",
     "digital notes",
@@ -96,12 +98,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { userId }: { userId: string | null } = auth();
+  const { userId }: { userId: string | null } = await auth();
 
   let isPremium = false;
   try {
     if (userId) {
-      const user = await clerkClient().users.getUser(userId);
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
       isPremium = user.privateMetadata.isPremium as boolean;
     }
   } catch (error) {
