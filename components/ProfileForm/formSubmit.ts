@@ -54,6 +54,10 @@ export async function onSubmitAction(data: any, utcOffset: number) {
     };
   }
 
+  const supernotesApiKeyEncyrpted = parsed.data.supernotesApiKey
+    ? await encrypt(parsed.data.supernotesApiKey as string, encryptionKey)
+    : "";
+
   const capacitiesApiKeyEncyrpted = parsed.data.capacitiesApiKey
     ? await encrypt(parsed.data.capacitiesApiKey as string, encryptionKey)
     : "";
@@ -68,6 +72,7 @@ export async function onSubmitAction(data: any, utcOffset: number) {
     const result = await db
       .update(profiles)
       .set({
+        supernotesApiKey: supernotesApiKeyEncyrpted,
         capacitiesApiKey: capacitiesApiKeyEncyrpted,
         capacitiesSpaceId: capacitiesSpaceIdEncyrpted,
         utcOffset,
@@ -87,6 +92,7 @@ export async function onSubmitAction(data: any, utcOffset: number) {
       await db
         .insert(profiles)
         .values({
+          supernotesApiKey: supernotesApiKeyEncyrpted,
           capacitiesApiKey: capacitiesApiKeyEncyrpted,
           capacitiesSpaceId: capacitiesSpaceIdEncyrpted,
           utcOffset,

@@ -32,9 +32,6 @@ export function Checkout() {
       });
 
       const { url } = await response.json();
-
-      console.log("URL:", url);
-
       window.location.href = url;
     } catch (error) {
       console.error("Error:", error);

@@ -94,6 +94,8 @@ export const profiles = pgTable("profiles", {
     .default(sql`requesting_user_id()`)
     .notNull()
     .unique(),
+  dailyEmails: boolean("daily_emails").default(false),
+  supernotesApiKey: text("supernotes_api_key"),
   capacitiesApiKey: text("capacities_api_key"),
   capacitiesSpaceId: text("capacities_space_id"),
   notionDatabaseId: text("notion_database_id"),
@@ -136,6 +138,7 @@ export const dailyQuotes = pgTable(
     day: date("day").defaultNow(),
     emailSent: boolean("email_sent").default(false),
     capacitiesUpdated: boolean("capacities_updated").default(false),
+    supernotesUpdated: boolean("supernotes_updated").default(false),
   },
   (table) => {
     return {

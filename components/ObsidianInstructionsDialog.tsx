@@ -1,0 +1,155 @@
+/**
+ * Copyright (C) 2024 Unearthed App
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+"use client";
+import * as React from "react";
+
+import { useMediaQuery } from "@/hooks/use-media-query";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Info, Mail } from "lucide-react";
+import { HeadingBlur } from "./HeadingBlur";
+
+export function ObsidianInstructionsDialog({ isMenuItem = false }) {
+  const [open, setOpen] = React.useState(false);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          {!isMenuItem ? (
+            <Button className="max-w-64">
+              <Info />
+              <div className="ml-2">Obsidian Instructions</div>
+            </Button>
+          ) : (
+            <div
+              role="menuitem"
+              className="hover:bg-primary relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+            >
+              <Info className="mr-2 h-4 w-4" />
+              <span>Obsidian Instructions</span>
+            </div>
+          )}
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              <span>Obsidian Instructions</span>
+            </DialogTitle>
+          </DialogHeader>
+          <ol className="list-none space-y-4 pl-2">
+            {[
+              "Generate an API key on 'Unearthed.app' first, and save it somewhere temporarily",
+              "Open Obsidian and go to the settings",
+              "Click on Community Plugins",
+              "Turn off Restricted mode (this is required for any Community Plugin)",
+              "Click 'Browse' and search for 'Unearthed'",
+              "Install 'Unearthed (Kindle Sync)'",
+              "Enable 'Unearthed (Kindle Sync)'",
+              "Click on 'Options' and fill out the details. Most importantly, paste in the API key that you generated into the 'Unearthed API key' field.",
+              "Test if it's working by pressing the 'Sync' buttons for the 'Manual sync', and 'Manual daily reflection sync'",
+            ].map((text, index) => (
+              <li key={index} className="flex items-start gap-4">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center font-bold text-xs text-center p-4 rounded-lg backdrop-blur-sm bg-white/30 text-alternate shadow-xl shadow-red-300/10 dark:shadow-lg dark:shadow-primary/10">
+                  {index + 1}
+                </span>
+                <span className="text-sm pt-0.5">{text}</span>
+              </li>
+            ))}
+          </ol>
+          <HeadingBlur content="Now everything in Kindle will be synced to Obsidian, even on mobile" />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        {!isMenuItem ? (
+          <Button className="max-w-64">
+            <Info />
+            <div className="ml-2">Obsidian Instructions</div>
+          </Button>
+        ) : (
+          <div
+            role="menuitem"
+            className="hover:bg-primary relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+          >
+            <Info className="mr-2 h-4 w-4" />
+            <span>Obsidian Instructions</span>
+          </div>
+        )}
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader className="text-left">
+          <DrawerTitle>
+            <span>Obsidian Instructions</span>
+          </DrawerTitle>
+        </DrawerHeader>
+        <ol className="list-none space-y-4 pl-2">
+          {[
+            "Generate an API key on 'Unearthed.app' first, and save it somewhere temporarily",
+            "Open Obsidian and go to the settings",
+            "Click on Community Plugins",
+            "Turn off Restricted mode (this is required for any Community Plugin)",
+            "Click 'Browse' and search for 'Unearthed'",
+            "Install 'Unearthed (Kindle Sync)'",
+            "Enable 'Unearthed (Kindle Sync)'",
+            "Click on 'Options' and fill out the details. Most importantly, paste in the API key that you generated into the 'Unearthed API key' field.",
+            "Test if it's working by pressing the 'Sync' buttons for the 'Manual sync', and 'Manual daily reflection sync'",
+          ].map((text, index) => (
+            <li key={index} className="flex items-start gap-4">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center font-bold text-xs text-center p-4 rounded-lg backdrop-blur-sm bg-white/30 text-alternate shadow-xl shadow-red-300/10 dark:shadow-lg dark:shadow-primary/10">
+                {index + 1}
+              </span>
+              <span className="text-sm pt-0.5">{text}</span>
+            </li>
+          ))}
+        </ol>
+
+        <DrawerFooter>
+          <DrawerClose asChild>
+            <div className="flex justify-between items-center">
+              <div>
+                <Button className="w-24">Ok</Button>
+              </div>
+            </div>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
+}

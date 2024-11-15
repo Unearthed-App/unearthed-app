@@ -76,6 +76,7 @@ export const metadata: Metadata = {
 export default async function App() {
   const { userId }: { userId: string | null } = await auth();
 
+
   let isPremium = false;
   try {
     if (userId) {

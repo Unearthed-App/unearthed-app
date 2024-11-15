@@ -1,20 +1,19 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 "use client";
 
@@ -25,7 +24,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { selectSourceSchema, selectQuoteSchema } from "@/db/schema";
 import { getBook, getBookTitles } from "@/server/actions";
-import { updateBookImage } from "@/server/actions-premium";
+import { updateBookImage, deleteBookImage } from "@/server/actions-premium";
 
 type Source = z.infer<typeof selectSourceSchema>;
 const QuotesArraySchema = z.array(selectQuoteSchema);
@@ -58,6 +57,7 @@ export default function Book(props: { params: Promise<{ bookId: string }> }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [showImageUpload, setShowImageUpload] = useState(false);
 
   const {
     data: book,
@@ -217,52 +217,80 @@ export default function Book(props: { params: Promise<{ bookId: string }> }) {
               ignored={book.ignored as boolean}
             />
             {book.origin == "UNEARTHED" && (
-              <div className="w-64 xl:w-full mt-4">
-                <h4 className="font-semibold mb-1 block">Change the image:</h4>
-                <UploadButton
-                  appearance={{
-                    button: `w-full ut-ready:bg-card ut-ready:text-black ut-uploading:text-black ut-uploading:cursor-not-allowed
-                    h-12 border-2 p-2.5 rounded-md transition-all duration-200
+              <>
+                {!showImageUpload && (
+                  <div className="mt-2 flex">
+                    <Button onClick={() => setShowImageUpload(true)} size="sm">
+                      Change Image
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        await deleteBookImage(book);
+                        toast({
+                          title: `Image Removed`,
+                          description: `Reloading the page, please wait`,
+                        });
+                        queryClient.invalidateQueries({ queryKey: ["book"] });
+                      }}
+                      size="sm"
+                      variant="destructivebrutal"
+                      className="ml-1"
+                    >
+                      Remove Image
+                    </Button>
+                  </div>
+                )}
+                {showImageUpload && (
+                  <div className="w-64 xl:w-full mt-4">
+                    <h4 className="font-semibold mb-1 block">
+                      Change the image:
+                    </h4>
+                    <UploadButton
+                      appearance={{
+                        button: ` text-xs font-bold w-full ut-ready:bg-primary ut-ready:text-black ut-uploading:text-black ut-uploading:cursor-not-allowed
+                     border-2 p-2.5 rounded-md transition-all duration-200
                     bg-card border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
                     hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
                     active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
                     dark:hover:bg-accent dark:bg-[rgb(238,157,138)] dark:text-black`,
-                    container: "flex justify-start",
-                    allowedContent:
-                      "flex h-8 flex-col items-center justify-center px-2 text-muted dark:text-white mt-2",
-                  }}
-                  endpoint="imageUploader"
-                  onClientUploadComplete={async (res) => {
-                    const firstFile = res[0];
+                        container: "flex justify-start",
+                        allowedContent:
+                          "flex h-8 flex-col items-center justify-center px-2 text-muted dark:text-white mt-2",
+                      }}
+                      endpoint="imageUploader"
+                      onClientUploadComplete={async (res) => {
+                        const firstFile = res[0];
 
-                    const fileToUpload = {
-                      appUrl: firstFile.appUrl,
-                      key: firstFile.key,
-                      name: firstFile.name,
-                      userId: firstFile.serverData.uploadedBy,
-                      url: firstFile.url,
-                      uploadedBy: firstFile.serverData.uploadedBy,
-                    };
+                        const fileToUpload = {
+                          appUrl: firstFile.appUrl,
+                          key: firstFile.key,
+                          name: firstFile.name,
+                          userId: firstFile.serverData.uploadedBy,
+                          url: firstFile.url,
+                          uploadedBy: firstFile.serverData.uploadedBy,
+                        };
 
-                    if (firstFile) {
-                      await updateBookImage(fileToUpload, book);
-                      toast({
-                        title: `Uploaded image successfully`,
-                        description: `Reloading the page, please wait`,
-                      });
-                      router.refresh();
-                    }
-                  }}
-                  onUploadError={(error: Error) => {
-                    console.log(`ERROR! ${error.message}`);
-                    toast({
-                      title: `Error`,
-                      description: `Make sure the file is an Image under the file size limit`,
-                      variant: "destructive",
-                    });
-                  }}
-                />
-              </div>
+                        if (firstFile) {
+                          await updateBookImage(fileToUpload, book);
+                          toast({
+                            title: `Uploaded image successfully`,
+                            description: `Reloading the page, please wait`,
+                          });
+                          queryClient.invalidateQueries({ queryKey: ["book"] });
+                        }
+                      }}
+                      onUploadError={(error: Error) => {
+                        console.log(`ERROR! ${error.message}`);
+                        toast({
+                          title: `Error`,
+                          description: `Make sure the file is an Image under the file size limit`,
+                          variant: "destructive",
+                        });
+                      }}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
           <div className="w-full xl:w-5/6 pt-4 xl:pt-0 flex">

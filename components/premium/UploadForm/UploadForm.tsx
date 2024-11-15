@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -33,7 +33,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { schema } from "./formSchema";
 import { onSubmitAction } from "./formSubmit";
-import { UploadCloud, X } from "lucide-react";
+import { UploadCloud, X, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -85,6 +85,15 @@ export function UploadForm({ onUpload }: UploadFormProps) {
     setIsLoading(false);
   };
 
+  const downloadTemplate = () => {
+    const link = document.createElement("a");
+    link.href = "/upload_template.csv";
+    link.download = "upload_template.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="bg-card rounded-lg border-2 p-4">
       <Form {...form}>
@@ -105,9 +114,21 @@ export function UploadForm({ onUpload }: UploadFormProps) {
                       <FormControl>
                         <RadioGroupItem value="csv" />
                       </FormControl>
-                      <FormLabel className="font-normal">
-                        CSV
-                      </FormLabel>
+                      <div className="w-full flex items-center justify-between gap-3">
+                        <FormLabel className="font-normal">CSV</FormLabel>
+                        {field.value === "csv" && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-8 gap-2"
+                            onClick={downloadTemplate}
+                          >
+                            <Download className="h-4 w-4" />
+                            Download Template
+                          </Button>
+                        )}
+                      </div>
                     </FormItem>
                     <FormItem className="flex items-center space-x-3 space-y-0">
                       <FormControl>

@@ -231,7 +231,11 @@ export default function Books() {
                     }}
                     onConfirm={handleConfirmDelete}
                     title="Delete Book"
-                    description={`Are you sure you want to delete "${book.title}"? This action cannot be undone.`}
+                    description={
+                      book.origin === "KINDLE"
+                        ? `Are you sure you want to delete "${book.title}"? As this is a Kindle book, it will reappear here on the next sync, so you should use the 'Ignore' button instead.`
+                        : `Are you sure you want to delete "${book.title}"? This action cannot be undone.`
+                    }
                     confirmText="Delete"
                     cancelText="Cancel"
                   >

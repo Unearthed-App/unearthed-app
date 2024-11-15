@@ -317,3 +317,51 @@ export const updateBookImage = async (file: ImageFile, source: Source) => {
     return [];
   }
 };
+
+export const deleteBookImage = async (source: Source) => {
+  const { userId }: { userId: string | null } = await auth();
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  let isPremium = false;
+  try {
+    if (userId) {
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
+      isPremium = user.privateMetadata.isPremium as boolean;
+    }
+  } catch (error) {
+    isPremium = false;
+  }
+
+  if (!isPremium) {
+    throw new Error("User not allowed");
+  }
+
+  try {
+    if (source.mediaId) {
+      const mediaResults = await db.query.media.findFirst({
+        where: and(eq(media.id, source.mediaId), eq(media.userId, userId)),
+      });
+
+      if (mediaResults && mediaResults.key) {
+        await db
+          .update(sources)
+          .set({ mediaId: null })
+          .where(and(eq(sources.id, source.id), eq(sources.userId, userId)));
+
+        await db
+          .delete(media)
+          .where(and(eq(media.id, source.mediaId), eq(media.userId, userId)));
+
+        await utapi.deleteFiles(mediaResults.key);
+      }
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
