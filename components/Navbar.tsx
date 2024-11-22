@@ -1,20 +1,19 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 "use client";
 import {
@@ -25,7 +24,8 @@ import {
 } from "@clerk/nextjs";
 import { DropdownMenuNav } from "@/components/DropdownMenuNav";
 import { ModeToggle } from "@/components/ModeToggle";
-import { ProfileDialog } from "./ProfileDialog";
+import { ProfileDialog } from "./ProfileForm/ProfileDialog";
+import { ProfileDialog as ProfileDialogPremium } from "./premium/ProfileForm/ProfileDialog";
 import { Crown, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
@@ -157,7 +157,7 @@ export function Navbar() {
             {isPremium && <QuoteFormDialog onQuoteAdded={() => {}} />}
             <DropdownMenuNav />
             <ModeToggle />
-            <ProfileDialog />
+            {isPremium ? <ProfileDialogPremium /> : <ProfileDialog />}
             <SignOutButton>
               <Button size="icon">
                 <LogOut />
@@ -186,7 +186,7 @@ export function Navbar() {
             {isPremium && <QuoteFormDialog onQuoteAdded={() => {}} />}
             <DropdownMenuNav />
             <ModeToggle />
-            <ProfileDialog />
+            {isPremium ? <ProfileDialogPremium /> : <ProfileDialog />}
           </SignedIn>
           <SignedOut>
             <SignInButton />

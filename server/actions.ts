@@ -222,6 +222,9 @@ export const getProfile = async (): Promise<Profile> => {
 
     const decryptedResult = {
       ...toReturn,
+      supernotesApiKey: toReturn.supernotesApiKey
+        ? await decrypt(toReturn.supernotesApiKey as string, encryptionKey)
+        : "",
       capacitiesApiKey: toReturn.capacitiesApiKey
         ? await decrypt(toReturn.capacitiesApiKey as string, encryptionKey)
         : "",
@@ -618,6 +621,36 @@ export const capacitiesFormatDaily = async (
 ## 🔥 Remember This?
 ### [[book/${bookTitle}]]
 #### [[person/${bookAuthor}]]
+
+> ${quoteContent}
+
+**Location:** ${quoteLocation}
+`;
+
+  if (quoteNote) {
+    toReturn += `
+
+**My note:** ${quoteNote}
+
+---
+`;
+  }
+
+  return toReturn;
+};
+
+export const supernoteFormatDaily = async (
+  bookTitle?: string,
+  bookAuthor?: string,
+  quoteContent?: string,
+  quoteNote?: string,
+  quoteLocation?: string
+) => {
+  let toReturn = `
+---
+## 🔥 Remember This?
+**${bookTitle}**
+### by ${bookAuthor}
 
 > ${quoteContent}
 

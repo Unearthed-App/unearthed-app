@@ -102,19 +102,11 @@ export async function GET() {
         continue;
       }
 
-      posthogClient.capture({
-        distinctId: user.id,
-        event: `send-email ATTEMPTING`,
-        properties: {
-          sendTo: user.emailAddresses[0].emailAddress,
-        },
-      });
-
       const profile = profileResults.find(
         (profile) => profile.userId === user.id
       );
 
-      if (!profile || !profile.utcOffset) {
+      if (!profile || !profile.utcOffset || !profile.dailyEmails) {
         continue;
       }
 
@@ -137,6 +129,18 @@ export async function GET() {
           encryptionKey
         )) as DailyReflection;
       }
+
+      if (!dailyReflection.source) {
+        continue;
+      }
+
+      posthogClient.capture({
+        distinctId: user.id,
+        event: `send-email ATTEMPTING`,
+        properties: {
+          sendTo: user.emailAddresses[0].emailAddress,
+        },
+      });
 
       const sendData = {
         from: "Unearthed <contact@unearthed.app>",

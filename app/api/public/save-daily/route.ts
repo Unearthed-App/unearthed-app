@@ -18,10 +18,9 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/db";
-import { and, eq, inArray, isNotNull } from "drizzle-orm";
+import { and, eq, inArray, isNotNull, not } from "drizzle-orm";
 import PostHogClient from "@/app/posthog";
 import { clerkClient } from "@clerk/nextjs/server";
-import { Resend } from "resend";
 import { getTodaysDate } from "@/lib/utils";
 
 import {
@@ -74,6 +73,8 @@ export async function GET() {
     where: and(
       isNotNull(profiles.capacitiesApiKey),
       isNotNull(profiles.capacitiesSpaceId),
+      not(eq(profiles.capacitiesApiKey, "")),
+      not(eq(profiles.capacitiesSpaceId, "")),
       eq(profiles.userStatus, "ACTIVE")
     ),
   });
@@ -118,6 +119,10 @@ export async function GET() {
         )) as DailyReflection;
       }
 
+      if (!dailyReflection.source) {
+        continue;
+      }
+
       profile.capacitiesApiKey = profile.capacitiesApiKey
         ? await decrypt(profile.capacitiesApiKey as string, encryptionKey)
         : "";
@@ -134,7 +139,7 @@ export async function GET() {
 
       posthogClient.capture({
         distinctId: profile.userId,
-        event: `send-email ERROR`,
+        event: `capacities ERROR`,
         properties: {
           message:
             error instanceof Error ? error.message : "Unknown error occurred",

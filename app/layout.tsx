@@ -41,6 +41,7 @@ import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { NoiseBackground } from "@/components/NoiseBackground";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
+import { ContactFormDialog } from "@/components/ContactForm/ContactFormDialog";
 
 const ConditionalPH = dynamic(() => import("@/components/ConditionalPH"));
 
@@ -133,6 +134,7 @@ export default async function RootLayout({
               </SignedIn>
               <SignedOut>
                 <div className="z-50 fixed mt-2 ml-2 flex space-x-2">
+                  <ContactFormDialog />
                   <ModeToggle />
                   <DropdownMenuNav />
                   <SignInButton>

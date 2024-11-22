@@ -1,20 +1,19 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 "use client";
 import { useState, useEffect } from "react";
@@ -72,6 +71,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { selectUnearthedKeySchema } from "@/db/schema";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import ConfirmationDialog from "@/components/ConfirmationDialog"; // Import the ConfirmationDialog we created
+import { ObsidianInstructionsDialog } from "@/components/ObsidianInstructionsDialog";
 
 type CapacitiesSpaceItem = {
   id: string;
@@ -104,6 +104,7 @@ export function ProfileForm() {
     defaultValues: {
       capacitiesSpaceId: "",
       capacitiesApiKey: "",
+      supernotesApiKey: "",
     },
   });
 
@@ -131,10 +132,12 @@ export function ProfileForm() {
         if (data.profile.userId) {
           setProfileExists(true);
         }
+        console.log(data);
 
         form.reset({
           capacitiesSpaceId: data.profile.capacitiesSpaceId || "",
           capacitiesApiKey: data.profile.capacitiesApiKey || "",
+          supernotesApiKey: data.profile.supernotesApiKey || "",
         });
       }
     } catch (error) {
@@ -314,19 +317,23 @@ export function ProfileForm() {
           className="w-full space-y-6"
         >
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="general">General</TabsTrigger>
               <TabsTrigger value="notion">Notion</TabsTrigger>
               <TabsTrigger value="capacities">Capacities</TabsTrigger>
+              <TabsTrigger value="supernotes">Supernotes</TabsTrigger>
             </TabsList>
             <TabsContent value="general">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex">
-                    <div className="w-full">General</div>
-                  </CardTitle>{" "}
+                    <div className="w-full">API Keys</div>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="">
+                  <div className="mb-4">
+                    <ObsidianInstructionsDialog />
+                  </div>
                   <CardDescription>
                     Use these keys to integrate with other apps
                   </CardDescription>
@@ -447,7 +454,7 @@ export function ProfileForm() {
                           </span>
                         </div>
 
-                        <div className="text-muted">
+                        <div className="text-muted text-sm">
                           Unearthed will sync every 24 hours with Notion, but
                           you can also force a sync here.
                           <br />
@@ -619,6 +626,73 @@ export function ProfileForm() {
                       )}
                     />
                   )}
+                </CardContent>
+                <CardFooter>
+                  <div className="w-full flex justify-end">
+                    <Button
+                      className="w-24"
+                      variant="brutalprimary"
+                      type="submit"
+                      disabled={isSaving}
+                    >
+                      {isSaving ? "Saving..." : "Save"}
+                    </Button>
+                  </div>{" "}
+                </CardFooter>
+              </Card>
+            </TabsContent>{" "}
+            <TabsContent value="supernotes">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex">
+                    <div className="w-full">Supernotes</div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            className="-mt-3"
+                            type="button"
+                            onClick={toggleSecrets}
+                          >
+                            {showingSecrets ? <EyeOff /> : <Eye />}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                          <p>
+                            {showingSecrets
+                              ? "Hide all secrets"
+                              : "Show all secrets"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </CardTitle>
+                  <CardDescription>
+                    Don&apos;t forget to press{" "}
+                    <span className="text-secondary">Save</span>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="">
+                  <FormField
+                    control={form.control}
+                    name="supernotesApiKey"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Supernotes API Key</FormLabel>
+                        <FormControl>
+                          <Input
+                            type={showingSecrets ? "text" : "password"}
+                            placeholder="Supernotes API Key"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Generate an API token in Supernotes and paste it here
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </CardContent>
                 <CardFooter>
                   <div className="w-full flex justify-end">
