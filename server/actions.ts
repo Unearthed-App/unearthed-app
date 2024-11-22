@@ -1118,3 +1118,66 @@ export const deleteSource = async ({ source }: { source: Source }) => {
     return false;
   }
 };
+
+export const deleteAllSources = async () => {
+  const { userId }: { userId: string | null } = await auth();
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  try {
+    const sourceIds = await db
+      .select({ id: sources.id })
+      .from(sources)
+      .where(eq(sources.userId, userId));
+
+    const sourceIdArray = sourceIds.map((q) => q.id);
+
+    if (sourceIdArray.length > 0) {
+      await db
+        .delete(notionSourceJobsOne)
+        .where(inArray(notionSourceJobsOne.sourceId, sourceIdArray));
+
+      await db
+        .delete(notionSourceJobsTwo)
+        .where(inArray(notionSourceJobsTwo.sourceId, sourceIdArray));
+
+      await db
+        .delete(notionSourceJobsThree)
+        .where(inArray(notionSourceJobsThree.sourceId, sourceIdArray));
+
+      // await db
+      //   .delete(notionSourceJobsFour)
+      //   .where(inArray(notionSourceJobsFour.sourceId, sourceIdArray));
+    }
+
+    // delete daily quotes associated with the source
+    const quoteIds = await db
+      .select({ id: quotes.id })
+      .from(quotes)
+      .where(eq(quotes.userId, userId));
+
+    const quoteIdArray = quoteIds.map((q) => q.id);
+
+    if (quoteIdArray.length > 0) {
+      await db
+        .delete(dailyQuotes)
+        .where(
+          and(
+            inArray(dailyQuotes.quoteId, quoteIdArray),
+            eq(dailyQuotes.userId, userId)
+          )
+        );
+    }
+
+    await db.delete(dailyQuotes).where(eq(dailyQuotes.userId, userId));
+
+    // delete the sources
+    await db.delete(sources).where(eq(sources.userId, userId));
+
+    return {};
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};

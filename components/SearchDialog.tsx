@@ -213,53 +213,55 @@ export function SearchDialog() {
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[800px]">
-          <DialogHeader>
-            <DialogTitle>Search</DialogTitle>
-            <DrawerDescription>
-              {isPremium
-                ? "Books, subtitles, authors, quotes, notes, and other things..."
-                : "Books, subtitles, authors, quotes..."}{" "}
-            </DrawerDescription>
-          </DialogHeader>
+          <div>
+            <DialogHeader className="mb-2">
+              <DialogTitle>Search</DialogTitle>
+              <DrawerDescription>
+                {isPremium
+                  ? "Books, subtitles, authors, quotes, notes, and other things..."
+                  : "Books, subtitles, authors, quotes..."}{" "}
+              </DrawerDescription>
+            </DialogHeader>
 
-          <Form {...form}>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                form.handleSubmit(onSubmit)(e);
-              }}
-              className="flex flex-wrap"
-            >
-              <div className="w-10/12">
-                <FormField
-                  control={form.control}
-                  name="searchQuery"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          placeholder="Search for something..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            <Form {...form}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  form.handleSubmit(onSubmit)(e);
+                }}
+                className="flex flex-wrap"
+              >
+                <div className="w-10/12">
+                  <FormField
+                    control={form.control}
+                    name="searchQuery"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="Search for something..."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-              <div className="w-2/12 pl-4">
-                <Button
-                  className="w-full"
-                  variant="brutalprimary"
-                  type="submit"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Searching..." : "Search"}
-                </Button>
-              </div>
-            </form>
-          </Form>
+                <div className="w-2/12 pl-4">
+                  <Button
+                    className="w-full"
+                    variant="brutalprimary"
+                    type="submit"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Searching..." : "Search"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
 
           {isLoading ? (
             <LoadingSkeleton />
@@ -268,7 +270,7 @@ export function SearchDialog() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="max-h-[500px] overflow-y-auto overflow-x-auto"
+              className="overflow-y-auto overflow-x-auto"
             >
               {searchResults.books && searchResults.books.length > 0 && (
                 <div>
@@ -412,7 +414,7 @@ export function SearchDialog() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="max-h-[500px] overflow-y-auto overflow-x-auto"
+              className="max-h-[600px] overflow-y-auto overflow-x-auto pb-24"
             >
               {searchResults.books.map((quote) => (
                 <motion.div

@@ -23,7 +23,7 @@ import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 import { Button } from "@/components/ui/button";
-import { Crown, LogIn } from "lucide-react";
+import { Crown, LogIn, PackageOpen } from "lucide-react";
 
 import Link from "next/link";
 import { UnearthedInAndOut } from "@/components/UnearthedInAndOut";
@@ -33,6 +33,8 @@ import { HomeCarousel } from "@/components/HomeCarousel";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { FeaturePremiumCard } from "@/components/FeaturePremiumCard";
 import { Separator } from "@/components/ui/separator";
+import { getBookTitles } from "@/server/actions";
+import { OnboardingCard } from "@/components/OnboardingCard";
 
 export const metadata: Metadata = {
   title: "Unearthed - Lost wisdom, found again",
@@ -76,7 +78,6 @@ export const metadata: Metadata = {
 export default async function App() {
   const { userId }: { userId: string | null } = await auth();
 
-
   let isPremium = false;
   try {
     if (userId) {
@@ -87,6 +88,8 @@ export default async function App() {
   } catch (error) {
     isPremium = false;
   }
+
+  const books = userId ? await getBookTitles() : [];
 
   return (
     <>
@@ -101,29 +104,49 @@ export default async function App() {
             >
               Welcome! 👋
             </h2>
-            <div className="flex flex-wrap md:space-x-4 item-center justicy-center text-center">
-              <h2 className="w-full md:w-auto text-lg md:text-2xl">
-                Check out your{" "}
-              </h2>
-              <Link
-                className="w-full md:w-auto"
-                href={isPremium ? "/premium/home" : "/dashboard/home"}
-              >
-                <Button
-                  className="mt-2 md:-mt-1 w-full md:w-auto"
-                  variant="brutalprimary"
+
+            {books.length == 0 ? (
+              <div className="w-full flex flex-wrap justify-center items-center">
+                <OnboardingCard />
+              </div>
+            ) : (
+              <div className="flex flex-wrap md:space-x-4 item-center justicy-center text-center">
+                <h2 className="w-full md:w-auto text-lg md:text-2xl">
+                  Check out your{" "}
+                </h2>
+                <Link
+                  className="w-full md:w-auto"
+                  href={isPremium ? "/premium/home" : "/dashboard/home"}
                 >
-                  Daily Reflection
-                </Button>
-              </Link>
-            </div>
+                  <Button
+                    className="mt-2 md:-mt-1 w-full md:w-auto"
+                    variant="brutalprimary"
+                  >
+                    Daily Reflection
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </main>
       </SignedIn>
       <SignedOut>
-        <main className="w-full flex flex-wrap items-center justify-center pb-24">
+        <main className="w-full flex flex-wrap items-center justify-center">
           <div className="w-full">
             <HomeHeader />
+          </div>
+
+          <div className="w-full flex justify-center pb-24">
+            <Link
+              href="https://github.com/Unearthed-App/unearthed-app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="brutalshimmer" className="">
+                <PackageOpen className="mr-2 h-4 w-4" />
+                Open Source
+              </Button>
+            </Link>
           </div>
 
           <div className="w-full bg-red-600/10 py-12 backdrop-saturate-200">

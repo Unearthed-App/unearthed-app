@@ -1,20 +1,19 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 "use client";
 import * as React from "react";
@@ -43,6 +42,7 @@ import { QuoteForm } from "./QuoteForm";
 import { selectSourceSchema } from "@/db/schema";
 import { z } from "zod";
 type Source = z.infer<typeof selectSourceSchema>;
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface AddQuoteFormProps {
   onQuoteAdded: () => void;
@@ -74,23 +74,31 @@ export function QuoteFormDialog({
           )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>
-              {buttonText ? (
-                <span>{buttonText}</span>
-              ) : (
-                <span>Add a Quote</span>
-              )}
-            </DialogTitle>
-          </DialogHeader>
-          <QuoteForm onQuoteAdded={onQuoteAdded} source={source} />
+          <ScrollArea>
+            <DialogHeader className="mb-2">
+              <DialogTitle>
+                {buttonText ? (
+                  <span>{buttonText}</span>
+                ) : (
+                  <span>Add a Quote</span>
+                )}
+              </DialogTitle>
+            </DialogHeader>
+            <QuoteForm onQuoteAdded={onQuoteAdded} source={source} />
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     );
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer
+      open={open}
+      onOpenChange={setOpen}
+      preventScrollRestoration={false}
+      disablePreventScroll
+      noBodyStyles
+    >
       <DrawerTrigger asChild>
         <Button variant="brutalprimary" size="icon">
           <PlusCircle />
@@ -102,9 +110,10 @@ export function QuoteFormDialog({
             {buttonText ? <span>{buttonText}</span> : <span>Add a Quote</span>}
           </DrawerTitle>
         </DrawerHeader>
-        <div className="px-4">
+        <ScrollArea className="px-4 w-full">
           <QuoteForm onQuoteAdded={onQuoteAdded} source={source} />
-        </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
 
         <DrawerFooter>
           <DrawerClose asChild>

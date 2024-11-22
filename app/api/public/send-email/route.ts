@@ -106,7 +106,7 @@ export async function GET() {
         (profile) => profile.userId === user.id
       );
 
-      if (!profile || !profile.utcOffset || !profile.dailyEmails) {
+      if (!profile || profile.utcOffset == null || !profile.dailyEmails) {
         continue;
       }
 

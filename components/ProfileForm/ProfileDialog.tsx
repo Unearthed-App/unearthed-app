@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/drawer";
 import { Settings } from "lucide-react";
 import { ProfileForm } from "./ProfileForm";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export function ProfileDialog() {
   const [open, setOpen] = React.useState(false);
@@ -55,21 +56,29 @@ export function ProfileDialog() {
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Settings</DialogTitle>
-            {/* <DialogDescription>
+          <ScrollArea>
+            <DialogHeader className="mb-2">
+              <DialogTitle>Settings</DialogTitle>
+              {/* <DialogDescription>
               Don&apos;t forget to press <span className="text-secondary">Save</span>
             </DialogDescription> */}
-          </DialogHeader>
-          <ProfileForm />
-          <h4 className="text-muted">Version: {packageJson.version}</h4>
+            </DialogHeader>
+            <ProfileForm />
+            <h4 className="mt-2 text-muted">Version: {packageJson.version}</h4>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     );
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer
+      open={open}
+      onOpenChange={setOpen}
+      preventScrollRestoration={false}
+      disablePreventScroll
+      noBodyStyles
+    >
       <DrawerTrigger asChild>
         <Button size="icon">
           <Settings />
@@ -80,9 +89,10 @@ export function ProfileDialog() {
           <DrawerTitle>Settings</DrawerTitle>
           {/* <DrawerDescription>Don&apos;t forget to press Save</DrawerDescription> */}
         </DrawerHeader>
-        <div className="px-4">
+        <ScrollArea className="px-4 w-full">
           <ProfileForm />
-        </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
 
         <DrawerFooter>
           <DrawerClose asChild>

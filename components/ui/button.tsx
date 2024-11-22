@@ -54,6 +54,14 @@ const buttonVariants = cva(
           active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
           dark:hover:bg-muted dark:text-black
         `,
+        brutalshimmer: `
+          animate-shimmer bg-[linear-gradient(70deg,#e7d0ca,45%,#ffffff,55%,#e7d0ca)] dark:bg-[linear-gradient(70deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] transition-colors
+          bg-primary h-12 border-2 p-2.5 rounded-md transition-all
+          hover:bg-muted border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
+          hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
+          active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
+          dark:hover:bg-muted dark:text-muted hover:dark:text-white
+        `,
       },
       size: {
         default: "h-10 px-4 py-2",

@@ -317,11 +317,19 @@ export function ProfileForm() {
           className="w-full space-y-6"
         >
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="general">General</TabsTrigger>
-              <TabsTrigger value="notion">Notion</TabsTrigger>
-              <TabsTrigger value="capacities">Capacities</TabsTrigger>
-              <TabsTrigger value="supernotes">Supernotes</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+              <TabsTrigger className="text-xs" value="general">
+                General
+              </TabsTrigger>
+              <TabsTrigger className="text-xs" value="notion">
+                Notion
+              </TabsTrigger>
+              <TabsTrigger className="text-xs" value="capacities">
+                Capacities
+              </TabsTrigger>
+              <TabsTrigger className="text-xs" value="supernotes">
+                Supernotes
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="general">
               <Card>
@@ -510,7 +518,7 @@ export function ProfileForm() {
                                       }
                                       disabled={isForcingNotionSync}
                                     >
-                                      Start New Connection
+                                      New Connection
                                     </Button>
                                   </TooltipTrigger>
                                   <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">

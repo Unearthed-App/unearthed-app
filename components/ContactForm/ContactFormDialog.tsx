@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/drawer";
 import { Mail } from "lucide-react";
 import { ContactForm } from "./ContactForm";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export function ContactFormDialog({ isMenuItem = false }) {
   const [open, setOpen] = React.useState(false);
@@ -64,23 +65,31 @@ export function ContactFormDialog({ isMenuItem = false }) {
           )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>
-              <span>Send us a message</span>
-            </DialogTitle>
-          </DialogHeader>
-          <ContactForm
-            onContactSent={() => {
-              setOpen(false);
-            }}
-          />
+          <ScrollArea>
+            <DialogHeader className="mb-2">
+              <DialogTitle>
+                <span>Send us a message</span>
+              </DialogTitle>
+            </DialogHeader>
+            <ContactForm
+              onContactSent={() => {
+                setOpen(false);
+              }}
+            />{" "}
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     );
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer
+      open={open}
+      onOpenChange={setOpen}
+      preventScrollRestoration={false}
+      disablePreventScroll
+      noBodyStyles
+    >
       <DrawerTrigger asChild>
         {!isMenuItem ? (
           <Button size="icon">
@@ -102,13 +111,14 @@ export function ContactFormDialog({ isMenuItem = false }) {
             <span>Send us a message</span>
           </DrawerTitle>
         </DrawerHeader>
-        <div className="px-4">
+        <ScrollArea className="px-4 w-full">
           <ContactForm
             onContactSent={() => {
               setOpen(false);
             }}
           />
-        </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
 
         <DrawerFooter>
           <DrawerClose asChild>
