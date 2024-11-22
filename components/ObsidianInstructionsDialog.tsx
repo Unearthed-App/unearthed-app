@@ -37,8 +37,9 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Info, Mail } from "lucide-react";
+import { Info } from "lucide-react";
 import { HeadingBlur } from "./HeadingBlur";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export function ObsidianInstructionsDialog({ isMenuItem = false }) {
   const [open, setOpen] = React.useState(false);
@@ -64,39 +65,47 @@ export function ObsidianInstructionsDialog({ isMenuItem = false }) {
           )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>
-              <span>Obsidian Instructions</span>
-            </DialogTitle>
-          </DialogHeader>
-          <ol className="list-none space-y-4 pl-2">
-            {[
-              "Generate an API key on 'Unearthed.app' first, and save it somewhere temporarily",
-              "Open Obsidian and go to the settings",
-              "Click on Community Plugins",
-              "Turn off Restricted mode (this is required for any Community Plugin)",
-              "Click 'Browse' and search for 'Unearthed'",
-              "Install 'Unearthed (Kindle Sync)'",
-              "Enable 'Unearthed (Kindle Sync)'",
-              "Click on 'Options' and fill out the details. Most importantly, paste in the API key that you generated into the 'Unearthed API key' field.",
-              "Test if it's working by pressing the 'Sync' buttons for the 'Manual sync', and 'Manual daily reflection sync'",
-            ].map((text, index) => (
-              <li key={index} className="flex items-start gap-4">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center font-bold text-xs text-center p-4 rounded-lg backdrop-blur-sm bg-white/30 text-alternate shadow-xl shadow-red-300/10 dark:shadow-lg dark:shadow-primary/10">
-                  {index + 1}
-                </span>
-                <span className="text-sm pt-0.5">{text}</span>
-              </li>
-            ))}
-          </ol>
-          <HeadingBlur content="Now everything in Kindle will be synced to Obsidian, even on mobile" />
+          <ScrollArea>
+            <DialogHeader className="mb-2">
+              <DialogTitle>
+                <span>Obsidian Instructions</span>
+              </DialogTitle>
+            </DialogHeader>
+            <ol className="list-none space-y-4 pl-2 my-4">
+              {[
+                "Generate an API key on 'Unearthed.app' first, and save it somewhere temporarily",
+                "Open Obsidian and go to the settings",
+                "Click on Community Plugins",
+                "Turn off Restricted mode (this is required for any Community Plugin)",
+                "Click 'Browse' and search for 'Unearthed'",
+                "Install 'Unearthed (Kindle Sync)'",
+                "Enable 'Unearthed (Kindle Sync)'",
+                "Click on 'Options' and fill out the details. Most importantly, paste in the API key that you generated into the 'Unearthed API key' field.",
+                "Test if it's working by pressing the 'Sync' buttons for the 'Manual sync', and 'Manual daily reflection sync'",
+              ].map((text, index) => (
+                <li key={index} className="flex items-start gap-4">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center font-bold text-xs text-center p-4 rounded-lg backdrop-blur-sm bg-white/30 text-alternate shadow-xl shadow-red-300/10 dark:shadow-lg dark:shadow-primary/10">
+                    {index + 1}
+                  </span>
+                  <span className="text-sm pt-0.5">{text}</span>
+                </li>
+              ))}
+            </ol>
+            <HeadingBlur content="Now everything in Kindle will be synced to Obsidian, even on mobile" />
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     );
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer
+      open={open}
+      onOpenChange={setOpen}
+      preventScrollRestoration={false}
+      disablePreventScroll
+      noBodyStyles
+    >
       <DrawerTrigger asChild>
         {!isMenuItem ? (
           <Button className="max-w-64">
@@ -119,26 +128,29 @@ export function ObsidianInstructionsDialog({ isMenuItem = false }) {
             <span>Obsidian Instructions</span>
           </DrawerTitle>
         </DrawerHeader>
-        <ol className="list-none space-y-4 pl-2">
-          {[
-            "Generate an API key on 'Unearthed.app' first, and save it somewhere temporarily",
-            "Open Obsidian and go to the settings",
-            "Click on Community Plugins",
-            "Turn off Restricted mode (this is required for any Community Plugin)",
-            "Click 'Browse' and search for 'Unearthed'",
-            "Install 'Unearthed (Kindle Sync)'",
-            "Enable 'Unearthed (Kindle Sync)'",
-            "Click on 'Options' and fill out the details. Most importantly, paste in the API key that you generated into the 'Unearthed API key' field.",
-            "Test if it's working by pressing the 'Sync' buttons for the 'Manual sync', and 'Manual daily reflection sync'",
-          ].map((text, index) => (
-            <li key={index} className="flex items-start gap-4">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center font-bold text-xs text-center p-4 rounded-lg backdrop-blur-sm bg-white/30 text-alternate shadow-xl shadow-red-300/10 dark:shadow-lg dark:shadow-primary/10">
-                {index + 1}
-              </span>
-              <span className="text-sm pt-0.5">{text}</span>
-            </li>
-          ))}
-        </ol>
+        <ScrollArea className="w-full">
+          <ol className="list-none space-y-4 pl-2">
+            {[
+              "Generate an API key on 'Unearthed.app' first, and save it somewhere temporarily",
+              "Open Obsidian and go to the settings",
+              "Click on Community Plugins",
+              "Turn off Restricted mode (this is required for any Community Plugin)",
+              "Click 'Browse' and search for 'Unearthed'",
+              "Install 'Unearthed (Kindle Sync)'",
+              "Enable 'Unearthed (Kindle Sync)'",
+              "Click on 'Options' and fill out the details. Most importantly, paste in the API key that you generated into the 'Unearthed API key' field.",
+              "Test if it's working by pressing the 'Sync' buttons for the 'Manual sync', and 'Manual daily reflection sync'",
+            ].map((text, index) => (
+              <li key={index} className="flex items-start gap-4">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center font-bold text-xs text-center p-4 rounded-lg backdrop-blur-sm bg-white/30 text-alternate shadow-xl shadow-red-300/10 dark:shadow-lg dark:shadow-primary/10">
+                  {index + 1}
+                </span>
+                <span className="text-sm pt-0.5">{text}</span>
+              </li>
+            ))}
+          </ol>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
 
         <DrawerFooter>
           <DrawerClose asChild>

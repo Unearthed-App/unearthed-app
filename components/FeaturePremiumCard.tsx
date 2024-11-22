@@ -62,7 +62,7 @@ export function FeaturePremiumCard({
             variant="destructive"
           />
           <CheckItemSmall
-            content="Global Search your notes"
+            content="Global Search for your notes"
             variant="destructive"
           />
           <CheckItemSmall
@@ -79,6 +79,10 @@ export function FeaturePremiumCard({
           />
           <CheckItemSmall
             content="Import from Kindle Clippings file"
+            variant="destructive"
+          />
+          <CheckItemSmall
+            content="Direct link to read on Kindle"
             variant="destructive"
           />
           <CheckItemSmall
@@ -122,11 +126,12 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="Daily Reflection sent to Supernotes" />
           <CheckItemSmall content="Daily Reflection sent to Capacities" />
           <CheckItemSmall content="Daily Reflection emailed to you" />
-          <CheckItemSmall content="Global Search your notes" />
+          <CheckItemSmall content="Global Search for your notes" />
           <CheckItemSmall content="Manually add Books/Authors" />
           <CheckItemSmall content="Manually add Quotes/Notes" />
           <CheckItemSmall content="Import from CSV files" />
           <CheckItemSmall content="Import from Kindle Clippings file" />
+          <CheckItemSmall content="Direct link to read on Kindle" />
           <CheckItemSmall content="Help keep this app alive" />
           {showButtons && (
             <Link href="/dashboard/get-premium">

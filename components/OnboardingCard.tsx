@@ -57,9 +57,14 @@ export function OnboardingCard() {
       <div className="mt-8 w-full flex justify-center items-center">
         <div className="max-w-[900px]">
           <div className="text-center p-4 rounded-lg backdrop-blur-sm bg-white/30 shadow-xl shadow-red-300/10 dark:shadow-lg dark:shadow-primary/10">
-            <h3 className="font-bold text-alternate">Syncing to other apps</h3>
+            <h3 className="font-bold text-secondary">
+              After you import some books
+            </h3>
+            <h3 className="font-bold text-alternate">
+              Sync to other apps
+            </h3>
             <p className="text-sm text-alternate">
-              Click on the settings icon in the navigation bar to get started.
+              Click on the settings icon in the navigation bar to setup integrations.
             </p>
             <div className="my-2">
               <ObsidianInstructionsDialog />

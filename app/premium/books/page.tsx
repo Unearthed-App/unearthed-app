@@ -1,20 +1,19 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 "use client";
 
@@ -23,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useCallback, useState } from "react";
 import {
+  deleteAllSources,
   getBooks,
   getProfile,
   syncSourceToNotion,
@@ -55,6 +55,7 @@ export default function Books() {
   const queryClient = useQueryClient();
   const [bookToDelete, setBookToDelete] = useState<Source | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
 
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["profile"],
@@ -96,6 +97,18 @@ export default function Books() {
     },
   });
 
+  const deleteAllMutation = useMutation({
+    mutationFn: deleteAllSources,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["books"] });
+      toast({
+        title: `Removed successfully`,
+        description: "",
+      });
+      setIsDeleteAllDialogOpen(false);
+    },
+  });
+
   const handleDeleteClick = (book: Source) => {
     setBookToDelete(book);
     setIsDeleteDialogOpen(true);
@@ -105,6 +118,10 @@ export default function Books() {
     if (bookToDelete) {
       await deleteBookMutation.mutate({ source: bookToDelete });
     }
+  };
+
+  const handleConfirmDeleteAll = async () => {
+    await deleteAllMutation.mutate();
   };
 
   const containerVariants = {
@@ -333,6 +350,25 @@ export default function Books() {
             <div className="text-muted text-xs">{book.subtitle}</div>
             <div className="text-secondary text-xs">by {book.author}</div>
           </div>
+          <div>
+            <Link
+              className="hover:text-primary md:pr-36"
+              href={`/premium/book/${book.id}`}
+            >
+              <Button className="w-32">View Quotes</Button>
+            </Link>
+          </div>
+          {book.asin && (
+            <div className="mt-1">
+              <Link
+                className="hover:text-primary md:pr-36"
+                href={`https://read.amazon.com/?asin=${book.asin}`}
+                target="_blank"
+              >
+                <Button className="w-32">Read on Kindle</Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="absolute right-0 bottom-0 flex pb-0 md:pb-2 pr-2 space-x-2">
@@ -356,6 +392,37 @@ export default function Books() {
   return (
     <div className="pt-32 p-4 flex flex-col">
       <div className="flex items-center justify-center space-x-2">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <ConfirmationDialog
+                isOpen={isDeleteAllDialogOpen}
+                onOpenChange={(open) => {
+                  setIsDeleteAllDialogOpen(open);
+                }}
+                onConfirm={handleConfirmDeleteAll}
+                title="Delete Book"
+                description="Are you sure you want to delete all of your books?"
+                confirmText="Delete"
+                cancelText="Cancel"
+              >
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="destructivebrutal"
+                    onClick={() => setIsDeleteAllDialogOpen(true)}
+                    disabled={deleteAllMutation.isPending}
+                  >
+                    <Trash className="w-6 h-6 mr-2" />
+                    Delete All
+                  </Button>
+                </AlertDialogTrigger>
+              </ConfirmationDialog>
+            </TooltipTrigger>
+            <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+              <p>Remove this completely</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <UploadFormDialog onUpload={refreshBooks} />
         <SourceFormDialog
           buttonText="Add a Book"

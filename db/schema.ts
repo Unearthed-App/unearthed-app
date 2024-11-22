@@ -40,6 +40,7 @@ export const sources = pgTable(
     author: text("author").default(""),
     type: text("type"),
     origin: text("origin"),
+    asin: text("asin"),
     mediaId: uuid("media_id").references(() => media.id),
     userId: text("user_id")
       .default(sql`requesting_user_id()`)
