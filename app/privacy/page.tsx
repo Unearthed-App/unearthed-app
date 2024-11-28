@@ -24,9 +24,9 @@ const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 
 export const metadata: Metadata = {
-  title: "Unearthed - Lost wisdom, found again",
+  title: "Unearthed - Past insights, new revelations",
   description:
-    "Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Search, tag, and connect your insights across platforms. Notion, Obsidian, Capacities.",
+    "Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Receive Daily Reflection. Search, tag, and connect your insights across platforms. Notion, Obsidian, Capacities.",
   keywords: [
     "kindle highlights",
     "digital notes",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     "capacities integration",
   ],
   openGraph: {
-    title: "Unearthed - Lost wisdom, found again",
+    title: "Unearthed - Past insights, new revelations",
     description:
       "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source. Notion, Obsidian, Capacities.",
     type: "website",

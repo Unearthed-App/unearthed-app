@@ -45,7 +45,6 @@ import {
   deleteUnearthedKey,
   generateAndSaveUnearthedKey,
   getSettings,
-  syncToNotion,
 } from "@/server/actions";
 import { Copy, Eye, EyeOff, Trash } from "lucide-react";
 
@@ -73,6 +72,8 @@ import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import ConfirmationDialog from "@/components/ConfirmationDialog"; // Import the ConfirmationDialog we created
 import { ObsidianInstructionsDialog } from "@/components/ObsidianInstructionsDialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ObsidianVideo } from "@/components/ObsidianVideo";
+import { disconnectNotion, syncToNotion } from "@/server/actions-premium";
 
 type CapacitiesSpaceItem = {
   id: string;
@@ -84,7 +85,8 @@ type UnearhtedKey = z.infer<typeof selectUnearthedKeySchema>;
 
 export function ProfileForm() {
   const [isDialogNotionOpen, setIsDialogNotionOpen] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogNotionRemoveOpen, setIsDialogNotionRemoveOpen] =
+    useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isForcingNotionSync, setIsForcingNotionSync] = useState(false);
@@ -99,6 +101,17 @@ export function ProfileForm() {
   const [loadingDefaultValues, setLoadingDefaultValues] = useState(true);
   let isFetched = false;
   const [profileExists, setProfileExists] = useState(false);
+
+  const [dialogState, setDialogState] = useState(
+    Object.fromEntries(unearthedKeys.map((key) => [key.id, false]))
+  );
+
+  const toggleDialog = (keyId: string, isOpen: boolean) => {
+    setDialogState((prevState) => ({
+      ...prevState,
+      [keyId]: isOpen,
+    }));
+  };
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -290,6 +303,33 @@ export function ProfileForm() {
     );
   };
 
+  const removeNotionConnection = async () => {
+    try {
+      const result = await disconnectNotion();
+
+      if (!result.success) {
+        toast({
+          title: "Error",
+          description: "Failed to disconnect Notion. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Notion disconnected.",
+        });
+
+        fetchProfileData();
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          "Failed to connect to Notion. Please check that Notion still has access granted.",
+        variant: "destructive",
+      });
+    }
+  };
   const copyUnearthedApiKey = () => {
     navigator.clipboard.writeText(newUnearthedApiKey as string);
     toast({
@@ -321,10 +361,18 @@ export function ProfileForm() {
         >
           <Tabs defaultValue="general" className="w-full">
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-              <TabsTrigger className="text-xs" value="general">General</TabsTrigger>
-              <TabsTrigger className="text-xs" value="notion">Notion</TabsTrigger>
-              <TabsTrigger className="text-xs" value="capacities">Capacities</TabsTrigger>
-              <TabsTrigger className="text-xs" value="supernotes">Supernotes</TabsTrigger>
+              <TabsTrigger className="text-xs" value="general">
+                General
+              </TabsTrigger>
+              <TabsTrigger className="text-xs" value="notion">
+                Notion
+              </TabsTrigger>
+              <TabsTrigger className="text-xs" value="capacities">
+                Capacities
+              </TabsTrigger>
+              <TabsTrigger className="text-xs" value="supernotes">
+                Supernotes
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="general">
               <Card>
@@ -373,13 +421,13 @@ export function ProfileForm() {
                       <div className="w-full p-2 h-10 select-none border-2 bg-card rounded-lg text-sm">
                         <p className="font-bold">{key.name}</p>
                       </div>
-                      <div className="">
+                      <div>
                         <ConfirmationDialog
-                          isOpen={isDialogOpen}
-                          onOpenChange={(open) => {
-                            setIsDialogOpen(open);
+                          isOpen={dialogState[key.id] || false}
+                          onOpenChange={(open) => toggleDialog(key.id, open)}
+                          onConfirm={() => {
+                            deleteUnearthedApiKey(key.id);
                           }}
-                          onConfirm={() => deleteUnearthedApiKey(key.id)}
                           title="Delete Key"
                           description={`Are you sure you want to delete this key? This action cannot be undone.`}
                           confirmText="Yes"
@@ -392,13 +440,13 @@ export function ProfileForm() {
                                   <Button
                                     type="button"
                                     variant="destructivebrutal"
-                                    onClick={() => setIsDialogOpen(true)}
+                                    onClick={() => toggleDialog(key.id, true)}
                                   >
                                     <Trash />
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
-                                  <p>Delete the Quote</p>
+                                  <p>Delete the Key</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -407,6 +455,7 @@ export function ProfileForm() {
                       </div>
                     </div>
                   ))}
+
                   <div className="mt-4 space-y-4">
                     <div className="flex space-x-2 justify-between items-end">
                       <div className="w-full">
@@ -463,12 +512,17 @@ export function ProfileForm() {
                       </p>
                     </div>
                   )}
+                  <div className="w-full">
+                    <div className="mt-2">
+                      <ObsidianInstructionsDialog />
+                    </div>
+                    <div className="mt-2">
+                      <ObsidianVideo />
+                    </div>
+                  </div>
                 </CardContent>
                 <CardFooter>
                   <div className="w-full flex justify-between">
-                    <div className="mb-4">
-                      <ObsidianInstructionsDialog />
-                    </div>
                     <Button
                       className="w-24"
                       variant="brutalprimary"
@@ -477,7 +531,7 @@ export function ProfileForm() {
                     >
                       {isSaving ? "Saving..." : "Save"}
                     </Button>
-                  </div>{" "}
+                  </div>
                 </CardFooter>
               </Card>
             </TabsContent>
@@ -515,6 +569,7 @@ export function ProfileForm() {
                                     forceNotionSync();
                                   }}
                                   disabled={isForcingNotionSync}
+                                  className="w-full"
                                 >
                                   {isForcingNotionSync
                                     ? "Sync Started"
@@ -531,6 +586,42 @@ export function ProfileForm() {
                           </TooltipProvider>
 
                           <ConfirmationDialog
+                            isOpen={isDialogNotionRemoveOpen}
+                            onOpenChange={(open) => {
+                              setIsDialogNotionRemoveOpen(open);
+                            }}
+                            onConfirm={removeNotionConnection}
+                            title="Are you sure?"
+                            description={`The connection between Notion and Unearthed will be removed.`}
+                            confirmText="Yes"
+                            cancelText="Cancel"
+                          >
+                            <AlertDialogTrigger asChild>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="destructivebrutal"
+                                      type="button"
+                                      onClick={() =>
+                                        setIsDialogNotionRemoveOpen(true)
+                                      }
+                                      disabled={isForcingNotionSync}
+                                      className="w-full ml-2"
+                                    >
+                                      Remove Connection
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                                    <p>Disconnect Notion from Unearthed</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </AlertDialogTrigger>
+                          </ConfirmationDialog>
+                        </div>
+                        <div className="flex justify-between mt-4">
+                          <ConfirmationDialog
                             isOpen={isDialogNotionOpen}
                             onOpenChange={(open) => {
                               setIsDialogNotionOpen(open);
@@ -546,14 +637,15 @@ export function ProfileForm() {
                                 <Tooltip>
                                   <TooltipTrigger asChild>
                                     <Button
-                                      variant="destructivebrutal"
+                                      variant="brutalprimary"
                                       type="button"
                                       onClick={() =>
                                         setIsDialogNotionOpen(true)
                                       }
                                       disabled={isForcingNotionSync}
+                                      className="w-full"
                                     >
-                                      New Connection
+                                      Replace Connection
                                     </Button>
                                   </TooltipTrigger>
                                   <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">

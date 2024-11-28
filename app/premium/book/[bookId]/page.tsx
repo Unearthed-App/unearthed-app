@@ -221,30 +221,29 @@ export default function Book(props: { params: Promise<{ bookId: string }> }) {
                 {!showImageUpload && (
                   <div className="mt-2 flex">
                     <Button onClick={() => setShowImageUpload(true)} size="sm">
-                      Change Image
+                      {book.mediaId ? "Change Image" : "Upload Image"}
                     </Button>
-                    <Button
-                      onClick={async () => {
-                        await deleteBookImage(book);
-                        toast({
-                          title: `Image Removed`,
-                          description: `Reloading the page, please wait`,
-                        });
-                        queryClient.invalidateQueries({ queryKey: ["book"] });
-                      }}
-                      size="sm"
-                      variant="destructivebrutal"
-                      className="ml-1"
-                    >
-                      Remove Image
-                    </Button>
+                    {book.mediaId && (
+                      <Button
+                        onClick={async () => {
+                          await deleteBookImage(book);
+                          toast({
+                            title: `Image Removed`,
+                            description: `Reloading the page, please wait`,
+                          });
+                          queryClient.invalidateQueries({ queryKey: ["book"] });
+                        }}
+                        size="sm"
+                        variant="destructivebrutal"
+                        className="ml-1"
+                      >
+                        Remove Image
+                      </Button>
+                    )}
                   </div>
                 )}
                 {showImageUpload && (
                   <div className="w-64 xl:w-full mt-4">
-                    <h4 className="font-semibold mb-1 block">
-                      Change the image:
-                    </h4>
                     <UploadButton
                       appearance={{
                         button: ` text-xs font-bold w-full ut-ready:bg-primary ut-ready:text-black ut-uploading:text-black ut-uploading:cursor-not-allowed

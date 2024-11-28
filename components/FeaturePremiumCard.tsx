@@ -51,7 +51,6 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="No character limit" />
           <CheckItemSmall content="Global Search" />
           <CheckItemSmall content="Select which books to sync" />
-          <CheckItemSmall content="Everything synced to Notion" />
           <CheckItemSmall content="Everything synced to Obsidian" />
           <CheckItemSmall content="Daily Reflection in Unearthed" />
           <CheckItemSmall content="Daily Reflection sent to Obsidian" />
@@ -59,6 +58,10 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="Daily Reflection sent to Capacities" />
           <CheckItemSmall
             content="Daily Reflection emailed to you"
+            variant="destructive"
+          />
+          <CheckItemSmall
+            content="Everything synced to Notion"
             variant="destructive"
           />
           <CheckItemSmall
@@ -119,13 +122,13 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="No character limit" />
           <CheckItemSmall content="Global Search" />
           <CheckItemSmall content="Select which books to sync" />
-          <CheckItemSmall content="Everything synced to Notion" />
           <CheckItemSmall content="Everything synced to Obsidian" />
           <CheckItemSmall content="Daily Reflection in Unearthed" />
           <CheckItemSmall content="Daily Reflection sent to Obsidian" />
           <CheckItemSmall content="Daily Reflection sent to Supernotes" />
           <CheckItemSmall content="Daily Reflection sent to Capacities" />
           <CheckItemSmall content="Daily Reflection emailed to you" />
+          <CheckItemSmall content="Everything synced to Notion" />
           <CheckItemSmall content="Global Search for your notes" />
           <CheckItemSmall content="Manually add Books/Authors" />
           <CheckItemSmall content="Manually add Quotes/Notes" />

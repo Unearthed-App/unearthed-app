@@ -71,6 +71,10 @@ export async function GET(request: NextRequest): Promise<Response> {
     isPremium = false;
   }
 
+  if (!isPremium) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const posthogClient = PostHogClient();
 
   posthogClient.capture({

@@ -45,7 +45,6 @@ import {
   deleteUnearthedKey,
   generateAndSaveUnearthedKey,
   getSettings,
-  syncToNotion,
 } from "@/server/actions";
 import { Copy, Eye, EyeOff, Trash } from "lucide-react";
 
@@ -72,6 +71,7 @@ import { selectUnearthedKeySchema } from "@/db/schema";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import ConfirmationDialog from "@/components/ConfirmationDialog"; // Import the ConfirmationDialog we created
 import { ObsidianInstructionsDialog } from "@/components/ObsidianInstructionsDialog";
+import { ObsidianVideo } from "@/components/ObsidianVideo";
 
 type CapacitiesSpaceItem = {
   id: string;
@@ -82,22 +82,29 @@ type CapacitiesSpaceItem = {
 type UnearhtedKey = z.infer<typeof selectUnearthedKeySchema>;
 
 export function ProfileForm() {
-  const [isDialogNotionOpen, setIsDialogNotionOpen] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isForcingNotionSync, setIsForcingNotionSync] = useState(false);
   const [showingSecrets, setShowingSecrets] = useState(false);
   const [newUnearthedApiKey, setNewUnearthedApiKey] = useState("");
   const [newKeyName, setNewKeyName] = useState("");
   const [unearthedKeys, setUnearthedKeys] = useState<UnearhtedKey[]>([]);
-  const [notionWorkspace, setNotionWorkspace] = useState("");
   const [displayCapacitiesSpaces, setDisplayCapacitiesSpaces] = useState<
     CapacitiesSpaceItem[]
   >([]);
   const [loadingDefaultValues, setLoadingDefaultValues] = useState(true);
   let isFetched = false;
   const [profileExists, setProfileExists] = useState(false);
+
+  const [dialogState, setDialogState] = useState(
+    Object.fromEntries(unearthedKeys.map((key) => [key.id, false]))
+  );
+
+  const toggleDialog = (keyId: string, isOpen: boolean) => {
+    setDialogState((prevState) => ({
+      ...prevState,
+      [keyId]: isOpen,
+    }));
+  };
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -114,8 +121,6 @@ export function ProfileForm() {
       const data = await getSettings();
 
       if (data) {
-        setNotionWorkspace(data.notionWorkspace);
-
         let toSetCapacitiesSpace: CapacitiesSpaceItem[] = [];
         if (Array.isArray(data.capicitiesSpaces)) {
           toSetCapacitiesSpace = data.capicitiesSpaces.map(
@@ -242,49 +247,8 @@ export function ProfileForm() {
     }
   };
 
-  const forceNotionSync = async () => {
-    try {
-      toast({
-        title: "Notion Sync Started",
-        description:
-          "This will happen in the background, please wait and then check Notion.",
-      });
-      const result = await syncToNotion();
-
-      if (!result.success) {
-        toast({
-          title: "Error",
-          description:
-            "Failed to connect to Notion. Please check that Notion still has access granted.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description:
-          "Failed to connect to Notion. Please check that Notion still has access granted.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const toggleSecrets = () => {
     setShowingSecrets(!showingSecrets);
-  };
-
-  const startNewNotionConnection = () => {
-    toast({
-      title: "Notion Re-connection Started",
-      description:
-        "Follow the instructions on the Notion page to finish syncing.",
-    });
-
-    window.open(
-      process.env.NEXT_PUBLIC_NOTION_AUTH_URL,
-      "_blank",
-      "noopener,noreferrer"
-    );
   };
 
   const copyUnearthedApiKey = () => {
@@ -317,12 +281,9 @@ export function ProfileForm() {
           className="w-full space-y-6"
         >
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-3">
               <TabsTrigger className="text-xs" value="general">
                 General
-              </TabsTrigger>
-              <TabsTrigger className="text-xs" value="notion">
-                Notion
               </TabsTrigger>
               <TabsTrigger className="text-xs" value="capacities">
                 Capacities
@@ -339,8 +300,13 @@ export function ProfileForm() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="">
-                  <div className="mb-4">
-                    <ObsidianInstructionsDialog />
+                  <div className="w-full">
+                    <div className="mt-2">
+                      <ObsidianInstructionsDialog />
+                    </div>
+                    <div className="my-2">
+                      <ObsidianVideo />
+                    </div>
                   </div>
                   <CardDescription>
                     Use these keys to integrate with other apps
@@ -353,13 +319,13 @@ export function ProfileForm() {
                       <div className="w-full p-2 h-10 select-none border-2 bg-card rounded-lg text-sm">
                         <p className="font-bold">{key.name}</p>
                       </div>
-                      <div className="">
+                      <div>
                         <ConfirmationDialog
-                          isOpen={isDialogOpen}
-                          onOpenChange={(open) => {
-                            setIsDialogOpen(open);
+                          isOpen={dialogState[key.id] || false}
+                          onOpenChange={(open) => toggleDialog(key.id, open)}
+                          onConfirm={() => {
+                            deleteUnearthedApiKey(key.id);
                           }}
-                          onConfirm={() => deleteUnearthedApiKey(key.id)}
                           title="Delete Key"
                           description={`Are you sure you want to delete this key? This action cannot be undone.`}
                           confirmText="Yes"
@@ -372,13 +338,13 @@ export function ProfileForm() {
                                   <Button
                                     type="button"
                                     variant="destructivebrutal"
-                                    onClick={() => setIsDialogOpen(true)}
+                                    onClick={() => toggleDialog(key.id, true)}
                                   >
                                     <Trash />
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
-                                  <p>Delete the Quote</p>
+                                  <p>Delete the Key</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -443,106 +409,6 @@ export function ProfileForm() {
                       </p>
                     </div>
                   )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="notion">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Notion</CardTitle>
-                </CardHeader>
-                <CardContent className="">
-                  <div className="">
-                    {notionWorkspace ? (
-                      <>
-                        <div className="font-semibold">
-                          Syncing to:{" "}
-                          <span className="text-secondary">
-                            {notionWorkspace}
-                          </span>
-                        </div>
-
-                        <div className="text-muted text-sm">
-                          Unearthed will sync every 24 hours with Notion, but
-                          you can also force a sync here.
-                          <br />
-                          Starting a new connection will replace the old
-                          connection, so be careful.
-                        </div>
-                        <div className="flex justify-between mt-4">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  type="button"
-                                  onClick={() => {
-                                    setIsForcingNotionSync(true);
-                                    forceNotionSync();
-                                  }}
-                                  disabled={isForcingNotionSync}
-                                >
-                                  {isForcingNotionSync
-                                    ? "Sync Started"
-                                    : "Force Sync"}
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
-                                <p>
-                                  Start a sync to Notion. Nothing on Notion will
-                                  be removed
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-
-                          <ConfirmationDialog
-                            isOpen={isDialogNotionOpen}
-                            onOpenChange={(open) => {
-                              setIsDialogNotionOpen(open);
-                            }}
-                            onConfirm={startNewNotionConnection}
-                            title="Are you sure?"
-                            description={`A new Notion page and database will be created. Unearthed will sync to that from now on. There old page will not be deleted.`}
-                            confirmText="Yes"
-                            cancelText="Cancel"
-                          >
-                            <AlertDialogTrigger asChild>
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button
-                                      variant="destructivebrutal"
-                                      type="button"
-                                      onClick={() =>
-                                        setIsDialogNotionOpen(true)
-                                      }
-                                      disabled={isForcingNotionSync}
-                                    >
-                                      New Connection
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
-                                    <p>
-                                      Create a new page and database in Notion
-                                    </p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            </AlertDialogTrigger>
-                          </ConfirmationDialog>
-                        </div>
-                      </>
-                    ) : (
-                      <Link
-                        className="mt-4"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={process.env.NEXT_PUBLIC_NOTION_AUTH_URL || ""}
-                      >
-                        <Button type="button">Connect with Notion</Button>
-                      </Link>
-                    )}
-                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
