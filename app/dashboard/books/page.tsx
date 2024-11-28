@@ -29,7 +29,15 @@ import {
   toggleIgnoredBook,
 } from "@/server/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Frown, Trash, ImageIcon } from "lucide-react";
+import {
+  Frown,
+  Trash,
+  ImageIcon,
+  MessageSquareQuote,
+  EllipsisVertical,
+  BookMarked,
+  Eye,
+} from "lucide-react";
 import Image from "next/image";
 import {
   Tooltip,
@@ -45,7 +53,13 @@ import { toast } from "@/hooks/use-toast";
 import { selectSourceWithRelationsSchema } from "@/db/schema";
 import { deleteSource } from "@/server/actions";
 import ConfirmationDialog from "@/components/ConfirmationDialog"; // Import the ConfirmationDialog we created
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 type Source = z.infer<typeof selectSourceWithRelationsSchema>;
 
@@ -194,118 +208,12 @@ export default function Books() {
       key={book.id}
       className="flex justify-center"
     >
-      <motion.div
-        whileHover={{
-          scale: 1.03,
-          zIndex: 1,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 400,
-          damping: 17,
-        }}
-        className="pt-14 md:pt-4 relative mb-2 flex w-full p-2 md:p-4 rounded-lg border-2 bg-card"
-      >
-        <div className="absolute md:right-0 top-0 flex pt-2 pr-2 space-x-2">
-          {!isLoadingProfile &&
-            profile?.notionAuthData &&
-            profile?.notionDatabaseId && (
-              <div className="">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        className="p-0"
-                        variant="brutal"
-                        size={"icon"}
-                        onClick={() => forceNotionSync(book)}
-                      >
-                        <Image
-                          src="/notion-logo-no-background.png"
-                          alt="Notion Logo"
-                          width={70}
-                          height={70}
-                          className="w-8 h-8 bg-white rounded-sm"
-                        />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
-                      <p>Click to update Notion database</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            )}
-          <div className="">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <ConfirmationDialog
-                    isOpen={isDeleteDialogOpen && bookToDelete?.id === book.id}
-                    onOpenChange={(open) => {
-                      setIsDeleteDialogOpen(open);
-                      if (!open) setBookToDelete(null);
-                    }}
-                    onConfirm={handleConfirmDelete}
-                    title="Delete Book"
-                    description={
-                      book.origin === "KINDLE"
-                        ? `Are you sure you want to delete "${book.title}"? As this is a Kindle book, it will reappear here on the next sync, so you should use the 'Ignore' button instead.`
-                        : `Are you sure you want to delete "${book.title}"? This action cannot be undone.`
-                    }
-                    confirmText="Delete"
-                    cancelText="Cancel"
-                  >
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        className="p-1"
-                        variant="destructivebrutal"
-                        size="icon"
-                        onClick={() => handleDeleteClick(book)}
-                        disabled={deleteBookMutation.isPending}
-                      >
-                        <Trash className="w-6 h-6" />
-                      </Button>
-                    </AlertDialogTrigger>
-                  </ConfirmationDialog>
-                </TooltipTrigger>
-                <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
-                  <p>Remove this completely</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <div className="">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className="p-1"
-                    variant="brutal"
-                    size={"icon"}
-                    onClick={() =>
-                      toggleIgnoreMutation.mutate({
-                        bookId: book.id,
-                        ignored: !book.ignored,
-                      })
-                    }
-                    disabled={toggleIgnoreMutation.isPending}
-                  >
-                    <Frown className="w-6 h-6 " />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
-                  <p>Click to ignore this book</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
+      <div className="relative mb-2 flex w-full p-2 rounded-lg border-2 bg-card">
         <div className="flex items-center">
           {book.media && book.media.url ? (
             <Link
               href={`/dashboard/book/${book.id}`}
-              className="w-[90px] md:w-[100px]"
+              className="w-[40px] md:w-[100px]"
             >
               <Image
                 src={book.media.url}
@@ -318,57 +226,129 @@ export default function Books() {
           ) : (
             <Link
               href={`/dashboard/book/${book.id}`}
-              className="w-[90px] md:w-[100px] h-full flex items-center"
+              className="w-[40px] md:w-[100px] h-full flex items-center"
             >
-              <div className="w-[90px] md:w-[100px] h-full max-h-[160px] rounded-lg border-2 border-black dark:border-white shadow-xl flex items-center justify-center">
+              <div className="w-[40px] md:w-[100px] h-full max-h-[160px] rounded-lg border-2 border-black dark:border-white shadow-xl flex items-center justify-center">
                 <ImageIcon className="w-12 h-12 text-muted" />
               </div>
             </Link>
           )}
         </div>
-        <div className="pl-2 md:pl-4 w-full flex flex-col justify-between h-full">
-          <div className="w-full text-foreground font-semibold text-sm mb-4">
-            <h4
-              className={`${crimsonPro.className} font-extrabold text-xl md:text-3xl`}
-            >
-              <Link
-                className="hover:text-primary md:pr-36"
-                href={`/dashboard/book/${book.id}`}
+        <div className="w-full flex flex-col justify-between">
+          <div className="h-full w-full flex justify-between">
+            <div className="h-full w-full px-2 md:px-4">
+              <h3
+                className={`${crimsonPro.className} font-extrabold text-xl md:text-3xl`}
               >
                 {book.title}
-              </Link>
-            </h4>
-            <div className="text-muted text-xs">{book.subtitle}</div>
-            <div className="text-secondary text-xs">by {book.author}</div>
-          </div>
-          <div>
-            <Link
-              className="hover:text-primary md:pr-36"
-              href={`/dashboard/book/${book.id}`}
-            >
-              <Button className="w-32">View Quotes</Button>
-            </Link>
-          </div>
-        </div>
+              </h3>
+              <div className="text-muted text-xs">{book.subtitle}</div>
+              <div className="text-secondary text-xs">by {book.author}</div>
+            </div>
+            <div className="h-full w-12">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size={"icon"}>
+                    <EllipsisVertical />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuGroup>
+                    <Link
+                      className=""
+                      href={`https://read.amazon.com/?asin=${book.asin}`}
+                      target="_blank"
+                    >
+                      <DropdownMenuItem>
+                        <BookMarked className="mr-2 h-4 w-4" />
+                        <span>Read on Kindle</span>
+                      </DropdownMenuItem>
+                    </Link>
 
-        <div className="absolute right-0 bottom-0 flex pb-0 md:pb-2 pr-2 space-x-2">
-          <div className="mt-2 text-xl">
-            <Link
-              href={`/dashboard/book/${book.id}`}
-              className="text-xs font-bold"
-            >
-              <span className="font-bold">{book.quotes.length} </span>
-              <span className="ml-1">
-                {" "}
-                {book.quotes.length == 1 ? "Quote" : "Quotes"}
-              </span>
-            </Link>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        toggleIgnoreMutation.mutate({
+                          bookId: book.id,
+                          ignored: !book.ignored,
+                        })
+                      }
+                    >
+                      <Frown className="mr-2 h-4 w-4" />
+                      <span>Ignore this book</span>
+                    </DropdownMenuItem>
+                    <ConfirmationDialog
+                      isOpen={
+                        isDeleteDialogOpen && bookToDelete?.id === book.id
+                      }
+                      onOpenChange={(open) => {
+                        setIsDeleteDialogOpen(open);
+                        if (!open) setBookToDelete(null);
+                      }}
+                      onConfirm={handleConfirmDelete}
+                      title="Delete Book"
+                      description={
+                        book.origin === "KINDLE"
+                          ? `Are you sure you want to delete "${book.title}"? As this is a Kindle book, it will reappear here on the next sync, so you should use the 'Ignore' button instead.`
+                          : `Are you sure you want to delete "${book.title}"? This action cannot be undone.`
+                      }
+                      confirmText="Delete"
+                      cancelText="Cancel"
+                    >
+                      <AlertDialogTrigger asChild>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleDeleteClick(book);
+                          }}
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                          <span>Remove completely</span>
+                        </DropdownMenuItem>
+                      </AlertDialogTrigger>
+                    </ConfirmationDialog>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+          <div className="h-12 w-full flex justify-between space-x-6 px-2 md:px-4">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="w-14 h-10 flex items-center font-bold text-xs">
+                    <MessageSquareQuote className="h-6 w-6 mr-2" />{" "}
+                    {book.quotes.length}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                  <p># Quotes</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="w-8 h-10 flex items-center">
+                    <Link
+                      className="hover:text-primary md:pr-36"
+                      href={`/dashboard/book/${book.id}`}
+                    >
+                      <Button className="p-1" variant="ghost" size="icon">
+                        <Eye className="w-6 h-6" />
+                      </Button>
+                    </Link>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                  <p>View</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   );
-
   return (
     <div className="pt-32 p-4 flex flex-col">
       <div className="flex items-center justify-center space-x-2">
@@ -381,7 +361,7 @@ export default function Books() {
                   setIsDeleteAllDialogOpen(open);
                 }}
                 onConfirm={handleConfirmDeleteAll}
-                title="Delete Book"
+                title="Delete All Books"
                 description="Are you sure you want to delete all of your books?"
                 confirmText="Delete"
                 cancelText="Cancel"
@@ -412,7 +392,7 @@ export default function Books() {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid gap-x-4 gap-y-2 grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3"
+                className="grid gap-x-4 gap-y-2 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
               >
                 {books.map(renderBookCard)}
               </motion.div>

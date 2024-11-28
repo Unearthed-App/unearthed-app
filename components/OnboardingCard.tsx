@@ -19,6 +19,8 @@ import { ObsidianInstructionsDialog } from "./ObsidianInstructionsDialog";
 import { Button } from "./ui/button";
 import Link from "next/link";
 
+import { ObsidianVideo } from "./ObsidianVideo";
+
 export function OnboardingCard() {
   return (
     <>
@@ -60,14 +62,16 @@ export function OnboardingCard() {
             <h3 className="font-bold text-secondary">
               After you import some books
             </h3>
-            <h3 className="font-bold text-alternate">
-              Sync to other apps
-            </h3>
+            <h3 className="font-bold text-alternate">Sync to other apps</h3>
             <p className="text-sm text-alternate">
-              Click on the settings icon in the navigation bar to setup integrations.
+              Click on the settings icon in the navigation bar to setup
+              integrations.
             </p>
             <div className="my-2">
               <ObsidianInstructionsDialog />
+            </div>{" "}
+            <div className="my-2">
+              <ObsidianVideo />
             </div>
           </div>
         </div>

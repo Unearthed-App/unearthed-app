@@ -45,8 +45,11 @@ export function UnearthedInAndOut() {
               </div>
               <div className="w-full flex justify-center">
                 <DisclosureCard
+                  videoUrl="https://www.youtube.com/embed/W321i9cjQms?si=N5UyK3btoOUMJhyV"
+                  videoTitle="Obsidian Instructions"
+                  videoDescription="Instructions for syncing Kindle to Obsidian"
                   title="Obsidian"
-                  content="All your books, quotes, notes, AND Daily Reflection synced to your local file system! It even works with the Obsidian mobile app."
+                  content="All your books, quotes, notes, and Daily Reflection synced to your local file system! It even works with the Obsidian mobile app."
                   image={{
                     src: "/obsidian.svg",
                     alt: "Obsidian Logo",

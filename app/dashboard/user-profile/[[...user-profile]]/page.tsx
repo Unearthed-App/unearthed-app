@@ -88,7 +88,7 @@ export default function UserProfilePage() {
   if (!isLoaded || !userId) {
     return (
       <div className="pt-32 flex w-full items-center justify-center">
-        <h2>User Removed</h2>
+        {/* <h2>User Removed</h2> */}
       </div>
     );
   }

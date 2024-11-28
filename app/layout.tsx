@@ -41,7 +41,6 @@ import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { NoiseBackground } from "@/components/NoiseBackground";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
-import { ContactFormDialog } from "@/components/ContactForm/ContactFormDialog";
 
 const ConditionalPH = dynamic(() => import("@/components/ConditionalPH"));
 
@@ -51,9 +50,9 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Unearthed - Lost wisdom, found again",
+  title: "Unearthed - Past insights, new revelations",
   description:
-    "Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Search, tag, and connect your insights across platforms. Notion, Obsidian, Capacities.",
+    "Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Receive Daily Reflection. Search, tag, and connect your insights across platforms. Notion, Obsidian, Capacities.",
   icons: {
     icon: [{ url: "/favicon.ico" }, { url: "/icon.png" }],
     apple: [{ url: "/apple-icon.png" }],
@@ -78,7 +77,7 @@ export const metadata: Metadata = {
     "capacities integration",
   ],
   openGraph: {
-    title: "Unearthed - Lost wisdom, found again",
+    title: "Unearthed - Past insights, new revelations",
     description:
       "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source. Notion, Obsidian, Capacities.",
     type: "website",
@@ -134,7 +133,6 @@ export default async function RootLayout({
               </SignedIn>
               <SignedOut>
                 <div className="z-50 fixed mt-2 ml-2 flex space-x-2">
-                  <ContactFormDialog />
                   <ModeToggle />
                   <DropdownMenuNav />
                   <SignInButton>

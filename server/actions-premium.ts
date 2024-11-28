@@ -25,15 +25,31 @@ import {
   selectQuoteSchema,
   insertMediaSchema,
   media,
+  profiles,
+  insertProfileSchema,
+  notionSourceJobsOne,
+  notionSourceJobsTwo,
+  notionSourceJobsThree,
 } from "@/db/schema";
 import { decrypt, getOrCreateEncryptionKey } from "@/lib/auth/encryptionKey";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { and, eq, ilike, inArray, isNull, or } from "drizzle-orm";
+import {
+  and,
+  eq,
+  ilike,
+  inArray,
+  isNotNull,
+  isNull,
+  not,
+  or,
+} from "drizzle-orm";
 import { z } from "zod";
 type Source = z.infer<typeof selectSourceSchema>;
 type Quote = z.infer<typeof selectQuoteSchema>;
 type Media = z.infer<typeof insertMediaSchema>;
+type Profile = z.infer<typeof insertProfileSchema>;
 import { utapi } from "@/server/uploadthing";
+import { splitArray } from "@/lib/utils";
 
 interface ImageFile {
   appUrl: string;
@@ -364,4 +380,152 @@ export const deleteBookImage = async (source: Source) => {
     console.error(error);
     return [];
   }
+};
+
+export const disconnectNotion = async () => {
+  const { userId }: { userId: string | null } = await auth();
+  if (!userId) {
+    return { success: false };
+  }
+
+  let isPremium = false;
+  try {
+    if (userId) {
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
+      isPremium = user.privateMetadata.isPremium as boolean;
+    }
+  } catch (error) {
+    isPremium = false;
+  }
+
+  if (!isPremium) {
+    return { success: false };
+  }
+
+  try {
+    await db
+      .update(profiles)
+      .set({
+        notionAuthData: null,
+        notionDatabaseId: null,
+      })
+      .where(eq(profiles.userId, userId));
+
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false };
+  }
+};
+
+export const syncToNotion = async () => {
+  const { userId }: { userId: string | null } = await auth();
+  if (!userId) {
+    return { success: false };
+  }
+
+  let isPremium = false;
+  try {
+    if (userId) {
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
+      isPremium = user.privateMetadata.isPremium as boolean;
+    }
+  } catch (error) {
+    isPremium = false;
+  }
+
+  if (!isPremium) {
+    return { success: false };
+  }
+
+  const dbResults = await db
+    .select()
+    .from(sources)
+    .leftJoin(
+      profiles,
+      and(
+        eq(sources.ignored, false),
+        eq(sources.userId, profiles.userId),
+        eq(profiles.userStatus, "ACTIVE"),
+        isNotNull(profiles.notionAuthData),
+        isNotNull(profiles.notionDatabaseId),
+        not(eq(profiles.notionAuthData, "")),
+        not(eq(profiles.notionDatabaseId, ""))
+      )
+    )
+    .where(eq(profiles.userId, userId));
+
+  type SourceResult = {
+    id: string;
+    profile: Profile | null;
+  };
+
+  const sourcesResults = dbResults.map(
+    (result): SourceResult => ({
+      ...result.sources,
+      profile: result.profiles,
+    })
+  );
+
+  if (!sourcesResults || sourcesResults.length === 0) {
+    throw new Error("sourcesResults failed");
+  }
+
+  // delete all existing jobs for that user first
+  const sourceIds = sourcesResults.map((source) => source.id);
+  await db
+    .delete(notionSourceJobsOne)
+    .where(inArray(notionSourceJobsOne.sourceId, sourceIds));
+  await db
+    .delete(notionSourceJobsTwo)
+    .where(inArray(notionSourceJobsTwo.sourceId, sourceIds));
+  await db
+    .delete(notionSourceJobsThree)
+    .where(inArray(notionSourceJobsThree.sourceId, sourceIds));
+  // await db
+  //   .delete(notionSourceJobsFour)
+  //   .where(inArray(notionSourceJobsFour.sourceId, sourceIds));
+
+  const [sourcesOne, sourcesTwo, sourcesThree, sourcesFour] = splitArray(
+    sourcesResults,
+    // 1
+    3
+  );
+
+  const tables = [
+    notionSourceJobsOne,
+    notionSourceJobsTwo,
+    notionSourceJobsThree,
+    //   notionSourceJobsFour,
+  ];
+  const sourceChunks = [sourcesOne, sourcesTwo, sourcesThree, sourcesFour];
+  const nonEmptyChunks = sourceChunks.filter(
+    (chunk): chunk is NonNullable<typeof chunk> =>
+      Array.isArray(chunk) && chunk.length > 0
+  );
+  for (let i = 0; i < nonEmptyChunks.length; i++) {
+    const toInsert = nonEmptyChunks[i].map((source: SourceResult) => {
+      if (!source.profile) {
+        throw new Error(`Source ${source.id} has no associated profile`);
+      }
+      return {
+        sourceId: source.id,
+        profileId: source.profile.id!,
+        status: "READY",
+        newConnection: false,
+      };
+    });
+
+    // await db.insert(notionSourceJobsOne).values(toInsert).onConflictDoNothing();
+
+    if (tables[i] && toInsert.length > 0) {
+      await db.insert(tables[i]).values(toInsert).onConflictDoNothing();
+    } else {
+      console.error(`Table at index ${i} is undefined`);
+    }
+  }
+
+  return { success: true };
 };
