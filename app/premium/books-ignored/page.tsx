@@ -1,30 +1,27 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import React from "react";
 import { getBooks, toggleIgnoredBook } from "@/server/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { Frown } from "lucide-react";
 import Image from "next/image";
 import {
   Tooltip,
@@ -38,15 +35,14 @@ import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 export default function BooksIgnored() {
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const {
-    data: books,
+    data: ignoredBooks,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["books"],
+    queryKey: ["ignored-books"],
     queryFn: () =>
       getBooks({
         ignored: true,
@@ -56,7 +52,7 @@ export default function BooksIgnored() {
   const toggleIgnoreMutation = useMutation({
     mutationFn: toggleIgnoredBook,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["books"] });
+      queryClient.invalidateQueries({ queryKey: ["ignored-books"] });
     },
   });
 
@@ -88,7 +84,7 @@ export default function BooksIgnored() {
       </div>
     );
 
-  if (!books || books.length == 0) {
+  if (!ignoredBooks || ignoredBooks.length == 0) {
     return (
       <div className="pt-32 p-4">
         <div className="mt-10 flex items-center justify-center gap-x-6">
@@ -112,7 +108,7 @@ export default function BooksIgnored() {
                 animate="visible"
                 className="grid gap-x-4 gap-y-2 grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3"
               >
-                {books.map((book) => (
+                {ignoredBooks.map((book) => (
                   <motion.div
                     variants={itemVariants}
                     key={book.id}

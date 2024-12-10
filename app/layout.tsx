@@ -28,6 +28,7 @@ import {
 import { neobrutalism } from "@clerk/themes";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
+import { Navbar as NavBarPremium } from "@/components/premium/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { ModeToggle } from "@/components/ModeToggle";
 import dynamic from "next/dynamic";
@@ -129,7 +130,7 @@ export default async function RootLayout({
               disableTransitionOnChange
             >
               <SignedIn>
-                <Navbar />
+                {isPremium ? <NavBarPremium /> : <Navbar />}
               </SignedIn>
               <SignedOut>
                 <div className="z-50 fixed mt-2 ml-2 flex space-x-2">

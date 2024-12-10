@@ -19,7 +19,7 @@
 import { useEffect, useState } from "react";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 import { Button } from "@/components/ui/button";
 import {

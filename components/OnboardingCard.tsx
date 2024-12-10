@@ -19,7 +19,7 @@ import { ObsidianInstructionsDialog } from "./ObsidianInstructionsDialog";
 import { Button } from "./ui/button";
 import Link from "next/link";
 
-import { ObsidianVideo } from "./ObsidianVideo";
+import { VideoDialog } from "@/components/VideoDialog";
 
 export function OnboardingCard() {
   return (
@@ -71,7 +71,12 @@ export function OnboardingCard() {
               <ObsidianInstructionsDialog />
             </div>{" "}
             <div className="my-2">
-              <ObsidianVideo />
+              <VideoDialog
+                videoUrl="https://www.youtube.com/embed/W321i9cjQms?si=N5UyK3btoOUMJhyV"
+                videoTitle="Obsidian Instructions"
+                videoDescription="Instructions for syncing Kindle to Obsidian"
+                videoButtonText="Watch Obsidian Video"
+              />{" "}
             </div>
           </div>
         </div>

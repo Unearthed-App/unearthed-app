@@ -1,21 +1,19 @@
 /**
  * Copyright (C) 2024 Unearthed App
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
-
 
 "use client";
 import { Button } from "./ui/button";
@@ -40,16 +38,20 @@ import {
 } from "./ui/drawer";
 import { PlayCircle } from "lucide-react";
 
+interface VideoDialogProps {
+  videoUrl: string;
+  videoTitle: string;
+  videoDescription: string;
+  videoButtonText: string;
+}
 
-export function ObsidianVideo() {
+export function VideoDialog({
+  videoUrl,
+  videoTitle,
+  videoDescription,
+  videoButtonText,
+}: VideoDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
-
-  const videoUrl =
-    "https://www.youtube.com/embed/W321i9cjQms?si=N5UyK3btoOUMJhyV";
-  const videoTitle = "Obsidian Instructions";
-  const videoDescription = "Instructions for syncing Kindle to Obsidian";
-
-
 
   return (
     <>
@@ -58,7 +60,7 @@ export function ObsidianVideo() {
           <DialogTrigger asChild>
             <Button className="">
               <PlayCircle className="mr-2" />
-              Watch Obsidian Video
+              {videoButtonText}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-h-[400px]">
@@ -74,7 +76,7 @@ export function ObsidianVideo() {
                   width="100%"
                   height="100%"
                   src={videoUrl}
-                  title="YouTube video"
+                  title={videoTitle}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 ></iframe>
@@ -87,7 +89,7 @@ export function ObsidianVideo() {
           <DrawerTrigger asChild>
             <Button className="">
               <PlayCircle className="mr-2" />
-              Watch Obsidian Video
+              {videoButtonText}
             </Button>
           </DrawerTrigger>
           <DrawerContent className="max-h-[500px]">
@@ -102,7 +104,7 @@ export function ObsidianVideo() {
                 width="100%"
                 height="100%"
                 src={videoUrl}
-                title="YouTube video"
+                title={videoTitle}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>

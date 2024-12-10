@@ -72,7 +72,7 @@ import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import ConfirmationDialog from "@/components/ConfirmationDialog"; // Import the ConfirmationDialog we created
 import { ObsidianInstructionsDialog } from "@/components/ObsidianInstructionsDialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ObsidianVideo } from "@/components/ObsidianVideo";
+import { VideoDialog } from "@/components/VideoDialog";
 import { disconnectNotion, syncToNotion } from "@/server/actions-premium";
 
 type CapacitiesSpaceItem = {
@@ -517,7 +517,12 @@ export function ProfileForm() {
                       <ObsidianInstructionsDialog />
                     </div>
                     <div className="mt-2">
-                      <ObsidianVideo />
+                      <VideoDialog
+                        videoUrl="https://www.youtube.com/embed/W321i9cjQms?si=N5UyK3btoOUMJhyV"
+                        videoTitle="Obsidian Instructions"
+                        videoDescription="Instructions for syncing Kindle to Obsidian"
+                        videoButtonText="Watch Obsidian Video"
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -725,6 +730,14 @@ export function ProfileForm() {
                       </FormItem>
                     )}
                   />
+                  <div className="mt-2">
+                    <VideoDialog
+                      videoUrl="https://www.youtube.com/embed/0gm0d3-EC7A?si=7V9Hr9hmV8q8RiYh"
+                      videoTitle="Capacities Instructions"
+                      videoDescription="Instructions for getting your Daily Reflection into Capacities"
+                      videoButtonText="Watch Capacities Video"
+                    />
+                  </div>
 
                   {displayCapacitiesSpaces.length > 0 && (
                     <FormField
@@ -828,6 +841,14 @@ export function ProfileForm() {
                       </FormItem>
                     )}
                   />
+                  <div className="mt-2">
+                    <VideoDialog
+                      videoUrl="https://www.youtube.com/embed/0gm0d3-EC7A?si=7V9Hr9hmV8q8RiYh"
+                      videoTitle="Supernotes Instructions"
+                      videoDescription="Instructions for getting your Daily Reflection into Supernotes"
+                      videoButtonText="Watch Supernotes Video"
+                    />
+                  </div>
                 </CardContent>
                 <CardFooter>
                   <div className="w-full flex justify-end">
