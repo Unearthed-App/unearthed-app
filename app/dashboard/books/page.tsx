@@ -19,7 +19,7 @@
 
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useCallback, useState } from "react";
 import {
   deleteAllSources,
@@ -330,7 +330,7 @@ export default function Books() {
                 <TooltipTrigger asChild>
                   <div className="w-8 h-10 flex items-center">
                     <Link
-                      className="hover:text-primary md:pr-36"
+                      className="hover:text-primary"
                       href={`/dashboard/book/${book.id}`}
                     >
                       <Button className="p-1" variant="ghost" size="icon">

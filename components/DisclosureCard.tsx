@@ -30,7 +30,7 @@ import {
   DisclosureContent,
   DisclosureTrigger,
 } from "@/components/ui/disclosure";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Image, { ImageProps } from "next/image";
 
 interface DisclosureCardProps {

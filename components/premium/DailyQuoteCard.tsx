@@ -22,7 +22,7 @@ import { getOrCreateDailyReflection } from "@/server/actions";
 import { Button } from "@/components/ui/button";
 import { QuoteCardBrutal } from "@/components/QuoteCardBrutal";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Link from "next/link";
 
 import { z } from "zod";

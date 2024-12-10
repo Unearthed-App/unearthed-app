@@ -61,6 +61,9 @@ export function UnearthedInAndOut() {
               </div>
               <div className="w-full flex justify-center">
                 <DisclosureCard
+                  videoUrl="https://www.youtube.com/embed/0gm0d3-EC7A?si=7V9Hr9hmV8q8RiYh"
+                  videoTitle="Supernotes Instructions"
+                  videoDescription="Instructions for getting your Daily Reflection into Supernotes"
                   title="Supernotes"
                   content="Wake up to a new Daily Reflection added automatically to your Daily Card in Supernotes."
                   image={{
@@ -74,6 +77,9 @@ export function UnearthedInAndOut() {
               </div>
               <div className="w-full flex justify-center">
                 <DisclosureCard
+                  videoUrl="https://www.youtube.com/embed/0gm0d3-EC7A?si=7V9Hr9hmV8q8RiYh"
+                  videoTitle="Capacities Instructions"
+                  videoDescription="Instructions for getting your Daily Reflection into Capacities"
                   title="Capacities"
                   content="Wake up to a new Daily Reflection added automatically to your Daily Note in Capacities."
                   image={{

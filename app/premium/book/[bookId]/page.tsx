@@ -21,7 +21,7 @@ import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { use, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { selectSourceSchema, selectQuoteSchema } from "@/db/schema";
 import { getBook, getBookTitles } from "@/server/actions";
 import { updateBookImage, deleteBookImage } from "@/server/actions-premium";
