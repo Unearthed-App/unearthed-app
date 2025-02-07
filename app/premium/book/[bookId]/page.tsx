@@ -51,6 +51,8 @@ import { QuoteCardBrutal } from "@/components/premium/QuoteCardBrutal";
 import { AnimatedLoader } from "@/components/AnimatedLoader";
 import { QuoteFormDialog } from "@/components/premium/QuoteForm/QuoteFormDialog";
 import { UploadButton } from "@/utils/uploadthing";
+import { ChatBotPopup } from "@/components/premium/ChatBotPopup";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 export default function Book(props: { params: Promise<{ bookId: string }> }) {
   const params = use(props.params);
@@ -59,11 +61,7 @@ export default function Book(props: { params: Promise<{ bookId: string }> }) {
   const queryClient = useQueryClient();
   const [showImageUpload, setShowImageUpload] = useState(false);
 
-  const {
-    data: book,
-    isLoading: isLoadingBook,
-    isError,
-  } = useQuery({
+  const { data: book, isLoading: isLoadingBook } = useQuery({
     queryKey: ["book"],
     queryFn: () => getBook(params.bookId),
   });
@@ -143,6 +141,14 @@ export default function Book(props: { params: Promise<{ bookId: string }> }) {
       </div>
     );
 
+  const ErrorMessage: React.FC = () => {
+    return (
+      <div className="error-message">
+        <p>Something went wrong.</p>
+      </div>
+    );
+  };
+
   return (
     <div className="pt-32 px-4 md:px-12 lg:px-24 xl:px-12 2xl:px-24">
       <div className="flex flex-wrap items-center mb-4">
@@ -205,7 +211,6 @@ export default function Book(props: { params: Promise<{ bookId: string }> }) {
           </Popover>
         </div>
       </div>
-
       {book && !("error" in book) && (
         <div className="flex flex-wrap">
           <div className="w-full xl:w-1/6 pr-4">
@@ -328,6 +333,16 @@ export default function Book(props: { params: Promise<{ bookId: string }> }) {
           </div>
         </div>
       )}
+      <motion.div
+        className="fixed z-30 bottom-4 right-4"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      >
+        <ErrorBoundary fallback={<ErrorMessage />}>
+          <ChatBotPopup book={book as Source} quotes={displayQuotes} />
+        </ErrorBoundary>
+      </motion.div>
     </div>
   );
 }

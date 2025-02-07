@@ -45,9 +45,9 @@ import {
   getOrCreateEncryptionKey,
   hashApiKey,
 } from "@/lib/auth/encryptionKey";
-import { getTodaysDate } from "@/lib/utils";
+import { getTodaysDate, sortQuotes } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
-import { and, eq, ilike, inArray, or } from "drizzle-orm";
+import { and, eq, ilike, inArray, or, count } from "drizzle-orm";
 import { z } from "zod";
 
 const { Client } = require("@notionhq/client");
@@ -96,7 +96,7 @@ export const getBook = async (
 
     const decryptedResult = {
       ...dbResult,
-      quotes: decryptedQuotes,
+      quotes: sortQuotes(decryptedQuotes),
     };
 
     const validatedData =
@@ -108,6 +108,7 @@ export const getBook = async (
     return { error: "Error occurred" };
   }
 };
+
 
 export const getBooks = async ({
   ignored,
@@ -150,6 +151,63 @@ export const getBooks = async ({
     return [];
   }
 };
+export const getPaginatedBooks = async ({
+  ignored,
+  page = 1,
+  pageSize = 10,
+}: {
+  ignored?: true | false | "";
+  page?: number;
+  pageSize?: number;
+}): Promise<{ books: SourceWithRelations[]; total: number }> => {
+  const { userId }: { userId: string | null } = await auth();
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  try {
+    let where;
+
+    if (ignored === "" || ignored === null || ignored === undefined) {
+      where = and(eq(sources.type, "BOOK"), eq(sources.userId, userId));
+    } else {
+      where = and(
+        eq(sources.type, "BOOK"),
+        eq(sources.ignored, ignored),
+        eq(sources.userId, userId)
+      );
+    }
+
+    const dbResult = await db.query.sources.findMany({
+      with: {
+        quotes: true,
+        media: true,
+      },
+      where,
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+      orderBy: (sources, { asc }) => [asc(sources.title)],
+    });
+
+    const totalResult = await db
+      .select({ count: count() })
+      .from(sources)
+      .where(where);
+
+    const validatedData = z
+      .array(selectSourceWithRelationsSchema)
+      .parse(dbResult);
+
+    return {
+      books: validatedData,
+      total: totalResult[0]?.count || 0,
+    };
+  } catch (error) {
+    console.error(error);
+    return { books: [], total: 0 };
+  }
+};
+
 
 export const getBookTitles = async (): Promise<Source[]> => {
   const { userId }: { userId: string | null } = await auth();
@@ -230,6 +288,9 @@ export const getProfile = async (): Promise<Profile> => {
         : "",
       notionAuthData: toReturn.notionAuthData
         ? await decrypt(toReturn.notionAuthData as string, encryptionKey)
+        : "",
+      aiApiKey: toReturn.aiApiKey
+        ? await decrypt(toReturn.aiApiKey as string, encryptionKey)
         : "",
     };
     const validatedData = selectProfileSchema.parse(decryptedResult);
@@ -1020,6 +1081,43 @@ export const deleteSource = async ({ source }: { source: Source }) => {
     return false;
   }
 };
+
+export const ignoreAllSources = async () => {
+  const { userId }: { userId: string | null } = await auth();
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  try {
+    await db
+      .update(sources)
+      .set({ ignored: true })
+      .where(eq(sources.userId, userId));
+    return { status: "OK" };
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+export const stopIgnoreAllSources = async () => {
+  const { userId }: { userId: string | null } = await auth();
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  try {
+    await db
+      .update(sources)
+      .set({ ignored: false })
+      .where(eq(sources.userId, userId));
+    return { status: "OK" };
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
 
 export const deleteAllSources = async () => {
   const { userId }: { userId: string | null } = await auth();

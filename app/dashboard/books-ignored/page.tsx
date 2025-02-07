@@ -19,8 +19,13 @@
 
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
-import React from "react";
-import { getBooks, toggleIgnoredBook } from "@/server/actions";
+import { useState } from "react";
+
+import {
+  getBooks,
+  toggleIgnoredBook,
+  stopIgnoreAllSources,
+} from "@/server/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import {
@@ -32,10 +37,33 @@ import {
 import Link from "next/link";
 import { AnimatedLoader } from "@/components/AnimatedLoader";
 import { Crimson_Pro } from "next/font/google";
+import ConfirmationDialog from "@/components/ConfirmationDialog";
+import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Smile } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 export default function BooksIgnored() {
   const queryClient = useQueryClient();
+  const [isStopIgnoreAllDialogOpen, setIsStopIgnoreAllDialogOpen] =
+    useState(false);
+
+  const stopIgnoreAllMutation = useMutation({
+    mutationFn: stopIgnoreAllSources,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ignored-books"] });
+      toast({
+        title: `Stopped ignoring successfully`,
+        description: "",
+      });
+      setIsStopIgnoreAllDialogOpen(false);
+    },
+  });
+
+  const handleConfirmStopIgnoreAll = async () => {
+    await stopIgnoreAllMutation.mutate();
+  };
 
   const {
     data: ignoredBooks,
@@ -98,6 +126,39 @@ export default function BooksIgnored() {
 
   return (
     <div className="pt-32 p-4 flex flex-col">
+      <div className="flex items-center justify-center space-x-2">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <ConfirmationDialog
+                isOpen={isStopIgnoreAllDialogOpen}
+                onOpenChange={(open) => {
+                  setIsStopIgnoreAllDialogOpen(open);
+                }}
+                onConfirm={handleConfirmStopIgnoreAll}
+                title="Stop Ignoring All Books"
+                description="Are you sure you want to stop ignoring all of your books?"
+                confirmText="Stop Ignoring"
+                cancelText="Cancel"
+              >
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="brutal"
+                    onClick={() => setIsStopIgnoreAllDialogOpen(true)}
+                    disabled={stopIgnoreAllMutation.isPending}
+                  >
+                    <Smile className="w-6 h-6 mr-2" />
+                    Stop Ignoring All
+                  </Button>
+                </AlertDialogTrigger>
+              </ConfirmationDialog>
+            </TooltipTrigger>
+            <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+              <p>Stop ignoring everything</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
       <div>
         <div className="">
           <div className="py-4 w-full flex items-center justify-center">

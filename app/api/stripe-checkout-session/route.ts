@@ -46,6 +46,13 @@ export async function POST(request: NextRequest) {
   const userEmail = user.emailAddresses[0].emailAddress;
 
   try {
+    posthogClient.capture({
+      distinctId: userId,
+      event: `stripe-checkout-session START`,
+      properties: {
+        email: userEmail,
+      },
+    });
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -80,8 +87,8 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error in Stripe checkout:", error);
     posthogClient.capture({
-      distinctId: "notion-insert-jobs cron",
-      event: `notion-insert-jobs cron ERROR`,
+      distinctId: userId,
+      event: `stripe-checkout-session ERROR`,
       properties: {
         message:
           error instanceof Error ? error.message : "Unknown error occurred",

@@ -1,0 +1,1 @@
+ALTER TABLE "sources" RENAME COLUMN "web_reader_url" TO "asin";

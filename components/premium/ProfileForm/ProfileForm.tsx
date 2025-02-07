@@ -120,6 +120,9 @@ export function ProfileForm() {
       capacitiesSpaceId: "",
       capacitiesApiKey: "",
       supernotesApiKey: "",
+      aiApiKey: "",
+      aiApiUrl: "",
+      aiApiModel: "",
     },
   });
 
@@ -154,6 +157,9 @@ export function ProfileForm() {
           capacitiesSpaceId: data.profile.capacitiesSpaceId || "",
           capacitiesApiKey: data.profile.capacitiesApiKey || "",
           supernotesApiKey: data.profile.supernotesApiKey || "",
+          aiApiKey: data.profile.aiApiKey || "",
+          aiApiUrl: data.profile.aiApiUrl || "",
+          aiApiModel: data.profile.aiApiModel || "",
         });
       }
     } catch (error) {
@@ -360,7 +366,7 @@ export function ProfileForm() {
           className="w-full space-y-6"
         >
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
               <TabsTrigger className="text-xs" value="general">
                 General
               </TabsTrigger>
@@ -372,6 +378,9 @@ export function ProfileForm() {
               </TabsTrigger>
               <TabsTrigger className="text-xs" value="supernotes">
                 Supernotes
+              </TabsTrigger>{" "}
+              <TabsTrigger className="text-xs" value="ai">
+                AI
               </TabsTrigger>
             </TabsList>
             <TabsContent value="general">
@@ -849,6 +858,121 @@ export function ProfileForm() {
                       videoButtonText="Watch Supernotes Video"
                     />
                   </div>
+                </CardContent>
+                <CardFooter>
+                  <div className="w-full flex justify-end">
+                    <Button
+                      className="w-24"
+                      variant="brutalprimary"
+                      type="submit"
+                      disabled={isSaving}
+                    >
+                      {isSaving ? "Saving..." : "Save"}
+                    </Button>
+                  </div>{" "}
+                </CardFooter>
+              </Card>
+            </TabsContent>
+            <TabsContent value="ai">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex">
+                    <div className="w-full">AI</div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            className="-mt-3"
+                            type="button"
+                            onClick={toggleSecrets}
+                          >
+                            {showingSecrets ? <EyeOff /> : <Eye />}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+                          <p>
+                            {showingSecrets
+                              ? "Hide all secrets"
+                              : "Show all secrets"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </CardTitle>
+                  <CardDescription>
+                    Hook up your preferred AI provider here
+                    <br />
+                    Don&apos;t forget to press{" "}
+                    <span className="text-secondary">Save</span>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="">
+                  <div className="mb-4">
+                    <VideoDialog
+                      videoUrl="https://www.youtube.com/embed/9bTCubJIjEU?si=H5PFO3n3OwafBx5T"
+                      videoTitle="AI Chat"
+                      videoDescription="Demo and setup guide for AI Chat"
+                      videoButtonText="AI Setup Video Instructions"
+                    />
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="aiApiKey"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>AI API Key</FormLabel>
+                        <FormControl>
+                          <Input
+                            type={showingSecrets ? "text" : "password"}
+                            placeholder="AI API Key"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Generate an API token with your AI provider and paste
+                          it
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="aiApiUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>AI URL</FormLabel>
+                        <FormControl>
+                          <Input type="text" placeholder="AI URL" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Find the URL for your AI provider and paste it here
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="aiApiModel"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>AI Model</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="AI Model"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Your AI provider will offer certain models. Choose the
+                          model that works best for you
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </CardContent>
                 <CardFooter>
                   <div className="w-full flex justify-end">

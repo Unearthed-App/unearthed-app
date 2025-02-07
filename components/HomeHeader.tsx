@@ -19,11 +19,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Crown, LogIn } from "lucide-react";
+import { Crown, LogIn, Sparkles } from "lucide-react";
 import { SignUpButton } from "@clerk/nextjs";
 import { Crimson_Pro } from "next/font/google";
 import { TextEffect } from "./ui/text-effect";
 import Link from "next/link";
+import { VideoDialog } from "./VideoDialog";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 export const HomeHeader = () => {
@@ -146,6 +147,36 @@ export const HomeHeader = () => {
             <Crown className="ml-2" />
           </Button>
         </Link>
+      </div>
+
+      <div className="mt-12 w-full px-2 motion-scale-in-[0.5] motion-rotate-in-[-10deg] motion-blur-in-[10px] motion-delay-[0.75s]/rotate motion-delay-[0.75s]/blur">
+        <div className="w-full flex justify-center">
+          <Sparkles className="w-12 h-12 text-secondary motion-preset-seesaw" />
+        </div>
+
+        <div className="w-full">
+          <p className="text-center text-xs md:text-base text-alternate dark:text-foreground font-semibold">
+            <h3 className="text-lg font-bold text-secondary">
+              AI: Chat with your Kindle highlights
+            </h3>
+            Use AI to generate quizzes,
+            <br />
+            summaries, and more from
+            <br />
+            the quotes and notes
+            <br />
+            within each book
+          </p>
+        </div>
+        
+        <div className="mt-2">
+          <VideoDialog
+            videoUrl="https://www.youtube.com/embed/9bTCubJIjEU?si=H5PFO3n3OwafBx5T"
+            videoTitle="AI Chat"
+            videoDescription="Demo and setup guide for AI Chat"
+            videoButtonText="Watch In Action"
+          />
+        </div>
       </div>
     </div>
   );

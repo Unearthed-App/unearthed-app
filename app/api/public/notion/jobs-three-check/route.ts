@@ -18,12 +18,13 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { and, eq, inArray, isNull, lte, or, sql } from "drizzle-orm";
-import { notionSourceJobsTwo, selectProfileSchema } from "@/db/schema";
+import { notionSourceJobsThree, selectProfileSchema } from "@/db/schema";
 import { db } from "@/db";
 import { z } from "zod";
 import PostHogClient from "@/app/posthog";
 import { clerkClient } from "@clerk/nextjs/server";
 import { decrypt } from "@/lib/auth/encryptionKey";
+import { generateUUID } from "@/lib/utils";
 const { Client } = require("@notionhq/client");
 type Profile = z.infer<typeof selectProfileSchema>;
 
@@ -168,12 +169,12 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const notionSourceJobs = await db.query.notionSourceJobsTwo.findMany({
+  const notionSourceJobs = await db.query.notionSourceJobsThree.findMany({
     where: and(
-      eq(notionSourceJobsTwo.status, "READY"),
+      eq(notionSourceJobsThree.status, "READY"),
       or(
-        isNull(notionSourceJobsTwo.attempts),
-        lte(notionSourceJobsTwo.attempts, 3)
+        isNull(notionSourceJobsThree.attempts),
+        lte(notionSourceJobsThree.attempts, 3)
       )
     ),
     with: {
@@ -195,18 +196,20 @@ export async function GET() {
   const sourceIds = notionSourceJobs.map((row) => row.sourceId);
 
   await db
-    .update(notionSourceJobsTwo)
+    .update(notionSourceJobsThree)
     .set({
-      attempts: sql`COALESCE(${notionSourceJobsTwo.attempts}, 0) + 1`,
+      attempts: sql`COALESCE(${notionSourceJobsThree.attempts}, 0) + 1`,
     })
-    .where(inArray(notionSourceJobsTwo.sourceId, sourceIds));
+    .where(inArray(notionSourceJobsThree.sourceId, sourceIds));
 
   try {
     const posthogClient = PostHogClient();
 
+    const distinctId = generateUUID();
+
     posthogClient.capture({
-      distinctId: `notion-jobs-two-process`,
-      event: `notion-jobs-two BEGIN`,
+      distinctId,
+      event: `notion-jobs-three BEGIN`,
       properties: {
         sourceIds,
       },
@@ -214,8 +217,8 @@ export async function GET() {
 
     for (const row of notionSourceJobs) {
       posthogClient.capture({
-        distinctId: `${row.source.userId}-${row.source.id}`,
-        event: `notion-jobs-two cron`,
+        distinctId: row.source.userId,
+        event: `notion-jobs-three`,
         properties: {
           newConnection: row.newConnection,
           sourceName: row.source.title,
@@ -512,15 +515,15 @@ export async function GET() {
         }
 
         await db
-          .update(notionSourceJobsTwo)
+          .update(notionSourceJobsThree)
           .set({
             status: "COMPLETE",
           })
-          .where(eq(notionSourceJobsTwo.sourceId, row.sourceId));
+          .where(eq(notionSourceJobsThree.sourceId, row.sourceId));
       } catch (error) {
         posthogClient.capture({
-          distinctId: `${row.source.userId}-${row.source.id}`,
-          event: `notion-jobs-two error`,
+          distinctId: row.source.userId,
+          event: `notion-jobs-three ERROR`,
           properties: {
             message:
               error instanceof Error ? error.message : "Unknown error occurred",

@@ -22,8 +22,9 @@ import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { useCallback, useState } from "react";
 import {
+  ignoreAllSources,
   deleteAllSources,
-  getBooks,
+  getPaginatedBooks,
   getProfile,
   syncSourceToNotion,
   toggleIgnoredBook,
@@ -65,12 +66,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 type Source = z.infer<typeof selectSourceWithRelationsSchema>;
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Books() {
   const queryClient = useQueryClient();
   const [bookToDelete, setBookToDelete] = useState<Source | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
+  const [isIgnoreAllDialogOpen, setIsIgnoreAllDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(20);
 
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["profile"],
@@ -78,16 +83,21 @@ export default function Books() {
   });
 
   const {
-    data: books,
+    data: booksData,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["books"],
+    queryKey: ["books", currentPage],
     queryFn: () =>
-      getBooks({
+      getPaginatedBooks({
         ignored: false,
+        page: currentPage,
+        pageSize,
       }),
   });
+
+  const totalPages = Math.ceil((booksData?.total || 0) / pageSize);
+  const books = booksData?.books || [];
 
   const toggleIgnoreMutation = useMutation({
     mutationFn: toggleIgnoredBook,
@@ -112,6 +122,18 @@ export default function Books() {
     },
   });
 
+  const ignoreAllMutation = useMutation({
+    mutationFn: ignoreAllSources,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["books"] });
+      toast({
+        title: `Ignored successfully`,
+        description: "",
+      });
+      setIsIgnoreAllDialogOpen(false);
+    },
+  });
+
   const deleteAllMutation = useMutation({
     mutationFn: deleteAllSources,
     onSuccess: () => {
@@ -133,6 +155,10 @@ export default function Books() {
     if (bookToDelete) {
       await deleteBookMutation.mutate({ source: bookToDelete });
     }
+  };
+
+  const handleConfirmIgnoreAll = async () => {
+    await ignoreAllMutation.mutate();
   };
 
   const handleConfirmDeleteAll = async () => {
@@ -182,6 +208,39 @@ export default function Books() {
       });
     }
   }
+
+  const PaginationControls = () => (
+    <div className="fixed bottom-0 py-1 w-full pb-2">
+      <div className="flex items-center justify-center gap-4">
+        <Button
+          variant="brutal"
+          size="icon"
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </Button>
+
+        <div className="text-center p-3 rounded-md backdrop-blur-sm bg-white/30 text-alternate shadow-xl shadow-red-300/10 dark:shadow-lg dark:shadow-primary/10">
+          <h3 className="hidden md:block font-bold text-xs">
+            Page {currentPage} of {totalPages}
+          </h3>
+          <h3 className="md:hidden font-bold text-xs">
+            {currentPage} / {totalPages}
+          </h3>
+        </div>
+
+        <Button
+          variant="brutal"
+          size="icon"
+          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+        >
+          <ChevronRight className="w-6 h-6" />
+        </Button>
+      </div>
+    </div>
+  );
 
   if (isLoading)
     return (
@@ -375,6 +434,51 @@ export default function Books() {
           <Tooltip>
             <TooltipTrigger asChild>
               <ConfirmationDialog
+                isOpen={isIgnoreAllDialogOpen}
+                onOpenChange={(open) => {
+                  setIsIgnoreAllDialogOpen(open);
+                }}
+                onConfirm={handleConfirmIgnoreAll}
+                title="Ignore All Books"
+                description="Are you sure you want to ignore all of your books?"
+                confirmText="Ignore"
+                cancelText="Cancel"
+              >
+                <AlertDialogTrigger asChild>
+                  <span>
+                    <span className="hidden md:block">
+                      <Button
+                        variant="brutal"
+                        onClick={() => setIsIgnoreAllDialogOpen(true)}
+                        disabled={ignoreAllMutation.isPending}
+                      >
+                        <Frown className="w-6 h-6 mr-2" />
+                        Ignore All
+                      </Button>
+                    </span>
+                    <span className="md:hidden">
+                      <Button
+                        variant="brutal"
+                        size="icon"
+                        onClick={() => setIsIgnoreAllDialogOpen(true)}
+                        disabled={ignoreAllMutation.isPending}
+                      >
+                        <Frown className="w-6 h-6" />
+                      </Button>
+                    </span>
+                  </span>
+                </AlertDialogTrigger>
+              </ConfirmationDialog>
+            </TooltipTrigger>
+            <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+              <p>Ignore everything</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <ConfirmationDialog
                 isOpen={isDeleteAllDialogOpen}
                 onOpenChange={(open) => {
                   setIsDeleteAllDialogOpen(open);
@@ -408,22 +512,23 @@ export default function Books() {
           onSourceAdded={refreshBooks}
         />
       </div>
-      <div>
-        <div className="">
-          <div className="py-4 w-full flex items-center justify-center">
-            <div className="w-full">
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="grid gap-x-4 gap-y-2 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
-              >
-                {books.map(renderBookCard)}
-              </motion.div>
-            </div>
+
+      <div className="flex-1 overflow-y-auto mt-4">
+        <div className="py-4 w-full flex items-center justify-center">
+          <div className="w-full">
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid gap-x-4 gap-y-2 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
+            >
+              {books.map(renderBookCard)}
+            </motion.div>
           </div>
         </div>
       </div>
+
+      {books.length > 0 && <PaginationControls />}
     </div>
   );
 }

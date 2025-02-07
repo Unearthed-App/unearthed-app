@@ -1,0 +1,1 @@
+ALTER TABLE "sources" DROP COLUMN IF EXISTS "image_url";

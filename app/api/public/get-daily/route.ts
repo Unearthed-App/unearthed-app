@@ -42,6 +42,7 @@ type DailyQuote = z.infer<typeof insertDailyQuotesSchema>;
 type Source = z.infer<typeof selectSourceSchema>;
 type Quote = z.infer<typeof selectQuoteSchema>;
 type Profile = z.infer<typeof selectProfileSchema>;
+import PostHogClient from "@/app/posthog";
 
 interface DailyReflection {
   source: Source;
@@ -80,12 +81,22 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const profile = await verifyApiKeyGetProfile(apiKey);
+  const profile = await verifyApiKeyGetProfile(apiKey);
 
-    if (!profile) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!profile) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const posthogClient = PostHogClient();
+
+  posthogClient.capture({
+    distinctId: profile.userId,
+    event: `get-daily (public) BEGIN`,
+    properties: {
+      message: "obsidian",
+    },
+  });
+  try {
 
     const client = await clerkClient();
     const user = await client.users.getUser(profile.userId);
@@ -109,6 +120,15 @@ export async function GET() {
       data: { dailyReflection },
     });
   } catch (error) {
+    posthogClient.capture({
+      distinctId: profile.userId,
+      event: `get-daily (public) ERROR`,
+      properties: {
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      },
+    });
+
     console.error(error);
     return NextResponse.json(
       { error: "Internal Server Error" },

@@ -34,6 +34,7 @@ import { z } from "zod";
 import { profiles, selectProfileSchema } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
+import { generateUUID } from "@/lib/utils";
 
 type ProfileSelect = z.infer<typeof selectProfileSchema>;
 
@@ -63,8 +64,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Webhook error" }, { status: 400 });
   }
 
+  const distinctId = generateUUID();
+
   posthogClient.capture({
-    distinctId: `"stripe webhook START"`,
+    distinctId,
     event: `${event.type}`,
   });
 
@@ -409,7 +412,7 @@ export async function POST(req: NextRequest) {
 
     if (error instanceof Error) {
       posthogClient.capture({
-        distinctId: "webhook_error",
+        distinctId,
         event: "webhook_processing_error",
         properties: {
           error: error.message,

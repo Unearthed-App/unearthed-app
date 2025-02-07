@@ -23,6 +23,8 @@ import { profiles, sources, unearthedKeys } from "@/db/schema";
 import bcrypt from "bcrypt";
 import { decrypt } from "@/lib/auth/encryptionKey";
 import { clerkClient } from "@clerk/nextjs/server";
+import { sortQuotes } from "@/lib/utils";
+import PostHogClient from "@/app/posthog";
 
 // Function to verify API key
 async function verifyApiKeyGetProfile(providedApiKey: string) {
@@ -57,13 +59,20 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const profile = await verifyApiKeyGetProfile(apiKey);
+
+  if (!profile) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const posthogClient = PostHogClient();
+
+  posthogClient.capture({
+    distinctId: profile.userId,
+    event: `obsidian-sync BEGIN`,
+  });
+  
   try {
-    const profile = await verifyApiKeyGetProfile(apiKey);
-
-    if (!profile) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const client = await clerkClient();
     const user = await client.users.getUser(profile.userId);
     const encryptionKey = user.privateMetadata.encryptionKey as string;
@@ -78,18 +87,28 @@ export async function GET() {
       ),
     });
 
-    // decrypt each dbResult->quotes->note
     for (const source of dbResult) {
       for (const quote of source.quotes) {
         if (quote.note) {
           quote.note = await decrypt(quote.note as string, encryptionKey);
         }
+        source.quotes = sortQuotes(source.quotes);
       }
     }
 
     return NextResponse.json({ success: true, data: dbResult });
   } catch (error) {
     console.error(error);
+
+    posthogClient.capture({
+      distinctId: profile.userId,
+      event: `obsidian-sync ERROR`,
+      properties: {
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      },
+    });
+
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

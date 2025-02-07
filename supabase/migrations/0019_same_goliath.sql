@@ -1,0 +1,1 @@
+ALTER TABLE "daily_quotes" ADD COLUMN "supernotes_updated" boolean DEFAULT false;

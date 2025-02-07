@@ -26,7 +26,7 @@ const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 const cardContents = [
   {
     title:
-      '"I\'m sick of <span class="text-secondary italic">manually</span> downloading and backing up my kindle highlights"',
+      '"I\'m sick of <span class="text-secondary italic">manually</span> backing up my kindle highlights"',
     description:
       'Unearthed will <span class="text-secondary font-semibold">automatically</span> download and sync your data for you.',
   },
@@ -75,14 +75,13 @@ const gridContentMap = {
 
 export const AnimatedCards = () => {
   return (
-    <div className="w-full flex flex-wrap items-center justify-center p-4 md:px-24 lg:px-0 ">
+    <div className="w-full flex flex-wrap items-center justify-center p-4 md:px-12 lg:px-0 ">
       <div className="w-full flex justify-center max-w-6xl mb-8">
         <HeadingBlur content="You won't be thinking any of this anymore..." />
         <h2 className={"opacity-50 mb-2 text-base lg:text-xl "}></h2>
       </div>
 
       <div className="lg:grid grid-cols-6 grid-rows-8 gap-4 w-full max-w-6xl lg:h-[850px]">
-        {/* Black filler cells */}
         <div className="hidden lg:block z-10 row-span-2 col-start-1 row-start-1">
           <NoiseCard />{" "}
         </div>

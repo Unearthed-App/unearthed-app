@@ -1,0 +1,1 @@
+ALTER TABLE "quotes" ALTER COLUMN "source_id" SET NOT NULL;

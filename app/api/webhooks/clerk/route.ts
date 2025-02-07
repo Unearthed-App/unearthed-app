@@ -77,17 +77,18 @@ export async function POST(req: Request) {
     });
   }
 
+  const userId = evt.data.id;
+
+  if (!userId) {
+    return new Response("Error", { status: 500 });
+  }
+
   posthogClient.capture({
-    distinctId: `"clerk webhook START"`,
-    event: `${evt.type}`,
+    distinctId: userId,
+    event: `clerk ${evt.type}`,
   });
 
   if (evt.type === "user.created") {
-    const userId = evt.data.id;
-
-    if (!userId) {
-      return new Response("Error", { status: 500 });
-    }
 
     const newEncryptionKey = generateSecureKey();
     const newSecret = generateSecureKey();
@@ -125,12 +126,7 @@ export async function POST(req: Request) {
       return new Response("Error", { status: 500 });
     }
   } else if (evt.type === "user.deleted") {
-    const userId = evt.data.id;
-
-    if (!userId) {
-      return new Response("Error", { status: 500 });
-    }
-
+    
     try {
       const profile = await db
         .update(profiles)

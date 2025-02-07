@@ -24,17 +24,15 @@ import {
 } from "@clerk/nextjs";
 import { DropdownMenuNav } from "@/components/DropdownMenuNav";
 import { ModeToggle } from "@/components/ModeToggle";
-import { ProfileDialog as ProfileDialogPremium } from "./ProfileForm/ProfileDialog";
-import { LogOut } from "lucide-react";
-import { Button } from "../ui/button";
+import { LogOut, Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { usePathname } from "next/navigation";
-import { SearchDialog } from "../SearchDialog";
-
-import { QuoteFormDialog } from "./QuoteForm/QuoteFormDialog";
+import { SearchDialog } from "@/components/SearchDialog";
 
 import { Crimson_Pro } from "next/font/google";
+import { QuoteFormDialog } from "./QuoteForm/QuoteFormDialog";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 export function Navbar() {
@@ -93,7 +91,11 @@ export function Navbar() {
             <QuoteFormDialog onQuoteAdded={() => {}} />
             <DropdownMenuNav />
             <ModeToggle />
-            <ProfileDialogPremium />
+            <Link href="/premium/settings">
+              <Button size="icon">
+                <Settings />
+              </Button>
+            </Link>
             <SignOutButton>
               <Button size="icon">
                 <LogOut />
@@ -114,7 +116,11 @@ export function Navbar() {
             <QuoteFormDialog onQuoteAdded={() => {}} />
             <DropdownMenuNav />
             <ModeToggle />
-            <ProfileDialogPremium />
+            <Link href="/premium/settings">
+              <Button size="icon">
+                <Settings />
+              </Button>
+            </Link>
           </SignedIn>
           <SignedOut>
             <SignInButton />

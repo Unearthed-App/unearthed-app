@@ -66,6 +66,10 @@ export async function onSubmitAction(data: any, utcOffset: number) {
     ? await encrypt(parsed.data.capacitiesSpaceId as string, encryptionKey)
     : "";
 
+  const aiApiKeyEncyrpted = parsed.data.aiApiKey
+    ? await encrypt(parsed.data.aiApiKey as string, encryptionKey)
+    : "";
+
   let couldNotUpdate = false;
 
   try {
@@ -76,6 +80,9 @@ export async function onSubmitAction(data: any, utcOffset: number) {
         supernotesApiKey: supernotesApiKeyEncyrpted,
         capacitiesApiKey: capacitiesApiKeyEncyrpted,
         capacitiesSpaceId: capacitiesSpaceIdEncyrpted,
+        aiApiKey: aiApiKeyEncyrpted,
+        aiApiUrl: parsed.data.aiApiUrl,
+        aiApiModel:  parsed.data.aiApiModel,
         utcOffset,
       })
       .where(eq(profiles.userId, userId));
@@ -97,6 +104,9 @@ export async function onSubmitAction(data: any, utcOffset: number) {
           supernotesApiKey: supernotesApiKeyEncyrpted,
           capacitiesApiKey: capacitiesApiKeyEncyrpted,
           capacitiesSpaceId: capacitiesSpaceIdEncyrpted,
+          aiApiKey: aiApiKeyEncyrpted,
+          aiApiUrl: parsed.data.aiApiUrl,
+          aiApiModel: parsed.data.aiApiModel,
           utcOffset,
           userId: userId,
           userStatus: "ACTIVE",

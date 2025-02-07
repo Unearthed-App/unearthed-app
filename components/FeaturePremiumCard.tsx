@@ -89,6 +89,10 @@ export function FeaturePremiumCard({
             variant="destructive"
           />
           <CheckItemSmall
+            content="AI chat with each book (BYO AI)"
+            variant="destructive"
+          />
+          <CheckItemSmall
             content="Help keep this app alive"
             variant="destructive"
           />
@@ -135,6 +139,7 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="Import from CSV files" />
           <CheckItemSmall content="Import from Kindle Clippings file" />
           <CheckItemSmall content="Direct link to read on Kindle" />
+          <CheckItemSmall content="AI chat with each book (BYO AI)" />
           <CheckItemSmall content="Help keep this app alive" />
           {showButtons && (
             <Link href="/dashboard/get-premium">
