@@ -39,7 +39,7 @@ const csvSchema = z.object({
   title: z.string().min(1, "Title is required"),
   subtitle: z.string().optional(),
   author: z.string().optional().default(""),
-  content: z.string().min(1, "Quote content is required"),
+  content: z.string().optional(),
   note: z.string().optional().default(""),
   color: z.string().optional(),
   location: z.string().optional(),
@@ -338,7 +338,6 @@ export async function onSubmitAction(formData: FormData) {
     };
   }
 }
-
 const insertQuotesForInsertedSources = async (
   combinedInsertedRecords: QuoteInsert[],
   encryptionKey: string
@@ -346,10 +345,12 @@ const insertQuotesForInsertedSources = async (
   const QuotesArraySchema = z.array(insertQuoteSchema);
 
   const toInsertQuotes = await Promise.all(
-    QuotesArraySchema.parse(combinedInsertedRecords).map(async (row) => ({
-      ...row,
-      note: row.note ? await encrypt(row.note, encryptionKey) : "",
-    }))
+    QuotesArraySchema.parse(combinedInsertedRecords)
+      .filter((row) => row.content !== null && row.content.trim() !== "")
+      .map(async (row) => ({
+        ...row,
+        note: row.note ? await encrypt(row.note, encryptionKey) : "",
+      }))
   );
 
   const batches: any[] = [];
@@ -388,9 +389,19 @@ const insertQuotesForExistingSources = async (
   }, {} as { [sourceId: string]: string[] });
 
   const filteredRecords = combinedExistingRecords.filter((record) => {
+    if (!record.content || record.content.trim() === "") {
+      return false;
+    }
+
     const existingQuotes = quotesBySourceId[record.sourceId] || [];
     return !existingQuotes.includes(record.content);
   });
+
+  if (filteredRecords.length === 0) {
+    return true;
+  }
+
+  console.log("filteredRecords", filteredRecords);
 
   const QuotesArraySchema = z.array(insertQuoteSchema);
 

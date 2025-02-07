@@ -24,6 +24,7 @@ import { z } from "zod";
 import PostHogClient from "@/app/posthog";
 import { clerkClient } from "@clerk/nextjs/server";
 import { decrypt } from "@/lib/auth/encryptionKey";
+import { generateUUID } from "@/lib/utils";
 const { Client } = require("@notionhq/client");
 type Profile = z.infer<typeof selectProfileSchema>;
 
@@ -204,8 +205,10 @@ export async function GET() {
   try {
     const posthogClient = PostHogClient();
 
+    const distinctId = generateUUID();
+
     posthogClient.capture({
-      distinctId: `notion-jobs-one-process`,
+      distinctId,
       event: `notion-jobs-one BEGIN`,
       properties: {
         sourceIds,
@@ -214,8 +217,8 @@ export async function GET() {
 
     for (const row of notionSourceJobs) {
       posthogClient.capture({
-        distinctId: `${row.source.userId}-${row.source.id}`,
-        event: `notion-jobs-one cron`,
+        distinctId: row.source.userId,
+        event: `notion-jobs-one`,
         properties: {
           newConnection: row.newConnection,
           sourceName: row.source.title,
@@ -519,8 +522,8 @@ export async function GET() {
           .where(eq(notionSourceJobsOne.sourceId, row.sourceId));
       } catch (error) {
         posthogClient.capture({
-          distinctId: `${row.source.userId}-${row.source.id}`,
-          event: `notion-jobs-one error`,
+          distinctId: row.source.userId,
+          event: `notion-jobs-one ERROR`,
           properties: {
             message:
               error instanceof Error ? error.message : "Unknown error occurred",

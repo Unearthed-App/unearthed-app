@@ -23,6 +23,7 @@ import { profiles } from "@/db/schema";
 import { and, eq, gt, isNotNull } from "drizzle-orm";
 import Stripe from "stripe";
 import { clerkClient } from "@clerk/nextjs/server";
+import { generateUUID } from "@/lib/utils";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-10-28.acacia",
@@ -43,10 +44,11 @@ export async function POST() {
   }
 
   const posthogClient = PostHogClient();
+  const distinctId = generateUUID();
 
   try {
     posthogClient.capture({
-      distinctId: `subscription-check-cron`,
+      distinctId,
       event: `subscription check START`,
     });
 
@@ -113,7 +115,7 @@ export async function POST() {
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     posthogClient.capture({
-      distinctId: "subscription-check-cron ERROR",
+      distinctId,
       event: `subscription check ERROR`,
       properties: {
         message:

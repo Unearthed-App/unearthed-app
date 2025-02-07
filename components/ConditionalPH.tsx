@@ -23,6 +23,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { checkCookieConsent } from "./CookieConsent";
 import { useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 
 interface ConditionalPHProps {
   children: React.ReactNode;
@@ -32,27 +33,28 @@ const ConditionalPH: React.FC<ConditionalPHProps> = ({ children }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const consentGiven = checkCookieConsent();
+  
+  const { user } = useUser();
 
   useEffect(() => {
-    if (consentGiven) {
-      // Check if posthog is available (it should be initialized in PHProvider)
-      if (pathname && posthog) {
-        let url = window.origin + pathname;
-        if (searchParams.toString()) {
-          url = url + `?${searchParams.toString()}`;
-        }
-        posthog.capture("$pageview", {
-          $current_url: url,
+    if (consentGiven && posthog) {
+      if (user) {
+        posthog.identify(user.id);
+        posthog.people.set({ 
+          email: user.primaryEmailAddress?.emailAddress,
         });
+      } else {
+        posthog.reset();
+      }
+
+      if (pathname) {
+        const url = `${window.origin}${pathname}${searchParams.toString() ? `?${searchParams}` : ''}`;
+        posthog.capture("$pageview", { $current_url: url });
       }
     }
-  }, [pathname, searchParams, consentGiven]);
+  }, [user, pathname, searchParams, consentGiven]);
 
-  if (consentGiven) {
-    return <PHProvider>{children}</PHProvider>;
-  }
-
-  return <>{children}</>;
+  return consentGiven ? <PHProvider>{children}</PHProvider> : <>{children}</>;
 };
 
 export default ConditionalPH;

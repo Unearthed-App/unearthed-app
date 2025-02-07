@@ -153,7 +153,7 @@ export default async function App() {
             <UnearthedInAndOut />
           </div>
 
-          <div className="my-12 px-4 md:px-24">
+          <div className="my-12 px-4 md:px-16">
             <div className="mt-4 mb-10">
               <FeaturePremiumCard showButtons />
             </div>

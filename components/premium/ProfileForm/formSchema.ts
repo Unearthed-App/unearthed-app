@@ -22,5 +22,8 @@ export const schema = z.object({
   capacitiesSpaceId: z.string(),
   capacitiesApiKey: z.string().optional(),
   supernotesApiKey: z.string().optional(),
+  aiApiKey: z.string().optional(),
+  aiApiUrl: z.string().optional(),
+  aiApiModel: z.string().optional(),
   dailyEmails: z.boolean(),
 });

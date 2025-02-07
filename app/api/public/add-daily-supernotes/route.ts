@@ -137,6 +137,7 @@ export async function GET() {
         properties: {
           message:
             error instanceof Error ? error.message : "Unknown error occurred",
+          profileResults,
         },
       });
       continue;

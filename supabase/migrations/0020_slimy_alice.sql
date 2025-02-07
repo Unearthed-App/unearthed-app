@@ -1,0 +1,1 @@
+ALTER TABLE "sources" ADD COLUMN "web_reader_url" text;
