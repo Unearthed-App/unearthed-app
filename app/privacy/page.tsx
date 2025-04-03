@@ -1,67 +1,72 @@
 /**
- * Copyright (C) 2024 Unearthed App
- * 
+ * Copyright (C) 2025 Unearthed App
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 import { Metadata } from "next";
 import React from "react";
 import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
-
-
 export const metadata: Metadata = {
-  title: "Unearthed - Past insights, new revelations",
+  title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
   description:
-    "Free, open-source tool to retrieve, sync, and reflect on your Amazon Kindle highlights, quotes, notes, and books. Receive Daily Reflection. Search, tag, and connect your insights across platforms. Notion, Obsidian, Capacities.",
+    "Free, open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalized insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
   keywords: [
     "kindle highlights",
+    "AI reading analysis",
+    "reading insights",
+    "book analytics",
     "digital notes",
     "knowledge management",
     "personal library",
     "daily reflections",
     "open source",
     "productivity tool",
-    "notion",
-    "capacities kindle",
-    "notion kindle",
-    "obsidian kindle",
-    "kindle integration",
+    "notion integration",
     "kindle to notion",
     "kindle to obsidian",
     "kindle to capacities",
     "capacities integration",
+    "kindle sync",
+    "reading patterns",
+    "book recommendations",
+    "readwise alternative",
+    "readwise",
   ],
   openGraph: {
-    title: "Unearthed - Past insights, new revelations",
+    title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
     description:
-      "Sync Kindle highlights, receive daily reflections, and seamlessly integrate your insights with other apps. Free and open-source. Notion, Obsidian, Capacities.",
+      "Free, open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalized insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
     type: "website",
     url: "https://unearthed.app",
     images: [
       {
-        url: "https://unearthed.app/search.png",
+        url: "https://unearthed.app/images/banner.webp",
         width: 1200,
         height: 630,
-        alt: "Unearthed app interface showing Kindle highlights and daily reflections. Notion, Obsidian, Capacities.",
+        alt: "Unearthed app interface showing AI-powered reading insights and Kindle integration",
       },
     ],
   },
-  alternates: {
-    canonical: "https://unearthed.app/privacy",
+  twitter: {
+    card: "summary_large_image",
+    title: "Unearthed - AI-Powered Reading Insights",
+    description:
+      "Transform your reading with AI analysis and seamless integration",
+    images: ["https://unearthed.app/images/banner.webp"],
   },
 };
 
@@ -77,7 +82,7 @@ const PrivacyPolicy = () => {
           Privacy Policy for Unearthed App
         </h1>
         <p className="text-secondary mb-4">
-          <strong>Last Updated: October 2, 2024</strong>
+          <strong>Last Updated: March 23, 2025</strong>
         </p>
 
         <h2
@@ -106,6 +111,10 @@ const PrivacyPolicy = () => {
             <strong className="text-secondary">UTC Time Offset</strong>: We
             store your UTC time offset to ensure accurate time representation in
             the app.
+          </li>
+          <li>
+            <strong className="text-secondary">AI Usage Metrics</strong>: We
+            track basic usage metrics (token counts) to manage AI quota limits.
           </li>
         </ul>
 
@@ -141,13 +150,31 @@ const PrivacyPolicy = () => {
             crimsonPro.className + " font-extrabold text-lg md:text-2xl"
           }
         >
+          AI Services
+        </h2>
+        <p className="mb-4">
+          We use AI services (Google Gemini and/or OpenAI Compatible provider of
+          your choosing) to provide analysis and insights. We do not store any
+          chat history or conversation data. Your interactions are sent directly
+          to the AI provider for processing and are not retained on our servers.
+          If you choose to use your own AI API keys, these are stored in
+          encrypted form and are only used to facilitate direct communication
+          with your chosen AI provider.
+        </p>
+
+        <h2
+          className={
+            crimsonPro.className + " font-extrabold text-lg md:text-2xl"
+          }
+        >
           How We Use Your Information
         </h2>
         <p className="mb-4">
           We use your information solely to provide and enhance the
           functionality of Unearthed App. We do not share your data with third
-          parties beyond Clerk Auth for authentication purposes and PostHog for
-          analytics.
+          parties beyond Clerk Auth for authentication purposes, PostHog for
+          analytics (if opted in), and AI providers for processing your
+          requests. AI interactions are not stored on our servers.
         </p>
 
         <h2

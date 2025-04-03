@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,10 @@ const config = {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
+        "primary-lighter": {
+          DEFAULT: "hsl(var(--primary-lighter))",
+          foreground: "hsl(var(--primary-lighter-foreground))",
+        },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
@@ -87,7 +91,7 @@ const config = {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
-        "shimmer": {
+        shimmer: {
           from: {
             backgroundPosition: "0 0",
           },
@@ -95,26 +99,34 @@ const config = {
             backgroundPosition: "-200% 0",
           },
         },
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
         scroll: {
           to: {
             transform: "translate(calc(-50% - 0.5rem))",
           },
         },
+        "accordion-down": {
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
+        },
+        "accordion-up": {
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
+        },
       },
       animation: {
-        "shimmer": "shimmer 2s linear infinite",
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        shimmer: "shimmer 2s linear infinite",
         scroll:
           "scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
@@ -126,7 +138,6 @@ const config = {
 } satisfies Config;
 
 export default withUt(config);
-
 
 function addVariablesForColors({ addBase, theme }: any) {
   let allColors = flattenColorPalette(theme("colors"));

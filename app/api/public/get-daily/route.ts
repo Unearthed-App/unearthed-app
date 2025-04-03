@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,12 +92,8 @@ export async function GET() {
   posthogClient.capture({
     distinctId: profile.userId,
     event: `get-daily (public) BEGIN`,
-    properties: {
-      message: "obsidian",
-    },
   });
   try {
-
     const client = await clerkClient();
     const user = await client.users.getUser(profile.userId);
     const encryptionKey = user.privateMetadata.encryptionKey as string;
@@ -217,7 +213,6 @@ const createDailyReflection = async (
       where: and(eq(quotes.userId, profile.userId)),
     });
 
-    // remove any quotes that have sources that are not ignored:true
     const quotesResultFiltered = quotesResult.filter((quote) => {
       if (quote.source) {
         return quote.source.ignored === false;

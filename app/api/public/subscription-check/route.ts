@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { generateUUID } from "@/lib/utils";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-10-28.acacia",
+  apiVersion: "2025-02-24.acacia",
 });
 
 export async function POST() {
@@ -64,6 +64,27 @@ export async function POST() {
 
     for (const profile of activeProfiles) {
       try {
+        const currentDate = new Date();
+        const lastDayOfMonth = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 1,
+          0
+        );
+        const numberOfDaysUntilExpire = Math.ceil(
+          (lastDayOfMonth.getTime() - currentDate.getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
+
+        if (numberOfDaysUntilExpire <= 0) {
+          await db
+            .update(profiles)
+            .set({
+              aiInputTokensUsed: 0,
+              aiOutputTokensUsed: 0,
+            })
+            .where(eq(profiles.userId, profile.userId));
+        }
+
         const subscription = await stripe.subscriptions.retrieve(
           profile.stripeSubscriptionId!
         );

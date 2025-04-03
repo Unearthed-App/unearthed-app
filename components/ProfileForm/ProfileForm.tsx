@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ import {
   generateAndSaveUnearthedKey,
   getSettings,
 } from "@/server/actions";
-import { Copy, Eye, EyeOff, Trash } from "lucide-react";
+import { Copy, Eye, EyeOff, Megaphone, Trash } from "lucide-react";
 
 import { schema } from "./formSchema";
 import { onSubmitAction } from "./formSubmit";
@@ -72,6 +72,7 @@ import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import ConfirmationDialog from "@/components/ConfirmationDialog"; // Import the ConfirmationDialog we created
 import { ObsidianInstructionsDialog } from "@/components/ObsidianInstructionsDialog";
 import { VideoDialog } from "@/components/VideoDialog";
+import { HeadingBlur } from "../HeadingBlur";
 
 type CapacitiesSpaceItem = {
   id: string;
@@ -306,7 +307,7 @@ export function ProfileForm() {
                     </div>
                     <div className="my-2">
                       <VideoDialog
-                        videoUrl="https://www.youtube.com/embed/W321i9cjQms?si=N5UyK3btoOUMJhyV"
+                        videoUrl="https://www.youtube.com/embed/uilUlt4wRVs?si=5AFVPu8_clj4AeTl"
                         videoTitle="Obsidian Instructions"
                         videoDescription="Instructions for syncing Kindle to Obsidian"
                         videoButtonText="Watch Obsidian Video"
@@ -560,6 +561,12 @@ export function ProfileForm() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="">
+                  <div className="flex flex-wrap justify-center">
+                    <Megaphone className="w-16 h-16 text-alternate" />
+                    <div className="my-4 w-full flex justify-center">
+                      <HeadingBlur content="Be aware that you may have quoatas on your Supernotes account. So if you are no longer seeing your Daily Reflection, please check that you have not reached your quota." />
+                    </div>
+                  </div>
                   <FormField
                     control={form.control}
                     name="supernotesApiKey"

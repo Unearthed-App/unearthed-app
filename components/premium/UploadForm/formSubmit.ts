@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -380,13 +380,16 @@ const insertQuotesForExistingSources = async (
     .from(quotes)
     .where(and(inArray(quotes.sourceId, sourceIds), eq(quotes.userId, userId)));
 
-  const quotesBySourceId = quotesFromDb.reduce((acc, quote) => {
-    if (!acc[quote.sourceId]) {
-      acc[quote.sourceId] = [];
-    }
-    acc[quote.sourceId].push(quote.content);
-    return acc;
-  }, {} as { [sourceId: string]: string[] });
+  const quotesBySourceId = quotesFromDb.reduce(
+    (acc, quote) => {
+      if (!acc[quote.sourceId]) {
+        acc[quote.sourceId] = [];
+      }
+      acc[quote.sourceId].push(quote.content);
+      return acc;
+    },
+    {} as { [sourceId: string]: string[] }
+  );
 
   const filteredRecords = combinedExistingRecords.filter((record) => {
     if (!record.content || record.content.trim() === "") {
@@ -400,8 +403,6 @@ const insertQuotesForExistingSources = async (
   if (filteredRecords.length === 0) {
     return true;
   }
-
-  console.log("filteredRecords", filteredRecords);
 
   const QuotesArraySchema = z.array(insertQuoteSchema);
 

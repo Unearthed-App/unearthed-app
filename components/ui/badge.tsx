@@ -1,20 +1,19 @@
 /**
- * Copyright (C) 2024 Unearthed App
- * 
+ * Copyright (C) 2025 Unearthed App
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -38,6 +37,14 @@ const badgeVariants = cva(
           dark:bg-white dark:border-black dark:text-black
           `,
         brutalinvert: `h-8 border-2 p-2.5 rounded-md transition-shadow duration-200
+          bg-white border-black text-black
+          dark:bg-black dark:border-white dark:text-white
+          `,
+        brutaldestructive: `h-8 border-2 p-2.5 rounded-md transition-shadow duration-200
+          bg-red-800 border-white text-white
+          dark:bg-red-500 dark:border-black dark:text-black
+          `,
+        brutalinvertsmall: `h-6 text-xs border-2 p-2 rounded-md transition-shadow duration-200
           bg-white border-black text-black
           dark:bg-black dark:border-white dark:text-white
           `,

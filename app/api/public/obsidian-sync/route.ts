@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ export async function GET() {
     distinctId: profile.userId,
     event: `obsidian-sync BEGIN`,
   });
-  
+
   try {
     const client = await clerkClient();
     const user = await client.users.getUser(profile.userId);

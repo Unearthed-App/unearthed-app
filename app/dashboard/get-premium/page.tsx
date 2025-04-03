@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,10 @@
 
 import { Checkout } from "@/components/Checkout";
 import { FeaturePremiumCard } from "@/components/FeaturePremiumCard";
-import { HeadingBlur } from "@/components/HeadingBlur";
-import { Megaphone } from "lucide-react";
 
 export default async function GetPremium() {
   return (
     <div className="w-full pt-32 p-4 flex flex-wrap justify-center">
-      <Megaphone className="w-16 h-16 text-alternate" />
-      <div className="my-4 w-full flex justify-center px-2 md:px-24 lg:px-64">
-        <HeadingBlur content="AI features: If you are wanting to take advantage of these, be aware that you will need to connect your own AI model with Unearthed via Settings." />
-      </div>
-
       <div className="w-full">
         <FeaturePremiumCard />
       </div>

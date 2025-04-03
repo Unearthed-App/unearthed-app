@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import { db } from "@/db";
 import { and, eq, inArray, isNotNull, not } from "drizzle-orm";
 import PostHogClient from "@/app/posthog";
 import { clerkClient } from "@clerk/nextjs/server";
-import { getTodaysDate } from "@/lib/utils";
+import { generateUUID, getTodaysDate } from "@/lib/utils";
 
 import {
   profiles,
@@ -36,7 +36,7 @@ import {
   media,
 } from "@/db/schema";
 import { decrypt } from "@/lib/auth/encryptionKey";
-import { z } from "zod";
+import { number, z } from "zod";
 import { supernoteFormatDaily } from "@/server/actions";
 
 type QuoteWithRelations = z.infer<typeof selectQuoteWithRelationsSchema>;
@@ -52,8 +52,10 @@ interface DailyReflection {
   quote: Quote;
 }
 
+const distinctId = generateUUID();
+const posthogClient = PostHogClient();
+
 export async function GET() {
-  const posthogClient = PostHogClient();
   const headersList = await headers();
   const authHeader = headersList.get("authorization");
 
@@ -81,6 +83,10 @@ export async function GET() {
 
   for (const profile of profileResults) {
     try {
+      posthogClient.capture({
+        distinctId: profile.userId,
+        event: `supernotes BEGIN`,
+      });
       const client = await clerkClient();
       const user = await client.users.getUser(profile.userId);
 
@@ -121,11 +127,21 @@ export async function GET() {
         continue;
       }
 
+      // posthogClient.capture({
+      //   distinctId: profile.userId,
+      //   event: `supernotes Got daily reflections`,
+      // });
+
       profile.supernotesApiKey = profile.supernotesApiKey
         ? await decrypt(profile.supernotesApiKey as string, encryptionKey)
         : "";
 
       await addDailyToSupernotes(profile, dailyReflection);
+
+      // posthogClient.capture({
+      //   distinctId: profile.userId,
+      //   event: `supernotes sent`,
+      // });
 
       dailyQuoteIdsToUpdate.push(dailyReflection.id);
     } catch (error) {
@@ -140,10 +156,19 @@ export async function GET() {
           profileResults,
         },
       });
+
       continue;
     }
   }
   if (dailyQuoteIdsToUpdate.length > 0) {
+    // posthogClient.capture({
+    //   distinctId,
+    //   event: `supernotes Update daily reflections`,
+    //   properties: {
+    //     numberOfDailyQuotesToUpdate: dailyQuoteIdsToUpdate.length,
+    //     dailyQuoteIdsToUpdate,
+    //   },
+    // });
     await db
       .update(dailyQuotes)
       .set({
@@ -208,6 +233,14 @@ const getDailyReflection = async (
       return false;
     }
   } catch (error) {
+    posthogClient.capture({
+      distinctId,
+      event: `supernotes getDailyReflection ERROR`,
+      properties: {
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      },
+    });
     console.error(error);
     return {};
   }
@@ -314,10 +347,19 @@ const addDailyToSupernotes = async (
       body: JSON.stringify(body),
     });
     const res = await response.json();
-
+    if (res.status !== 200) {
+      throw new Error(res.detail);
+    }
     return { success: true };
   } catch (error) {
-    console.error(error);
+    posthogClient.capture({
+      distinctId: profile.userId,
+      event: `supernotes api ERROR`,
+      properties: {
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      },
+    });
     return {};
   }
 };

@@ -19,6 +19,8 @@
     --input: 337 14% 91%;
     --primary: 175 65% 42%;
     --primary-foreground: 0 0% 100%;
+    --primary-lighter: 167 38% 86%;
+    --primary-lighter-foreground: 0 0% 100%;
     --secondary: 175, 60%, 20%;
     --secondary-foreground: 10, 60%, 20%;
     --accent: 175 65% 42%;
@@ -44,6 +46,8 @@
     --input: 337 14% 12%;
     --primary: 175 65% 42%;
     --primary-foreground: 0 0% 100%;
+    --primary-lighter: 175 65% 20%;
+    --primary-lighter-foreground: 0 0% 100%;
     --secondary: 175, 60%, 50%;
     --secondary-foreground: 10, 60%, 20%;
     --accent: 175 65% 42%;

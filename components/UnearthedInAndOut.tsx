@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,29 @@
 
 "use client";
 
+import {
+  ArrowBigDownDash,
+  ArrowBigRightDash,
+  ArrowBigUpDash,
+} from "lucide-react";
 import { DisclosureCard } from "./DisclosureCard";
-import { HeadingBlur } from "./HeadingBlur";
+// import { HeadingBlur } from "./HeadingBlur";
+import { Crimson_Pro } from "next/font/google";
+const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 export function UnearthedInAndOut() {
   return (
     <div className="w-full flex flex-wrap">
       <div className="w-full">
         <div className=" flex flex-col items-center justify-center px-5 py-2">
-          <div className="-mt-20">
-            <HeadingBlur content="Sync your Kindle to these apps" />
+          <div className="flex items-center mb-12">
+            <ArrowBigDownDash className="mr-2 w-6 h-6 text-alternate" />
+            <h3
+              className={`text-center font-black italic text-xl md:text-xl inline-flex items-center text-alternate`}
+            >
+              SYNC TO THESE APPS
+            </h3>
+            <ArrowBigDownDash className="ml-2 w-6 h-6 text-alternate" />
           </div>
           <div className="w-full flex justify-center px-4 md:px-12 xl:px-64">
             <div className="w-full grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
@@ -45,7 +58,7 @@ export function UnearthedInAndOut() {
               </div>
               <div className="w-full flex justify-center">
                 <DisclosureCard
-                  videoUrl="https://www.youtube.com/embed/W321i9cjQms?si=N5UyK3btoOUMJhyV"
+                  videoUrl="https://www.youtube.com/embed/uilUlt4wRVs?si=5AFVPu8_clj4AeTl"
                   videoTitle="Obsidian Instructions"
                   videoDescription="Instructions for syncing Kindle to Obsidian"
                   title="Obsidian"
@@ -92,6 +105,17 @@ export function UnearthedInAndOut() {
                 />
               </div>
             </div>
+          </div>
+          <div className="flex items-center mt-12">
+            <ArrowBigUpDash className="w-6 h-6 text-alternate" />
+            <ArrowBigUpDash className="ml-2 w-6 h-6 text-alternate" />
+            <ArrowBigUpDash className="ml-2 w-6 h-6 text-alternate" />
+            <ArrowBigUpDash className="ml-2 w-6 h-6 text-alternate" />
+            <ArrowBigUpDash className="ml-2 w-6 h-6 text-alternate" />
+            <ArrowBigUpDash className="ml-2 w-6 h-6 text-alternate" />
+            <ArrowBigUpDash className="ml-2 w-6 h-6 text-alternate" />
+            <ArrowBigUpDash className="ml-2 w-6 h-6 text-alternate" />
+            <ArrowBigUpDash className="ml-2 w-6 h-6 text-alternate" />
           </div>
         </div>
       </div>

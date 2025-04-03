@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ export function UploadFormDialog({ onUpload }: UploadFormProps) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button className="max-w-64">
+          <Button className="max-w-64" size={"sm"}>
             <ImportIcon />
             <div className="ml-2">Import Multiple</div>
           </Button>

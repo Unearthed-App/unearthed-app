@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ export async function onSubmitAction(data: any) {
   };
 
   posthogClient.capture({
-    distinctId: `contact email ${userId ? userId : toSend.from}`,
+    distinctId: `${userId ? userId : toSend.from}`,
     event: `contact email`,
     properties: toSend,
   });

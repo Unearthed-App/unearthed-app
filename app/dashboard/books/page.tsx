@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,9 +60,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { PaginationControls } from "@/components/PaginationControls";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 type Source = z.infer<typeof selectSourceWithRelationsSchema>;
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Books() {
   const queryClient = useQueryClient();
@@ -199,39 +199,6 @@ export default function Books() {
       });
     }
   }
-
-  const PaginationControls = () => (
-    <div className="fixed bottom-0 py-1 w-full pb-2">
-      <div className="flex items-center justify-center gap-4">
-        <Button
-          variant="brutal"
-          size="icon"
-          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-          disabled={currentPage === 1}
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </Button>
-
-        <div className="text-center p-3 rounded-md backdrop-blur-sm bg-white/30 text-alternate shadow-xl shadow-red-300/10 dark:shadow-lg dark:shadow-primary/10">
-          <h3 className="hidden md:block font-bold text-xs">
-            Page {currentPage} of {totalPages}
-          </h3>
-          <h3 className="md:hidden font-bold text-xs">
-            {currentPage} / {totalPages}
-          </h3>
-        </div>
-
-        <Button
-          variant="brutal"
-          size="icon"
-          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-          disabled={currentPage === totalPages}
-        >
-          <ChevronRight className="w-6 h-6" />
-        </Button>
-      </div>
-    </div>
-  );
 
   if (isLoading)
     return (
@@ -498,7 +465,13 @@ export default function Books() {
         </div>
       </div>
 
-      {books.length > 0 && <PaginationControls />}
+      {books.length > 0 && (
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
     </div>
   );
 }

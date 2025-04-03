@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ export async function GET() {
   if (dailyReflection.book && dailyReflection.book.imageUrl) {
     dailyReflection.book.imageUrl = dailyReflection.book.media.url;
   }
-
 
   return NextResponse.json({ dailyReflection }, { status: 200 });
 }

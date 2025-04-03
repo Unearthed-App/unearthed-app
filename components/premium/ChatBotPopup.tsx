@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,9 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { getProfile } from "@/server/actions";
+import { calculateAiUsage } from "@/server/actions-premium";
 import Link from "next/link";
+import { AiChatSuggestions } from "@/components/premium/AiChatSuggestions";
 
 type Profile = z.infer<typeof selectProfileSchema>;
 type Quote = z.infer<typeof selectQuoteSchema>;
@@ -93,10 +95,13 @@ export const ChatBotPopup = ({ book, quotes }: ChatBotPopupProps) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isFetched, setIsFetched] = useState(false);
   const hasLoadedRef = useRef(false);
+  const [aiPercentageUsed, setAiPercentageUsed] = useState(0);
 
   async function fetchProfileData() {
     const prof = (await getProfile()) as Profile;
     setProfile(prof);
+    const usage = await calculateAiUsage(prof);
+    setAiPercentageUsed(usage);
   }
 
   useEffect(() => {
@@ -158,7 +163,7 @@ ${quotes
       setMessages([
         {
           role: "assistant",
-          content: `Hello! I'm here to help you remember what you've learned from "${book.title}." Ask me to quiz you on anything, or perhaps you'd like to discuss your main takeaway. I don't have access to the contents of the book, but I can tell you about your quotes and notes.`,
+          content: `Hello! I'm here to help you get the most out of "${book.title}."`,
         },
       ]);
     }
@@ -320,20 +325,21 @@ ${quotes
         <DialogTrigger asChild>
           <Button variant="brutalprimary">
             <MessageCircleQuestion className="mr-2 h-6 w-6" />
-            Quiz me!
+            Analyze
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[800px] h-[80vh]" forceMount>
-          {!profile?.aiApiKey || !profile?.aiApiUrl || !profile?.aiApiModel ? (
+          {aiPercentageUsed >= 100 &&
+          (!profile?.aiApiKey || !profile?.aiApiModel) ? (
             <DialogHeader className="mb-2">
               <div className="flex justify-between items-center">
                 <DialogTitle className="text-xl">
-                  Not available yet...
+                  You have run out of AI credits
                 </DialogTitle>
               </div>
               <DialogDescription>
-                This is because you need to update your settings and setup an AI
-                provider
+                You can either wait until next month, or use your own AI
+                Provider in the settings
               </DialogDescription>
               <Link href="/premium/settings">
                 <Button variant="brutal">
@@ -383,8 +389,8 @@ ${quotes
                       {msg.role === "user"
                         ? "You"
                         : msg.role === "assistant-thinking"
-                        ? "Book Assistant's thoughts..."
-                        : "Book Assistant"}
+                          ? "Book Assistant's thoughts..."
+                          : "Book Assistant"}
                     </p>
 
                     {msg.role === "assistant-thinking" ? (
@@ -585,23 +591,15 @@ ${quotes
                   <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask me anything, or press 'Quiz me'..."
+                    placeholder="Ask me anything..."
                     className="flex-1 border-2 border-black p-2 rounded focus:outline-none focus:ring-2 focus:ring-primary"
-                    disabled={isPending}
                   />
-                  <Button
-                    variant="brutal"
-                    type="button"
-                    onClick={(e) => {
-                      const quizPrompt =
-                        "Quiz me with multiple choice questions about this book. Wait for my answers and continue the quiz as directed. Use my quotes and notes as the source. Do not reveal the answers until I provide my answer. Only provide ONE question at a time.";
-                      setInput(quizPrompt);
-                      handleSubmit(quizPrompt);
+                  <AiChatSuggestions
+                    onPromptSelect={(prompt) => {
+                      setInput(prompt);
+                      handleSubmit(prompt);
                     }}
-                    disabled={isPending}
-                  >
-                    Quiz me
-                  </Button>
+                  />
                   <Button
                     variant="brutal"
                     type="button"
@@ -638,11 +636,12 @@ ${quotes
         </Button>
       </DrawerTrigger>
       <DrawerContent className="h-[90vh]">
-        {!profile?.aiApiKey || !profile?.aiApiUrl || !profile?.aiApiModel ? (
+        {aiPercentageUsed >= 100 &&
+        (!profile?.aiApiKey || !profile?.aiApiModel) ? (
           <DrawerHeader className="text-left">
             <div className="flex justify-between items-center">
               <DrawerTitle className="text-xl">
-                Not available yet...
+                You have run out of AI credits
               </DrawerTitle>
               <DrawerClose asChild>
                 <Button variant="ghost" size="sm">
@@ -651,8 +650,8 @@ ${quotes
               </DrawerClose>
             </div>
             <DrawerDescription>
-              This is because you need to update your settings and setup an AI
-              provider
+              You can either wait until next month, or use your own AI Provider
+              in the settings
             </DrawerDescription>
             <Link href="/premium/settings">
               <Button variant="brutal">
@@ -706,8 +705,8 @@ ${quotes
                     {msg.role === "user"
                       ? "You"
                       : msg.role === "assistant-thinking"
-                      ? "Book Assistant's thoughts..."
-                      : "Book Assistant"}
+                        ? "Book Assistant's thoughts..."
+                        : "Book Assistant"}
                   </p>
                   {msg.role === "assistant-thinking" ? (
                     <Collapsible
@@ -903,9 +902,8 @@ ${quotes
                   <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask me anything, or press 'Quiz me'..."
+                    placeholder="Ask me anything..."
                     className="w-full border-2 border-black p-2 rounded focus:outline-none"
-                    disabled={isPending}
                   />
                   <Button
                     variant="brutalprimary"
@@ -920,29 +918,25 @@ ${quotes
                     )}
                   </Button>
                 </div>
-                <Button
-                  variant="brutal"
-                  type="button"
-                  onClick={(e) => {
-                    const quizPrompt =
-                      "Quiz me with multiple choice questions about this book. Wait for my answers and continue the quiz as directed. Use my quotes and notes as the source. Do not reveal the answers until I provide my answer. Only provide ONE question at a time.";
-                    setInput(quizPrompt);
-                    handleSubmit(quizPrompt);
-                  }}
-                  disabled={isPending}
-                  className="w-1/2 mt-2"
-                >
-                  Quiz me
-                </Button>
-                <Button
-                  variant="brutal"
-                  type="button"
-                  disabled={isPending}
-                  onClick={handleClearSession}
-                  className="w-1/2 mt-2"
-                >
-                  Clear Session
-                </Button>
+                <div className="flex">
+                  <div className="w-1/2 mt-2">
+                    <AiChatSuggestions
+                      onPromptSelect={(prompt) => {
+                        setInput(prompt);
+                        handleSubmit(prompt);
+                      }}
+                    />
+                  </div>
+                  <Button
+                    variant="brutal"
+                    type="button"
+                    disabled={isPending}
+                    onClick={handleClearSession}
+                    className="w-1/2 mt-2"
+                  >
+                    Clear Session
+                  </Button>
+                </div>
               </form>
             </DrawerFooter>
           </>

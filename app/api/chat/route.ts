@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,11 @@ import { decrypt, getOrCreateEncryptionKey } from "@/lib/auth/encryptionKey";
 import { insertProfileSchema, profiles } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { calculateAiUsage } from "@/server/actions-premium";
+import { clerkClient } from "@clerk/nextjs/server";
+import PostHogClient from "@/app/posthog";
+
 type Profile = z.infer<typeof insertProfileSchema>;
 
 const ChatRequestSchema = z.object({
@@ -33,8 +38,6 @@ const ChatRequestSchema = z.object({
     })
   ),
 });
-
-const initialInstructions = `You are a quiz master/librarian/psychologist. You love to help people get the most out of the books they read. When you receive the user's quotes and notes, you are able to interpret them and explain what they mean. You can help the user understand the meaning of the quotes and notes they have shared with you. Wait for user prompting before blurting advice but if the prompting is vague, start suggesting quizzes. You can also ask the user questions to help them reflect on their reading.`;
 
 type ChatRequest = z.infer<typeof ChatRequestSchema>;
 
@@ -48,6 +51,7 @@ export async function POST(request: NextRequest) {
   if (!encryptionKey) {
     throw new Error("User not authenticated");
   }
+  const posthogClient = PostHogClient();
 
   try {
     let profile: Profile;
@@ -62,38 +66,120 @@ export async function POST(request: NextRequest) {
       profile = dbResult;
     }
 
-    profile = {
-      ...profile,
-      aiApiKey: profile.aiApiKey
-        ? await decrypt(profile.aiApiKey as string, encryptionKey)
-        : "",
-    };
+    let isPremium = false;
+    try {
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
+      isPremium = user.privateMetadata.isPremium as boolean;
+    } catch (error) {
+      isPremium = false;
+    }
 
-    const model = profile.aiApiModel!;
-    const openai = new OpenAI({
-      baseURL: profile.aiApiUrl!,
-      apiKey: profile.aiApiKey!,
-    });
+    if (!isPremium) {
+      throw new Error("User not allowed");
+    }
 
     const body: ChatRequest = await request.json();
     const validatedRequest = ChatRequestSchema.parse(body);
 
-    const completion = await openai.chat.completions.create({
-      model: model,
-      messages: [
+    if (profile.aiApiModel || profile.aiApiKey) {
+      posthogClient.capture({
+        distinctId: userId,
+        event: `chat (BYO) started`,
+      });
+      profile = {
+        ...profile,
+        aiApiKey: profile.aiApiKey
+          ? await decrypt(profile.aiApiKey as string, encryptionKey)
+          : "",
+      };
+
+      const openai = new OpenAI({
+        baseURL: profile.aiApiUrl!,
+        apiKey: profile.aiApiKey!,
+      });
+
+      const completion = await openai.chat.completions.create({
+        model: profile.aiApiModel!,
+        messages: [
+          {
+            role: "system",
+            content: `${validatedRequest.systemMessage}`,
+          },
+          ...validatedRequest.messages,
+        ],
+        temperature: 0.7,
+      });
+
+      const responseContent = completion.choices[0].message.content;
+
+      return NextResponse.json({ response: responseContent }, { status: 200 });
+    } else {
+      const aiPercentageUsed = await calculateAiUsage(profile);
+
+      if (aiPercentageUsed >= 100) {
+        throw new Error("Quota used up");
+      }
+      const modelName = process.env.AI_GOOGLE_MODEL!;
+      const apiKey = process.env.AI_GOOGLE_KEY!;
+
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: modelName });
+
+      const geminiMessages = [
         {
-          role: "system",
-          content: initialInstructions + "" + validatedRequest.systemMessage,
+          role: "user",
+          parts: [
+            {
+              text: `${validatedRequest.systemMessage}`,
+            },
+          ],
         },
-        ...validatedRequest.messages,
-      ],
-      temperature: 0.7,
-    });
+        ...validatedRequest.messages.map((msg) => ({
+          role: msg.role === "assistant" ? "model" : msg.role,
+          parts: [{ text: msg.content }],
+        })),
+      ];
 
-    const responseContent = completion.choices[0].message.content;
+      const result = await model.generateContent({
+        contents: geminiMessages,
+        generationConfig: { temperature: 0.7 },
+      });
 
-    return NextResponse.json({ response: responseContent }, { status: 200 });
+      const inputTokens = result.response.usageMetadata?.promptTokenCount || 0;
+      const outputTokens =
+        result.response.usageMetadata?.candidatesTokenCount || 0;
+
+      posthogClient.capture({
+        distinctId: userId,
+        event: `chat (gemini) complete`,
+        properties: {
+          inputTokens,
+          outputTokens,
+        },
+      });
+      await db
+        .update(profiles)
+        .set({
+          aiInputTokensUsed: (profile?.aiInputTokensUsed || 0) + inputTokens,
+          aiOutputTokensUsed: (profile.aiOutputTokensUsed || 0) + outputTokens,
+        })
+        .where(eq(profiles.userId, userId));
+
+      return NextResponse.json(
+        { response: result.response.text() },
+        { status: 200 }
+      );
+    }
   } catch (error) {
+    posthogClient.capture({
+      distinctId: userId,
+      event: `chat ERROR`,
+      properties: {
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      },
+    });
     console.error("Error:", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -105,7 +191,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof OpenAI.APIError) {
       return NextResponse.json(
         {
-          error: "AI service error",
+          error: "OpenAI service error",
           code: error.code,
           message: error.message,
         },
