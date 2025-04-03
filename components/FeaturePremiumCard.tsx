@@ -32,7 +32,7 @@ export function FeaturePremiumCard({
   return (
     <div className="flex flex-wrap sm:flex-nowrap justify-center">
       <div className="sm:mr-2">
-        <div className="p-4 border-2 rounded-lg">
+        <div className="p-4 border-2 rounded-lg md:max-w-[330px]">
           <h1 className={crimsonPro.className + " font-extrabold text-4xl"}>
             Free
           </h1>
@@ -61,6 +61,10 @@ export function FeaturePremiumCard({
             variant="destructive"
           />
           <CheckItemSmall
+            content="Interactive map to visualize connections between books, quotes, notes, and tags"
+            variant="destructive"
+          />{" "}
+          <CheckItemSmall
             content="Book recommendations based on similar books"
             variant="destructive"
           />
@@ -72,12 +76,9 @@ export function FeaturePremiumCard({
             content="Personalized blind spot detection"
             variant="destructive"
           />
+          <CheckItemSmall content="Notion Sync" variant="destructive" />
           <CheckItemSmall
-            content="Everything synced to Notion"
-            variant="destructive"
-          />
-          <CheckItemSmall
-            content="Global Search for your notes"
+            content="Global Search for your notes and tags"
             variant="destructive"
           />
           <CheckItemSmall
@@ -111,9 +112,13 @@ export function FeaturePremiumCard({
           <CheckItemSmall
             content="Auto generate reflection questions, and have your answers rated"
             variant="destructive"
+          />{" "}
+          <CheckItemSmall
+            content="Tag your books and quotes, automatically and manually with inline text detection"
+            variant="destructive"
           />
           <CheckItemSmall
-            content="Tag your books and quotes, automatically and manually"
+            content="Apply tags globally to all relevant quotes/notes"
             variant="destructive"
           />
           <CheckItemSmall
@@ -121,7 +126,7 @@ export function FeaturePremiumCard({
             variant="destructive"
           />
           <CheckItemSmall
-            content="Help keep this app alive :)"
+            content="Help keep this app alive 🥹"
             variant="destructive"
           />
           {showButtons && (
@@ -132,7 +137,7 @@ export function FeaturePremiumCard({
         </div>
       </div>
       <div className="mt-4 sm:mt-0 sm:ml-2">
-        <div className="p-4 border-2 rounded-lg bg-card">
+        <div className="p-4 border-2 rounded-lg md:max-w-[330px] bg-card">
           <div className="flex space-x-2 items-center text-secondary">
             <Crown className="w-8 h-8 text-primary" />
             <h1 className={crimsonPro.className + " font-extrabold text-4xl"}>
@@ -160,11 +165,12 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="Daily Reflection sent to Supernotes" />
           <CheckItemSmall content="Daily Reflection sent to Capacities" />
           <CheckItemSmall content="Daily Reflection emailed to you" />
+          <CheckItemSmall content="Interactive map to visualize connections between books, quotes, notes, and tags" />
           <CheckItemSmall content="Book recommendations based on similar books" />
           <CheckItemSmall content="Book recommendations based on opposing viewpoints" />
           <CheckItemSmall content="Personalized blind spot detection" />
-          <CheckItemSmall content="Everything synced to Notion" />
-          <CheckItemSmall content="Global Search for your notes" />
+          <CheckItemSmall content="Notion Sync" />
+          <CheckItemSmall content="Global Search for your notes and tags" />
           <CheckItemSmall content="Manually add Books/Authors" />
           <CheckItemSmall content="Manually add Quotes/Notes" />
           <CheckItemSmall content="Import from CSV files" />
@@ -173,9 +179,10 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="AI chat with each book" />
           <CheckItemSmall content="Auto extract key ideas" />
           <CheckItemSmall content="Auto generate reflection questions, and have your answers rated" />
-          <CheckItemSmall content="Tag your books and quotes, automatically and manually" />
+          <CheckItemSmall content="Tag your books and quotes, automatically and manually with inline text detection" />
+          <CheckItemSmall content="Apply tags globally to all relevant quotes/notes" />
           <CheckItemSmall content="Generate book summary, themes, takeaways, reader's perspective" />
-          <CheckItemSmall content="Help keep this app alive :)" />
+          <CheckItemSmall content="Help keep this app alive ☺️" />
           {showButtons && (
             <Link href="/dashboard/get-premium">
               <Button variant="brutalprimary" className="mt-2 w-full">
