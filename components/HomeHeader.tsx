@@ -75,22 +75,29 @@ export const HomeHeader = () => {
         </div>
       </div>
 
-      <div className="w-full flex flex-wrap sm:flex-nowrap justify-center mt-8">
-        <SignUpButton>
-          <Button className="mt-2 flex px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms]">
-            <span className="">Join for Free</span>
-            <LogIn className="ml-2" />
-          </Button>
-        </SignUpButton>
-        <Link href="/dashboard/get-premium">
-          <Button
-            variant="brutalprimary"
-            className="mt-2 sm:ml-2 flex px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms]"
-          >
-            <span className="hover:motion-preset-confetti">Get Premium</span>
-            <Crown className="ml-2" />
-          </Button>
-        </Link>
+      <div className="w-full flex justify-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8  max-w-[630px]">
+          <SignUpButton>
+            <Button className="w-full mt-2 flex px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms]">
+              <LogIn className="mr-2" />
+              <span className="text-base md:text-xl uppercase">
+                Join for Free
+              </span>
+            </Button>
+          </SignUpButton>
+          <Link href="/dashboard/get-premium" className="w-full md:w-auto">
+            <Button
+              variant="brutalprimary"
+              className="w-full mt-2 flex px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms]"
+            >
+              <Crown className="mr-2" />
+              <span className="hover:ml-2 hover:motion-preset-confetti text-base md:text-xl uppercase group">
+                Get Premium{" "}
+                <span className="hidden group-hover:inline-block ml-1">✨</span>
+              </span>
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="w-full relative bg-gradient-to-t from-popover via-bg-popover/10 to-transparent lg:px-12 mt-36">
