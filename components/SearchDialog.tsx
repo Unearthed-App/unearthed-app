@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +41,8 @@ import {
 } from "@/components/ui/drawer";
 import { Search } from "lucide-react";
 import { search } from "@/server/actions";
-import { search as searchPremium } from "@/server/actions-premium";
 import { Skeleton } from "./ui/skeleton";
 import { QuoteBookCardBrutal } from "@/components/QuoteBookCardBrutal";
-import { QuoteBookCardBrutal as QuoteBookCardBrutalPremium } from "@/components/premium/QuoteBookCardBrutal";
 
 import {
   selectSourceWithRelationsSchema,
@@ -52,15 +50,12 @@ import {
 } from "@/db/schema";
 import { Input } from "./ui/input";
 import { BookCard } from "@/components/BookCard";
-import { BookCard as BookCardPremium } from "@/components/premium/BookCard";
 import { z } from "zod";
 
 type SearchResults = {
   books: Array<z.infer<typeof selectSourceWithRelationsSchema>>;
   quotes: Array<z.infer<typeof selectQuoteWithRelationsSchema>>;
 };
-
-import { getIsPremium } from "@/lib/utils";
 
 import { useForm } from "react-hook-form";
 import {
@@ -94,28 +89,11 @@ export function SearchDialog() {
     },
   });
 
-  const [isPremium, setIsPremium] = useState(false);
-
-  useEffect(() => {
-    const fetchPremiumStatus = async () => {
-      const isPremium = await getIsPremium();
-      setIsPremium(isPremium);
-    };
-
-    fetchPremiumStatus();
-  }, []);
-
   const onSubmit = async (data: z.infer<typeof schema>) => {
     setIsLoading(true);
     try {
       if (data && data.searchQuery) {
-        let searchReturned;
-
-        if (isPremium) {
-          searchReturned = await searchPremium(data.searchQuery);
-        } else {
-          searchReturned = await search(data.searchQuery);
-        }
+        const searchReturned = await search(data.searchQuery);
 
         if (searchReturned) {
           setSearchResults(searchReturned as SearchResults);
@@ -217,9 +195,7 @@ export function SearchDialog() {
             <DialogHeader className="mb-2">
               <DialogTitle>Search</DialogTitle>
               <DrawerDescription>
-                {isPremium
-                  ? "Books, subtitles, authors, quotes, notes, and other things..."
-                  : "Books, subtitles, authors, quotes..."}{" "}
+                Books, subtitles, authors, quotes...
               </DrawerDescription>
             </DialogHeader>
 
@@ -239,6 +215,7 @@ export function SearchDialog() {
                       <FormItem>
                         <FormControl>
                           <Input
+                            disabled={isLoading}
                             placeholder="Search for something..."
                             {...field}
                           />
@@ -280,31 +257,17 @@ export function SearchDialog() {
                       key={book.id}
                       variants={itemVariants}
                     >
-                      {isPremium ? (
-                        <BookCardPremium
-                          id={book.id}
-                          title={book.title}
-                          ignored={book.ignored ?? false}
-                          subtitle={book.subtitle ?? ""}
-                          author={book.author ?? ""}
-                          imageUrl={
-                            book.media && book.media.url ? book.media.url : ""
-                          }
-                          setOpen={setOpen}
-                        />
-                      ) : (
-                        <BookCard
-                          id={book.id}
-                          title={book.title}
-                          ignored={book.ignored ?? false}
-                          subtitle={book.subtitle ?? ""}
-                          author={book.author ?? ""}
-                          imageUrl={
-                            book.media && book.media.url ? book.media.url : ""
-                          }
-                          setOpen={setOpen}
-                        />
-                      )}
+                      <BookCard
+                        id={book.id}
+                        title={book.title}
+                        ignored={book.ignored ?? false}
+                        subtitle={book.subtitle ?? ""}
+                        author={book.author ?? ""}
+                        imageUrl={
+                          book.media && book.media.url ? book.media.url : ""
+                        }
+                        setOpen={setOpen}
+                      />
                     </motion.div>
                   ))}
                 </div>
@@ -318,29 +281,16 @@ export function SearchDialog() {
                       key={quote.id}
                       variants={itemVariants}
                     >
-                      {isPremium ? (
-                        <QuoteBookCardBrutalPremium
-                          bookId={quote.source.id}
-                          bookTitle={quote.source.title}
-                          bookAuthor={quote.source.author as string}
-                          quote={quote.content}
-                          note={quote.note ?? ""}
-                          location={quote.location ?? ""}
-                          color={quote.color || ""}
-                          setOpen={setOpen}
-                        />
-                      ) : (
-                        <QuoteBookCardBrutal
-                          bookId={quote.source.id}
-                          bookTitle={quote.source.title}
-                          bookAuthor={quote.source.author as string}
-                          quote={quote.content}
-                          note={quote.note ?? ""}
-                          location={quote.location ?? ""}
-                          color={quote.color || ""}
-                          setOpen={setOpen}
-                        />
-                      )}
+                      <QuoteBookCardBrutal
+                        bookId={quote.source.id}
+                        bookTitle={quote.source.title}
+                        bookAuthor={quote.source.author as string}
+                        quote={quote.content}
+                        note={quote.note ?? ""}
+                        location={quote.location ?? ""}
+                        color={quote.color || ""}
+                        setOpen={setOpen}
+                      />
                     </motion.div>
                   ))}
                 </div>
@@ -363,9 +313,7 @@ export function SearchDialog() {
         <DrawerHeader className="text-left">
           <DrawerTitle>Search</DrawerTitle>
           <DrawerDescription>
-            {isPremium
-              ? "Books, subtitles, authors, quotes, notes, and other things..."
-              : "Books, subtitles, authors, quotes..."}
+            Books, subtitles, authors, quotes...
           </DrawerDescription>
         </DrawerHeader>
         <div className="px-4">
@@ -385,6 +333,7 @@ export function SearchDialog() {
                     <FormItem>
                       <FormControl>
                         <Input
+                          disabled={isLoading}
                           placeholder="Search for something..."
                           {...field}
                         />

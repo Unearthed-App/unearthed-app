@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,18 @@ export function FeaturePremiumCard({
             variant="destructive"
           />
           <CheckItemSmall
+            content="Book recommendations based on similar books"
+            variant="destructive"
+          />
+          <CheckItemSmall
+            content="Book recommendations based on opposing viewpoints"
+            variant="destructive"
+          />
+          <CheckItemSmall
+            content="Personalized blind spot detection"
+            variant="destructive"
+          />
+          <CheckItemSmall
             content="Everything synced to Notion"
             variant="destructive"
           />
@@ -89,11 +101,27 @@ export function FeaturePremiumCard({
             variant="destructive"
           />
           <CheckItemSmall
-            content="AI chat with each book (BYO AI)"
+            content="AI chat with each book"
             variant="destructive"
           />
           <CheckItemSmall
-            content="Help keep this app alive"
+            content="Auto extract key ideas"
+            variant="destructive"
+          />
+          <CheckItemSmall
+            content="Auto generate reflection questions, and have your answers rated"
+            variant="destructive"
+          />
+          <CheckItemSmall
+            content="Tag your books and quotes, automatically and manually"
+            variant="destructive"
+          />
+          <CheckItemSmall
+            content="Generate book summary, themes, takeaways, reader's perspective"
+            variant="destructive"
+          />
+          <CheckItemSmall
+            content="Help keep this app alive :)"
             variant="destructive"
           />
           {showButtons && (
@@ -132,6 +160,9 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="Daily Reflection sent to Supernotes" />
           <CheckItemSmall content="Daily Reflection sent to Capacities" />
           <CheckItemSmall content="Daily Reflection emailed to you" />
+          <CheckItemSmall content="Book recommendations based on similar books" />
+          <CheckItemSmall content="Book recommendations based on opposing viewpoints" />
+          <CheckItemSmall content="Personalized blind spot detection" />
           <CheckItemSmall content="Everything synced to Notion" />
           <CheckItemSmall content="Global Search for your notes" />
           <CheckItemSmall content="Manually add Books/Authors" />
@@ -139,8 +170,12 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="Import from CSV files" />
           <CheckItemSmall content="Import from Kindle Clippings file" />
           <CheckItemSmall content="Direct link to read on Kindle" />
-          <CheckItemSmall content="AI chat with each book (BYO AI)" />
-          <CheckItemSmall content="Help keep this app alive" />
+          <CheckItemSmall content="AI chat with each book" />
+          <CheckItemSmall content="Auto extract key ideas" />
+          <CheckItemSmall content="Auto generate reflection questions, and have your answers rated" />
+          <CheckItemSmall content="Tag your books and quotes, automatically and manually" />
+          <CheckItemSmall content="Generate book summary, themes, takeaways, reader's perspective" />
+          <CheckItemSmall content="Help keep this app alive :)" />
           {showButtons && (
             <Link href="/dashboard/get-premium">
               <Button variant="brutalprimary" className="mt-2 w-full">

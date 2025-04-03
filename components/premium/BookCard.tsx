@@ -1,20 +1,19 @@
 /**
- * Copyright (C) 2024 Unearthed App
- * 
+ * Copyright (C) 2025 Unearthed App
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 "use client";
 import { Button } from "@/components/ui/button";
@@ -76,11 +75,11 @@ export function BookCard({
 
   return (
     <div className="mb-2 flex w-full p-2 md:p-4 rounded-lg border-2 bg-card">
-      <div className="flex items-center">
+      <div className="flex-shrink-0 w-[100px] md:w-[150px]">
         {imageUrl ? (
           <Link
             href={`/premium/book/${id}`}
-            className=""
+            className="block"
             onClick={(e) => {
               setOpen(false);
             }}
@@ -90,21 +89,21 @@ export function BookCard({
               width={150}
               height={150}
               alt="Picture of the book"
-              className="rounded-lg border-2 border-black dark:border-white shadow-xl"
+              className="rounded-lg border-2 border-black dark:border-white shadow-xl w-full h-auto object-cover"
             />
           </Link>
         ) : (
-          <p></p>
+          <div className="w-full aspect-[2/3] bg-muted rounded-lg" />
         )}
       </div>
-      <div className="pl-2 md:pl-4 flex flex-wrap justify-between">
-        <div className="text-foreground font-semibold text-sm mb-4">
+      <div className="pl-2 md:pl-4 flex-grow flex flex-wrap justify-between">
+        <div className="text-foreground font-semibold text-sm mb-4 w-full">
           <h4
-            className={`${crimsonPro.className} font-extrabold text-xl md:text-3xl`}
+            className={`${crimsonPro.className} font-extrabold text-xl md:text-3xl line-clamp-2`}
           >
             {title}
           </h4>
-          <div className="text-muted text-xs">{subtitle}</div>
+          <div className="text-muted text-xs line-clamp-1">{subtitle}</div>
           <div className="text-secondary text-xs">by {author}</div>
         </div>
 

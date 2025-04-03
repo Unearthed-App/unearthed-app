@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 "use client";
 
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 
 import {
   LogOut,
@@ -27,6 +27,8 @@ import {
   Home,
   User,
   LogIn,
+  Crown,
+  UserPlus2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -226,6 +228,22 @@ export function DropdownMenuNav() {
                   <span>Sign In</span>
                 </DropdownMenuItem>
               </SignInButton>
+            </DropdownMenuGroup>
+            <DropdownMenuGroup>
+              <SignUpButton>
+                <DropdownMenuItem>
+                  <UserPlus2 className="mr-2 h-4 w-4" />
+                  <span>Sign Up</span>
+                </DropdownMenuItem>
+              </SignUpButton>
+            </DropdownMenuGroup>
+            <DropdownMenuGroup>
+              <Link href="/dashboard/get-premium">
+                <DropdownMenuItem className="bg-secondary dark:bg-white dark:text-black text-primary-foreground hover:bg-primary/90 font-semibold">
+                  <Crown className="mr-2 h-4 w-4" />
+                  <span>Get Premium ✨</span>
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />

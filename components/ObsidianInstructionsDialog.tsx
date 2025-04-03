@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,8 +78,7 @@ export function ObsidianInstructionsDialog({ isMenuItem = false }) {
                 "Click on Community Plugins",
                 "Turn off Restricted mode (this is required for any Community Plugin)",
                 "Click 'Browse' and search for 'Unearthed'",
-                "Install 'Unearthed (Kindle Sync)'",
-                "Enable 'Unearthed (Kindle Sync)'",
+                "Install and Enable 'Unearthed (Kindle Sync)'",
                 "Click on 'Options' and fill out the details. Most importantly, paste in the API key that you generated into the 'Unearthed API key' field.",
                 "Test if it's working by pressing the 'Sync' buttons for the 'Manual sync', and 'Manual daily reflection sync'",
               ].map((text, index) => (

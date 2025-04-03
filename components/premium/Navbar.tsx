@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,7 @@
  */
 
 "use client";
-import {
-  SignInButton,
-  SignOutButton,
-  SignedIn,
-  SignedOut,
-} from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { DropdownMenuNav } from "@/components/DropdownMenuNav";
 import { ModeToggle } from "@/components/ModeToggle";
 import { LogOut, Settings } from "lucide-react";
@@ -29,11 +24,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { usePathname } from "next/navigation";
-import { SearchDialog } from "@/components/SearchDialog";
+import { SearchDialog } from "@/components/premium/SearchDialog";
 
 import { Crimson_Pro } from "next/font/google";
 import { QuoteFormDialog } from "./QuoteForm/QuoteFormDialog";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
+import { ConnectionsGraph } from "@/components/premium/ConnectionsGraph";
 
 export function Navbar() {
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -82,6 +78,17 @@ export function Navbar() {
                   >
                     Ignored
                   </h3>
+                </Link>{" "}
+                <Link href="/premium/tags">
+                  <h3
+                    className={`${
+                      crimsonPro.className
+                    } transition-all duration-100 font-semibold hover:text-secondary ${
+                      isActive("/premium/tags") ? activeStyles : ""
+                    }`}
+                  >
+                    Tags
+                  </h3>
                 </Link>
               </SignedIn>
             </div>
@@ -96,11 +103,7 @@ export function Navbar() {
                 <Settings />
               </Button>
             </Link>
-            <SignOutButton>
-              <Button size="icon">
-                <LogOut />
-              </Button>
-            </SignOutButton>
+            <ConnectionsGraph />
           </div>
         </div>
       </div>
@@ -110,7 +113,7 @@ export function Navbar() {
   return (
     <div className="z-50 fixed w-full ">
       <div className=" flex justify-center">
-        <div className="mt-2 bg-card rounded-lg border-2 border-black inset-0 flex space-x-4 p-4 justify-center">
+        <div className="mt-2 bg-card rounded-lg border-2 border-black inset-0 flex space-x-2 p-4 justify-center">
           <SignedIn>
             <SearchDialog />
             <QuoteFormDialog onQuoteAdded={() => {}} />
@@ -121,6 +124,7 @@ export function Navbar() {
                 <Settings />
               </Button>
             </Link>
+            <ConnectionsGraph />
           </SignedIn>
           <SignedOut>
             <SignInButton />

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +44,8 @@ import {
   createEmptyProfile,
   deleteUnearthedKey,
   generateAndSaveUnearthedKey,
-  getSettings,
 } from "@/server/actions";
-import { Copy, Eye, EyeOff, Trash } from "lucide-react";
+import { Copy, Eye, EyeOff, Megaphone, Trash } from "lucide-react";
 
 import { schema } from "./formSchema";
 import { onSubmitAction } from "./formSubmit";
@@ -73,7 +72,13 @@ import ConfirmationDialog from "@/components/ConfirmationDialog"; // Import the 
 import { ObsidianInstructionsDialog } from "@/components/ObsidianInstructionsDialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { VideoDialog } from "@/components/VideoDialog";
-import { disconnectNotion, syncToNotion } from "@/server/actions-premium";
+import {
+  disconnectNotion,
+  syncToNotion,
+  getSettings,
+} from "@/server/actions-premium";
+import { HeadingBlur } from "@/components/HeadingBlur";
+import { Progress } from "@/components/ui/progress";
 
 type CapacitiesSpaceItem = {
   id: string;
@@ -101,6 +106,8 @@ export function ProfileForm() {
   const [loadingDefaultValues, setLoadingDefaultValues] = useState(true);
   let isFetched = false;
   const [profileExists, setProfileExists] = useState(false);
+  const [aiPercentageUsed, setAiPercentageUsed] = useState(0);
+  const [aiDaysLeft, setAiDaysLeft] = useState(0);
 
   const [dialogState, setDialogState] = useState(
     Object.fromEntries(unearthedKeys.map((key) => [key.id, false]))
@@ -161,6 +168,20 @@ export function ProfileForm() {
           aiApiUrl: data.profile.aiApiUrl || "",
           aiApiModel: data.profile.aiApiModel || "",
         });
+
+        const currentDate = new Date();
+        const lastDayOfMonth = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 1,
+          0
+        );
+        const numberOfDaysUntilExpire = Math.ceil(
+          (lastDayOfMonth.getTime() - currentDate.getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
+
+        setAiDaysLeft(numberOfDaysUntilExpire);
+        setAiPercentageUsed(data.aiPercentageUsed || 0);
       }
     } catch (error) {
       console.error("Error fetching:", error);
@@ -356,7 +377,7 @@ export function ProfileForm() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full sm:min-w-[600px]">
       <Form {...form}>
         <form
           onSubmit={(e) => {
@@ -527,7 +548,7 @@ export function ProfileForm() {
                     </div>
                     <div className="mt-2">
                       <VideoDialog
-                        videoUrl="https://www.youtube.com/embed/W321i9cjQms?si=N5UyK3btoOUMJhyV"
+                        videoUrl="https://www.youtube.com/embed/uilUlt4wRVs?si=5AFVPu8_clj4AeTl"
                         videoTitle="Obsidian Instructions"
                         videoDescription="Instructions for syncing Kindle to Obsidian"
                         videoButtonText="Watch Obsidian Video"
@@ -830,6 +851,14 @@ export function ProfileForm() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="">
+                  <div className="flex flex-wrap justify-center">
+                    <Megaphone className="w-16 h-16 text-alternate" />
+                    <div className="w-full flex justify-center">
+                      <div className="my-4 w-full flex justify-center max-w-[500px]">
+                        <HeadingBlur content="Be aware that you may have quoatas on your Supernotes account. So if you are no longer seeing your Daily Reflection, please check that you have not reached your quota." />
+                      </div>
+                    </div>
+                  </div>
                   <FormField
                     control={form.control}
                     name="supernotesApiKey"
@@ -877,7 +906,12 @@ export function ProfileForm() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex">
-                    <div className="w-full">AI</div>
+                    <div className="w-full">
+                      AI
+                      <span className="text-sm ml-2">
+                        (using Google Gemini 2.0)
+                      </span>
+                    </div>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -900,21 +934,41 @@ export function ProfileForm() {
                     </TooltipProvider>
                   </CardTitle>
                   <CardDescription>
-                    Hook up your preferred AI provider here
+                    Use Unearthed&apos;s built in AI or hook up your preferred
+                    AI provider here
                     <br />
                     Don&apos;t forget to press{" "}
                     <span className="text-secondary">Save</span>
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="">
-                  <div className="mb-4">
+                  <div className="w-full mb-4">
+                    <Progress value={aiPercentageUsed} />
+                    <div className="text-center mt-2 text-sm font-bold">
+                      {aiPercentageUsed}% used{" "}
+                      <span className="text-secondary">
+                        ({aiDaysLeft} days left)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex justify-center">
+                    <div className="my-4 w-full flex justify-center max-w-[500px]">
+                      <HeadingBlur content="Your account comes with AI built in, but there is a limit. Your usage gets reset back to 0 every month. Or feel free to use your own OpenAI compatible provider." />
+                    </div>
+                  </div>
+
+                  {/* <div className="mb-4 w-full flex justify-center">
                     <VideoDialog
                       videoUrl="https://www.youtube.com/embed/9bTCubJIjEU?si=H5PFO3n3OwafBx5T"
                       videoTitle="AI Chat"
                       videoDescription="Demo and setup guide for AI Chat"
                       videoButtonText="AI Setup Video Instructions"
                     />
-                  </div>
+                  </div> */}
+                  <h3 className="font-bold text-secondary px-0 md:px-24 text-center">
+                    Leave all fields below here empty if you would like to use
+                    Unearthed&apos;s built in AI
+                  </h3>
                   <FormField
                     control={form.control}
                     name="aiApiKey"

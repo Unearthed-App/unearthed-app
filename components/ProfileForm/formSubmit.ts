@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,6 @@ export async function onSubmitAction(data: any, utcOffset: number) {
         utcOffset,
       })
       .where(eq(profiles.userId, userId));
-    console.log(result);
     if (result.length === 0) {
       couldNotUpdate = true;
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 import { ProfileForm } from "@/components/premium/ProfileForm/ProfileForm";
 import packageJson from "@/package.json";
 
-
 export default async function Home() {
-
   return (
     <div className="pt-32 p-4">
       <div>

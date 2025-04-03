@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,19 +47,29 @@ import {
 import { BookHeader } from "@/components/BookHeader";
 import { QuoteCardBrutal } from "@/components/QuoteCardBrutal";
 import { AnimatedLoader } from "@/components/AnimatedLoader";
+import { PaginationControls } from "@/components/PaginationControls";
 
 export default function Book(props: { params: Promise<{ bookId: string }> }) {
   const params = use(props.params);
-
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(20);
 
   const {
     data: book,
     mutate: server_getBook,
     isPending: isPendingBook,
   } = useMutation({
-    mutationFn: getBook,
+    mutationFn: ({
+      bookId,
+      page,
+      pageSize,
+    }: {
+      bookId: string;
+      page: number;
+      pageSize: number;
+    }) => getBook(bookId, page, pageSize),
     onSuccess: (data) => {
       console.log(data);
     },
@@ -94,22 +104,23 @@ export default function Book(props: { params: Promise<{ bookId: string }> }) {
   };
 
   useEffect(() => {
-    // Load book titles
     server_getBookTitles();
-
-    // Load quotes for the current book
     if (params.bookId) {
-      server_getBook(params.bookId);
+      server_getBook({ bookId: params.bookId, page: currentPage, pageSize });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    currentPage,
+    pageSize,
+    params.bookId,
+    server_getBook,
+    server_getBookTitles,
+  ]);
 
   const handleBookSelect = (bookValue: string) => {
     const selectedBook = displayBookTitles.find(
       (book) => book.value === bookValue
     );
     if (selectedBook) {
-      // Reload the page with the new book ID in the URL
       router.push(`/dashboard/book/${selectedBook.id}`);
     }
     setOpen(false);
@@ -145,105 +156,122 @@ export default function Book(props: { params: Promise<{ bookId: string }> }) {
       </div>
     );
 
+  const totalPages = Math.ceil(
+    (book && !("error" in book) && book.quotes ? book.quotes.length : 0) /
+      pageSize
+  );
+
   return (
-    <div className="pt-32 px-4 md:px-12 lg:px-24 xl:px-12 2xl:px-24">
-      <div className="flex flex-wrap items-center mb-4">
-        <div className="mb-2">
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                role="combobox"
-                aria-expanded={open}
-                className="justify-between"
-              >
-                {params.bookId
-                  ? displayBookTitles.find((book) => book.id === params.bookId)
-                      ?.label || "Select book..."
-                  : "Select book..."}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="p-0">
-              <Command>
-                <CommandInput placeholder="Search book..." />
-                <CommandList>
-                  <CommandEmpty>No book found.</CommandEmpty>
-                  <CommandGroup>
-                    {displayBookTitles.map((book) => (
-                      <CommandItem
-                        key={book.id}
-                        value={book.value}
-                        onSelect={handleBookSelect}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            params.bookId === book.id
-                              ? "opacity-100"
-                              : "opacity-0"
-                          )}
-                        />
-                        {book.ignored && (
-                          <Frown
-                            className={cn("mr-2 h-4 w-4 text-destructive")}
+    <>
+      <div className="pt-32 px-4 md:px-12 lg:px-24 xl:px-12 2xl:px-24">
+        <div className="flex flex-wrap items-center mb-4">
+          <div className="mb-2">
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  role="combobox"
+                  aria-expanded={open}
+                  className="justify-between"
+                >
+                  {params.bookId
+                    ? displayBookTitles.find(
+                        (book) => book.id === params.bookId
+                      )?.label || "Select book..."
+                    : "Select book..."}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-0">
+                <Command>
+                  <CommandInput placeholder="Search book..." />
+                  <CommandList>
+                    <CommandEmpty>No book found.</CommandEmpty>
+                    <CommandGroup>
+                      {displayBookTitles.map((book) => (
+                        <CommandItem
+                          key={book.id}
+                          value={book.value}
+                          onSelect={handleBookSelect}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              params.bookId === book.id
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
                           />
-                        )}
-                        {book.label}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+                          {book.ignored && (
+                            <Frown
+                              className={cn("mr-2 h-4 w-4 text-destructive")}
+                            />
+                          )}
+                          {book.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
+
+        {book && !("error" in book) && (
+          <div className="flex flex-wrap">
+            <div className="w-full xl:w-1/6 pr-2">
+              <BookHeader
+                title={book.title}
+                subtitle={book.subtitle as string}
+                author={book.author as string}
+                imageUrl={book.media ? (book.media.url as string) : ""}
+                ignored={book.ignored as boolean}
+              />
+            </div>
+
+            <div className="w-full xl:w-5/6 pt-4 xl:pt-0 flex">
+              {displayQuotes.length === 0 ? (
+                <h3 className="text-xl text-center my-4 text-secondary">
+                  {/* No quotes in the selected book. */}
+                </h3>
+              ) : (
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="columns-1 md:columns-2 xl:columns-3 gap-4"
+                >
+                  {displayQuotes.map((quote) => (
+                    <motion.div
+                      className="mb-4 break-inside-avoid-column"
+                      key={quote.id}
+                      variants={itemVariants}
+                    >
+                      <QuoteCardBrutal
+                        bookTitle={book.title}
+                        bookAuthor={book.author as string}
+                        quote={quote.content}
+                        note={quote.note ?? ""}
+                        location={quote.location ?? ""}
+                        color={quote.color || ""}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-
-      {book && !("error" in book) && (
-        <div className="flex flex-wrap">
-          <div className="w-full xl:w-1/6 pr-2">
-            <BookHeader
-              title={book.title}
-              subtitle={book.subtitle as string}
-              author={book.author as string}
-              imageUrl={book.media ? (book.media.url as string) : ""}
-              ignored={book.ignored as boolean}
-            />
-          </div>
-
-          <div className="w-full xl:w-5/6 pt-4 xl:pt-0 flex">
-            {displayQuotes.length === 0 ? (
-              <h3 className="text-xl text-center my-4 text-secondary">
-                {/* No quotes in the selected book. */}
-              </h3>
-            ) : (
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="columns-1 md:columns-2 xl:columns-3 gap-4"
-              >
-                {displayQuotes.map((quote) => (
-                  <motion.div
-                    className="mb-4 break-inside-avoid-column"
-                    key={quote.id}
-                    variants={itemVariants}
-                  >
-                    <QuoteCardBrutal
-                      bookTitle={book.title}
-                      bookAuthor={book.author as string}
-                      quote={quote.content}
-                      note={quote.note ?? ""}
-                      location={quote.location ?? ""}
-                      color={quote.color || ""}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-          </div>
+      {book && !("error" in book) && displayQuotes.length > 0 && (
+        <div className="z-30 fixed bottom-0 w-full pb-2">
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
+          />
         </div>
       )}
-    </div>
+    </>
   );
 }

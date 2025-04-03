@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ import {
 } from "@/lib/auth/encryptionKey";
 import { getTodaysDate, sortQuotes } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
-import { and, eq, ilike, inArray, or, count } from "drizzle-orm";
+import { and, eq, ilike, inArray, or, count, desc } from "drizzle-orm";
 import { z } from "zod";
 
 const { Client } = require("@notionhq/client");
@@ -58,10 +58,15 @@ type Quote = z.infer<typeof selectQuoteSchema>;
 type Source = z.infer<typeof selectSourceSchema>;
 type Profile = z.infer<typeof insertProfileSchema>;
 type DailyQuote = z.infer<typeof insertDailyQuotesSchema>;
+type SourceWithQuotesCount = SourceWithRelations & {
+  totalQuotes: number;
+};
 
 export const getBook = async (
-  bookId: string
-): Promise<SourceWithRelations | { error: string }> => {
+  bookId: string,
+  page: number = 1,
+  pageSize: number = 20
+): Promise<SourceWithQuotesCount | { error: string }> => {
   const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
@@ -73,9 +78,33 @@ export const getBook = async (
   }
 
   try {
+    // Get total count of quotes
+    const totalCount = await db
+      .select({ count: count() })
+      .from(quotes)
+      .where(and(eq(quotes.sourceId, bookId), eq(quotes.userId, userId)));
+
+    // First get all quote IDs for this source to handle pagination properly
+    const allQuotes = await db
+      .select({
+        id: quotes.id,
+      })
+      .from(quotes)
+      .where(and(eq(quotes.sourceId, bookId), eq(quotes.userId, userId)))
+      .orderBy(desc(quotes.createdAt))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize);
+
+    // Get the book with the specific quotes
     const dbResult = await db.query.sources.findFirst({
       with: {
-        quotes: true,
+        quotes: {
+          where: inArray(
+            quotes.id,
+            allQuotes.map((q) => q.id)
+          ),
+          orderBy: (quotes, { desc }) => [desc(quotes.createdAt)],
+        },
         media: true,
       },
       where: and(eq(sources.id, bookId), eq(sources.userId, userId)),
@@ -94,21 +123,16 @@ export const getBook = async (
       }))
     );
 
-    const decryptedResult = {
+    return {
       ...dbResult,
-      quotes: sortQuotes(decryptedQuotes),
-    };
-
-    const validatedData =
-      selectSourceWithRelationsSchema.parse(decryptedResult);
-
-    return validatedData;
+      quotes: decryptedQuotes,
+      totalQuotes: totalCount[0]?.count || 0,
+    } as SourceWithQuotesCount;
   } catch (error) {
-    console.error(error);
-    return { error: "Error occurred" };
+    console.error("Error fetching book:", error);
+    return { error: "Failed to fetch book" };
   }
 };
-
 
 export const getBooks = async ({
   ignored,
@@ -151,6 +175,7 @@ export const getBooks = async ({
     return [];
   }
 };
+
 export const getPaginatedBooks = async ({
   ignored,
   page = 1,
@@ -207,7 +232,6 @@ export const getPaginatedBooks = async ({
     return { books: [], total: 0 };
   }
 };
-
 
 export const getBookTitles = async (): Promise<Source[]> => {
   const { userId }: { userId: string | null } = await auth();
@@ -301,7 +325,7 @@ export const getProfile = async (): Promise<Profile> => {
   }
 };
 
-const capicitiesGetSpaces = async (profile: Profile) => {
+export const capicitiesGetSpaces = async (profile: Profile) => {
   const { userId }: { userId: string | null } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
@@ -353,6 +377,7 @@ export const getSettings = async () => {
     capicitiesSpaces,
     unearthedKeys,
     notionWorkspace: notionAuthData.workspace_name || "",
+    aiPercentageUsed: 100,
   };
 };
 
@@ -761,7 +786,7 @@ export const search = async (
     ),
   });
 
-  const quotesResult = await db.query.quotes.findMany({
+  const dbResult = await db.query.quotes.findMany({
     with: {
       source: true,
     },
@@ -774,9 +799,19 @@ export const search = async (
     ),
   });
 
+  const quotesResult = await Promise.all(
+    dbResult
+      .filter((quote) => !quote.source?.ignored)
+      .map(async (quote) => ({
+        ...quote,
+        note: quote.note
+          ? await decrypt(quote.note as string, encryptionKey)
+          : "",
+      }))
+  );
+
   return { books: booksResult, quotes: quotesResult };
 };
-
 
 export const syncSourceToNotion = async (sourceId: string) => {
   const { userId }: { userId: string | null } = await auth();
@@ -936,7 +971,7 @@ export const firstNotionSync = async (): Promise<{
   }
 };
 
-const getUnearthedKeys = async (profile: Profile) => {
+export const getUnearthedKeys = async (profile: Profile) => {
   const dbResult = await db.query.unearthedKeys.findMany({
     where: eq(unearthedKeys.userId, profile.userId!),
   });
@@ -1118,7 +1153,6 @@ export const stopIgnoreAllSources = async () => {
   }
 };
 
-
 export const deleteAllSources = async () => {
   const { userId }: { userId: string | null } = await auth();
   if (!userId) {
@@ -1179,5 +1213,16 @@ export const deleteAllSources = async () => {
   } catch (error) {
     console.error(error);
     return false;
+  }
+};
+
+export const getTotalQuotesCount = async () => {
+  try {
+    const result = await db.select({ count: count() }).from(quotes);
+
+    return result[0]?.count || 0;
+  } catch (error) {
+    console.error(error);
+    return 0;
   }
 };

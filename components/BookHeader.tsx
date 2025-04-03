@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ export function BookHeader({
       className="flex flex-col justify-between"
     >
       <div className="flex flex-wrap">
-        <div className="w-full ">
+        <div className="md:w-full ">
           {imageUrl ? (
             <Image
               src={imageUrl}
@@ -59,21 +59,23 @@ export function BookHeader({
             <p></p>
           )}
         </div>
-        <div className="w-full mt-4">
-          <h1
-            className={`${crimsonPro.className} font-extrabold text-xl md:text-3xl`}
-          >
-            {title}
-          </h1>
+        <div className="w-full mt-4 flex items-center">
+          <div className="">
+            <h1
+              className={`${crimsonPro.className} font-extrabold text-xl md:text-3xl`}
+            >
+              {title}
+            </h1>
 
-          <h2 className="text-muted md:pr-4">{subtitle}</h2>
-          <h3 className="text-sm text-secondary">by {author}</h3>
-          {ignored && (
-            <Badge variant="destructive" className="mt-4">
-              <Frown className={"h-4 w-4 mr-1"} />
-              <span>Ignored</span>
-            </Badge>
-          )}
+            <h2 className="text-muted md:pr-4">{subtitle}</h2>
+            <h3 className="text-sm text-secondary">by {author}</h3>
+            {ignored && (
+              <Badge variant="brutaldestructive" className="mt-4">
+                <Frown className={"h-4 w-4 mr-1"} />
+                <span>Ignored</span>
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>

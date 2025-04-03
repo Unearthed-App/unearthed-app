@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,6 @@ export async function POST(req: Request) {
   });
 
   if (evt.type === "user.created") {
-
     const newEncryptionKey = generateSecureKey();
     const newSecret = generateSecureKey();
 
@@ -126,7 +125,6 @@ export async function POST(req: Request) {
       return new Response("Error", { status: 500 });
     }
   } else if (evt.type === "user.deleted") {
-    
     try {
       const profile = await db
         .update(profiles)

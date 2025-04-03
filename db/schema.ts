@@ -1,20 +1,19 @@
 /**
- * Copyright (C) 2024 Unearthed App
- * 
+ * Copyright (C) 2025 Unearthed App
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 import {
   boolean,
@@ -48,17 +47,15 @@ export const sources = pgTable(
     ignored: boolean("ignored").default(false),
     createdAt: timestamp("created_at").defaultNow(),
   },
-  (table) => {
-    return {
-      uniqueSourceContent: unique("uniqueSourceContent").on(
-        table.title,
-        table.author,
-        table.userId,
-        table.type,
-        table.origin
-      ),
-    };
-  }
+  (table) => [
+    unique("uniqueSourceContent").on(
+      table.title,
+      table.author,
+      table.userId,
+      table.type,
+      table.origin
+    ),
+  ]
 );
 
 export const quotes = pgTable(
@@ -77,16 +74,13 @@ export const quotes = pgTable(
       .notNull(),
     createdAt: timestamp("created_at").defaultNow(),
   },
-  (table) => {
-    return {
-      uniqueQuoteContent: unique("uniqueQuoteContent").on(
-        table.sourceId,
-        table.content,
-        // table.note,
-        table.userId
-      ),
-    };
-  }
+  (table) => [
+    unique("uniqueQuoteContent").on(
+      table.sourceId,
+      table.content,
+      table.userId
+    ),
+  ]
 );
 
 export const profiles = pgTable("profiles", {
@@ -116,6 +110,8 @@ export const profiles = pgTable("profiles", {
   createdAt: timestamp("created_at").defaultNow(),
   expiredAt: timestamp("expired_at"),
   lastWebhookError: text("last_webhook_error"),
+  aiInputTokensUsed: integer("ai_input_tokens_used").default(0),
+  aiOutputTokensUsed: integer("ai_output_tokens_used").default(0),
 });
 
 export const media = pgTable("media", {
@@ -221,6 +217,42 @@ export const notionSourceJobsFour = pgTable("notion_source_jobs_four", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const tags = pgTable("tags", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .default(sql`requesting_user_id()`)
+    .notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const sourceTags = pgTable("source_tags", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .default(sql`requesting_user_id()`)
+    .notNull(),
+  sourceId: uuid("source_id")
+    .notNull()
+    .references(() => sources.id),
+  tagId: uuid("tag_id")
+    .notNull()
+    .references(() => tags.id),
+});
+
+export const quoteTags = pgTable("quote_tags", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .default(sql`requesting_user_id()`)
+    .notNull(),
+  quoteId: uuid("quote_id")
+    .notNull()
+    .references(() => quotes.id),
+  tagId: uuid("tag_id")
+    .notNull()
+    .references(() => tags.id),
+});
+
 // Relations
 export const sourcesRelations = relations(sources, ({ many, one }) => ({
   quotes: many(quotes),
@@ -228,13 +260,15 @@ export const sourcesRelations = relations(sources, ({ many, one }) => ({
     fields: [sources.mediaId],
     references: [media.id],
   }),
+  tags: many(sourceTags),
 }));
 
-export const quotesRelations = relations(quotes, ({ one }) => ({
+export const quotesRelations = relations(quotes, ({ many, one }) => ({
   source: one(sources, {
     fields: [quotes.sourceId],
     references: [sources.id],
   }),
+  tags: many(quoteTags),
 }));
 
 export const dailyQuotesRelations = relations(dailyQuotes, ({ one }) => ({
@@ -299,6 +333,17 @@ export const notionSourceJobsFourRelations = relations(
     }),
   })
 );
+
+export const sourceTagsRelations = relations(sourceTags, ({ one }) => ({
+  source: one(sources, {
+    fields: [sourceTags.sourceId],
+    references: [sources.id],
+  }),
+  tag: one(tags, {
+    fields: [sourceTags.tagId],
+    references: [tags.id],
+  }),
+}));
 
 // Types for zod
 export const insertNotionSourceJobsOneSchema =
@@ -369,6 +414,14 @@ export const insertMediaSchema = createInsertSchema(media);
 export const selectMediaSchema = createSelectSchema(media, {
   createdAt: z.coerce.date(),
 });
+
+export const insertTagSchema = createInsertSchema(tags);
+export const selectTagSchema = createSelectSchema(tags, {
+  createdAt: z.coerce.date(),
+});
+
+export const insertSourceTagSchema = createInsertSchema(sourceTags);
+export const selectSourceTagSchema = createSelectSchema(sourceTags);
 
 export const selectSourceWithRelationsSchema = selectSourceSchema.extend({
   quotes: z.array(selectQuoteSchema),

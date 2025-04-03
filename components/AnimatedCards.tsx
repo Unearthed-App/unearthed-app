@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import { motion } from "motion/react";
 import { Crimson_Pro } from "next/font/google";
 import { Separator } from "./ui/separator";
 import { HeadingBlur } from "./HeadingBlur";
+import { ArrowBigDownDash } from "lucide-react";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 const cardContents = [
@@ -76,12 +77,20 @@ const gridContentMap = {
 export const AnimatedCards = () => {
   return (
     <div className="w-full flex flex-wrap items-center justify-center p-4 md:px-12 lg:px-0 ">
-      <div className="w-full flex justify-center max-w-6xl mb-8">
-        <HeadingBlur content="You won't be thinking any of this anymore..." />
-        <h2 className={"opacity-50 mb-2 text-base lg:text-xl "}></h2>
+      <div className="mt-8 w-full flex justify-center max-w-6xl text-center">
+        <h3 className={`${crimsonPro.className} text-4xl font-bold`}>
+          Say goodbye to these{" "}
+          <span className="text-secondary">frustrations...</span>
+        </h3>
+        {/* <HeadingBlur content="You won't be thinking any of this anymore..." /> */}
+        {/* <h2 className={"opacity-50 mb-2 text-base lg:text-xl "}></h2> */}
       </div>
 
-      <div className="lg:grid grid-cols-6 grid-rows-8 gap-4 w-full max-w-6xl lg:h-[850px]">
+      {/* <div className="w-full flex justify-center max-w-6xl mb-8 text-center">
+        <ArrowBigDownDash className="my-2 w-12 h-12 text-secondary" />
+      </div> */}
+
+      <div className="mt-4 lg:grid grid-cols-6 grid-rows-8 gap-4 w-full max-w-6xl lg:h-[850px]">
         <div className="hidden lg:block z-10 row-span-2 col-start-1 row-start-1">
           <NoiseCard />{" "}
         </div>

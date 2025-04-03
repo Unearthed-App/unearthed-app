@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2024 Unearthed App
+ * Copyright (C) 2025 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ export function OnboardingCard() {
             </div>{" "}
             <div className="my-2">
               <VideoDialog
-                videoUrl="https://www.youtube.com/embed/W321i9cjQms?si=N5UyK3btoOUMJhyV"
+                videoUrl="https://www.youtube.com/embed/uilUlt4wRVs?si=5AFVPu8_clj4AeTl"
                 videoTitle="Obsidian Instructions"
                 videoDescription="Instructions for syncing Kindle to Obsidian"
                 videoButtonText="Watch Obsidian Video"

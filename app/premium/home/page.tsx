@@ -1,25 +1,25 @@
 /**
- * Copyright (C) 2024 Unearthed App
- * 
+ * Copyright (C) 2025 Unearthed App
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 import { DailyQuoteCard } from "@/components/premium/DailyQuoteCard";
 import { OnboardingCard } from "@/components/OnboardingCard";
 import { getBookTitles } from "@/server/actions";
 import { HeadingBlur } from "@/components/HeadingBlur";
+import { BlindSpotsSection } from "@/components/BlindSpotsSection";
 
 export default async function Home() {
   const books = await getBookTitles();
@@ -32,14 +32,15 @@ export default async function Home() {
         </div>
       ) : (
         <div>
+          <div className="w-full flex justify-center mb-8">
+            <BlindSpotsSection />
+          </div>
           <div className="flex items-center justify-center">
             <DailyQuoteCard />
           </div>
           <div className="mt-8 w-full flex justify-center">
             <div className="">
-              <HeadingBlur
-                content="Remember, you can also view your Daily Reflection in the web extension."
-              />
+              <HeadingBlur content="Remember, you can also view your Daily Reflection in the web extension." />
             </div>
           </div>
         </div>
