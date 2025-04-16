@@ -15,7 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Frown } from "lucide-react";
+import { Frown, ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { Badge } from "./ui/badge";
 import { motion } from "motion/react";
@@ -56,7 +56,9 @@ export function BookHeader({
               className="rounded-lg border-2 shadow-xl"
             />
           ) : (
-            <p></p>
+            <div className="w-[150px] h-full aspect-[2/3] rounded-lg border-2 shadow-xl flex items-center justify-center bg-muted">
+              <ImageIcon className="w-12 h-12 text-muted-foreground" />
+            </div>
           )}
         </div>
         <div className="w-full mt-4 flex items-center">

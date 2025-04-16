@@ -24,58 +24,49 @@ import { TextEffect } from "./ui/text-effect";
 import Link from "next/link";
 import Image from "next/image";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import Einkle from "./Einkle";
 
 export const HomeHeader = () => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   return (
     <div className="w-full pt-24 flex flex-wrap justify-center text-center ">
-      <div className="relative w-full flex justify-center">
-        <div className="max-w-[910px]">
-          <h1>
-            <span
-              className={`
+      <div className="w-full">
+        <h1 className="px-2">
+          <span
+            className={`
                 text-primary
                 py-4 leading-tigh
                 motion-blur-in-2xl motion-delay-300 motion-duration-500 
-                font-extrabold text-5xl md:text-8xl
+                font-extrabold text-5xl lg:text-8xl
                 [text-shadow:8px_8px_0_#14524d,1px_1px_0_#14524d,2px_2px_0_#14524d,3px_3px_0_#14524d,4px_4px_0_#14524d,5px_5px_0_#14524d,6px_6px_0_#14524d,7px_7px_0_#14524d]
 
               `}
-            >
-              PAST INSIGHTS
-            </span>
-            <br />
-            <span
-              className={`
+          >
+            PAST INSIGHTS
+          </span>
+          <br />
+          <span
+            className={`
                 text-red-500
                 py-4 leading-tigh
                 motion-blur-in-2xl motion-delay-300 motion-duration-500 
-                font-extrabold text-5xl md:text-8xl
+                font-extrabold text-5xl lg:text-8xl
                 [text-shadow:8px_8px_0_#74342D,1px_1px_0_#74342D,2px_2px_0_#74342D,3px_3px_0_#74342D,4px_4px_0_#74342D,5px_5px_0_#74342D,6px_6px_0_#74342D,7px_7px_0_#74342D]
               `}
-            >
-              NEW REVELATIONS
-            </span>
-          </h1>
-        </div>
+          >
+            NEW REVELATIONS
+          </span>
+        </h1>
       </div>
 
-      <div className="w-full flex justify-center mt-12 pb-4">
-        <div className="max-w-[700px] text-xs md:text-base text-alternate dark:text-foreground font-semibold px-4">
-          <TextEffect per="word" as="h3" preset="blur">
-            Transform your Kindle highlights into daily revelations. Unearthed
-            analyses your reading history to surface forgotten insights, detect
-            blind spots, generate personalized reflection questions, and deliver
-            daily reflections to your favorite platforms. With automatic Kindle
-            sync, instant global search, and seamless integration with popular
-            note-taking apps like Notion, Obsidian, Supernotes, and Capacities,
-            your past knowledge becomes a constant stream of inspiration.
-          </TextEffect>
-        </div>
+      <div className="scale-50 md:scale-100 motion-blur-in-2xl motion-delay-300 motion-duration-500 mt-8 md:-mt-24 flex items-center justify-center h-[500px] w-[500px] md:h-[1200px] md:w-[1200px]">
+        <Einkle />
       </div>
 
-      <div className="w-full flex justify-center">
+    
+
+      <div className="w-full flex justify-center -mt-0 md:-mt-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8  max-w-[630px]">
           <SignUpButton>
             <Button className="w-full mt-2 flex px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms]">
