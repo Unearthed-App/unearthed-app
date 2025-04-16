@@ -128,6 +128,17 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      backgroundImage: {
+        radial: "radial-gradient(var(--tw-gradient-stops))",
+      },
+      boxShadow: {
+        "inset-sm": "inset 0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        inset: "inset 0 2px 4px 0 rgb(0 0 0 / 0.05)",
+        "inset-md": "inset 0 4px 6px -1px rgb(0 0 0 / 0.1)",
+        "inset-lg": "inset 0 2px 5px 5px rgb(0 0 0 / 0.4)",
+        "inset-gradient":
+          "inset 0 2px 5px 5px rgb(0 0 0 / 0.8), inset 0 2px 5px 5px rgb(242 213 208 / 0.7), inset 0 2px 5px 5px transparent",
+      },
     },
   },
   plugins: [

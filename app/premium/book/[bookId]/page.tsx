@@ -84,6 +84,7 @@ import { QuoteFormDialog } from "@/components/premium/QuoteForm/QuoteFormDialog"
 import { UploadButton } from "@/utils/uploadthing";
 import { ChatBotPopup } from "@/components/premium/ChatBotPopup";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { BookDetailsEditor } from "@/components/premium/BookDetailsEditor";
 import {
   Dialog,
   DialogContent,
@@ -1406,7 +1407,7 @@ export default function BookPage({
                 </Popover>
               </div>
 
-              {book && !("error" in book) && book.origin === "UNEARTHED" && (
+              {book && !("error" in book) && (
                 <div className="w-full mb-2">
                   <QuoteFormDialog
                     buttonText="Add a Quote"
@@ -1415,13 +1416,26 @@ export default function BookPage({
                   />
                 </div>
               )}
-              <BookHeader
-                title={book.title}
-                subtitle={book.subtitle as string}
-                author={book.author as string}
-                imageUrl={book.media?.url as string}
-                ignored={book.ignored as boolean}
-              />
+              <div className="relative">
+                <BookHeader
+                  title={book.title}
+                  subtitle={book.subtitle as string}
+                  author={book.author as string}
+                  imageUrl={book.media?.url as string}
+                  ignored={book.ignored as boolean}
+                />
+                {book && !("error" in book) && book.origin === "UNEARTHED" && (
+                  <div className="absolute top-0 left-0 p-1">
+                    <BookDetailsEditor
+                      bookId={book.id}
+                      title={book.title}
+                      subtitle={book.subtitle}
+                      author={book.author}
+                      asin={book.asin}
+                    />
+                  </div>
+                )}
+              </div>
               <div className="mt-4 text-sm">
                 <div className="flex items-center gap-2 text-alternate font-semibold">
                   <Quote className="h-4 w-4" />
@@ -1619,7 +1633,7 @@ export default function BookPage({
                         appearance={{
                           button: ` text-xs font-bold w-full ut-ready:bg-primary ut-ready:text-black ut-uploading:text-black ut-uploading:cursor-not-allowed
                             border-2 p-2.5 rounded-md transition-all duration-200
-                            bg-card border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
+                            bg-card border-black shadow-[4px_4px_0px_rgba(0,0,0,1)]
                             hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
                             active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
                             dark:hover:bg-accent dark:bg-[rgb(238,157,138)] dark:text-black`,

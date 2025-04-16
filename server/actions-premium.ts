@@ -1905,6 +1905,51 @@ export const deleteOrphanedTags = async () => {
   }
 };
 
+export const updateBookDetails = async (
+  bookId: string,
+  title: string,
+  subtitle: string | null,
+  author: string | null,
+  asin: string | null
+) => {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  let isPremium = false;
+  try {
+    if (userId) {
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
+      isPremium = user.privateMetadata.isPremium as boolean;
+    }
+  } catch (error) {
+    isPremium = false;
+  }
+
+  if (!isPremium) {
+    throw new Error("Premium required");
+  }
+
+  try {
+    await db
+      .update(sources)
+      .set({
+        title,
+        subtitle,
+        author,
+        asin,
+      })
+      .where(and(eq(sources.id, bookId), eq(sources.userId, userId)));
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating book details:", error);
+    throw new Error("Failed to update book details");
+  }
+};
+
 export const getBookNetworkData = async () => {
   const { userId }: { userId: string | null } = await auth();
   if (!userId) {
