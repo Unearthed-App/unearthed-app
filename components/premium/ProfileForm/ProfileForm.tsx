@@ -108,6 +108,7 @@ export function ProfileForm() {
   const [profileExists, setProfileExists] = useState(false);
   const [aiPercentageUsed, setAiPercentageUsed] = useState(0);
   const [aiDaysLeft, setAiDaysLeft] = useState(0);
+  const [userId, setUserId] = useState("");
 
   const [dialogState, setDialogState] = useState(
     Object.fromEntries(unearthedKeys.map((key) => [key.id, false]))
@@ -156,6 +157,7 @@ export function ProfileForm() {
 
         if (data.profile.userId) {
           setProfileExists(true);
+          setUserId(data.profile.userId);
         }
         console.log(data);
 
@@ -364,6 +366,14 @@ export function ProfileForm() {
     });
   };
 
+  const copyUserId = () => {
+    const userIdAdjusted = userId.replace("user_", "");
+    navigator.clipboard.writeText(userIdAdjusted);
+    toast({
+      title: "User ID copied to clipboard",
+    });
+  };
+
   if (loadingDefaultValues || isLoading) {
     return (
       <div className="flex flex-col space-y-3">
@@ -553,6 +563,22 @@ export function ProfileForm() {
                         videoDescription="Instructions for syncing Kindle to Obsidian"
                         videoButtonText="Watch Obsidian Video"
                       />
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4">
+                    <h3 className="w-full font-semibold">User ID</h3>
+                    <div className="mt-1 flex space-x-2 justify-between items-end">
+                      <Input disabled type="password" value={userId} />
+                      <div>
+                        <Button
+                          type="button"
+                          variant="brutal"
+                          onClick={copyUserId}
+                        >
+                          <Copy />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

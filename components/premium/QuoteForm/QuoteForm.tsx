@@ -240,6 +240,11 @@ export function QuoteForm({ onQuoteAdded, source }: AddQuoteFormProps) {
                     <SelectItem value="blue">Blue</SelectItem>
                     <SelectItem value="pink">Pink</SelectItem>
                     <SelectItem value="orange">Orange</SelectItem>
+                    <SelectItem value="red">Red</SelectItem>
+                    <SelectItem value="green">Green</SelectItem>
+                    <SelectItem value="olive">Olive</SelectItem>
+                    <SelectItem value="cyan">Cyan</SelectItem>
+                    <SelectItem value="purple">Purple</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

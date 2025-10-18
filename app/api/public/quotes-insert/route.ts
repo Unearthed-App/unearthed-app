@@ -34,6 +34,32 @@ import { clerkClient } from "@clerk/nextjs/server";
 
 const BATCH_SIZE = 100;
 
+// Sanitization function to be used on both incoming and existing data
+const sanitizeText = (text: string): string => {
+  if (!text || typeof text !== "string") return "";
+
+  return (
+    text
+      // Normalize unicode characters
+      .normalize("NFKC")
+      // Replace various problematic quote characters with standard ones
+      .replace(/[\u2018\u2019]/g, "'") // Smart single quotes
+      .replace(/[\u201C\u201D]/g, '"') // Smart double quotes
+      .replace(/[\u2013\u2014]/g, "-") // En dash, Em dash
+      .replace(/\u2026/g, "...") // Ellipsis
+      // Replace various whitespace characters with standard space
+      .replace(/[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]/g, " ")
+      // Replace zero-width characters
+      .replace(/[\u200B\u200C\u200D\uFEFF]/g, "")
+      // Replace other problematic characters
+      .replace(/[\u00AD]/g, "") // Soft hyphen
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "") // Control characters
+      // Trim and collapse multiple spaces
+      .replace(/\s+/g, " ")
+      .trim()
+  );
+};
+
 async function verifyApiKeyGetProfile(
   providedApiKey: string,
   providedUserId: string
@@ -101,7 +127,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // const encryptionKey = await getOrCreateEncryptionKey();
   let encryptionKey: string | undefined;
   const user = await client.users.getUser(userId);
   encryptionKey = user.privateMetadata.encryptionKey as string | undefined;
@@ -118,24 +143,39 @@ export async function POST(request: NextRequest) {
 
   try {
     let body = await request.json();
-
-    body = body.map((row: any) => {
-      const { sourceId, ...rest } = row;
-      return {
-        ...rest,
-        sourceId: sourceId,
-      };
-    });
     const QuotesArraySchema = z.array(insertQuoteSchema);
 
+    // 1. Fetch existing quotes for the user
+    const existingQuotes = await db.query.quotes.findMany({
+      where: eq(quotes.userId, userId),
+    });
+
+    // 2. Create a Set of sanitized texts from existing quotes for efficient lookup
+    const existingSanitizedTexts = new Set(
+      existingQuotes.map((q) => sanitizeText(q.content))
+    );
+    // 3. Filter the incoming quotes to remove duplicates
+    const uniqueNewQuotes = body.filter((newQuote: any) => {
+      const sanitizedNewText = sanitizeText(newQuote.content);
+      // Keep the quote only if its sanitized version is not in our Set
+      return !existingSanitizedTexts.has(sanitizedNewText);
+    });
+    // If all quotes were duplicates, we can exit early.
+    if (uniqueNewQuotes.length === 0) {
+      return NextResponse.json(
+        { result: "No new quotes to add." },
+        { status: 200 }
+      );
+    }
+
+    // 4. Prepare the unique quotes for insertion
     const toInsert = await Promise.all(
-      QuotesArraySchema.parse(body).map(async (row) => ({
+      QuotesArraySchema.parse(uniqueNewQuotes).map(async (row) => ({
         ...row,
-        note: row.note ? await encrypt(row.note, encryptionKey) : "",
+        note: row.note ? await encrypt(row.note, encryptionKey!) : "",
         userId,
       }))
     );
-
     const batches: any[] = [];
 
     for (let i = 0; i < toInsert.length; i += BATCH_SIZE) {
@@ -146,18 +186,25 @@ export async function POST(request: NextRequest) {
       distinctId: userId,
       event: `quotes-insert uploading quotes in batches`,
       properties: {
-        quoteCount: toInsert.length,
+        originalCount: body.length,
+        newQuoteCount: toInsert.length,
         batchCount: batches.length,
       },
     });
 
-    const result = await db.transaction(async (tx) => {
+    // 5. Insert the new unique quotes
+    await db.transaction(async (tx) => {
       for (const batch of batches) {
+        // onConflictDoNothing is kept as a final safety net,
+        // though our logic should prevent most conflicts.
         await tx.insert(quotes).values(batch).onConflictDoNothing();
       }
     });
 
-    return NextResponse.json({ result }, { status: 200 });
+    return NextResponse.json(
+      { message: `Successfully added ${toInsert.length} new quotes.` },
+      { status: 200 }
+    );
   } catch (error) {
     posthogClient.capture({
       distinctId: userId,
@@ -169,11 +216,15 @@ export async function POST(request: NextRequest) {
     });
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Invalid request body" },
+        { error: "Invalid request body", details: error.issues },
         { status: 400 }
       );
     }
 
-    return NextResponse.json({ error: "Error" }, { status: 500 });
+    console.error("Error inserting quotes:", error);
+    return NextResponse.json(
+      { error: "Error processing request" },
+      { status: 500 }
+    );
   }
 }

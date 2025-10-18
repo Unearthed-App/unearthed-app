@@ -153,7 +153,7 @@ export function UploadForm({ onUpload }: UploadFormProps) {
                     className={cn(
                       "relative flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-6 transition-colors",
                       dragActive && "border-primary bg-secondary/20",
-                      value && "border-success bg-success/20"
+                      value && "border-green-500 bg-green-500/20"
                     )}
                     onDragOver={(e) => {
                       e.preventDefault();

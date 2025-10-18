@@ -17,6 +17,74 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: "/api/public/obs-obsidian-get-tags",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "app://obsidian.md",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+      {
+        source: "/api/public/obs-obsidian-sync",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "app://obsidian.md",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+      {
+        source: "/api/public/obs-obsidian-get",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "app://obsidian.md",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+      {
+        source: "/api/public/obsidian-get-tags",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "app://obsidian.md",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+      {
         source: "/api/public/obsidian-sync",
         headers: [
           {
@@ -25,7 +93,58 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET",
+            value: "GET, POST",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+      {
+        source: "/api/public/obsidian-get",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "app://obsidian.md",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+      {
+        source: "/api/public/books-insert-koreader",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+      {
+        source: "/api/public/quotes-insert-koreader",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST",
           },
           {
             key: "Access-Control-Allow-Headers",
@@ -42,7 +161,7 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET",
+            value: "GET, POST",
           },
           {
             key: "Access-Control-Allow-Headers",
@@ -59,7 +178,7 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET",
+            value: "GET, POST",
           },
           {
             key: "Access-Control-Allow-Headers",
@@ -76,24 +195,7 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET",
-          },
-          {
-            key: "Access-Control-Allow-Headers",
-            value: "Content-Type, Authorization",
-          },
-        ],
-      },
-      {
-        source: "/api/public/connect",
-        headers: [
-          {
-            key: "Access-Control-Allow-Origin",
-            value: "*",
-          },
-          {
-            key: "Access-Control-Allow-Methods",
-            value: "GET",
+            value: "GET, POST",
           },
           {
             key: "Access-Control-Allow-Headers",
@@ -110,7 +212,7 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET",
+            value: "GET, POST",
           },
           {
             key: "Access-Control-Allow-Headers",
@@ -118,7 +220,6 @@ const nextConfig = {
           },
         ],
       },
-
       {
         source: "/api/public/books-insert",
         headers: [
@@ -128,7 +229,7 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET",
+            value: "GET, POST",
           },
           {
             key: "Access-Control-Allow-Headers",
@@ -145,7 +246,41 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET",
+            value: "GET, POST",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+      {
+        source: "/api/public/ext-books-insert",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+      {
+        source: "/api/public/ext-quotes-insert",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST",
           },
           {
             key: "Access-Control-Allow-Headers",

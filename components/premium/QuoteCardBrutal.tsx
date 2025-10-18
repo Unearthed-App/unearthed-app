@@ -127,6 +127,78 @@ const colorLookup = {
     buttonShadowDark:
       "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
   },
+  red: {
+    foreground: "bg-red-300 dark:bg-red-500 bg-opacity-100",
+    background: "bg-red-600 bg-opacity-10",
+    text: "text-red-900 dark:text-red-100",
+    line: "border-red-500 dark:border-red-500",
+    shadow: "shadow-red-500/10 dark:shadow-red-700/10",
+    border: "border-2 border-red-500 dark:border-red-500",
+    buttonShadow:
+      "border-red-500 shadow-[2px_2px_0px_rgba(239,68,68,1)] hover:shadow-[1px_1px_0px_rgba(239,68,68,1)] active:shadow-[0px_0px_0px_rgba(239,68,68,1)]",
+    buttonShadowDark:
+      "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
+  },
+  green: {
+    foreground: "bg-green-300 dark:bg-green-500 bg-opacity-100",
+    background: "bg-green-600 bg-opacity-10",
+    text: "text-green-900 dark:text-green-100",
+    line: "border-green-500 dark:border-green-500",
+    shadow: "shadow-green-500/10 dark:shadow-green-700/10",
+    border: "border-2 border-green-500 dark:border-green-500",
+    buttonShadow:
+      "border-green-500 shadow-[2px_2px_0px_rgba(34,197,94,1)] hover:shadow-[1px_1px_0px_rgba(34,197,94,1)] active:shadow-[0px_0px_0px_rgba(34,197,94,1)]",
+    buttonShadowDark:
+      "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
+  },
+  olive: {
+    foreground: "bg-lime-300 dark:bg-lime-500 bg-opacity-100",
+    background: "bg-lime-600 bg-opacity-10",
+    text: "text-lime-900 dark:text-lime-100",
+    line: "border-lime-500 dark:border-lime-500",
+    shadow: "shadow-lime-500/10 dark:shadow-lime-700/10",
+    border: "border-2 border-lime-500 dark:border-lime-500",
+    buttonShadow:
+      "border-lime-500 shadow-[2px_2px_0px_rgba(132,204,22,1)] hover:shadow-[1px_1px_0px_rgba(132,204,22,1)] active:shadow-[0px_0px_0px_rgba(132,204,22,1)]",
+    buttonShadowDark:
+      "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
+  },
+  cyan: {
+    foreground: "bg-cyan-300 dark:bg-cyan-500 bg-opacity-100",
+    background: "bg-cyan-600 bg-opacity-10",
+    text: "text-cyan-900 dark:text-cyan-100",
+    line: "border-cyan-500 dark:border-cyan-500",
+    shadow: "shadow-cyan-500/10 dark:shadow-cyan-700/10",
+    border: "border-2 border-cyan-500 dark:border-cyan-500",
+    buttonShadow:
+      "border-cyan-500 shadow-[2px_2px_0px_rgba(6,182,212,1)] hover:shadow-[1px_1px_0px_rgba(6,182,212,1)] active:shadow-[0px_0px_0px_rgba(6,182,212,1)]",
+    buttonShadowDark:
+      "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
+  },
+  purple: {
+    foreground: "bg-purple-300 dark:bg-purple-500 bg-opacity-100",
+    background: "bg-purple-600 bg-opacity-10",
+    text: "text-purple-900 dark:text-purple-100",
+    line: "border-purple-500 dark:border-purple-500",
+    shadow: "shadow-purple-500/10 dark:shadow-purple-700/10",
+    border: "border-2 border-purple-500 dark:border-purple-500",
+    buttonShadow:
+      "border-purple-500 shadow-[2px_2px_0px_rgba(168,85,247,1)] hover:shadow-[1px_1px_0px_rgba(168,85,247,1)] active:shadow-[0px_0px_0px_rgba(168,85,247,1)]",
+    buttonShadowDark:
+      "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
+  },
+  gray: {
+    foreground: "bg-neutral-300 dark:bg-neutral-500 bg-opacity-100",
+    background: "bg-neutral-300 bg-opacity-10",
+    text: "text-neutral-700 dark:text-neutral-100",
+    line: "border-black dark:border-neutral-500",
+    shadow: "",
+    border: "border-2 border-black dark:border-white",
+    buttonShadow:
+      "shadow-[2px_2px_0px_rgba(100,100,100,1)] hover:shadow-[1px_1px_0px_rgba(100,100,100,1)] active:shadow-[0px_0px_0px_rgba(100,100,100,1)]",
+    buttonShadowDark:
+      "dark:border-black dark:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
+  },
 } as const;
 
 type ColorKey = keyof typeof colorLookup;

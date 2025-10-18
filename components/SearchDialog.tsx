@@ -180,14 +180,8 @@ export function SearchDialog() {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button className="">
+          <Button size="icon" className="">
             <Search />
-            <div className="hidden lg:flex items-center space-x-4 ml-4">
-              <span>Search</span>
-              <div className="p-1 rounded bg-background dark:bg-black dark:text-white">
-                ⌘K
-              </div>
-            </div>
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[800px]">

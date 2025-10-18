@@ -52,8 +52,8 @@ export const sources = pgTable(
       table.title,
       table.author,
       table.userId,
-      table.type,
-      table.origin
+      table.type
+      // table.origin
     ),
   ]
 );
@@ -253,6 +253,31 @@ export const quoteTags = pgTable("quote_tags", {
     .references(() => tags.id),
 });
 
+
+export const purchases = pgTable("purchases", {
+  id: uuid("id").primaryKey().defaultRandom().notNull(),
+  version: integer("version").notNull(),
+  productName: text("product_name").notNull(),
+  productId: text("product_id").notNull(),
+  priceId: text("price_id").notNull(),
+  email: text("email").notNull(),
+  sessionId: text("session_id").notNull(),
+  distinctId: text("distinct_id").notNull(),
+  status: text("status").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const unearthedLocalVersions = pgTable("unearthed_local_versions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  version: integer("version").notNull(),
+  productName: text("product_name").notNull(),
+  productLinkWindows: text("product_link_windows"),
+  productLinkMacIntel: text("product_link_mac_intel"),
+  productLinkMacSilicon: text("product_link_mac_silicon"),
+  productLinkLinux: text("product_link_linux"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const sourcesRelations = relations(sources, ({ many, one }) => ({
   quotes: many(quotes),
@@ -385,6 +410,10 @@ export const selectNotionSourceJobsFourSchema = createSelectSchema(
 
 export const insertUnearthedKeySchema = createInsertSchema(unearthedKeys);
 export const selectUnearthedKeySchema = createSelectSchema(unearthedKeys);
+
+export const insertPurchasesSchema = createInsertSchema(purchases);
+export const selectPurchasesSchema = createSelectSchema(purchases);
+
 
 export const insertSourceSchema = createInsertSchema(sources);
 export const insertQuoteSchema = createInsertSchema(quotes);

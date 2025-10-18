@@ -29,6 +29,7 @@ import {
   LogIn,
   Crown,
   UserPlus2,
+  Download,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -43,20 +44,20 @@ import {
 import Link from "next/link";
 import { SignOutButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { getIsPremium } from "@/lib/utils";
+// import { getIsPremium } from "@/lib/utils";
 import { ContactFormDialog } from "./ContactForm/ContactFormDialog";
 
 export function DropdownMenuNav() {
-  const [isPremium, setIsPremium] = useState(false);
+  // const [isPremium, setIsPremium] = useState(false);
 
-  useEffect(() => {
-    const fetchPremiumStatus = async () => {
-      const isPremium = await getIsPremium();
-      setIsPremium(isPremium);
-    };
+  // useEffect(() => {
+  //   const fetchPremiumStatus = async () => {
+  //     const isPremium = await getIsPremium();
+  //     setIsPremium(isPremium);
+  //   };
 
-    fetchPremiumStatus();
-  }, []);
+  //   fetchPremiumStatus();
+  // }, []);
 
   return (
     <>
@@ -69,139 +70,72 @@ export function DropdownMenuNav() {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="w-56">
-            {isPremium ? (
-              <>
-                <DropdownMenuGroup>
-                  <Link href="/premium/home">
-                    <DropdownMenuItem>
-                      <Home className="mr-2 h-4 w-4" />
-                      <span>Home</span>
-                    </DropdownMenuItem>
-                  </Link>
-                  <Link href="/premium/books">
-                    <DropdownMenuItem>
-                      <BookOpenText className="mr-2 h-4 w-4" />
-                      <span>Books</span>
-                    </DropdownMenuItem>
-                  </Link>
-                  <Link href="/premium/books-ignored">
-                    <DropdownMenuItem>
-                      <Frown className="mr-2 h-4 w-4" />
-                      <span>Ignored</span>
-                    </DropdownMenuItem>
-                  </Link>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://chromewebstore.google.com/detail/unearthed-app/aneeklbnnklhdaipicoakebmbedcgmfb?authuser=0&hl=en"
-                  >
-                    <DropdownMenuItem>
-                      <span>Install Chrome Extension</span>
-                    </DropdownMenuItem>
-                  </Link>
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://addons.mozilla.org/en-US/firefox/addon/unearthed-app/"
-                  >
-                    <DropdownMenuItem>
-                      <span>Install Firefox Extension</span>
-                    </DropdownMenuItem>
-                  </Link>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <Link href="/privacy" passHref>
-                    <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
-                  </Link>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <Link href="/dashboard/user-profile">
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </DropdownMenuItem>
-                  </Link>
-                  <ContactFormDialog isMenuItem />
-                  <SignOutButton>
-                    <DropdownMenuItem>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Sign out</span>
-                    </DropdownMenuItem>
-                  </SignOutButton>{" "}
-                </DropdownMenuGroup>
-              </>
-            ) : (
-              <>
-                <DropdownMenuGroup>
-                  <Link href="/dashboard/home">
-                    <DropdownMenuItem>
-                      <Home className="mr-2 h-4 w-4" />
-                      <span>Home</span>
-                    </DropdownMenuItem>
-                  </Link>
-                  <Link href="/dashboard/books">
-                    <DropdownMenuItem>
-                      <BookOpenText className="mr-2 h-4 w-4" />
-                      <span>Books</span>
-                    </DropdownMenuItem>
-                  </Link>
-                  <Link href="/dashboard/books-ignored">
-                    <DropdownMenuItem>
-                      <Frown className="mr-2 h-4 w-4" />
-                      <span>Ignored Books</span>
-                    </DropdownMenuItem>
-                  </Link>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://chromewebstore.google.com/detail/unearthed-app/aneeklbnnklhdaipicoakebmbedcgmfb?authuser=0&hl=en"
-                  >
-                    <DropdownMenuItem>
-                      <span>Install Chrome Extension</span>
-                    </DropdownMenuItem>
-                  </Link>
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://addons.mozilla.org/en-US/firefox/addon/unearthed-app/"
-                  >
-                    <DropdownMenuItem>
-                      <span>Install Firefox Extension</span>
-                    </DropdownMenuItem>
-                  </Link>
-                </DropdownMenuGroup>{" "}
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <Link href="/privacy" passHref>
-                    <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
-                  </Link>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <Link href="/dashboard/user-profile">
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </DropdownMenuItem>
-                  </Link>
-                  <ContactFormDialog isMenuItem />
-                  <SignOutButton>
-                    <DropdownMenuItem>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Sign out</span>
-                    </DropdownMenuItem>
-                  </SignOutButton>
-                </DropdownMenuGroup>
-              </>
-            )}
+            <DropdownMenuGroup>
+              <Link href="/premium/home">
+                <DropdownMenuItem>
+                  <Home className="mr-2 h-4 w-4" />
+                  <span>Home</span>
+                </DropdownMenuItem>
+              </Link>
+              <Link href="/premium/books">
+                <DropdownMenuItem>
+                  <BookOpenText className="mr-2 h-4 w-4" />
+                  <span>Books</span>
+                </DropdownMenuItem>
+              </Link>
+              <Link href="/premium/books-ignored">
+                <DropdownMenuItem>
+                  <Frown className="mr-2 h-4 w-4" />
+                  <span>Ignored</span>
+                </DropdownMenuItem>
+              </Link>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://chromewebstore.google.com/detail/unearthed-app/aneeklbnnklhdaipicoakebmbedcgmfb?authuser=0&hl=en"
+              >
+                <DropdownMenuItem>
+                  <span>Install Chrome Extension</span>
+                </DropdownMenuItem>
+              </Link>
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://addons.mozilla.org/en-US/firefox/addon/unearthed-app/"
+              >
+                <DropdownMenuItem>
+                  <span>Install Firefox Extension</span>
+                </DropdownMenuItem>
+              </Link>
+              <Link href="/premium/local-download" passHref>
+                <DropdownMenuItem>D/L Unearthed Local</DropdownMenuItem>
+              </Link>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <Link href="/privacy" passHref>
+                <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
+              </Link>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <Link href="/dashboard/user-profile">
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+              </Link>
+              <ContactFormDialog isMenuItem />
+              <SignOutButton>
+                <DropdownMenuItem>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </SignOutButton>{" "}
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </SignedIn>
@@ -238,10 +172,18 @@ export function DropdownMenuNav() {
               </SignUpButton>
             </DropdownMenuGroup>
             <DropdownMenuGroup>
+              <Link href="/local">
+                <DropdownMenuItem className="border-secondary bg-background dark:bg-primary dark:text-white text-primary-background hover:bg-primary/90 font-semibold">
+                  <Download className="mr-2 h-4 w-4" />
+                  <span>Get Unearthed Local</span>
+                </DropdownMenuItem>
+              </Link>
+            </DropdownMenuGroup>
+            <DropdownMenuGroup>
               <Link href="/dashboard/get-premium">
                 <DropdownMenuItem className="bg-secondary dark:bg-white dark:text-black text-primary-foreground hover:bg-primary/90 font-semibold">
                   <Crown className="mr-2 h-4 w-4" />
-                  <span>Get Premium ✨</span>
+                  <span>Get Unearthed Online</span>
                 </DropdownMenuItem>
               </Link>
             </DropdownMenuGroup>

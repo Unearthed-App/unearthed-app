@@ -15,12 +15,30 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { AnimatedLoader } from "@/components/AnimatedLoader";
+"use client";
 
-export default function Loading() {
+import { Button } from "./ui/button";
+
+export function CheckoutLocal() {
+  const handleCheckout = async () => {
+    try {
+      const response = await fetch("/api/public/stripe-checkout-session-local", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const { url } = await response.json();
+      window.location.href = url;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
-    <div className="pt-32 flex items-center justify-center">
-      <AnimatedLoader />
-    </div>
+    <Button variant="brutalprimary" onClick={handleCheckout}>
+      <span className="">Get Unearthed Local</span>
+    </Button>
   );
 }

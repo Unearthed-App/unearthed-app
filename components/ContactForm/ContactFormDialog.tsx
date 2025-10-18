@@ -52,7 +52,7 @@ export function ContactFormDialog({ isMenuItem = false }) {
           {!isMenuItem ? (
             <Button className="hidden md:flex max-w-64">
               <Mail />
-              <div className="ml-2">Send us a message</div>
+              <div className="ml-2">Send a message</div>
             </Button>
           ) : (
             <div
@@ -60,7 +60,7 @@ export function ContactFormDialog({ isMenuItem = false }) {
               className="hover:bg-primary relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
             >
               <Mail className="mr-2 h-4 w-4" />
-              <span>Send us a message</span>
+              <span>Send a message</span>
             </div>
           )}
         </DialogTrigger>
@@ -68,7 +68,7 @@ export function ContactFormDialog({ isMenuItem = false }) {
           <ScrollArea>
             <DialogHeader className="mb-2">
               <DialogTitle>
-                <span>Send us a message</span>
+                <span>Send a message</span>
               </DialogTitle>
             </DialogHeader>
             <ContactForm
@@ -101,14 +101,14 @@ export function ContactFormDialog({ isMenuItem = false }) {
             className="hover:bg-primary relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
           >
             <Mail className="mr-2 h-4 w-4" />
-            <span>Send us a message</span>
+            <span>Send a message</span>
           </div>
         )}
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
           <DrawerTitle>
-            <span>Send us a message</span>
+            <span>Send a message</span>
           </DrawerTitle>
         </DrawerHeader>
         <ScrollArea className="px-4 w-full">

@@ -122,7 +122,7 @@ export function BlindSpotsSection() {
                 <br />
                 potential knowledge gaps and get
                 <br />
-                personalized book recommendations
+                personalised book recommendations
               </p>
             </TooltipContent>
           </Tooltip>

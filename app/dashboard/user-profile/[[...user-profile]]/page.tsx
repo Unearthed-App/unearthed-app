@@ -25,6 +25,7 @@ import { Crown, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
+import { NonPremiumNavigation } from "@/components/NonPremiumNavigation";
 
 export default function UserProfilePage() {
   const [isPremium, setIsPremium] = useState(false);
@@ -71,12 +72,12 @@ export default function UserProfilePage() {
     } else {
       return (
         <div>
-          <h2 className="font-bold text-xl">You are not yet a Premium user</h2>
+          <h2 className="font-bold text-xl">You do not have access yet</h2>
           <p>Follow the link below to find out more</p>
           <Link href="/dashboard/get-premium">
             <Button variant="brutalprimary" className="mt-4">
               <Crown className="mr-0 md:mr-2" />
-              <span className="">Compare Plans</span>
+              <span className="">Get Unearthed Online</span>
             </Button>
           </Link>
         </div>
@@ -93,57 +94,63 @@ export default function UserProfilePage() {
   }
 
   return (
-    <div className="pt-32 flex w-full items-center justify-center">
-      <UserProfile
-        path="/dashboard/user-profile"
-        routing="path"
-        appearance={{
-          variables: {
-            colorPrimary: "#000000",
-          },
-          elements: {
-            cardBox: "bg-card rounded-lg text-foreground",
+    <div className="pt-16 md:pt-24">
+      {/* Navigation */}
+      <NonPremiumNavigation currentPage="profile" />
 
-            rootBox: "bg-card rounded-lg text-foreground",
+      <div className="flex w-full items-center justify-center">
+        <UserProfile
+          path="/dashboard/user-profile"
+          routing="path"
+          appearance={{
+            variables: {
+              colorPrimary: "#000000",
+            },
+            elements: {
+              cardBox: "bg-card rounded-lg text-foreground",
 
-            navbar: "bg-card rounded-lg text-foreground",
-            navbarButton: `border-2 rounded-md transition-all duration-200
+              rootBox: "bg-card rounded-lg text-foreground",
+
+              navbar: "bg-card rounded-lg text-foreground",
+              navbarButton: `border-2 rounded-md transition-all duration-200
               bg-card border-black 
               dark:hover:bg-accent dark:bg-[rgb(238,157,138)] dark:text-black`,
 
-            profileSectionItem: "text-foreground",
-            formFieldLabel: "text-foreground",
+              profileSectionItem: "text-foreground",
+              formFieldLabel: "text-foreground",
 
-            scrollBox: "bg-card rounded-lg text-foreground",
-            headerTitle: "text-foreground",
-            headerSubtitle: "text-foreground",
-            pageScrollBox: "text-foreground",
-            header: "text-foreground",
-            profileSectionTitle: "text-foreground",
-            profileSectionContent: "text-foreground",
-            profileSectionItemList: "text-foreground",
-            profileSectionItem__emailAddresses: "rounded-md bg-white py-1 px-4",
-            menuButton: `border-2 rounded-md transition-all duration-200
+              scrollBox: "bg-card rounded-lg text-foreground",
+              headerTitle: "text-foreground",
+              headerSubtitle: "text-foreground",
+              pageScrollBox: "text-foreground",
+              header: "text-foreground",
+              profileSectionTitle: "text-foreground",
+              profileSectionContent: "text-foreground",
+              profileSectionItemList: "text-foreground",
+              profileSectionItem__emailAddresses:
+                "rounded-md bg-white py-1 px-4",
+              menuButton: `border-2 rounded-md transition-all duration-200
               bg-card border-black
               dark:bg-[rgb(238,157,138)] text-black hover:bg-background`,
-            avatarImageActionsUpload: `border-2 rounded-md transition-all duration-200
+              avatarImageActionsUpload: `border-2 rounded-md transition-all duration-200
               bg-card border-black
               dark:bg-[rgb(238,157,138)] text-black hover:bg-background`,
-            profileSectionPrimaryButton: `border-2 rounded-md transition-all duration-200
+              profileSectionPrimaryButton: `border-2 rounded-md transition-all duration-200
               bg-card border-black
               dark:bg-[rgb(238,157,138)] text-black hover:bg-background`,
-            actionCard: "bg-background rounded-lg text-foreground",
-          },
-        }}
-      >
-        <UserProfile.Page
-          label="Subscription"
-          labelIcon={<Crown className="w-4 h-4" />}
-          url="custom-page"
+              actionCard: "bg-background rounded-lg text-foreground",
+            },
+          }}
         >
-          <SubscriptionPage />
-        </UserProfile.Page>
-      </UserProfile>
+          <UserProfile.Page
+            label="Subscription"
+            labelIcon={<Crown className="w-4 h-4" />}
+            url="custom-page"
+          >
+            <SubscriptionPage />
+          </UserProfile.Page>
+        </UserProfile>
+      </div>
     </div>
   );
 }

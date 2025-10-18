@@ -25,7 +25,7 @@ import {
 import { DropdownMenuNav } from "@/components/DropdownMenuNav";
 import { ModeToggle } from "@/components/ModeToggle";
 import { ProfileDialog } from "./ProfileForm/ProfileDialog";
-import { Crown, LogOut } from "lucide-react";
+import { AlertTriangle, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -88,10 +88,12 @@ export function Navbar() {
           </div>
           <div className="flex space-x-4 items-center justify-end">
             {pathname !== "/dashboard/get-premium" && (
-              <Link href="/dashboard/get-premium">
-                <Button variant="brutalprimary">
-                  <Crown className="mr-0 md:mr-2" />
-                  <span className="">Get Premium</span>
+              <Link href="/dashboard/free-no-more">
+                <Button variant="destructivebrutal">
+                  <AlertTriangle className="mr-0 md:mr-2" />
+                  <span className="">
+                    Changes are coming! Please read before losing access
+                  </span>
                 </Button>
               </Link>
             )}
@@ -115,9 +117,12 @@ export function Navbar() {
       <div className=" flex justify-center">
         <div className="mt-2 bg-card rounded-lg border-2 border-black inset-0 flex space-x-4 p-4 justify-center">
           <SignedIn>
-            <Link href="/dashboard/get-premium">
-              <Button size="icon" className="" variant="brutalprimary">
-                <Crown />
+            <Link href="/dashboard/free-no-more">
+              <Button variant="destructivebrutal">
+                <AlertTriangle className="mr-1" />
+                <span className="">
+                  Changes!
+                </span>
               </Button>
             </Link>
             <SearchDialog />

@@ -767,8 +767,18 @@ export const ConnectionsGraph = () => {
       if (!result || !result.sources || !result.quotes || !result.tags) {
         throw new Error("Received invalid data from API.");
       }
+
+      if (result.sources.length == 0) {
+        toast({
+          title: "Error",
+          description: "No data found, make sure you have synced some books first",
+          variant: "destructive",
+        });
+        return;
+      }
+
       setMindMapSigmaData(result);
-      setIsMindMapSigmaDialogOpen(true); // Open dialog (color fetch will trigger)
+      setIsMindMapSigmaDialogOpen(true);
     } catch (error) {
       console.error("Error generating mind map:", error);
       toast({

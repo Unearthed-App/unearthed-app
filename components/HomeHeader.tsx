@@ -19,7 +19,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Crown, LogIn, PlayCircle } from "lucide-react";
-import { SignUpButton } from "@clerk/nextjs";
 import { TextEffect } from "./ui/text-effect";
 import Link from "next/link";
 import Image from "next/image";
@@ -30,78 +29,55 @@ export const HomeHeader = () => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   return (
-    <div className="w-full pt-24 flex flex-wrap justify-center text-center ">
-      <div className="w-full">
-        <h1 className="px-2">
-          <span
-            className={`
-                text-primary
-                py-4 leading-tigh
-                motion-blur-in-2xl motion-delay-300 motion-duration-500 
-                font-extrabold text-5xl lg:text-8xl
-                [text-shadow:8px_8px_0_#14524d,1px_1px_0_#14524d,2px_2px_0_#14524d,3px_3px_0_#14524d,4px_4px_0_#14524d,5px_5px_0_#14524d,6px_6px_0_#14524d,7px_7px_0_#14524d]
-
-              `}
-          >
-            PAST INSIGHTS
-          </span>
-          <br />
-          <span
-            className={`
-                text-red-500
-                py-4 leading-tigh
-                motion-blur-in-2xl motion-delay-300 motion-duration-500 
-                font-extrabold text-5xl lg:text-8xl
-                [text-shadow:8px_8px_0_#74342D,1px_1px_0_#74342D,2px_2px_0_#74342D,3px_3px_0_#74342D,4px_4px_0_#74342D,5px_5px_0_#74342D,6px_6px_0_#74342D,7px_7px_0_#74342D]
-              `}
-          >
-            NEW REVELATIONS
-          </span>
-        </h1>
-      </div>
-
+    <header className="w-full pt-24 flex flex-wrap justify-center text-center">
       <div className="scale-50 md:scale-100 motion-blur-in-2xl motion-delay-300 motion-duration-500 mt-8 md:-mt-24 flex items-center justify-center h-[500px] w-[500px] md:h-[1200px] md:w-[1200px]">
         <Einkle />
       </div>
 
-    
-
-      <div className="w-full flex justify-center -mt-0 md:-mt-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8  max-w-[630px]">
-          <SignUpButton>
-            <Button className="w-full mt-2 flex px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms]">
-              <LogIn className="mr-2" />
-              <span className="text-base md:text-xl uppercase">
-                Join for Free
-              </span>
-            </Button>
-          </SignUpButton>
-          <Link href="/dashboard/get-premium" className="w-full md:w-auto">
+      <nav
+        className="w-full flex justify-center -mt-0 md:-mt-20"
+        role="navigation"
+        aria-label="Product options"
+      >
+        <div className="grid grid-cols-1 mt-8 max-w-[630px]">
+          <Link
+            href="/premium/books"
+            className="w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 rounded-md"
+            aria-label="Learn about Unearthed Online - Full-featured cloud experience"
+          >
             <Button
               variant="brutalprimary"
-              className="w-full mt-2 flex px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms]"
+              className="w-full mt-2 flex px-8 sm:px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms] min-h-[56px] touch-manipulation"
+              tabIndex={-1}
             >
-              <Crown className="mr-2" />
-              <span className="hover:ml-2 hover:motion-preset-confetti text-base md:text-xl uppercase group">
-                Get Premium{" "}
-                <span className="hidden group-hover:inline-block ml-1">✨</span>
+              <Crown className="mr-2" aria-hidden="true" />
+              <span className="text-sm sm:text-base md:text-xl uppercase">
+                Get Unearthed Online
               </span>
             </Button>
           </Link>
         </div>
-      </div>
+      </nav>
 
-      <div className="w-full relative bg-gradient-to-t from-popover via-bg-popover/10 to-transparent lg:px-12 mt-36">
+      <section
+        className="w-full relative bg-gradient-to-t from-popover via-bg-popover/10 to-transparent lg:px-12 mt-36"
+        aria-label="Application preview"
+      >
+        <div
+          className="absolute top-0 left-0 w-full h-[730px] motion-preset-expand motion-duration-1500 motion-delay-[4000ms] -mt-24 rounded-xl overflow-hidden dark:bg-[#ff5c5c47]/40 blur-lg dark:p-8"
+          aria-hidden="true"
+        ></div>
         <Image
           className="motion-preset-expand motion-duration-1500 motion-delay-[4000ms] -mt-24 rounded-lg overflow-hidden relative"
           src={
             isDesktop ? "/images/banner.webp" : "/images/banner-portrait.webp"
           }
-          alt="app screen"
+          alt="Screenshot of Unearthed application interface showing quote management and reading insights features"
           width="2700"
           height="1440"
+          priority
         />
-      </div>
-    </div>
+      </section>
+    </header>
   );
 };

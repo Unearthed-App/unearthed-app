@@ -23,7 +23,7 @@ const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
   description:
-    "Free, open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalized insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
+    "Open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalised insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
   keywords: [
     "kindle highlights",
     "AI reading analysis",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
     description:
-      "Free, open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalized insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
+      "Open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalised insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
     type: "website",
     url: "https://unearthed.app",
     images: [

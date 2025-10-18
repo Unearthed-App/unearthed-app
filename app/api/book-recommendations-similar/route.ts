@@ -21,7 +21,6 @@ import { z } from "zod";
 import { db } from "@/db";
 import { and, eq } from "drizzle-orm";
 import {
-  DynamicRetrievalMode,
   GoogleGenerativeAI,
 } from "@google/generative-ai";
 import { calculateAiUsage } from "@/server/actions-premium";

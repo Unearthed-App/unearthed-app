@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
     ).map((row) => ({
       ...row,
       type: "BOOK",
-      origin: "KINDLE",
+      origin: row.origin || "KINDLE",
       userId,
     }));
 

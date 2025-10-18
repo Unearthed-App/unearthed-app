@@ -49,6 +49,7 @@ import { getTodaysDate, sortQuotes } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { and, eq, ilike, inArray, or, count, desc } from "drizzle-orm";
 import { z } from "zod";
+import { deleteAllTagsFromBook } from "./actions-premium";
 
 const { Client } = require("@notionhq/client");
 
@@ -1075,9 +1076,16 @@ export const deleteSource = async ({ source }: { source: Source }) => {
     await db
       .delete(notionSourceJobsThree)
       .where(eq(notionSourceJobsThree.sourceId, source.id));
+
     // await db
     //   .delete(notionSourceJobsFour)
     //   .where(eq(notionSourceJobsFour.sourceId, source.id));
+
+    try {
+      await deleteAllTagsFromBook(source.id);
+    } catch (error) {
+      console.error("Failed to delete all tags from book:", error);
+    }
 
     // delete daily quotes associated with the source
     const quoteIds = await db
@@ -1135,6 +1143,34 @@ export const ignoreAllSources = async () => {
   }
 };
 
+export const getLatestLocalVersion = async () => {
+  try {
+    // Get the latest version (highest version number) from the database
+    const latestVersion = await db.query.unearthedLocalVersions.findFirst({
+      orderBy: (t, { desc }) => [desc(t.version)],
+    });
+
+    if (!latestVersion) {
+      return { error: "No versions found" };
+    }
+
+    return {
+      success: true,
+      data: {
+        version: latestVersion.version,
+        productName: latestVersion.productName,
+        productLinkWindows: latestVersion.productLinkWindows,
+        productLinkMacIntel: latestVersion.productLinkMacIntel,
+        productLinkMacSilicon: latestVersion.productLinkMacSilicon,
+        productLinkLinux: latestVersion.productLinkLinux,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching latest version:", error);
+    return { error: "Failed to fetch latest version" };
+  }
+};
+
 export const stopIgnoreAllSources = async () => {
   const { userId }: { userId: string | null } = await auth();
   if (!userId) {
@@ -1168,6 +1204,15 @@ export const deleteAllSources = async () => {
     const sourceIdArray = sourceIds.map((q) => q.id);
 
     if (sourceIdArray.length > 0) {
+      await Promise.all(
+        sourceIdArray.map(async (sid) => {
+          try {
+            await deleteAllTagsFromBook(sid);
+          } catch (error) {
+            console.error("Failed to delete all tags from book:", sid, error);
+          }
+        })
+      );
       await db
         .delete(notionSourceJobsOne)
         .where(inArray(notionSourceJobsOne.sourceId, sourceIdArray));
@@ -1213,16 +1258,5 @@ export const deleteAllSources = async () => {
   } catch (error) {
     console.error(error);
     return false;
-  }
-};
-
-export const getTotalQuotesCount = async () => {
-  try {
-    const result = await db.select({ count: count() }).from(quotes);
-
-    return result[0]?.count || 0;
-  } catch (error) {
-    console.error(error);
-    return 0;
   }
 };

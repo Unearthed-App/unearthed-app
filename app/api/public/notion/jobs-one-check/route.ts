@@ -349,7 +349,10 @@ export async function GET() {
           let notionColor = "gray";
           const lowerCaseColor = quote.color?.toLowerCase();
 
-          if (lowerCaseColor?.includes("grey")) {
+          if (
+            lowerCaseColor?.includes("grey") ||
+            lowerCaseColor?.includes("gray")
+          ) {
             notionColor = "gray";
           } else if (lowerCaseColor?.includes("yellow")) {
             notionColor = "yellow";
@@ -359,6 +362,16 @@ export async function GET() {
             notionColor = "pink";
           } else if (lowerCaseColor?.includes("orange")) {
             notionColor = "orange";
+          } else if (lowerCaseColor?.includes("red")) {
+            notionColor = "red";
+          } else if (lowerCaseColor?.includes("green")) {
+            notionColor = "green";
+          } else if (lowerCaseColor?.includes("olive")) {
+            notionColor = "olive";
+          } else if (lowerCaseColor?.includes("cyan")) {
+            notionColor = "cyan";
+          } else if (lowerCaseColor?.includes("purple")) {
+            notionColor = "purple";
           }
 
           const quoteBlocks = splitLongContent(

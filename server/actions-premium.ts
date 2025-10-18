@@ -1986,7 +1986,7 @@ export const getBookNetworkData = async () => {
   });
 
   if (!sourcesResult.length) {
-    throw new Error("No books found");
+    return { sources: [], quotes: [], tags: [], sourceTags: [], quoteTags: [] };
   }
 
   // Get all quotes for these sources

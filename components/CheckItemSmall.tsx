@@ -25,20 +25,20 @@ export const CheckItemSmall = ({
   variant?: string;
 }) => {
   return (
-    <div className="flex w-full space-x-4 items-center my-1 md:my-2 text-sm lg:text-xl">
+    <div className="flex w-full space-x-2 sm:space-x-3 md:space-x-4 items-start my-1 sm:my-2">
       <div
-        className={`w-4 h-4 rounded-full ${
+        className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full flex-shrink-0 mt-0.5 ${
           variant === "destructive" ? "bg-destructive" : "bg-primary"
         }`}
       >
         {variant === "destructive" ? (
-          <CircleDashed className="w-4 h-4" />
+          <CircleDashed className="w-4 h-4 sm:w-5 sm:h-5" />
         ) : (
-          <CheckCircle className="w-4 h-4" />
+          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
         )}
       </div>
       <div
-        className={`text-sm font-semibold ${
+        className={`text-xs sm:text-sm md:text-base font-semibold leading-relaxed ${
           variant === "destructive" ? "text-muted" : ""
         }`}
       >

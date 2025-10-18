@@ -984,7 +984,7 @@ export default function BookPage({
                     <CardHeader className="pt-2">
                       <CardDescription>
                         Engage with your reading through AI-powered reflection
-                        questions, receive personalized feedback, and deepen
+                        questions, receive personalised feedback, and deepen
                         your understanding.
                       </CardDescription>
                     </CardHeader>
@@ -1424,7 +1424,7 @@ export default function BookPage({
                   imageUrl={book.media?.url as string}
                   ignored={book.ignored as boolean}
                 />
-                {book && !("error" in book) && book.origin === "UNEARTHED" && (
+                {book && !("error" in book) && book.origin !== "KINDLE" && (
                   <div className="absolute top-0 left-0 p-1">
                     <BookDetailsEditor
                       bookId={book.id}
@@ -1596,7 +1596,7 @@ export default function BookPage({
                   )}
                 </div>
               )}
-              {book.origin === "UNEARTHED" && (
+              {book.origin !== "KINDLE" && (
                 <>
                   {!showImageUpload && (
                     <div className="mt-2 flex">

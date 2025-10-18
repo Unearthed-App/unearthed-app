@@ -348,17 +348,30 @@ export async function GET() {
           let notionColor = "gray";
           const lowerCaseColor = quote.color?.toLowerCase();
 
-          if (lowerCaseColor?.includes("grey")) {
-            notionColor = "gray";
-          } else if (lowerCaseColor?.includes("yellow")) {
-            notionColor = "yellow";
-          } else if (lowerCaseColor?.includes("blue")) {
-            notionColor = "blue";
-          } else if (lowerCaseColor?.includes("pink")) {
-            notionColor = "pink";
-          } else if (lowerCaseColor?.includes("orange")) {
-            notionColor = "orange";
-          }
+            if (
+              lowerCaseColor?.includes("grey") ||
+              lowerCaseColor?.includes("gray")
+            ) {
+              notionColor = "gray";
+            } else if (lowerCaseColor?.includes("yellow")) {
+              notionColor = "yellow";
+            } else if (lowerCaseColor?.includes("blue")) {
+              notionColor = "blue";
+            } else if (lowerCaseColor?.includes("pink")) {
+              notionColor = "pink";
+            } else if (lowerCaseColor?.includes("orange")) {
+              notionColor = "orange";
+            } else if (lowerCaseColor?.includes("red")) {
+              notionColor = "red";
+            } else if (lowerCaseColor?.includes("green")) {
+              notionColor = "green";
+            } else if (lowerCaseColor?.includes("olive")) {
+              notionColor = "olive";
+            } else if (lowerCaseColor?.includes("cyan")) {
+              notionColor = "cyan";
+            } else if (lowerCaseColor?.includes("purple")) {
+              notionColor = "purple";
+            }
 
           const quoteBlocks = splitLongContent(
             quote.content || "No quote...",

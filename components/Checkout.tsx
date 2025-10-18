@@ -40,7 +40,7 @@ export function Checkout() {
   return (
     <Button variant="brutalprimary" onClick={handleCheckout}>
       <Crown className="mr-0 md:mr-2" />
-      <span className="">Get Premium</span>
+      <span className="">Get Unearthed Online</span>
     </Button>
   );
 }

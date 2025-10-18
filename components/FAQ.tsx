@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */ 
+ */
 
 "use client";
 import React, { useState } from "react";
@@ -26,176 +26,538 @@ import {
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
-const faqData = [
+const faqSections = [
   {
-    title: "What is Unearthed?",
-    content: (
-      <>
-        <p className="">
-          A place to collect, manage, analyse, tag, and send your Kindle
-          highlights and notes.
-        </p>
-      </>
-    ),
+    title: "General Questions",
+    questions: [
+      {
+        title: "What is Unearthed?",
+        content: (
+          <>
+            <p className="">
+              A place to collect, manage, analyse, tag, and send your
+              Kindle/KOReader highlights and notes. Syncing can happen in the
+              background automatically. Unearthed now comes in two versions:
+              Unearthed Online (web-based with AI features) and Unearthed Local
+              (desktop app for complete control).
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "Is Unearthed free to use?",
+        content: (
+          <>
+            <p className="">
+              There is no longer a free tier. However the Unearthed Online
+              codebase is completely Open Source. This includes the we app,
+              browser extension, Obsidian plugin, and KOReader plugin. So feel
+              free to host and run it yourself if you need to.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "Does Unearthed support KOReader?",
+        content: (
+          <>
+            <p className="">
+              Yes! Unearthed (Online and Local) work with both Kindle and
+              KOReader and will merge your books automatically, allowing you to
+              get all your notes and highlights from both sources in one place.
+              This makes it perfect for users who read on multiple devices or
+              prefer open-source reading software.
+            </p>
+          </>
+        ),
+      },
+      {
+        title:
+          "What's the difference between Unearthed Local and Unearthed Online?",
+        content: (
+          <>
+            <p className="mb-3">
+              <strong>Unearthed Online</strong> is the web-based version with
+              cloud sync, AI features, and integrations with multiple platforms:
+            </p>
+            <ul className="list-disc list-inside space-y-1 mb-3 ml-4">
+              <li>AI-powered chat, analysis, and recommendations</li>
+              <li>Cloud storage and sync across devices</li>
+              <li>Integration with Obsidian, Notion, Capacities, Supernotes</li>
+              <li>Browser extension for easy syncing</li>
+            </ul>
+            <p className="mb-3">
+              <strong>Unearthed Local</strong> is a desktop app focused on
+              privacy and local control:
+            </p>
+            <ul className="list-disc list-inside space-y-1 ml-4">
+              <li>All data stays on your computer - no cloud storage</li>
+              <li>Direct sync to Obsidian (no plugin required)</li>
+              <li>One-time purchase, no subscriptions</li>
+              <li>Works with both Kindle and KOReader</li>
+              <li>Cross-platform (Windows, macOS, Linux-soon)</li>
+              <li>Daily reflections added to Obsidian daily notes</li>
+            </ul>
+          </>
+        ),
+      },
+      {
+        title: "Why did you create two different versions?",
+        content: (
+          <>
+            <p className="">
+              The main reason was sustainability. While many people were using
+              Unearthed, the vast majority were using the free tier, which meant
+              hosting costs kept growing without corresponding revenue. The
+              solution was to create Unearthed Local - an app that runs on your
+              computer with no hosting costs, meaning no monthly fees for users
+              either. This approach also aligns with the philosophy of data
+              ownership - your reading data stays completely under your control
+              on your own device.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "Can I use both Unearthed Local and Online?",
+        content: (
+          <>
+            <p className="">
+              Yes, you can use both versions if you want. However, they operate
+              independently - Unearthed Local stores data locally while
+              Unearthed Online uses online secure storage. Choose the one that
+              best fits your workflow, or use both for different purposes.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "What are Daily Reflections?",
+        content: (
+          <>
+            <p className="">
+              Unearthed will select a quote to serve to you for the day, and are
+              designed to help you rediscover past insights. They appear in the
+              web interface, browser extension and can be synced to Obsidian
+              daily notes, Capacities, and Supernotes.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "Is Unearthed open source?",
+        content: (
+          <>
+            <p className="">
+              Yes, Unearthed Online, including the web app, browser extension,
+              Obsidian plugin, and KOReader plugin, are open source. This allows
+              for code inspection, self-hosting, and community contributions.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "How does Unearthed access my Kindle data?",
+        content: (
+          <>
+            <p className="mb-3">
+              <strong>Unearthed Online:</strong> Uses a browser extension
+              (Chrome/Firefox) to access your Kindle data from read.amazon.com
+              when you&apos;re logged into your Amazon account. It doesn&apos;t
+              require or store your Amazon credentials. You could also upload
+              the Kindle Clippings file to import manually.
+            </p>
+            <p className="">
+              <strong>Unearthed Local:</strong> Connects directly to your Kindle
+              account in a similar way. No Amazon credentials are stored or
+              viewed by the application, and no device needs to be plugged into
+              your computer.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "Is my data private and secure with Unearthed?",
+        content: (
+          <>
+            <p className="">
+              Yes, Unearthed prioritises user privacy and security. It
+              doesn&apos;t store Amazon credentials, and all data is completely
+              removed if you delete your account. Code inspection is encouraged.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "How do I sync my Kindle highlights to Obsidian?",
+        content: (
+          <>
+            <p className="mb-3">
+              <strong>Option 1 - Unearthed Online:</strong>
+            </p>
+            <ol className="list-decimal list-inside space-y-2 ml-4 mb-3">
+              <li>Install the Unearthed web extension</li>
+              <li>Generate an API key in your Unearthed account settings</li>
+              <li>Enter the API key in the Unearthed settings</li>
+              <li>Enable auto-sync or perform manual syncs</li>
+            </ol>
+            <p className="mb-3">
+              <strong>Option 2 - Unearthed Local:</strong>
+            </p>
+            <ol className="list-decimal list-inside space-y-2 ml-4">
+              <li>Point the desktop app to your Obsidian vault location</li>
+              <li>Enable auto-sync in the app</li>
+              <li>No plugin required - syncs directly to your vault</li>
+            </ol>
+          </>
+        ),
+      },
+      {
+        title: "Can I export my data from Unearthed?",
+        content: (
+          <>
+            <p className="mb-3">
+              <strong>Unearthed Online:</strong> Allows you to download your
+              Kindle highlights and notes as a CSV file via the browser
+              extension. You can also fully export to Obsidian.
+            </p>
+            <p className="">
+              <strong>Unearthed Local:</strong> Since all data is stored locally
+              on your computer, you already own and control all your data. The
+              app syncs directly to your Obsidian vault, so your data is always
+              accessible in standard markdown format.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "Which version should I choose?",
+        content: (
+          <>
+            <p className="mb-3">
+              Choose based on your priorities and workflow:
+            </p>
+            <p className="mb-3">
+              <strong>Choose Unearthed Local if you:</strong>
+            </p>
+            <ul className="list-disc list-inside space-y-1 ml-4 mb-3">
+              <li>Prioritise complete local control</li>
+              <li>Prefer one-time purchases over subscriptions</li>
+              <li>Primarily use Obsidian for note-taking</li>
+              <li>Don&apos;t need AI features or cloud sync</li>
+              <li>Want a simple, focused tool that runs in the background</li>
+              <li>You don&apos;t mind relying on a computer for auto sync</li>
+            </ul>
+            <p className="mb-3">
+              <strong>Choose Unearthed Online if you:</strong>
+            </p>
+            <ul className="list-disc list-inside space-y-1 ml-4">
+              <li>Want AI-powered insights and analysis of your reading</li>
+              <li>Need to sync across multiple devices</li>
+              <li>
+                Use multiple note-taking apps (Notion, Capacities, Supernotes)
+              </li>
+              <li>
+                Enjoy features like blind spot detection and book
+                recommendations
+              </li>
+              <li>Want the interactive map and advanced search capabilities</li>
+            </ul>
+          </>
+        ),
+      },
+      {
+        title: "What if I have more questions or want to suggest new features?",
+        content: (
+          <>
+            <p className="">
+              You can reach out directly with questions or suggestions. For
+              feature requests or improvements, you can create a GitHub issue
+              since Unearthed is open source.
+            </p>
+          </>
+        ),
+      },
+    ],
   },
   {
-    title: "Is Unearthed free to use?",
-    content: (
-      <>
-        <p className="">
-          Yes, Unearthed offers a free tier with features like automatic Kindle
-          import, global search for books and quotes, book selection for
-          syncing, Obsidian integration, and daily reflections.
-        </p>
-      </>
-    ),
+    title: "Unearthed Online",
+    questions: [
+      {
+        title: "What are the AI features in Unearthed Online?",
+        content: (
+          <>
+            <p className="mb-3">
+              My intention for including AI features was to aid in your
+              learning, and not to replace your brain. I wanted to include
+              features that could guide you in resurfacing knowledge, revealing
+              blind spots in your library, and to help you to expand your
+              collection of books in a meaningful way.
+            </p>
+            <ul className="list-disc list-inside space-y-2 mb-3 ml-4">
+              <li>
+                <strong>AI Chat with Books</strong> - Ask questions about
+                individual books, get insights from your highlights and notes
+              </li>
+              <li>
+                <strong>Blind Spot Detection</strong> - Analyzes your entire
+                reading history to identify knowledge gaps and suggest areas for
+                improvement
+              </li>
+              <li>
+                <strong>Reflection Questions</strong> - Generates
+                thought-provoking questions about your highlights, rates your
+                responses and provides alternative perspectives
+              </li>
+              <li>
+                <strong>Book Analysis</strong> - Creates comprehensive analysis
+                including summaries, major themes, key takeaways, and
+                reader&apos;s perspective
+              </li>
+              <li>
+                <strong>Book Recommendations</strong> - Suggests both similar
+                books and ones that challenge your current viewpoints based on
+                your reading patterns
+              </li>
+              <li>
+                <strong>Auto Extract Key Ideas</strong> - Automatically
+                identifies and extracts the most important concepts from your
+                highlights
+              </li>
+            </ul>
+            <p className="text-sm text-muted-foreground">
+              These features use Google Gemini by default but can be configured
+              to use other OpenAI-compatible providers. All AI features are
+              opt-in and can be disabled if preferred.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "Can I add books and highlights manually in Unearthed Online?",
+        content: (
+          <>
+            <p className="mb-3">
+              Yes, Unearthed Online provides multiple ways to add content:
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4">
+              <li>
+                Manual entry of books, authors, quotes, and notes through the
+                web interface
+              </li>
+              <li>Import from CSV files with your existing data</li>
+              <li>Import from Kindle Clippings files (My Clippings.txt)</li>
+              <li>Automatic sync via browser extension from read.amazon.com</li>
+              <li>KOReader highlights and notes import</li>
+            </ul>
+            <p className="mt-3">
+              This flexibility allows you to combine data from multiple sources
+              and maintain a comprehensive reading library.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "What integrations does Unearthed Online support?",
+        content: (
+          <>
+            <p className="mb-3">
+              Unearthed Online integrates with multiple platforms to fit into
+              your existing workflow:
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4">
+              <li>
+                <strong>Obsidian</strong> - Full sync including books,
+                highlights, notes, tags, and daily reflections
+              </li>
+              <li>
+                <strong>Notion</strong> - Sync your reading data to Notion
+                databases
+              </li>
+              <li>
+                <strong>Capacities</strong> - Integration with daily reflections
+                and reading data
+              </li>
+              <li>
+                <strong>Supernotes</strong> - Daily reflections and reading
+                insights
+              </li>
+              <li>
+                <strong>Email</strong> - Daily reflection quotes sent to your
+                inbox
+              </li>
+            </ul>
+            <p className="mt-3">
+              All integrations are optional and can be configured based on your
+              preferences.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "How does the Interactive Map work in Unearthed Online?",
+        content: (
+          <>
+            <p className="">
+              The Interactive Map is a visual tool that shows connections
+              between your books, quotes, notes, and tags. It helps you discover
+              relationships in your reading that you might not have noticed,
+              revealing patterns in your thinking and areas where different
+              books complement or contrast with each other. This feature is
+              exclusive to Unearthed Online and provides a unique way to explore
+              your personal knowledge graph.
+            </p>
+          </>
+        ),
+      },
+    ],
   },
   {
-    title: "Is Unearthed open source?",
-    content: (
-      <>
-        <p className="">
-          Yes, the entire Unearthed ecosystem, including the web app, browser
-          extension, and Obsidian plugin, is open source. This allows for code
-          inspection, self-hosting, and community contributions.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: "How does Unearthed access my Kindle data?",
-    content: (
-      <>
-        <p className="">
-          Unearthed uses a browser extension (Chrome/Firefox) to access your
-          Kindle data from read.amazon.com when you&apos;re logged into your
-          Amazon account. It doesn&apos;t require or store your Amazon
-          credentials.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: "Is my data private and secure with Unearthed?",
-    content: (
-      <>
-        <p className="">
-          Yes, Unearthed prioritises user privacy and security. It doesn&apos;t
-          store Amazon credentials, and all data is completely removed if you
-          delete your account. Code inspection is encouraged.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: "How do I sync my Kindle highlights to Obsidian?",
-    content: (
-      <>
-        <ol className="list-decimal list-inside space-y-2 ">
-          <li>Install the Unearthed plugin in Obsidian</li>
-          <li>Generate an API key in your Unearthed account settings</li>
-          <li>Enter the API key in the Obsidian plugin settings</li>
-          <li>Enable auto-sync or perform manual syncs</li>
-        </ol>
-      </>
-    ),
-  },
-  {
-    title: "What are Daily Reflections?",
-    content: (
-      <>
-        <p className="">
-          Unearthed will select a quote to serve to you for the day, and are
-          designed to help you rediscover past insights. They appear in the web
-          interface, browser extension and can be synced to Obsidian daily
-          notes, Capacities, and Supernotes.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: "What are the AI features?",
-    content: (
-      <>
-        <p className="">
-          Available in the premium version, Unearthed offers several AI-powered
-          features:
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-2">
-          <li>
-            <strong>Chat</strong> - Ask any question about your books, quotes,
-            or notes
-          </li>
-          <li>
-            <strong>Blind Spot Detection</strong> - Analyzes your reading
-            history to identify knowledge gaps and areas for improvement
-          </li>
-          <li>
-            <strong>Reflection Questions</strong> - Generates thought-provoking
-            questions about your highlights, rates your responses
-          </li>
-          <li>
-            <strong>Book Analysis</strong> - Creates comprehensive analysis
-            including summaries, themes, takeaways, and reader&apos;s
-            perspective
-          </li>
-          <li>
-            <strong>Book Recommendations</strong> - Suggests both similar books
-            and ones that challenge your viewpoints
-          </li>
-          <li>
-            <strong>Auto Extract Key Ideas</strong> - Automatically identifies
-            and extracts important concepts from your highlights
-          </li>
-        </ul>
-        <p className="mt-2 text-alternate">
-          These features use Google Gemini by default but can be configured to
-          use other OpenAI-compatible providers.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: "Can I export my data from Unearthed?",
-    content: (
-      <>
-        <p className="">
-          Unearthed allows you to download your Kindle highlights and notes as a
-          CSV file via the browser extension. You can also fully export to
-          Obsidian.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: "Can I import a CSV or Kindle clippings file?",
-    content: (
-      <>
-        <p className="">
-          Yes, you can import your Kindle highlights and notes from a CSV file
-          or a Kindle clippings file with the premium version.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: "What if I have more questions or want to suggest new features?",
-    content: (
-      <>
-        <p className="">
-          You can reach out directly with questions or suggestions. For feature
-          requests or improvements, you can create a GitHub issue since
-          Unearthed is open source.
-        </p>
-      </>
-    ),
+    title: "Unearthed Local",
+    questions: [
+      {
+        title: "How does Unearthed Local work?",
+        content: (
+          <>
+            <p className="mb-3">
+              Unearthed Local is a desktop application that syncs your Kindle
+              and KOReader highlights directly to your computer:
+            </p>
+            <ol className="list-decimal list-inside space-y-2 ml-4">
+              <li>Connect your Kindle account (no credentials stored)</li>
+              <li>Point the app to your Obsidian vault location</li>
+              <li>Enable auto-sync to keep your library updated</li>
+              <li>The app runs in the background and syncs automatically</li>
+            </ol>
+            <p className="mt-3">
+              No device plugging required, no special Obsidian plugins needed,
+              and all your data stays completely local.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "How do payments work?",
+        content: (
+          <>
+            <p className="mb-3">
+              Unearthed Local is a one-time purchase with no subscriptions or
+              recurring fees:
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4 mb-3">
+              <li>Buy once, keep forever - no monthly or yearly fees</li>
+              <li>
+                Free updates for your major version (e.g., buy v1.0.6, get all
+                updates up to v1.9.9 free)
+              </li>
+              <li>
+                Cross-platform license - works on Windows, macOS, and Linux
+                (coming soon)
+              </li>
+              <li>No cloud hosting costs means no ongoing fees for users</li>
+            </ul>
+            <p className="">
+              This pricing model ensures you own the software permanently while
+              supporting sustainable development.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "What happens to my data with Unearthed Local?",
+        content: (
+          <>
+            <p className="">
+              All your data stays completely on your computer. Nothing is sent
+              to the cloud, stored on external servers, or shared with third
+              parties. You have complete control and ownership of your reading
+              data, and it remains accessible even if you&apos;re offline.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "Can I run Unearthed Local in the background?",
+        content: (
+          <>
+            <p className="mb-3">
+              Yes, Unearthed Local is designed to run seamlessly in the
+              background:
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4 mb-3">
+              <li>
+                Automatic background sync keeps your Obsidian vault updated
+              </li>
+              <li>No need to manually open the app after initial setup</li>
+              <li>
+                Daily reflections are automatically added to your Obsidian daily
+                notes if you choose
+              </li>
+            </ul>
+            <p className="">
+              While the app can run completely in the background, you might
+              enjoy opening it occasionally to read the daily reflection, though
+              this is also available directly in your Obsidian daily notes if
+              you choose.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "What platforms does Unearthed Local support?",
+        content: (
+          <>
+            <p className="mb-3">
+              Unearthed Local is available across multiple platforms:
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4 mb-3">
+              <li>
+                <strong>Windows</strong> - Full support, ready to download
+              </li>
+              <li>
+                <strong>macOS</strong> - Full support, ready to download
+              </li>
+              <li>
+                <strong>Linux</strong> - Coming soon
+              </li>
+            </ul>
+            <p className="">
+              A single purchase gives you access to the app on all supported
+              platforms, so you can use it on multiple computers with different
+              operating systems.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "Does Unearthed Local have AI features?",
+        content: (
+          <>
+            <p className="">No</p>
+          </>
+        ),
+      },
+    ],
   },
 ];
 
 const FAQ = () => {
+  const [openSections, setOpenSections] = useState<string[]>([]);
   const [openItems, setOpenItems] = useState<string[]>([]);
 
-  const handleOpenChange = (item: string | string[]) => {
+  const handleSectionOpenChange = (section: string | string[]) => {
+    if (Array.isArray(section)) {
+      setOpenSections(section);
+    } else {
+      if (openSections.includes(section)) {
+        setOpenSections(openSections.filter((s) => s !== section));
+      } else {
+        setOpenSections([...openSections, section]);
+      }
+    }
+  };
+
+  const handleItemOpenChange = (item: string | string[]) => {
     if (Array.isArray(item)) {
       setOpenItems(item);
     } else {
@@ -212,91 +574,181 @@ const FAQ = () => {
       <h2 className="block w-full pb-8 text-center text-xl md:text-4xl uppercase font-black italic items-center text-alternate">
         FAQ
       </h2>
-      <Accordion
-        type="multiple"
-        className="w-full max-w-4xl mx-auto"
-        value={openItems}
-        onValueChange={handleOpenChange}
-      >
-        {faqData.map((item, index) => (
-          <AccordionItem
-            key={`faq-${index}`}
-            value={`item-${index}`}
-            className={cn(
-              "border-2",
-              "bg-card/50 backdrop-blur-md rounded-lg mb-4",
-              "transition-all duration-300",
-              "hover:shadow-lg hover:shadow-black/20",
-              "focus-within:ring-2 focus-within:ring-teal-500/50"
-            )}
-          >
-            <AccordionTrigger
-              className={cn(
-                "font-semibold text-alternate py-4 text-sm md:text-lg",
-                "hover:text-secondary transition-colors duration-200",
-                "data-[state=open]:text-secondary",
-                "px-4",
-                "w-full flex justify-between items-center",
-                "focus:outline-none focus:ring-2 focus:ring-teal-500/50 rounded-md"
-              )}
+      <div className="w-full max-w-4xl mx-auto space-y-6">
+        {faqSections.map((section, sectionIndex) => (
+          <div key={`section-${sectionIndex}`} className="space-y-4">
+            {/* Section Header */}
+            <Accordion
+              type="multiple"
+              className="w-full"
+              value={openSections}
+              onValueChange={handleSectionOpenChange}
             >
-              <motion.div
-                className=""
-                animate={{
-                  rotate: openItems.includes(`item-${index}`) ? 180 : 0,
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                {openItems.includes(`item-${index}`) ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-minus-circle text-gray-400"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M8 12h8" />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-plus-circle text-primary"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M8 12h8" />
-                    <path d="M12 8v8" />
-                  </svg>
+              <AccordionItem
+                value={`section-${sectionIndex}`}
+                className={cn(
+                  "border-2 border-primary/30",
+                  "bg-primary/10 backdrop-blur-md rounded-lg",
+                  "transition-all duration-300",
+                  "hover:shadow-lg hover:shadow-black/20"
                 )}
-              </motion.div>
-              <span className="flex-1 text-start ml-2">{item.title}</span>
-            </AccordionTrigger>
-            <AccordionContent
-              className={cn(
-                "py-4 px-4",
-                "border-t",
-                "bg-card/50",
-                "rounded-b-lg"
-              )}
-            >
-              {item.content}
-            </AccordionContent>
-          </AccordionItem>
+              >
+                <AccordionTrigger
+                  className={cn(
+                    "font-bold text-primary py-4 text-lg md:text-xl",
+                    "hover:text-secondary transition-colors duration-200",
+                    "data-[state=open]:text-secondary",
+                    "px-6",
+                    "w-full flex justify-between items-center",
+                    "focus:outline-none focus:ring-2 focus:ring-teal-500/50 rounded-md"
+                  )}
+                >
+                  <motion.div
+                    className=""
+                    animate={{
+                      rotate: openSections.includes(`section-${sectionIndex}`)
+                        ? 180
+                        : 0,
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {openSections.includes(`section-${sectionIndex}`) ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-chevron-up text-primary"
+                      >
+                        <path d="m18 15-6-6-6 6" />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-chevron-down text-primary"
+                      >
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    )}
+                  </motion.div>
+                  <span className="flex-1 text-start ml-3">
+                    {section.title}
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-4">
+                  {/* Questions within the section */}
+                  <Accordion
+                    type="multiple"
+                    className="w-full space-y-3 pt-4"
+                    value={openItems}
+                    onValueChange={handleItemOpenChange}
+                  >
+                    {section.questions.map((item, itemIndex) => (
+                      <AccordionItem
+                        key={`${sectionIndex}-${itemIndex}`}
+                        value={`${sectionIndex}-${itemIndex}`}
+                        className={cn(
+                          "border-2",
+                          "bg-card/50 backdrop-blur-md rounded-lg",
+                          "transition-all duration-300",
+                          "hover:shadow-lg hover:shadow-black/20",
+                          "focus-within:ring-2 focus-within:ring-teal-500/50"
+                        )}
+                      >
+                        <AccordionTrigger
+                          className={cn(
+                            "font-semibold text-alternate py-4 text-sm md:text-lg",
+                            "hover:text-secondary transition-colors duration-200",
+                            "data-[state=open]:text-secondary",
+                            "px-4",
+                            "w-full flex justify-between items-center",
+                            "focus:outline-none focus:ring-2 focus:ring-teal-500/50 rounded-md"
+                          )}
+                        >
+                          <motion.div
+                            className=""
+                            animate={{
+                              rotate: openItems.includes(
+                                `${sectionIndex}-${itemIndex}`
+                              )
+                                ? 180
+                                : 0,
+                            }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            {openItems.includes(
+                              `${sectionIndex}-${itemIndex}`
+                            ) ? (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="lucide lucide-minus-circle text-gray-400"
+                              >
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M8 12h8" />
+                              </svg>
+                            ) : (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="lucide lucide-plus-circle text-primary"
+                              >
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M8 12h8" />
+                                <path d="M12 8v8" />
+                              </svg>
+                            )}
+                          </motion.div>
+                          <span className="flex-1 text-start ml-2">
+                            {item.title}
+                          </span>
+                        </AccordionTrigger>
+                        <AccordionContent
+                          className={cn(
+                            "py-4 px-4",
+                            "border-t",
+                            "bg-card/50",
+                            "rounded-b-lg"
+                          )}
+                        >
+                          {item.content}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
         ))}
-      </Accordion>
+      </div>
     </div>
   );
 };

@@ -31,12 +31,10 @@ import PostHogClient from "@/app/posthog";
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 import { z } from "zod";
-import { profiles, selectProfileSchema } from "@/db/schema";
+import { profiles, purchases } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { generateUUID } from "@/lib/utils";
-
-type ProfileSelect = z.infer<typeof selectProfileSchema>;
 
 export async function POST(req: NextRequest) {
   const posthogClient = PostHogClient();
@@ -79,87 +77,135 @@ export async function POST(req: NextRequest) {
         if (session.payment_status === "paid") {
           const customerEmail = session.customer_details?.email;
           const userId = session.metadata?.userId;
+          const productName = session.metadata?.productName;
 
           if (!customerEmail) {
             throw new Error("No customer email found in session");
           }
-          if (!userId) {
-            throw new Error("No userId found in session metadata");
+
+          // Check if this is a local purchase (no userId required)
+          const isLocalPurchase =
+            productName === process.env.STRIPE_LOCAL_PRODUCT_NAME;
+
+          if (!userId && !isLocalPurchase) {
+            throw new Error(
+              "No userId found in session metadata for premium purchase"
+            );
           }
 
-          console.log(`Processing completed checkout for user ${userId}`);
-          const clerkUser = await client.users.getUser(userId);
-
-          posthogClient.capture({
-            distinctId: userId,
-            event: `${event.type}`,
-          });
-
-          try {
-            if (clerkUser) {
-              await client.users.updateUserMetadata(userId!, {
-                privateMetadata: {
-                  isPremium: true,
-                },
-              });
-            }
-
-            let profile: ProfileSelect;
-
-            const toSet = {
-              userId,
-              stripeSubscriptionId: session.subscription as string,
-              stripePriceId: session.metadata!.priceId as string,
-              stripeCustomerId: session.customer as string,
-              stripeCreatedTimestamp: session.created as number,
-              stripeExpireTimestamp: session.expires_at as number,
-              expiredAt: null,
-              lastWebhookError: null,
-            };
-
-            await db.transaction(async (tx) => {
-              // First try to update existing profile
-              const result = await tx
-                .update(profiles)
-                .set(toSet)
-                .where(eq(profiles.userId, userId))
-                .returning();
-
-              if (result.length > 0) {
-                profile = result[0];
-                console.log(`Updated existing profile for user ${userId}`);
-              } else {
-                // If no existing profile, create new one
-                const resultNew = await tx
-                  .insert(profiles)
-                  .values(toSet)
-                  .onConflictDoNothing()
-                  .returning();
-
-                if (resultNew.length > 0) {
-                  profile = resultNew[0];
-                  console.log(`Created new profile for user ${userId}`);
-                } else {
-                  throw new Error(
-                    `Failed to create or update profile for user ${userId}`
-                  );
-                }
-              }
-            });
-          } catch (error) {
-            console.error("Database operation failed:", error);
+          if (isLocalPurchase) {
+            // Handle local purchase - no user account required
+            console.log(
+              `Processing completed local checkout for email ${customerEmail}`
+            );
 
             posthogClient.capture({
-              distinctId: userId,
-              event: `stripe ERROR`,
+              distinctId: session.metadata?.distinctId || generateUUID(),
+              event: `${event.type}`,
               properties: {
-                message:
-                  error instanceof Error
-                    ? error.message
-                    : "Unknown error occurred",
+                productName,
+                customerEmail,
+                isLocalPurchase: true,
               },
             });
-            return new Response("Database operation failed", { status: 500 });
+
+            // Record the purchase in the database
+            try {
+              await db
+                .insert(purchases)
+                .values({
+                  version: parseInt(session.metadata?.version || "1"),
+                  productName: session.metadata?.productName || "",
+                  productId: session.metadata?.productId || "",
+                  priceId: session.metadata?.priceId || "",
+                  email: customerEmail,
+                  sessionId: session.id,
+                  distinctId: session.metadata?.distinctId || generateUUID(),
+                  status: session.payment_status || "unknown",
+                })
+                .onConflictDoNothing();
+
+              console.log(`Purchase recorded for ${customerEmail}`);
+            } catch (error) {
+              console.error("Failed to record purchase:", error);
+              // Don't throw here - the payment was successful even if we can't record it
+            }
+
+            // For local purchases, we don't need to update user profiles or Clerk metadata
+            // The purchase is complete and the user will receive their download link
+            console.log(`Local purchase completed for ${customerEmail}`);
+          } else {
+            // Handle premium subscription purchase - requires userId
+            console.log(`Processing completed checkout for user ${userId}`);
+            const clerkUser = await client.users.getUser(userId!);
+
+            posthogClient.capture({
+              distinctId: userId!,
+              event: `${event.type}`,
+            });
+
+            try {
+              if (clerkUser) {
+                await client.users.updateUserMetadata(userId!, {
+                  privateMetadata: {
+                    isPremium: true,
+                  },
+                });
+              }
+
+              const toSet = {
+                userId: userId!,
+                stripeSubscriptionId: session.subscription as string,
+                stripePriceId: session.metadata!.priceId as string,
+                stripeCustomerId: session.customer as string,
+                stripeCreatedTimestamp: session.created as number,
+                stripeExpireTimestamp: session.expires_at as number,
+                expiredAt: null,
+                lastWebhookError: null,
+              };
+
+              await db.transaction(async (tx) => {
+                // First try to update existing profile
+                const result = await tx
+                  .update(profiles)
+                  .set(toSet)
+                  .where(eq(profiles.userId, userId!))
+                  .returning();
+
+                if (result.length > 0) {
+                  console.log(`Updated existing profile for user ${userId}`);
+                } else {
+                  // If no existing profile, create new one
+                  const resultNew = await tx
+                    .insert(profiles)
+                    .values(toSet)
+                    .onConflictDoNothing()
+                    .returning();
+
+                  if (resultNew.length > 0) {
+                    console.log(`Created new profile for user ${userId}`);
+                  } else {
+                    throw new Error(
+                      `Failed to create or update profile for user ${userId}`
+                    );
+                  }
+                }
+              });
+            } catch (error) {
+              console.error("Database operation failed:", error);
+
+              posthogClient.capture({
+                distinctId: userId!,
+                event: `stripe ERROR`,
+                properties: {
+                  message:
+                    error instanceof Error
+                      ? error.message
+                      : "Unknown error occurred",
+                },
+              });
+              return new Response("Database operation failed", { status: 500 });
+            }
           }
         }
         break;

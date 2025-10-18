@@ -95,6 +95,7 @@ export function ProfileForm() {
   const [loadingDefaultValues, setLoadingDefaultValues] = useState(true);
   let isFetched = false;
   const [profileExists, setProfileExists] = useState(false);
+  const [userId, setUserId] = useState("");
 
   const [dialogState, setDialogState] = useState(
     Object.fromEntries(unearthedKeys.map((key) => [key.id, false]))
@@ -137,6 +138,7 @@ export function ProfileForm() {
 
         if (data.profile.userId) {
           setProfileExists(true);
+          setUserId(data.profile.userId);
         }
         console.log(data);
 
@@ -270,6 +272,14 @@ export function ProfileForm() {
       </div>
     );
   }
+
+  const copyUserId = () => {
+    const userIdAdjusted = userId.replace("user_", "");
+    navigator.clipboard.writeText(userIdAdjusted);
+    toast({
+      title: "User ID copied to clipboard",
+    });
+  };
 
   return (
     <div className="w-full">
@@ -415,6 +425,22 @@ export function ProfileForm() {
                       </p>
                     </div>
                   )}
+
+                  <div className="mt-4">
+                    <h3 className="w-full font-semibold">User ID</h3>
+                    <div className="mt-1 flex space-x-2 justify-between items-end">
+                      <Input disabled type="password" value={userId} />
+                      <div>
+                        <Button
+                          type="button"
+                          variant="brutal"
+                          onClick={copyUserId}
+                        >
+                          <Copy />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

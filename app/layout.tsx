@@ -27,7 +27,6 @@ import {
 } from "@clerk/nextjs";
 import { neobrutalism } from "@clerk/themes";
 import "./globals.css";
-import { Navbar } from "@/components/Navbar";
 import { Navbar as NavBarPremium } from "@/components/premium/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { ModeToggle } from "@/components/ModeToggle";
@@ -53,7 +52,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
   description:
-    "Free, open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalized insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
+    "Open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalised insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
   keywords: [
     "kindle highlights",
     "AI reading analysis",
@@ -79,7 +78,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
     description:
-      "Free, open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalized insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
+      "Open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalised insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
     type: "website",
     url: "https://unearthed.app",
     images: [
@@ -135,7 +134,7 @@ export default async function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <SignedIn>{isPremium ? <NavBarPremium /> : <Navbar />}</SignedIn>
+              <SignedIn>{isPremium && <NavBarPremium />}</SignedIn>
               <SignedOut>
                 <div className="z-50 fixed mt-2 ml-2 flex space-x-2">
                   <ModeToggle />

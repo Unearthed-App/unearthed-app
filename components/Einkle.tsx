@@ -14,27 +14,50 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Crimson_Pro } from "next/font/google";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { useInView } from "motion/react";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 const Einkle = () => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const [isHovered, setIsHovered] = useState(false);
+  const [isInViewActive, setIsInViewActive] = useState(false);
+  const ref = useRef(null);
+  const isInView = useInView(ref);
+
+  useEffect(() => {
+    if (isInView) {
+      const timer = setTimeout(() => {
+        setIsInViewActive(true);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    } else {
+      setIsInViewActive(false);
+    }
+  }, [isInView]);
 
   return (
     <div
+      ref={ref}
+      style={{
+        transition: "all 0.3s ease-out",
+        transform: isHovered ? "rotate(0deg)" : undefined,
+      }}
       className={cn(
         "relative flex justify-center items-center",
-        isDesktop ? "group" : ""
+        !isInViewActive ? "group" : "",
+        !isInViewActive && !isHovered && "animate-wobble"
       )}
+      onMouseEnter={() => !isInViewActive && setIsHovered(true)}
+      onMouseLeave={() => !isInViewActive && setIsHovered(false)}
     >
       <div
         className={cn(
           "z-10 absolute transition-all duration-1000 bg-gradient-to-r from-[#25b1a5] via-[#ff9af5] to-[#ef4444] rounded-[70px] blur-lg",
-          isDesktop
+          !isInViewActive
             ? "opacity-0 -inset-px group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-1000"
             : "opacity-100 -inset-1"
         )}
@@ -42,7 +65,7 @@ const Einkle = () => {
       <div
         className={cn(
           "z-20 transition-all duration-700",
-          isDesktop ? "hover:-translate-y-3" : "-translate-y-3",
+          !isInViewActive ? "hover:-translate-y-3" : "-translate-y-3",
           "shadow-inset-gradient rounded-[70px] p-12",
           "h-[900px] w-[600px]",
           "flex flex-col",
@@ -52,7 +75,7 @@ const Einkle = () => {
         <div
           className={cn(
             "z-10 absolute transition-all duration-1000 bg-gradient-to-r from-white/5 via-white/20 to-white/5 rounded-[20px] blur-lg",
-            isDesktop
+            !isInViewActive
               ? "opacity-0 -inset-px group-hover:opacity-100 group-hover:-inset-1"
               : "opacity-100 -inset-1"
           )}
@@ -62,7 +85,7 @@ const Einkle = () => {
           className={cn(
             "z-20 transition-all duration-700 flex-1 w-full rounded-[20px]",
             "shadow-inset-lg ring-[1px]",
-            isDesktop
+            !isInViewActive
               ? "bg-gradient-to-br from-neutral-600 to-neutral-800 group-hover:bg-gradient-to-br group-hover:from-white group-hover:to-neutral-100 ring-neutral-200/10 group-hover:ring-neutral-100/60"
               : "bg-gradient-to-br from-white to-neutral-100 ring-neutral-100/60"
           )}
@@ -71,18 +94,40 @@ const Einkle = () => {
             className={`${crimsonPro.className} p-4 text-black text-2xl leading-tight pb-12`}
           >
             <h1 className="text-6xl font-bold">UNEARTHED</h1>
-            <h1 className="text-sm mb-4">Scroll...</h1>
+            <h1 className="text-6xl font-bold">ONLINE</h1>
+            <h1 className="text-sm mb-4">Scroll me...</h1>
+            <div className="border-2 border-black border-dashed p-4 rounded-lg mb-4">
+              <h2 className="text-3xl font-semibold italic mb-2">
+                Something new ⚆_⚆
+              </h2>
+              <h2 className="text-xl font-semibold italic mb-2">
+                KOReader highlights can now be synced and merged with your
+                Kindle highlights!
+              </h2>
+              <h1 className="text-sm">
+                <a
+                  href="https://github.com/Unearthed-App/unearthed-koreader"
+                  className="hover:underline font-bold"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Check it out on GitHub
+                </a>{" "}
+                ...more info to come...
+              </h1>
+            </div>
             <p className=" mb-4">
-              Transform your Kindle highlights into daily revelations. Unearthed
-              analyses your reading history to surface forgotten insights,
-              detect blind spots, generate personalised reflection questions,
-              and deliver daily reflections to your favorite platforms.
+              Transform your Kindle/KOReader highlights into daily revelations.
+              Unearthed analyses your reading history to surface forgotten
+              insights, detect blind spots, generate personalised reflection
+              questions, and deliver daily reflections to your favorite
+              platforms.
             </p>
             <p className=" mb-4">
-              With automatic Kindle sync, instant global search, and seamless
-              integration with popular note-taking apps like Notion, Obsidian,
-              Supernotes, and Capacities, your past knowledge becomes a constant
-              stream of inspiration.
+              With automatic Kindle/KOReader sync, instant global search, and
+              seamless integration with popular note-taking apps like Notion,
+              Obsidian, Supernotes, and Capacities, your past knowledge becomes
+              a constant stream of inspiration.
             </p>
             <p className="mb-4 font-black italic uppercase text-4xl">
               NO AMAZON CREDENTIALS
@@ -104,15 +149,15 @@ const Einkle = () => {
                 4
               </div>
             </div>
-            <ul className="space-y-2 px-8">
+            <ul className="space-y-2 px-2">
               <li className="flex items-center gap-2">
                 <span className="font-bold text-3xl">1.</span>{" "}
-                <span className="font-bold">Sign up</span> - it&apos;s free
+                <span className="font-bold">Sign up</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="font-bold text-3xl">2.</span>{" "}
-                <span className="font-bold">Get browser extension</span>- for
-                auto-sync
+                <span className="font-bold">Install extension or plugin</span>-
+                for auto-sync
               </li>
               <li className="flex items-center gap-2">
                 <span className="font-bold text-3xl">3.</span>{" "}
@@ -124,9 +169,6 @@ const Einkle = () => {
                 <span className="font-bold">Connect note apps</span> - optional
               </li>
             </ul>
-            <p className="mt-12 text-sm">
-              Well I guess it&apos;s all optional...
-            </p>
           </div>
         </ScrollArea>
         <div className="text-center text-neutral-400 text-xs h-24 flex items-center justify-center">

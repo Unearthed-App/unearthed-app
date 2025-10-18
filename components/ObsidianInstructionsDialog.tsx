@@ -73,13 +73,11 @@ export function ObsidianInstructionsDialog({ isMenuItem = false }) {
             </DialogHeader>
             <ol className="list-none space-y-4 pl-2 my-4">
               {[
-                "Generate an API key on 'Unearthed.app' first, and save it somewhere temporarily",
+                "Unearthed Settings - Generate an API key, and save it somewhere temporarily",
+                "Unearthed Settings - Copy your User ID, and save it somewhere temporarily",
                 "Open Obsidian and go to the settings",
-                "Click on Community Plugins",
-                "Turn off Restricted mode (this is required for any Community Plugin)",
-                "Click 'Browse' and search for 'Unearthed'",
-                "Install and Enable 'Unearthed (Kindle Sync)'",
-                "Click on 'Options' and fill out the details. Most importantly, paste in the API key that you generated into the 'Unearthed API key' field.",
+                "Install and enable the Unearthed Community Plugin",
+                "Click on 'Options' and fill out the details, including the above saved data",
                 "Test if it's working by pressing the 'Sync' buttons for the 'Manual sync', and 'Manual daily reflection sync'",
               ].map((text, index) => (
                 <li key={index} className="flex items-start gap-4">
@@ -130,14 +128,11 @@ export function ObsidianInstructionsDialog({ isMenuItem = false }) {
         <ScrollArea className="w-full">
           <ol className="list-none space-y-4 pl-2">
             {[
-              "Generate an API key on 'Unearthed.app' first, and save it somewhere temporarily",
+              "Unearthed Settings - Generate an API key, and save it somewhere temporarily",
+              "Unearthed Settings - Copy your User ID, and save it somewhere temporarily",
               "Open Obsidian and go to the settings",
-              "Click on Community Plugins",
-              "Turn off Restricted mode (this is required for any Community Plugin)",
-              "Click 'Browse' and search for 'Unearthed'",
-              "Install 'Unearthed (Kindle Sync)'",
-              "Enable 'Unearthed (Kindle Sync)'",
-              "Click on 'Options' and fill out the details. Most importantly, paste in the API key that you generated into the 'Unearthed API key' field.",
+              "Install and enable the Unearthed Community Plugin",
+              "Click on 'Options' and fill out the details, including the above saved data",
               "Test if it's working by pressing the 'Sync' buttons for the 'Manual sync', and 'Manual daily reflection sync'",
             ].map((text, index) => (
               <li key={index} className="flex items-start gap-4">

@@ -55,7 +55,7 @@ export function ProfileDialog() {
             <Settings />
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[500px]">
           <ScrollArea>
             <DialogHeader className="mb-2">
               <DialogTitle>Settings</DialogTitle>

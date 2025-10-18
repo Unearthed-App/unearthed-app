@@ -20,14 +20,12 @@
 import { motion } from "motion/react";
 import { Crimson_Pro } from "next/font/google";
 import { Separator } from "./ui/separator";
-import { HeadingBlur } from "./HeadingBlur";
-import { ArrowBigDownDash } from "lucide-react";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 const cardContents = [
   {
     title:
-      '"I\'m sick of <span class="text-secondary italic">manually</span> backing up my kindle highlights"',
+      '"I\'m sick of <span class="text-secondary italic">manually</span> backing up my Kindle and KOReader highlights"',
     description:
       'Unearthed will <span class="text-secondary font-semibold">automatically</span> download and sync your data for you.',
   },
