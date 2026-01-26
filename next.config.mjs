@@ -14,8 +14,28 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "2mb",
+    },
+  },
   async headers() {
     return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+        has: [
+          {
+            type: "header",
+            key: "x-middleware-prefetch",
+          },
+        ],
+      },
       {
         source: "/api/public/obs-obsidian-get-tags",
         headers: [

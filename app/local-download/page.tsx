@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
+export const dynamic = 'force-dynamic';
+
 // Client page that calls a server-side public API to fetch available downloads
 export default function UnearthedLocalDownload() {
   type LocalVersion = {

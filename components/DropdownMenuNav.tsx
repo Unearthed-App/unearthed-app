@@ -164,14 +164,6 @@ export function DropdownMenuNav() {
               </SignInButton>
             </DropdownMenuGroup>
             <DropdownMenuGroup>
-              <SignUpButton>
-                <DropdownMenuItem>
-                  <UserPlus2 className="mr-2 h-4 w-4" />
-                  <span>Sign Up</span>
-                </DropdownMenuItem>
-              </SignUpButton>
-            </DropdownMenuGroup>
-            <DropdownMenuGroup>
               <Link href="/local">
                 <DropdownMenuItem className="border-secondary bg-background dark:bg-primary dark:text-white text-primary-background hover:bg-primary/90 font-semibold">
                   <Download className="mr-2 h-4 w-4" />
@@ -180,12 +172,12 @@ export function DropdownMenuNav() {
               </Link>
             </DropdownMenuGroup>
             <DropdownMenuGroup>
-              <Link href="/dashboard/get-premium">
+              <SignUpButton forceRedirectUrl="/dashboard/get-premium">
                 <DropdownMenuItem className="bg-secondary dark:bg-white dark:text-black text-primary-foreground hover:bg-primary/90 font-semibold">
                   <Crown className="mr-2 h-4 w-4" />
                   <span>Get Unearthed Online</span>
                 </DropdownMenuItem>
-              </Link>
+              </SignUpButton>
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />

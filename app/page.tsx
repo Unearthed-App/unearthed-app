@@ -15,88 +15,56 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+"use client";
 
+import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
-
 import { Button } from "@/components/ui/button";
-import { Crown, LogIn } from "lucide-react";
-
 import Link from "next/link";
-import { auth, clerkClient } from "@clerk/nextjs/server";
 import { getBookTitles } from "@/server/actions";
 import { OnboardingCard } from "@/components/OnboardingCard";
-import { Metadata } from "next";
 import FAQ from "@/components/FAQ";
 import { LoggedInHome } from "@/components/LoggedInHome";
-import { DualOptionSection } from "@/components/DualOptionSection";
+import { HomeHero } from "@/components/HomeHero";
+import { HomeFeatures } from "@/components/HomeFeatures";
+import { HomeDualOptions } from "@/components/HomeDualOptions";
+import { useQuery } from "@tanstack/react-query";
+import { AnimatedLoader } from "@/components/AnimatedLoader";
+import { useState, useEffect } from "react";
 
-export const metadata: Metadata = {
-  title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
-  description:
-    "Open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalised insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
-  keywords: [
-    "kindle highlights",
-    "AI reading analysis",
-    "reading insights",
-    "book analytics",
-    "digital notes",
-    "knowledge management",
-    "personal library",
-    "daily reflections",
-    "open source",
-    "productivity tool",
-    "notion integration",
-    "kindle to notion",
-    "kindle to obsidian",
-    "kindle to capacities",
-    "capacities integration",
-    "kindle sync",
-    "reading patterns",
-    "book recommendations",
-    "readwise alternative",
-    "readwise",
-  ],
-  openGraph: {
-    title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
-    description:
-      "Open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalised insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
-    type: "website",
-    url: "https://unearthed.app",
-    images: [
-      {
-        url: "https://unearthed.app/images/banner.webp",
-        width: 1200,
-        height: 630,
-        alt: "Unearthed app interface showing AI-powered reading insights and Kindle integration",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Unearthed - AI-Powered Reading Insights",
-    description:
-      "Transform your reading with AI analysis and seamless integration",
-    images: ["https://unearthed.app/images/banner.webp"],
-  },
-};
+export default function App() {
+  const { user, isLoaded } = useUser();
+  const [isPremium, setIsPremium] = useState(false);
 
-export default async function App() {
-  const { userId }: { userId: string | null } = await auth();
+  const { data: books = [], isLoading } = useQuery({
+    queryKey: ["bookTitles"],
+    queryFn: getBookTitles,
+    enabled: !!user,
+  });
 
-  let isPremium = false;
-  try {
-    if (userId) {
-      const client = await clerkClient();
-      const user = await client.users.getUser(userId);
-      isPremium = user.privateMetadata.isPremium as boolean;
+  const { data: premiumStatus } = useQuery({
+    queryKey: ["premiumStatus"],
+    queryFn: async () => {
+      const response = await fetch('/api/auth/premium-status');
+      return response.json();
+    },
+    enabled: !!user,
+  });
+
+  useEffect(() => {
+    if (premiumStatus) {
+      setIsPremium(premiumStatus.isPremium || false);
     }
-  } catch (error) {
-    isPremium = false;
-  }
+  }, [premiumStatus]);
 
-  const books = userId ? await getBookTitles() : [];
+  if (!isLoaded || (user && isLoading)) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <AnimatedLoader />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -136,41 +104,10 @@ export default async function App() {
         )}
       </SignedIn>
       <SignedOut>
-        <main className="w-full flex flex-wrap items-center justify-center">
-          <header className="w-full pt-24 flex flex-wrap justify-center text-center">
-            <div className="w-full">
-              <h1 className="px-2">
-                <span
-                  className={`
-                      text-primary
-                      py-4 leading-tight
-                      motion-blur-in-2xl motion-delay-300 motion-duration-500 
-                      font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-8xl
-                      [text-shadow:8px_8px_0_#14524d,1px_1px_0_#14524d,2px_2px_0_#14524d,3px_3px_0_#14524d,4px_4px_0_#14524d,5px_5px_0_#14524d,6px_6px_0_#14524d,7px_7px_0_#14524d]
-                    `}
-                >
-                  PAST INSIGHTS
-                </span>
-                <br />
-                <span
-                  className={`
-                      text-red-500
-                      py-4 leading-tight
-                      motion-blur-in-2xl motion-delay-300 motion-duration-500 
-                      font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-8xl
-                      [text-shadow:8px_8px_0_#74342D,1px_1px_0_#74342D,2px_2px_0_#74342D,3px_3px_0_#74342D,4px_4px_0_#74342D,5px_5px_0_#74342D,6px_6px_0_#74342D,7px_7px_0_#74342D]
-                    `}
-                >
-                  NEW REVELATIONS
-                </span>
-              </h1>
-            </div>
-          </header>
-          
-          <div className="w-full">
-            <DualOptionSection />
-          </div>
-
+        <main className="w-full">
+          <HomeHero />
+          <HomeFeatures />
+          <HomeDualOptions />
           <FAQ />
         </main>
       </SignedOut>

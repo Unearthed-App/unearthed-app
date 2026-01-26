@@ -20,6 +20,8 @@
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
+
+export const dynamic = "force-dynamic";
 import { useCallback, useState } from "react";
 import {
   ignoreAllSources,

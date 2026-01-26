@@ -32,13 +32,19 @@ import { FeaturePremiumCard } from "@/components/FeaturePremiumCard";
 import { Metadata } from "next";
 import FeatureSection from "@/components/FeatureSection";
 
+export const dynamic = 'force-static';
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
-  title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
+  title: "Unearthed Online - AI-Powered Reading Insights with Cloud Sync",
   description:
-    "Open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalised insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
+    "Cloud-based open-source reading platform. Automatically sync Kindle and KOReader highlights. Discover forgotten insights, detect blind spots, chat with books, and export to Notion, Obsidian, Capacities, and Supernotes.",
   keywords: [
-    "kindle highlights",
+    "readwise alternative",
+    "kindle highlights cloud sync",
     "AI reading analysis",
+    "chat with books",
+    "blind spot detection",
     "reading insights",
     "book analytics",
     "digital notes",
@@ -48,41 +54,51 @@ export const metadata: Metadata = {
     "open source",
     "productivity tool",
     "notion integration",
+    "obsidian integration",
     "kindle to notion",
     "kindle to obsidian",
     "kindle to capacities",
     "capacities integration",
+    "supernotes integration",
     "kindle sync",
+    "KOReader sync",
+    "KOReader highlights",
     "reading patterns",
     "book recommendations",
-    "readwise alternative",
-    "readwise",
+    "note-taking apps",
+    "kindle notebook sync",
+    "past insights new revelations",
+    "connected knowledge",
+    "reading history analysis",
   ],
   openGraph: {
-    title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
+    title: "Unearthed Online - AI-Powered Reading Insights with Cloud Sync",
     description:
-      "Open-source tool with AI-powered analysis of your Kindle highlights, notes, and reading patterns. Get personalised insights, daily reflections, and seamless integration with Notion, Obsidian, and Capacities.",
+      "Cloud-based open-source reading platform. Automatically sync Kindle and KOReader highlights. Discover forgotten insights, detect blind spots, and export to Notion, Obsidian, Capacities, and Supernotes.",
     type: "website",
-    url: "https://unearthed.app",
+    url: "https://unearthed.app/online",
+    siteName: "Unearthed",
+    locale: "en_US",
     images: [
       {
         url: "https://unearthed.app/images/banner.webp",
         width: 1200,
         height: 630,
-        alt: "Unearthed app interface showing AI-powered reading insights and Kindle integration",
+        alt: "Unearthed Online - AI-powered reading insights with cloud sync",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Unearthed - AI-Powered Reading Insights",
+    site: "@unearthedapp",
+    title: "Unearthed Online - AI-Powered Reading Insights",
     description:
-      "Transform your reading with AI analysis and seamless integration",
+      "Cloud-based platform that transforms your Kindle highlights into connected knowledge with AI analysis.",
     images: ["https://unearthed.app/images/banner.webp"],
   },
 };
 
-export default async function UnearthedOnline() {
+export default function UnearthedOnline() {
   return (
     <>
       <main className="w-full flex flex-wrap items-center justify-center">

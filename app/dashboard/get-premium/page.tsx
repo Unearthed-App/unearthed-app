@@ -15,6 +15,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+export const dynamic = 'force-dynamic';
+
 import { Checkout } from "@/components/Checkout";
 import { FeaturePremiumCard } from "@/components/FeaturePremiumCard";
 import { NonPremiumNavigation } from "@/components/NonPremiumNavigation";

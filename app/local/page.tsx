@@ -19,15 +19,23 @@ import { Metadata } from "next";
 import React from "react";
 import { CheckoutLocal } from "@/components/CheckoutLocal";
 import { NonPremiumNavigation } from "@/components/NonPremiumNavigation";
+import { LocalScreenshots } from "./LocalScreenshots";
+
+export const dynamic = 'force-static';
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Unearthed Local – Privacy-First Kindle Sync to Obsidian",
+  title:
+    "Unearthed Local – Privacy-First Readwise Alternative | One-Time Purchase",
   description:
-    "One-time purchase. Local-only Kindle book & highlight syncing to Obsidian. Own your data forever with complete privacy and no subscriptions.",
+    "Open-source privacy-first Readwise alternative. One-time purchase desktop app for local-only Kindle and KOReader highlight syncing to Obsidian. No subscriptions, no cloud, complete data ownership. Own your reading data forever.",
   keywords: [
+    "readwise alternative",
+    "privacy-first readwise",
+    "local readwise alternative",
+    "one-time purchase readwise",
     "kindle to obsidian",
     "local kindle sync",
-    "readwise alternative",
     "offline kindle highlights",
     "brutalist software",
     "one time purchase",
@@ -39,14 +47,19 @@ export const metadata: Metadata = {
     "data ownership",
     "no subscription",
     "KOReader sync",
+    "kindle highlights local",
+    "readwise without subscription",
+    "readwise desktop app",
+    "open source readwise",
   ],
   alternates: {
     canonical: "https://unearthed.app/local",
   },
   openGraph: {
-    title: "Unearthed Local – Privacy-First Kindle Sync to Obsidian",
+    title:
+      "Unearthed Local - Privacy-First Readwise Alternative | One-Time Purchase",
     description:
-      "One-time purchase. Local-only Kindle book & highlight syncing to Obsidian. Own your data forever with complete privacy and no subscriptions.",
+      "Open-source privacy-first Readwise alternative. One-time purchase desktop app for local-only Kindle and KOReader highlight syncing to Obsidian. No subscriptions, complete data ownership.",
     type: "website",
     url: "https://unearthed.app/local",
     siteName: "Unearthed",
@@ -63,9 +76,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     site: "@unearthedapp",
-    title: "Unearthed Local – Privacy-First Kindle Sync",
+    title: "Unearthed Local – Privacy-First Readwise Alternative",
     description:
-      "One-time purchase desktop app for local Kindle sync to Obsidian",
+      "One-time purchase privacy-first Readwise alternative. Local-only Kindle sync to Obsidian with complete data ownership.",
     images: ["https://unearthed.app/images/banner.webp"],
   },
 };
@@ -76,7 +89,6 @@ const UnearthedLocal = () => {
       <div className="min-h-screen p-4 pt-16 md:pt-24">
         <NonPremiumNavigation currentPage="local" />
         <div className="font-mono flex flex-col items-center justify-center">
-          {/* Navigation */}
 
           <header className="w-full text-center border-b-4 border-black pb-4 mb-8">
             <h1 className="text-5xl font-extrabold uppercase">
@@ -88,7 +100,9 @@ const UnearthedLocal = () => {
             </p>
           </header>
 
-          <main className="max-w-4xl w-full border-4 border-black p-8 shadow-[8px_8px_0px_rgba(0,0,0,1)]">
+          <LocalScreenshots />
+
+          <main className="max-w-4xl w-full rounded-xl border-4 border-black p-8 shadow-[8px_8px_0px_rgba(0,0,0,1)]">
             <section className="mb-8">
               <h2 className="text-3xl font-bold underline mb-4">
                 Full Local Control.

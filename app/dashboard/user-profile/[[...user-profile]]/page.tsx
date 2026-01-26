@@ -17,7 +17,6 @@
 
 "use client";
 
-import { getIsPremium } from "@/lib/utils";
 import { UserProfile } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 
@@ -32,13 +31,23 @@ export default function UserProfilePage() {
   const { isLoaded, userId, sessionId, getToken } = useAuth();
 
   useEffect(() => {
-    const fetchPremiumStatus = async () => {
-      const isPremium = await getIsPremium();
-      setIsPremium(isPremium);
-    };
+    if (isLoaded && userId) {
+      const fetchPremiumStatus = async () => {
+        try {
+          const response = await fetch('/api/auth/premium-status');
+          const data = await response.json();
+          setIsPremium(data.isPremium || false);
+        } catch (error) {
+          console.error('Error fetching premium status:', error);
+          setIsPremium(false);
+        }
+      };
 
-    fetchPremiumStatus();
-  }, []);
+      fetchPremiumStatus();
+    } else if (isLoaded && !userId) {
+      setIsPremium(false);
+    }
+  }, [isLoaded, userId]);
 
   const SubscriptionPage = () => {
     if (isPremium) {

@@ -166,3 +166,25 @@
 .radial-gradient-custom {
   background-image: radial-gradient(at 30% 30%, var(--tw-gradient-from) 0%, var(--tw-gradient-to) 75%);
 }
+
+@layer utilities {
+  .border-3 {
+    border-width: 3px;
+  }
+  
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+}

@@ -15,11 +15,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+"use client";
+
 import {
   ProductComparisonCard,
   ProductComparisonCardProps,
 } from "./ProductComparisonCard";
 import { Crimson_Pro } from "next/font/google";
+import { motion } from "motion/react";
 
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
@@ -38,6 +41,7 @@ const productOptions: Omit<ProductComparisonCardProps, "className">[] = [
       description: "Own it forever, no subscriptions",
     },
     features: [
+      "Obsidian syncing only (so far)",
       "Auto sync - no need to plug in your device",
       "Complete privacy - your data stays on your device",
       "Desktop app for Windows, Mac, and Linux (soon)",
@@ -64,6 +68,7 @@ const productOptions: Omit<ProductComparisonCardProps, "className">[] = [
       description: "Cancel anytime",
     },
     features: [
+      "Yes, it's also private!",
       "Sync across all your devices seamlessly",
       "AI powered blind spot detection and insights (opt-in)",
       "AI chat with each book individually (opt-in)",
@@ -89,38 +94,68 @@ const productOptions: Omit<ProductComparisonCardProps, "className">[] = [
 export function DualOptionSection({ className = "" }: DualOptionSectionProps) {
   return (
     <section
-      className={`py-12 md:py-16 lg:py-20 ${className}`}
+      className={`relative ${className}`}
       aria-labelledby="dual-options-heading"
     >
       <div className="container mx-auto px-4 max-w-7xl">
-        {/* Section Header */}
-        <header className="text-center mb-12 md:mb-16">
+        <motion.header 
+          className="text-center mb-16 md:mb-20"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
           <h2
             id="dual-options-heading"
-            className={`${crimsonPro.className} font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 leading-tight`}
+            className={`${crimsonPro.className} font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent`}
           >
             Choose Your Unearthed Experience
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Unearthed now comes in two varieties. Choose the option that best
-            fits your needs.
+          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light tracking-wide">
+            Unearthed now comes in two varieties. Choose the option that best fits your needs.
           </p>
-        </header>
+        </motion.header>
 
-        {/* Product Comparison Cards */}
-        <div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-12 md:mb-16"
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10"
           role="region"
           aria-label="Product comparison options"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.15,
+                delayChildren: 0.2,
+              },
+            },
+          }}
         >
-          {productOptions.map((product) => (
-            <ProductComparisonCard
+          {productOptions.map((product, index) => (
+            <motion.div
               key={product.colorScheme}
-              {...product}
-              className="h-full"
-            />
+              variants={{
+                hidden: { opacity: 0, y: 40, scale: 0.95 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: {
+                    duration: 0.7,
+                    ease: [0.16, 1, 0.3, 1],
+                  },
+                },
+              }}
+              whileHover={{ y: -8 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ProductComparisonCard {...product} className="h-full" />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

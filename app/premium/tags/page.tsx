@@ -17,8 +17,10 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Loader2, Book, Quote, Tag, Trash, Unlink } from "lucide-react";
+
+export const dynamic = 'force-dynamic';
 import {
   getAllTags,
   deleteAllTags,

@@ -25,11 +25,12 @@ import Link from "next/link";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { usePathname } from "next/navigation";
 import { SearchDialog } from "@/components/premium/SearchDialog";
+import dynamic from "next/dynamic";
 
 import { Crimson_Pro } from "next/font/google";
 import { QuoteFormDialog } from "./QuoteForm/QuoteFormDialog";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
-import { ConnectionsGraph } from "@/components/premium/ConnectionsGraph";
+const ConnectionsGraph = dynamic(() => import("@/components/premium/ConnectionsGraph").then(mod => ({ default: mod.ConnectionsGraph })), { ssr: false });
 
 export function Navbar() {
   const isDesktop = useMediaQuery("(min-width: 768px)");

@@ -23,7 +23,6 @@ import Link from "next/link";
 import { SignOutButton, SignedIn } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { getIsPremium } from "@/lib/utils";
 
 interface NonPremiumNavigationProps {
   className?: string;
@@ -42,9 +41,11 @@ export function NonPremiumNavigation({
   useEffect(() => {
     const fetchPremiumStatus = async () => {
       try {
-        const premiumStatus = await getIsPremium();
-        setIsPremium(premiumStatus);
+        const response = await fetch('/api/auth/premium-status');
+        const data = await response.json();
+        setIsPremium(data.isPremium || false);
       } catch (error) {
+        console.error('Error fetching premium status:', error);
         setIsPremium(false);
       } finally {
         setIsLoading(false);

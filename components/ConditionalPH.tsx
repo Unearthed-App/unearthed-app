@@ -21,14 +21,14 @@ import { PHProvider } from "@/app/providers";
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { checkCookieConsent } from "./CookieConsent";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useUser } from "@clerk/nextjs";
 
 interface ConditionalPHProps {
   children: React.ReactNode;
 }
 
-const ConditionalPH: React.FC<ConditionalPHProps> = ({ children }) => {
+function ConditionalPHInner({ children }: ConditionalPHProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const consentGiven = checkCookieConsent();
@@ -54,6 +54,14 @@ const ConditionalPH: React.FC<ConditionalPHProps> = ({ children }) => {
   }, [user, pathname, searchParams, consentGiven]);
 
   return consentGiven ? <PHProvider>{children}</PHProvider> : <>{children}</>;
+}
+
+const ConditionalPH: React.FC<ConditionalPHProps> = ({ children }) => {
+  return (
+    <Suspense fallback={<>{children}</>}>
+      <ConditionalPHInner>{children}</ConditionalPHInner>
+    </Suspense>
+  );
 };
 
 export default ConditionalPH;

@@ -15,6 +15,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+export const dynamic = 'force-dynamic';
+
 import { db } from "@/db";
 import { purchases, unearthedLocalVersions } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -101,7 +103,7 @@ export default async function UnearthedLocalSuccess({
         <main className="p-6 pt-24">
           <h1 className="text-2xl font-bold mb-4">Payment not completed.</h1>
           <p>
-            Please email contact@unearthed.com if you believe this is an error.
+            Please email contact@unearthed.app if you believe this is an error.
           </p>
         </main>
       );
@@ -209,10 +211,10 @@ export default async function UnearthedLocalSuccess({
               <footer className="mt-6 text-xs font-mono text-center px-2">
                 If your download doesn’t work, email{" "}
                 <a
-                  href="mailto:contact@unearthed.com"
+                  href="mailto:contact@unearthed.app"
                   className="underline decoration-2 decoration-black dark:decoration-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
                 >
-                  contact@unearthed.com
+                  contact@unearthed.app
                 </a>{" "}
                 from the same email you used for your purchase.
               </footer>
@@ -224,7 +226,7 @@ export default async function UnearthedLocalSuccess({
               bbbb Something went wrong.
             </h1>
             <p>
-              Please email contact@unearthed.com if you believe this is an
+              Please email contact@unearthed.app if you believe this is an
               error.
             </p>
           </main>

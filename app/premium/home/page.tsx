@@ -15,14 +15,29 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+"use client";
+
 import { DailyQuoteCard } from "@/components/premium/DailyQuoteCard";
 import { OnboardingCard } from "@/components/OnboardingCard";
 import { getBookTitles } from "@/server/actions";
 import { HeadingBlur } from "@/components/HeadingBlur";
 import { BlindSpotsSection } from "@/components/BlindSpotsSection";
+import { useQuery } from "@tanstack/react-query";
+import { AnimatedLoader } from "@/components/AnimatedLoader";
 
-export default async function Home() {
-  const books = await getBookTitles();
+export default function Home() {
+  const { data: books = [], isLoading } = useQuery({
+    queryKey: ["bookTitles"],
+    queryFn: getBookTitles,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="pt-32 flex items-center justify-center">
+        <AnimatedLoader />
+      </div>
+    );
+  }
 
   return (
     <div className="pt-32 p-4">

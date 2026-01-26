@@ -18,12 +18,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Crown, LogIn, PlayCircle } from "lucide-react";
-import { TextEffect } from "./ui/text-effect";
-import Link from "next/link";
+import { Crown } from "lucide-react";
 import Image from "next/image";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import Einkle from "./Einkle";
+import { SignUpButton } from "@clerk/nextjs";
+
 
 export const HomeHeader = () => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -40,11 +40,7 @@ export const HomeHeader = () => {
         aria-label="Product options"
       >
         <div className="grid grid-cols-1 mt-8 max-w-[630px]">
-          <Link
-            href="/premium/books"
-            className="w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 rounded-md"
-            aria-label="Learn about Unearthed Online - Full-featured cloud experience"
-          >
+          <SignUpButton forceRedirectUrl="/dashboard/get-premium">
             <Button
               variant="brutalprimary"
               className="w-full mt-2 flex px-8 sm:px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms] min-h-[56px] touch-manipulation"
@@ -55,7 +51,7 @@ export const HomeHeader = () => {
                 Get Unearthed Online
               </span>
             </Button>
-          </Link>
+          </SignUpButton>
         </div>
       </nav>
 

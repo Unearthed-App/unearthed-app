@@ -25,6 +25,9 @@ import {
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { Crimson_Pro } from "next/font/google";
+
+const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 const faqSections = [
   {
@@ -50,7 +53,7 @@ const faqSections = [
           <>
             <p className="">
               There is no longer a free tier. However the Unearthed Online
-              codebase is completely Open Source. This includes the we app,
+              codebase is completely Open Source. This includes the web app,
               browser extension, Obsidian plugin, and KOReader plugin. So feel
               free to host and run it yourself if you need to.
             </p>
@@ -570,14 +573,38 @@ const FAQ = () => {
   };
 
   return (
-    <div className="w-full bg-background px-2 md:px-8 pt-8 pb-24">
-      <h2 className="block w-full pb-8 text-center text-xl md:text-4xl uppercase font-black italic items-center text-alternate">
-        FAQ
-      </h2>
-      <div className="w-full max-w-4xl mx-auto space-y-6">
+    <div className="w-full bg-background px-2 md:px-8 pt-8 pb-24 relative overflow-hidden">
+      <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-red-500/10 to-transparent rounded-full blur-3xl opacity-50" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-tl from-primary/10 to-transparent rounded-full blur-3xl opacity-50" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="text-center mb-12"
+      >
+        <h2
+          className={`${crimsonPro.className} block w-full pb-4 text-center text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-br from-red-500 via-rose-500 to-red-600 bg-clip-text text-transparent`}
+        >
+          Frequently Asked Questions
+        </h2>
+      </motion.div>
+
+      <div className="w-full max-w-5xl mx-auto space-y-6 relative z-10">
         {faqSections.map((section, sectionIndex) => (
-          <div key={`section-${sectionIndex}`} className="space-y-4">
-            {/* Section Header */}
+          <motion.div
+            key={`section-${sectionIndex}`}
+            className="space-y-4"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{
+              duration: 0.6,
+              delay: sectionIndex * 0.1,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+          >
             <Accordion
               type="multiple"
               className="w-full"
@@ -587,20 +614,22 @@ const FAQ = () => {
               <AccordionItem
                 value={`section-${sectionIndex}`}
                 className={cn(
-                  "border-2 border-primary/30",
-                  "bg-primary/10 backdrop-blur-md rounded-lg",
+                  "border-3 border-black",
+                  "bg-gradient-to-br from-card via-card to-primary/5 backdrop-blur-md rounded-xl",
                   "transition-all duration-300",
-                  "hover:shadow-lg hover:shadow-black/20"
+                  "shadow-[6px_6px_0px_rgba(0,0,0,1)]",
+                  "hover:shadow-[10px_10px_0px_rgba(0,0,0,1)]",
+                  "hover:-translate-y-1"
                 )}
               >
                 <AccordionTrigger
                   className={cn(
-                    "font-bold text-primary py-4 text-lg md:text-xl",
-                    "hover:text-secondary transition-colors duration-200",
-                    "data-[state=open]:text-secondary",
-                    "px-6",
+                    "font-black text-primary py-5 text-lg md:text-2xl",
+                    "hover:text-red-500 transition-colors duration-200",
+                    "data-[state=open]:text-red-500",
+                    "px-6 md:px-8",
                     "w-full flex justify-between items-center",
-                    "focus:outline-none focus:ring-2 focus:ring-teal-500/50 rounded-md"
+                    "focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-xl"
                   )}
                 >
                   <motion.div
@@ -610,7 +639,7 @@ const FAQ = () => {
                         ? 180
                         : 0,
                     }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                   >
                     {openSections.includes(`section-${sectionIndex}`) ? (
                       <svg
@@ -620,10 +649,10 @@ const FAQ = () => {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        strokeWidth="2"
+                        strokeWidth="3"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="lucide lucide-chevron-up text-primary"
+                        className="lucide lucide-chevron-up text-red-500"
                       >
                         <path d="m18 15-6-6-6 6" />
                       </svg>
@@ -635,7 +664,7 @@ const FAQ = () => {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        strokeWidth="2"
+                        strokeWidth="3"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         className="lucide lucide-chevron-down text-primary"
@@ -648,105 +677,119 @@ const FAQ = () => {
                     {section.title}
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4">
-                  {/* Questions within the section */}
+                <AccordionContent className="px-6 md:px-8 pb-6">
                   <Accordion
                     type="multiple"
-                    className="w-full space-y-3 pt-4"
+                    className="w-full space-y-4 pt-4"
                     value={openItems}
                     onValueChange={handleItemOpenChange}
                   >
                     {section.questions.map((item, itemIndex) => (
-                      <AccordionItem
+                      <motion.div
                         key={`${sectionIndex}-${itemIndex}`}
-                        value={`${sectionIndex}-${itemIndex}`}
-                        className={cn(
-                          "border-2",
-                          "bg-card/50 backdrop-blur-md rounded-lg",
-                          "transition-all duration-300",
-                          "hover:shadow-lg hover:shadow-black/20",
-                          "focus-within:ring-2 focus-within:ring-teal-500/50"
-                        )}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{
+                          duration: 0.4,
+                          delay: itemIndex * 0.05,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
                       >
-                        <AccordionTrigger
+                        <AccordionItem
+                          value={`${sectionIndex}-${itemIndex}`}
                           className={cn(
-                            "font-semibold text-alternate py-4 text-sm md:text-lg",
-                            "hover:text-secondary transition-colors duration-200",
-                            "data-[state=open]:text-secondary",
-                            "px-4",
-                            "w-full flex justify-between items-center",
-                            "focus:outline-none focus:ring-2 focus:ring-teal-500/50 rounded-md"
+                            "border-2 border-black",
+                            "bg-background/80 backdrop-blur-sm rounded-lg",
+                            "transition-all duration-300",
+                            "shadow-[3px_3px_0px_rgba(0,0,0,1)]",
+                            "hover:shadow-[5px_5px_0px_rgba(0,0,0,1)]",
+                            "hover:-translate-y-0.5",
+                            "focus-within:ring-2 focus-within:ring-primary/50"
                           )}
                         >
-                          <motion.div
-                            className=""
-                            animate={{
-                              rotate: openItems.includes(
-                                `${sectionIndex}-${itemIndex}`
-                              )
-                                ? 180
-                                : 0,
-                            }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            {openItems.includes(
-                              `${sectionIndex}-${itemIndex}`
-                            ) ? (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="lucide lucide-minus-circle text-gray-400"
-                              >
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M8 12h8" />
-                              </svg>
-                            ) : (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="lucide lucide-plus-circle text-primary"
-                              >
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M8 12h8" />
-                                <path d="M12 8v8" />
-                              </svg>
+                          <AccordionTrigger
+                            className={cn(
+                              "font-bold text-foreground py-4 text-sm md:text-base",
+                              "hover:text-red-500 transition-colors duration-200",
+                              "data-[state=open]:text-red-500",
+                              "px-4 md:px-5",
+                              "w-full flex justify-between items-center",
+                              "focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-lg"
                             )}
-                          </motion.div>
-                          <span className="flex-1 text-start ml-2">
-                            {item.title}
-                          </span>
-                        </AccordionTrigger>
-                        <AccordionContent
-                          className={cn(
-                            "py-4 px-4",
-                            "border-t",
-                            "bg-card/50",
-                            "rounded-b-lg"
-                          )}
-                        >
-                          {item.content}
-                        </AccordionContent>
-                      </AccordionItem>
+                          >
+                            <motion.div
+                              className=""
+                              animate={{
+                                rotate: openItems.includes(
+                                  `${sectionIndex}-${itemIndex}`
+                                )
+                                  ? 90
+                                  : 0,
+                              }}
+                              transition={{
+                                duration: 0.3,
+                                ease: [0.16, 1, 0.3, 1],
+                              }}
+                            >
+                              {openItems.includes(
+                                `${sectionIndex}-${itemIndex}`
+                              ) ? (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="20"
+                                  height="20"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="lucide lucide-minus text-red-500"
+                                >
+                                  <path d="M5 12h14" />
+                                </svg>
+                              ) : (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="20"
+                                  height="20"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="lucide lucide-plus text-primary"
+                                >
+                                  <path d="M5 12h14" />
+                                  <path d="M12 5v14" />
+                                </svg>
+                              )}
+                            </motion.div>
+                            <span className="flex-1 text-start ml-3">
+                              {item.title}
+                            </span>
+                          </AccordionTrigger>
+                          <AccordionContent
+                            className={cn(
+                              "py-4 px-4 md:px-5",
+                              "border-t-2 border-black/10",
+                              "bg-background/50",
+                              "rounded-b-lg",
+                              "text-muted-foreground"
+                            )}
+                          >
+                            {item.content}
+                          </AccordionContent>
+                        </AccordionItem>
+                      </motion.div>
                     ))}
                   </Accordion>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

@@ -17,6 +17,8 @@
 
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";

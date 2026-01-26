@@ -31,14 +31,14 @@ export default function Loading() {
       if (didSendRef.current) return;
       if (!sessionId) return;
       didSendRef.current = true;
-      // UNCOMMENT LATER
-      // try {
-      //   await fetch("/api/public/purchase-success-email", {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({ sessionId }),
-      //   });
-      // } catch (e) {}
+
+      try {
+        await fetch("/api/public/purchase-success-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId }),
+        });
+      } catch (e) {}
     };
     send();
   }, [sessionId]);
