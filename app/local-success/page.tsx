@@ -164,7 +164,7 @@ export default async function UnearthedLocalSuccess({
                       href={unearthedLocalVersionsList.productLinkMacSilicon!}
                       target="_blank"
                     >
-                      Mac (Apple Silicon)
+                      Mac (ARM)
                     </a>
                   </Button>
                   <Button asChild>
@@ -172,7 +172,15 @@ export default async function UnearthedLocalSuccess({
                       href={unearthedLocalVersionsList.productLinkLinux!}
                       target="_blank"
                     >
-                      Linux
+                      Linux (DEB)
+                    </a>
+                  </Button>
+                  <Button asChild>
+                    <a
+                      href={unearthedLocalVersionsList.productLinkLinuxRpm!}
+                      target="_blank"
+                    >
+                      Linux (RPM)
                     </a>
                   </Button>
                 </div>

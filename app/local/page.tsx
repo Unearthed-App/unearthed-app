@@ -154,7 +154,7 @@ const UnearthedLocal = () => {
               </h2>
               <p className="text-lg leading-relaxed">
                 Unearthed Local works on <strong>Windows</strong>,{" "}
-                <strong>macOS</strong>, and <strong>Linux (soon)</strong>.
+                <strong>macOS</strong>, and <strong>Linux</strong>.
                 One-time purchase across all platforms. Download and run on
                 whatever system you prefer.
               </p>

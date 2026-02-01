@@ -29,6 +29,7 @@ export default function UnearthedPremiumLocalDownload() {
     productLinkMacIntel?: string | null;
     productLinkMacSilicon?: string | null;
     productLinkLinux?: string | null;
+    productLinkLinuxRpm?: string | null;
     createdAt?: string | null;
   };
 
@@ -143,14 +144,21 @@ export default function UnearthedPremiumLocalDownload() {
                       {v.productLinkMacSilicon && (
                         <Button asChild>
                           <a href={v.productLinkMacSilicon} target="_blank">
-                            macOS (Apple Silicon)
+                            macOS (ARM)
                           </a>
                         </Button>
                       )}
                       {v.productLinkLinux && (
                         <Button asChild>
                           <a href={v.productLinkLinux} target="_blank">
-                            Linux
+                            Linux (DEB)
+                          </a>
+                        </Button>
+                      )}
+                      {v.productLinkLinuxRpm && (
+                        <Button asChild>
+                          <a href={v.productLinkLinuxRpm} target="_blank">
+                            Linux (RPM)
                           </a>
                         </Button>
                       )}

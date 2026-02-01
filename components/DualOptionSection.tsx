@@ -44,7 +44,7 @@ const productOptions: Omit<ProductComparisonCardProps, "className">[] = [
       "Obsidian syncing only (so far)",
       "Auto sync - no need to plug in your device",
       "Complete privacy - your data stays on your device",
-      "Desktop app for Windows, Mac, and Linux (soon)",
+      "Desktop app for Windows, Mac, and Linux",
       "Import from Kindle and KOReader",
       "Local search and filtering",
       "Daily Reflection within the app and synced to Obsidian",

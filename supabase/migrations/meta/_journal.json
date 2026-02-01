@@ -183,6 +183,13 @@
       "when": 1754046582559,
       "tag": "0031_absurd_ares",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1769567021203,
+      "tag": "0032_omniscient_goliath",
+      "breakpoints": true
     }
   ]
 }

@@ -1163,6 +1163,7 @@ export const getLatestLocalVersion = async () => {
         productLinkMacIntel: latestVersion.productLinkMacIntel,
         productLinkMacSilicon: latestVersion.productLinkMacSilicon,
         productLinkLinux: latestVersion.productLinkLinux,
+        productLinkLinuxRpm: latestVersion.productLinkLinuxRpm,
       },
     };
   } catch (error) {

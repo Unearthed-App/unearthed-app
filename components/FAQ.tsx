@@ -98,7 +98,7 @@ const faqSections = [
               <li>Direct sync to Obsidian (no plugin required)</li>
               <li>One-time purchase, no subscriptions</li>
               <li>Works with both Kindle and KOReader</li>
-              <li>Cross-platform (Windows, macOS, Linux-soon)</li>
+              <li>Cross-platform (Windows, macOS, Linux)</li>
               <li>Daily reflections added to Obsidian daily notes</li>
             </ul>
           </>
@@ -455,7 +455,6 @@ const faqSections = [
               </li>
               <li>
                 Cross-platform license - works on Windows, macOS, and Linux
-                (coming soon)
               </li>
               <li>No cloud hosting costs means no ongoing fees for users</li>
             </ul>
@@ -521,7 +520,7 @@ const faqSections = [
                 <strong>macOS</strong> - Full support, ready to download
               </li>
               <li>
-                <strong>Linux</strong> - Coming soon
+                <strong>Linux</strong>
               </li>
             </ul>
             <p className="">

@@ -39,7 +39,7 @@ const cardContents = [
   {
     title: '"I need <span class="text-secondary italic">inspiration</span>"',
     description:
-      'Unearthed will serve you a <span class="text-secondary font-semibold">Daily Reflection</span>, via the browser extension, web app, Capacities, and the mobile app (soon).<br /><br />This is not some random quote from the web, this is something that you have <span class="text-secondary font-semibold">enjoyed</span> in the past enough to highlight and maybe even make a note about.',
+      'Unearthed will serve you a <span class="text-secondary font-semibold">Daily Reflection</span>, via the browser extension, web app, Obsidian, Capacities, and locally.<br /><br />This is not some random quote from the web, this is something that you have <span class="text-secondary font-semibold">enjoyed</span> in the past enough to highlight and maybe even make a note about.',
   },
   {
     title:

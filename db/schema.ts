@@ -275,7 +275,9 @@ export const unearthedLocalVersions = pgTable("unearthed_local_versions", {
   productLinkMacIntel: text("product_link_mac_intel"),
   productLinkMacSilicon: text("product_link_mac_silicon"),
   productLinkLinux: text("product_link_linux"),
+  productLinkLinuxRpm: text("product_link_linux_rpm"),
   createdAt: timestamp("created_at").defaultNow(),
+  changes: text("changes"),
 });
 
 // Relations

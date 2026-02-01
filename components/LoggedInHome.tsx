@@ -37,7 +37,7 @@ export const LoggedInHome = () => {
       "Sync with Obsidian (may expand later)",
       "Complete privacy - runs on your computer",
       "No monthly fees or subscriptions",
-      "Cross-platform: Windows, macOS, Linux (soon)",
+      "Cross-platform: Windows, macOS, Linux",
       "Free updates within major version",
     ],
     ctaText: "Learn More",
