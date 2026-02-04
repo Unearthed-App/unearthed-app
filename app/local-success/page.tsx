@@ -119,6 +119,32 @@ export default async function UnearthedLocalSuccess({
         <p className="text-sm text-muted-foreground mb-8">
           Thanks for supporting Unearthed! Your files are ready to download.
         </p>
+        <a
+          href="/local-docs"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group w-full max-w-2xl mb-10 block"
+        >
+          <div className="relative bg-alternate dark:bg-primary text-primary-foreground border-4 border-black p-5 shadow-[6px_6px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-150">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+                <path d="M8 7h6" />
+                <path d="M8 11h8" />
+              </svg>
+              <div>
+                <p className="text-xl font-black uppercase tracking-wide">Read the Docs</p>
+                <p className="text-sm opacity-90">Installation guides, features, troubleshooting</p>
+              </div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 transition-transform">
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      </a>
 
         {/* Purchase ID */}
         <div className="mb-12">

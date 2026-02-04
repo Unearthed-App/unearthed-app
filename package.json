@@ -57,6 +57,7 @@
     "csv": "^6.3.10",
     "drizzle-orm": "^0.36.1",
     "drizzle-zod": "^0.5.1",
+    "fuse.js": "^7.1.0",
     "graphology": "^0.26.0",
     "graphology-layout-force": "^0.2.4",
     "graphology-layout-forceatlas2": "^0.10.1",

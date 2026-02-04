@@ -30,6 +30,7 @@ import {
   Crown,
   UserPlus2,
   Download,
+  BookText,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -162,6 +163,14 @@ export function DropdownMenuNav() {
                   <span>Sign In</span>
                 </DropdownMenuItem>
               </SignInButton>
+            </DropdownMenuGroup>
+            <DropdownMenuGroup>
+              <Link href="/local-docs">
+                <DropdownMenuItem className="border-secondary bg-background dark:bg-primary dark:text-white text-primary-background hover:bg-primary/90 font-semibold">
+                  <BookText className="mr-2 h-4 w-4" />
+                  <span>Docs (Unearthed Local)</span>
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuGroup>
               <Link href="/local">
