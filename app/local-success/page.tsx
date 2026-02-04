@@ -25,6 +25,9 @@ import type { Metadata } from "next";
 
 import { Button } from "@/components/ui/button";
 import CopyDistinctId from "@/components/CopyDistinctId";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 type SuccessPageProps = {
   searchParams: Promise<{
     session_id?: string;
@@ -46,21 +49,6 @@ export default async function UnearthedLocalSuccess({
       <h1 className="text-2xl font-bold mb-4">Something went wrong.</h1>
     </main>
   );
-
-  function formatVersion(versionNum: number) {
-    // Convert the number to a string
-    let s = versionNum.toString();
-
-    // Pad with a leading zero if the length is less than 3
-    if (s.length < 3) {
-      s = "0" + s;
-    }
-
-    // Insert periods between the digits
-    let formattedString = s.split("").join(".");
-
-    return formattedString;
-  }
 
   if (!sessionId) {
     return somethingWentWrong;
@@ -109,137 +97,159 @@ export default async function UnearthedLocalSuccess({
       );
     }
 
-    const unearthedLocalVersionsList =
-      await db.query.unearthedLocalVersions.findFirst({
-        where: eq(unearthedLocalVersions.productName, productName),
-        orderBy: (versions, { desc }) => [desc(versions.version)],
-      });
-    console.log("unearthedLocalVersionsList", unearthedLocalVersionsList);
-    console.log("productName", productName);
+    const versions = await db.query.unearthedLocalVersions.findMany({
+      where: eq(unearthedLocalVersions.productName, productName),
+      orderBy: (v, { desc }) => [desc(v.version)],
+    });
+
+    if (!versions.length) {
+      return (
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-32 pb-16">
+          <h1 className="text-3xl font-black mb-2">Something went wrong.</h1>
+          <p className="text-sm text-muted-foreground">
+            Please email contact@unearthed.app if you believe this is an error.
+          </p>
+        </main>
+      );
+    }
 
     return (
-      <>
-        {unearthedLocalVersionsList ? (
-          <main className="min-h-screen flex items-center justify-center px-4 sm:px-6   text-black dark:text-white pt-24 pb-12">
-            <div className="w-full max-w-3xl space-y-6">
-              {/* Header */}
-              <section className="border-4 border-black dark:border-white p-6 rounded-lg shadow-[6px_6px_0_0_rgba(0,0,0,1)] dark:shadow-[6px_6px_0_0_rgba(255,255,255,1)]">
-                <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight mb-4 text-center">
-                  Purchase Complete
-                </h1>
-                <p className="text-lg font-medium text-center">
-                  Thanks for supporting Unearthed! Your files are ready to
-                  download.
-                </p>
-              </section>
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-32 pb-16">
+        <h1 className="text-3xl font-black mb-2">Purchase Complete</h1>
+        <p className="text-sm text-muted-foreground mb-8">
+          Thanks for supporting Unearthed! Your files are ready to download.
+        </p>
 
-              {/* Download Section */}
-              <section className="border-4 border-black dark:border-white p-6 rounded-lg shadow-[6px_6px_0_0_rgba(0,0,0,1)] dark:shadow-[6px_6px_0_0_rgba(255,255,255,1)]">
-                <h2 className="text-2xl font-bold uppercase mb-4 text-center">
-                  Download Version{" "}
-                  {formatVersion(unearthedLocalVersionsList.version)}
-                </h2>
-                <p className="mb-6 text-base font-medium text-center">
-                  Choose your platform
-                </p>
-                <div className="flex flex-wrap justify-center gap-3">
-                  <Button asChild>
-                    <a
-                      href={unearthedLocalVersionsList.productLinkWindows!}
-                      target="_blank"
-                    >
-                      Windows
-                    </a>
-                  </Button>
-                  <Button asChild>
-                    <a
-                      href={unearthedLocalVersionsList.productLinkMacIntel!}
-                      target="_blank"
-                    >
-                      Mac (Intel)
-                    </a>
-                  </Button>
-                  <Button asChild>
-                    <a
-                      href={unearthedLocalVersionsList.productLinkMacSilicon!}
-                      target="_blank"
-                    >
-                      Mac (ARM)
-                    </a>
-                  </Button>
-                  <Button asChild>
-                    <a
-                      href={unearthedLocalVersionsList.productLinkLinux!}
-                      target="_blank"
-                    >
-                      Linux (DEB)
-                    </a>
-                  </Button>
-                  <Button asChild>
-                    <a
-                      href={unearthedLocalVersionsList.productLinkLinuxRpm!}
-                      target="_blank"
-                    >
-                      Linux (RPM)
-                    </a>
-                  </Button>
+        {/* Purchase ID */}
+        <div className="mb-12">
+          <h2 className="text-xl font-bold mb-4 border-b-2 border-black dark:border-white pb-2">
+            Your Purchase ID
+          </h2>
+
+          <div className="border-2 border-black rounded-md overflow-hidden shadow-[4px_4px_0px_rgba(0,0,0,1)] bg-card">
+            <div className="p-4 space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Save this Purchase ID in a safe place — you&apos;ll need it
+                for future updates.
+              </p>
+              <CopyDistinctId distinctId={distinctId} />
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                This is a <strong>one-time payment</strong> for this version
+                of Unearthed Local. For Example: if you purchase version one,
+                you can download updates from <code className="text-xs bg-black/10 dark:bg-white/10 px-1 py-0.5 rounded">1.0.0</code> up to{" "}
+                <code className="text-xs bg-black/10 dark:bg-white/10 px-1 py-0.5 rounded">1.9.9</code> by returning to{" "}
+                <a
+                  href="https://unearthed.app/local-download"
+                  className="underline font-bold"
+                >
+                  unearthed.app/local-download
+                </a>{" "}
+                and entering your Purchase ID.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Download Section */}
+        <div className="mb-12">
+          <h2 className="text-xl font-bold mb-4 border-b-2 border-black dark:border-white pb-2">
+            {productName}
+          </h2>
+
+          <div className="space-y-6">
+            {versions.map((v, index) => (
+              <div
+                key={v.id}
+                className={`border-2 border-black rounded-md overflow-hidden shadow-[4px_4px_0px_rgba(0,0,0,1)] bg-card ${
+                  index === 0 ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""
+                }`}
+              >
+                <div className="flex items-center gap-3 px-4 py-3 border-b-2 border-black bg-muted/50">
+                  <span className="text-lg font-black">
+                    Version {v.version}
+                  </span>
+                  {index === 0 && (
+                    <span className="text-xs font-bold px-2 py-0.5 bg-primary text-primary-foreground rounded border border-black">
+                      LATEST
+                    </span>
+                  )}
                 </div>
-              </section>
 
-              {/* Purchase ID */}
-              <section className="border-4 border-black dark:border-white p-6 rounded-lg shadow-[6px_6px_0_0_rgba(0,0,0,1)] dark:shadow-[6px_6px_0_0_rgba(255,255,255,1)]">
-                <h3 className="text-xl font-bold uppercase mb-3 text-center">
-                  Your Purchase ID
-                </h3>
-                <p className="text-sm font-medium mb-4 text-center">
-                  Save this Purchase ID in a safe place — you&apos;ll need it
-                  for future updates.
-                </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 mb-6 w-full px-2">
-                  <div className="w-full sm:w-auto max-w-full sm:max-w-none">
-                    <CopyDistinctId distinctId={distinctId} />
+                <div className="p-4 space-y-4">
+                  {v.changes && (
+                    <div className="text-sm border-2 border-black/20 dark:border-white/20 rounded-md p-3 bg-muted/30">
+                      <h4 className="font-bold text-xs uppercase tracking-wide text-muted-foreground mb-2">
+                        Changes
+                      </h4>
+                      <ReactMarkdown
+                        className="prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_li]:my-0.5 [&_p]:my-1 [&_h1]:text-base [&_h2]:text-sm [&_h3]:text-sm [&_code]:text-xs [&_code]:bg-black/10 [&_code]:dark:bg-white/10 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded"
+                        remarkPlugins={[remarkGfm]}
+                      >
+                        {v.changes}
+                      </ReactMarkdown>
+                    </div>
+                  )}
+
+                  <div>
+                    <h4 className="font-bold text-xs uppercase tracking-wide text-muted-foreground mb-2">
+                      Downloads
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                      {v.productLinkWindows && (
+                        <Button asChild className="w-full">
+                          <a href={v.productLinkWindows} target="_blank">
+                            Windows
+                          </a>
+                        </Button>
+                      )}
+                      {v.productLinkMacIntel && (
+                        <Button asChild className="w-full">
+                          <a href={v.productLinkMacIntel} target="_blank">
+                            macOS (Intel)
+                          </a>
+                        </Button>
+                      )}
+                      {v.productLinkMacSilicon && (
+                        <Button asChild className="w-full">
+                          <a href={v.productLinkMacSilicon} target="_blank">
+                            macOS (ARM)
+                          </a>
+                        </Button>
+                      )}
+                      {v.productLinkLinux && (
+                        <Button asChild className="w-full">
+                          <a href={v.productLinkLinux} target="_blank">
+                            Linux (DEB)
+                          </a>
+                        </Button>
+                      )}
+                      {v.productLinkLinuxRpm && (
+                        <Button asChild className="w-full">
+                          <a href={v.productLinkLinuxRpm} target="_blank">
+                            Linux (RPM)
+                          </a>
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <p className="text-sm leading-relaxed text-center px-2">
-                  This is a <strong>one-time payment</strong> for this version
-                  of Unearthed Local. For Example: if you purchase version one,
-                  you can download updates from <code>1.0.0</code> up to{" "}
-                  <code>1.9.9</code> by returning to{" "}
-                  <a
-                    href="https://unearthed.app/local-download"
-                    className="underline decoration-2 decoration-black dark:decoration-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
-                  >
-                    unearthed.app/local-download
-                  </a>{" "}
-                  and entering your Purchase ID.
-                </p>
-              </section>
+              </div>
+            ))}
+          </div>
+        </div>
 
-              {/* Support Info */}
-              <footer className="mt-6 text-xs font-mono text-center px-2">
-                If your download doesn’t work, email{" "}
-                <a
-                  href="mailto:contact@unearthed.app"
-                  className="underline decoration-2 decoration-black dark:decoration-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
-                >
-                  contact@unearthed.app
-                </a>{" "}
-                from the same email you used for your purchase.
-              </footer>
-            </div>
-          </main>
-        ) : (
-          <main className="p-6 pt-24">
-            <h1 className="text-2xl font-bold mb-4">
-              bbbb Something went wrong.
-            </h1>
-            <p>
-              Please email contact@unearthed.app if you believe this is an
-              error.
-            </p>
-          </main>
-        )}
-      </>
+        {/* Support Info */}
+        <p className="text-xs text-muted-foreground">
+          If your download doesn&apos;t work, email{" "}
+          <a
+            href="mailto:contact@unearthed.app"
+            className="underline font-bold"
+          >
+            contact@unearthed.app
+          </a>{" "}
+          from the same email you used for your purchase.
+        </p>
+      </main>
     );
   } catch (error) {
     console.error("Stripe session error:", error);

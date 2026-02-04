@@ -18,6 +18,8 @@
 
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 // Premium client page that automatically shows ALL available downloads
 export default function UnearthedPremiumLocalDownload() {
@@ -31,6 +33,7 @@ export default function UnearthedPremiumLocalDownload() {
     productLinkLinux?: string | null;
     productLinkLinuxRpm?: string | null;
     createdAt?: string | null;
+    changes?: string | null;
   };
 
   type ProductVersions = {
@@ -73,11 +76,22 @@ export default function UnearthedPremiumLocalDownload() {
     fetchAllVersions();
   }, []);
 
+  const downloadLinks = (v: LocalVersion) => {
+    const links = [
+      { href: v.productLinkWindows, label: "Windows" },
+      { href: v.productLinkMacIntel, label: "macOS (Intel)" },
+      { href: v.productLinkMacSilicon, label: "macOS (ARM)" },
+      { href: v.productLinkLinux, label: "Linux (DEB)" },
+      { href: v.productLinkLinuxRpm, label: "Linux (RPM)" },
+    ].filter((l) => l.href);
+    return links;
+  };
+
   if (loading) {
     return (
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-32">
-        <h1 className="text-2xl font-bold mb-4">
-          Download Unearthed Local (Premium)
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-32 pb-16">
+        <h1 className="text-3xl font-black mb-2">
+          Download Unearthed Local
         </h1>
         <p className="text-sm text-muted-foreground mb-6">
           Loading all available downloads...
@@ -87,17 +101,17 @@ export default function UnearthedPremiumLocalDownload() {
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-32">
-      <h1 className="text-2xl font-bold mb-4">
-        Download Unearthed Local (Premium)
+    <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-32 pb-16">
+      <h1 className="text-3xl font-black mb-2">
+        Download Unearthed Local
       </h1>
-      <p className="text-sm text-muted-foreground mb-6">
+      <p className="text-sm text-muted-foreground mb-8">
         As a premium user, you have access to all available versions of
         Unearthed Local.
       </p>
 
       {error && (
-        <div className="mb-6 p-3 border border-red-300 text-red-700 dark:text-red-400 rounded">
+        <div className="mb-6 p-3 border-2 border-red-500 text-red-700 dark:text-red-400 rounded-md bg-red-50 dark:bg-red-950/30">
           {error}
         </div>
       )}
@@ -109,8 +123,10 @@ export default function UnearthedPremiumLocalDownload() {
       )}
 
       {productVersions.map((product) => (
-        <div key={product.productName} className="space-y-4 mb-8">
-          <h2 className="text-xl font-semibold">{product.productName}</h2>
+        <div key={product.productName} className="mb-12">
+          <h2 className="text-xl font-bold mb-4 border-b-2 border-black dark:border-white pb-2">
+            {product.productName}
+          </h2>
 
           {product.versions.length === 0 && (
             <p className="text-sm text-muted-foreground">
@@ -118,56 +134,58 @@ export default function UnearthedPremiumLocalDownload() {
             </p>
           )}
 
-          {product.versions.length > 0 && (
-            <ul className="space-y-4">
-              {product.versions.map((v) => (
-                <li key={v.id} className="p-4 border rounded bg-card">
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div>
-                      <div className="font-medium">Version {v.version}</div>
+          <div className="space-y-6">
+            {product.versions.map((v, index) => (
+              <div
+                key={v.id}
+                className={`border-2 border-black rounded-md overflow-hidden shadow-[4px_4px_0px_rgba(0,0,0,1)] bg-card ${
+                  index === 0 ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""
+                }`}
+              >
+                <div className="flex items-center gap-3 px-4 py-3 border-b-2 border-black bg-muted/50">
+                  <span className="text-lg font-black">
+                    Version {v.version}
+                  </span>
+                  {index === 0 && (
+                    <span className="text-xs font-bold px-2 py-0.5 bg-primary text-primary-foreground rounded border border-black">
+                      LATEST
+                    </span>
+                  )}
+                </div>
+
+                <div className="p-4 space-y-4">
+                  {v.changes && (
+                    <div className="text-sm border-2 border-black/20 dark:border-white/20 rounded-md p-3 bg-muted/30">
+                      <h4 className="font-bold text-xs uppercase tracking-wide text-muted-foreground mb-2">
+                        Changes
+                      </h4>
+                      <ReactMarkdown
+                        className="prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_li]:my-0.5 [&_p]:my-1 [&_h1]:text-base [&_h2]:text-sm [&_h3]:text-sm [&_code]:text-xs [&_code]:bg-black/10 [&_code]:dark:bg-white/10 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded"
+                        remarkPlugins={[remarkGfm]}
+                      >
+                        {v.changes}
+                      </ReactMarkdown>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {v.productLinkWindows && (
-                        <Button asChild>
-                          <a href={v.productLinkWindows} target="_blank">
-                            Windows
+                  )}
+
+                  <div>
+                    <h4 className="font-bold text-xs uppercase tracking-wide text-muted-foreground mb-2">
+                      Downloads
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                      {downloadLinks(v).map((link) => (
+                        <Button key={link.label} asChild className="w-full">
+                          <a href={link.href!} target="_blank">
+                            {link.label}
                           </a>
                         </Button>
-                      )}
-                      {v.productLinkMacIntel && (
-                        <Button asChild>
-                          <a href={v.productLinkMacIntel} target="_blank">
-                            macOS (Intel)
-                          </a>
-                        </Button>
-                      )}
-                      {v.productLinkMacSilicon && (
-                        <Button asChild>
-                          <a href={v.productLinkMacSilicon} target="_blank">
-                            macOS (ARM)
-                          </a>
-                        </Button>
-                      )}
-                      {v.productLinkLinux && (
-                        <Button asChild>
-                          <a href={v.productLinkLinux} target="_blank">
-                            Linux (DEB)
-                          </a>
-                        </Button>
-                      )}
-                      {v.productLinkLinuxRpm && (
-                        <Button asChild>
-                          <a href={v.productLinkLinuxRpm} target="_blank">
-                            Linux (RPM)
-                          </a>
-                        </Button>
-                      )}
+                      ))}
                     </div>
                   </div>
-                </li>
-              ))}
-            </ul>
-          )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </main>
