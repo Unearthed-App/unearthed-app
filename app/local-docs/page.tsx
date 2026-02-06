@@ -76,7 +76,7 @@ export default function LocalDocsPage() {
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
           <BookOpen className="h-6 w-6 text-primary" />
-          <span className="text-sm font-medium text-primary">v1.2.3</span>
+          <span className="text-sm font-medium text-primary">v1.2.7</span>
         </div>
         <h1 className="text-3xl font-bold tracking-tight mb-3">
           Unearthed Local

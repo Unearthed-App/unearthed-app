@@ -135,7 +135,7 @@ export default function LocalDocsLayout({
   return (
     <div className="min-h-screen bg-background">
       {/* Top bar */}
-      <header className="pt-24 md:pt-0 sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="pt-24 sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6">
           <button
             className="lg:hidden p-1.5 rounded-md hover:bg-accent"

@@ -201,8 +201,17 @@ export default function InstallPage() {
             </StepItem>
             <StepItem step={2} title="Bypass Gatekeeper">
               <p>
-                On first launch, <strong>right-click</strong> the app and choose{" "}
-                <strong>Open</strong> to bypass Gatekeeper.
+                On first launch, <strong>right-click</strong> (or Control-click) the app and choose{" "}
+                <strong>Open</strong>, then confirm when prompted.
+              </p>
+              <p className="text-xs mt-2 text-muted-foreground">
+                <strong>If that doesn&apos;t work:</strong> Try opening the app
+                normally first (it will be blocked), then go to{" "}
+                <strong>System Settings</strong> &rarr;{" "}
+                <strong>Privacy &amp; Security</strong> &rarr;{" "}
+                <strong>General</strong> and click{" "}
+                <strong>Open Anyway</strong> next to the blocked app message.
+                You only need to do this once.
               </p>
             </StepItem>
             <StepItem step={3} title="Grant permissions">
