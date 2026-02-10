@@ -198,8 +198,8 @@ const UnearthedLocal = () => {
               <strong>Designed to stay out of your way</strong> and sync in the
               background, or become a reading companion to help you discover,
               highlight, and annotate new content.{" "}
-              <strong>You don't even need to open it after setup</strong> if you
-              don't want to. All local. No subscriptions. No cloud.
+              <strong>You don&apos;t even need to open it after setup</strong>{" "}
+              if you don&apos;t want to. All local. No subscriptions. No cloud.
             </p>
             <p className="text-sm text-muted-foreground mb-10 italic">
               This is a desktop app &mdash; different to unearthed.app
@@ -217,6 +217,35 @@ const UnearthedLocal = () => {
 
           {/* Bento Screenshot Grid */}
           <LocalScreenshots />
+
+          {/* Why Section */}
+          <section className="w-full max-w-3xl mb-20 px-4">
+            <div className="border-2 border-black dark:border-white/20 rounded-2xl p-8 bg-card/50">
+              <p className="text-lg leading-relaxed mb-4">
+                <strong>Obsidian</strong>.
+              </p>
+              <p className="text-lg leading-relaxed mb-4">
+                You don&apos;t need a special Obsidian plugin.
+              </p>
+              <p className="text-lg leading-relaxed mb-4">
+                You don&apos;t need to plug in a device.
+              </p>
+              <p className="text-lg leading-relaxed mb-4">
+                You&apos;ll even get a Daily Reflection added to your Obsidian
+                daily note.
+              </p>
+              <p className="text-lg leading-relaxed mb-6">
+                <span className="font-bold">
+                  Take back your gathered thoughts and store them where{" "}
+                  <u>you</u> want them.
+                </span>
+              </p>
+              <p className="text-lg leading-relaxed">
+                BTW this also works with KOReader, so get all your notes and
+                highlights in one place!
+              </p>
+            </div>
+          </section>
 
           {/* Features Grid */}
           <section className="w-full max-w-5xl mb-20 px-4">
