@@ -10,8 +10,9 @@ import {
   Search,
   Shield,
   HardDrive,
-  Wifi,
+  Rss,
   Info,
+  Wifi,
 } from "lucide-react";
 
 const SECTIONS = [
@@ -45,15 +46,20 @@ const HIGHLIGHTS = [
   {
     icon: HardDrive,
     title: "100% Offline",
-    description: "All data stored locally in SQLite. No cloud account required.",
+    description:
+      "All data stored locally in SQLite. No cloud account required.",
+  },
+  {
+    icon: Rss,
+    title: "RSS Reader",
+    description:
+      "Subscribe to RSS feeds, read articles in-app, and import them with color-coded highlights and notes.",
   },
   {
     icon: Shield,
     title: "Secure by Design",
     description:
-      // "Context isolation, disabled node integration, ASAR integrity, encrypted cookies.",
-
-      "Industry-standard security: sandboxed code execution, and no unauthorised access."
+      "Industry-standard security: sandboxed code execution, and no unauthorised access.",
   },
   {
     icon: Wifi,
@@ -76,14 +82,15 @@ export default function LocalDocsPage() {
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
           <BookOpen className="h-6 w-6 text-primary" />
-          <span className="text-sm font-medium text-primary">v1.2.7</span>
+          <span className="text-sm font-medium text-primary">v1.3.1</span>
         </div>
         <h1 className="text-3xl font-bold tracking-tight mb-3">
           Unearthed Local
         </h1>
         <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
           A privacy-first desktop app that syncs your Kindle and KOReader
-          highlights into Obsidian. Runs entirely on your machine.
+          highlights into Obsidian, with a built-in RSS feed reader for
+          importing and annotating articles. Runs entirely on your machine.
         </p>
       </div>
 
@@ -186,7 +193,9 @@ export default function LocalDocsPage() {
               5
             </span>
             <span>
-              Your highlights appear in your desired local location as Markdown files
+              Your highlights appear in your configured location as Markdown
+              files. Explore the <strong>RSS Feeds</strong> tab to subscribe
+              to feeds and import articles.
             </span>
           </li>
         </ol>
@@ -199,7 +208,7 @@ export default function LocalDocsPage() {
           <div>
             <h3 className="font-semibold text-sm mb-1">Data Safety</h3>
             <p className="text-sm text-muted-foreground">
-              <strong>Read-only sources:</strong> Your Kindle and KOReader data are never modified by Unearthed—they are used as sources only.
+              <strong>Read-only sources:</strong> Your Kindle, KOReader, and RSS feed data are never modified by Unearthed—they are used as sources only.
             </p>
             <p className="text-sm text-muted-foreground mt-1">
               <strong>Modified by Unearthed:</strong> The local Unearthed database and your Obsidian vault will be modified during syncing and export.

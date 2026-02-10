@@ -143,12 +143,66 @@ export const searchIndex: SearchItem[] = [
     keywords: ["csv", "export", "spreadsheet", "columns"],
   },
   {
+    id: "feature-rss-feeds",
+    title: "RSS Feed Reader",
+    section: "Features",
+    category: "Features",
+    content:
+      "Subscribe to RSS feeds, browse articles newest-first with filtering by feed, import status, and search. Import articles into local database as sources. Both RSS 2.0 and Atom formats supported. Auto-refresh on app startup.",
+    href: "/local-docs/features#rss-feeds",
+    keywords: [
+      "rss",
+      "feed",
+      "subscribe",
+      "articles",
+      "atom",
+      "import",
+      "reader",
+    ],
+  },
+  {
+    id: "feature-article-highlighting",
+    title: "Article Highlighting & Notes",
+    section: "Features",
+    category: "Features",
+    content:
+      "Imported RSS articles can be highlighted with four colors (yellow, blue, pink, orange) and annotated with notes. Highlights are stored in the database and exported to Obsidian like book quotes.",
+    href: "/local-docs/features#article-reader",
+    keywords: [
+      "highlight",
+      "article",
+      "notes",
+      "annotate",
+      "color",
+      "yellow",
+      "blue",
+      "pink",
+      "orange",
+    ],
+  },
+  {
+    id: "feature-youtube-embeds",
+    title: "YouTube Embed Support",
+    section: "Features",
+    category: "Features",
+    content:
+      "RSS articles containing YouTube links display embedded video players. Video transcripts are fetched and injected into article content. Retries on rate limiting with exponential backoff.",
+    href: "/local-docs/features#youtube",
+    keywords: [
+      "youtube",
+      "video",
+      "embed",
+      "transcript",
+      "player",
+    ],
+  },
+  {
     id: "feature-daily-reflection",
     title: "Daily Reflection",
     section: "Features",
     category: "Features",
     content:
-      "Random quote displayed on dashboard. Optionally append to Obsidian daily note. Configurable date format, location, and template. Auto-create daily note if not exists.",
+      "Random quote displayed on dashboard. Optionally append to Obsidian daily note. Full moment.js-compatible date format tokens. Append Under Heading to insert under a specific markdown heading. Auto-create daily note if not exists.",
     href: "/local-docs/features#daily-reflection",
     keywords: [
       "daily",
@@ -157,6 +211,9 @@ export const searchIndex: SearchItem[] = [
       "random",
       "obsidian",
       "note",
+      "heading",
+      "moment",
+      "date format",
     ],
   },
   {
@@ -274,7 +331,7 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "Daily note date format (YYYY-MM-DD, YYYYMMDD, DD-MM-YYYY). Daily reflection folder path. Create Daily Note if missing. Add Reflection on Startup.",
+      "Daily note date format with full moment.js token support (YYYY, MMMM, dddd, etc.). Slashes create subfolders. Append Under Heading to insert under a specific markdown heading. Daily reflection folder path. Create Daily Note if missing. Add Reflection on Startup.",
     href: "/local-docs/settings#daily-reflection",
     keywords: [
       "daily",
@@ -283,6 +340,25 @@ export const searchIndex: SearchItem[] = [
       "format",
       "startup",
       "note",
+      "heading",
+      "moment",
+      "token",
+    ],
+  },
+  {
+    id: "settings-macos-dock",
+    title: "macOS Show in Dock",
+    section: "Settings",
+    category: "Settings",
+    content:
+      "macOS only. When disabled, the app runs solely from the menu bar without a Dock icon. Automatically enables Keep App Running in Background.",
+    href: "/local-docs/settings#macos-dock",
+    keywords: [
+      "macos",
+      "dock",
+      "menu bar",
+      "tray",
+      "hide",
     ],
   },
   {
@@ -440,6 +516,25 @@ export const searchIndex: SearchItem[] = [
       "401",
       "unauthorized",
       "token",
+    ],
+  },
+  {
+    id: "troubleshoot-rss",
+    title: "RSS Feed Issues",
+    section: "Troubleshooting",
+    category: "Troubleshoot",
+    content:
+      "Feed subscription fails: verify URL is a valid RSS or Atom feed. Articles reappear after deletion: use Hide instead. Images not loading: requires internet. YouTube embed not playing: retries on rate limiting.",
+    href: "/local-docs/troubleshoot#rss-feeds",
+    keywords: [
+      "rss",
+      "feed",
+      "subscribe",
+      "articles",
+      "youtube",
+      "images",
+      "hide",
+      "delete",
     ],
   },
   {

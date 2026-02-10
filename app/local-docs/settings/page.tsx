@@ -17,6 +17,7 @@ import {
   FileText,
   Palette,
   Sparkles,
+  Monitor,
 } from "lucide-react";
 
 function SettingSection({
@@ -133,6 +134,20 @@ export default function SettingsPage() {
           />
         </SettingSection>
 
+        {/* macOS Dock */}
+        <SettingSection id="macos-dock" icon={Monitor} title="macOS Dock">
+          <SettingItem
+            name="Show in Dock"
+            defaultValue={true}
+            description="macOS only. When disabled, the app runs solely from the menu bar without a Dock icon."
+            tips={[
+              "Automatically enables 'Keep App Running in Background' when disabled",
+              "The tray/menu bar icon is used to access the app instead",
+              "This setting only appears on macOS",
+            ]}
+          />
+        </SettingSection>
+
         {/* API Endpoint (KOReader) */}
         <SettingSection id="api" icon={Link} title="API Endpoint (KOReader)">
           <p>
@@ -198,11 +213,12 @@ export default function SettingsPage() {
           <SettingItem
             name="Daily Note Date Format"
             defaultValue="YYYY-MM-DD"
-            description="The date format used for your Obsidian daily note filenames."
+            description="The date format used for your Obsidian daily note filenames. Supports full moment.js-compatible token replacement."
             tips={[
-              "Common formats: YYYY-MM-DD, YYYYMMDD, DD-MM-YYYY",
+              "Tokens: YYYY, YY, MMMM, MMM, MM, M, DD, D, Do, dddd, ddd, dd, d, DDD, DDDD, w, ww, W, WW, E, e, Q",
+              "Slashes create subfolders: YYYY/MM-MMMM/YYYY-MM-DD-dddd → 2025/02-February/2025-02-10-Monday",
+              "Escaped literals: [Week] WW → Week 06",
               "Must match your Obsidian daily notes plugin settings",
-              "Example: 2024-01-15 or 20240115",
             ]}
           />
 
@@ -235,6 +251,17 @@ export default function SettingsPage() {
               "Works together with 'Create Daily Note' setting",
               "If both are disabled, no automatic reflection is added",
               "If 'Create' is off but 'Add' is on, waits for manual note creation",
+            ]}
+          />
+
+          <SettingItem
+            name="Append Under Heading"
+            description="Optional. Insert daily reflections under a specific markdown heading instead of appending at the end of the file."
+            tips={[
+              "Example: ### Daily Reflection",
+              "Finds the heading in your daily note and inserts content below it",
+              "If the heading is not found, falls back to appending at the end",
+              "Respects heading hierarchy — content is placed before the next same-level heading",
             ]}
           />
 

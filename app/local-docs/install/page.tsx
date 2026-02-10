@@ -108,7 +108,7 @@ export default function InstallPage() {
               <tr>
                 <td className="px-4 py-2.5 font-medium">Network</td>
                 <td className="px-4 py-2.5 text-muted-foreground">
-                  Required only for Kindle sync
+                  Required for Kindle sync and RSS feeds
                 </td>
               </tr>
             </tbody>

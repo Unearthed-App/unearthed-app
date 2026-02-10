@@ -114,6 +114,9 @@ export function DropdownMenuNav() {
               <Link href="/premium/local-download" passHref>
                 <DropdownMenuItem>D/L Unearthed Local</DropdownMenuItem>
               </Link>
+              <Link href="/local-docs" passHref>
+                <DropdownMenuItem>Unearthed Local Docs</DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>

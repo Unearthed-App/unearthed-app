@@ -20,15 +20,28 @@ import React from "react";
 import { CheckoutLocal } from "@/components/CheckoutLocal";
 import { NonPremiumNavigation } from "@/components/NonPremiumNavigation";
 import { LocalScreenshots } from "./LocalScreenshots";
+import {
+  BookOpen,
+  Rss,
+  FileText,
+  Wifi,
+  Highlighter,
+  Search,
+  Lightbulb,
+  Monitor,
+  Shield,
+  ArrowRight,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export const dynamic = 'force-static';
+export const dynamic = "force-static";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title:
     "Unearthed Local – Privacy-First Readwise Alternative | One-Time Purchase",
   description:
-    "Open-source privacy-first Readwise alternative. One-time purchase desktop app for local-only Kindle and KOReader highlight syncing to Obsidian. No subscriptions, no cloud, complete data ownership. Own your reading data forever.",
+    "Open-source privacy-first Readwise alternative. One-time purchase desktop app for local-only Kindle and KOReader highlight syncing to Obsidian. Built-in RSS feed reader with article highlighting. No subscriptions, no cloud, complete data ownership.",
   keywords: [
     "readwise alternative",
     "privacy-first readwise",
@@ -37,9 +50,11 @@ export const metadata: Metadata = {
     "kindle to obsidian",
     "local kindle sync",
     "offline kindle highlights",
-    "brutalist software",
+    "rss feed reader",
+    "rss to obsidian",
+    "article highlighting",
+    "youtube rss feed",
     "one time purchase",
-    "version policy",
     "personal knowledge management",
     "privacy-focused",
     "desktop app",
@@ -59,7 +74,7 @@ export const metadata: Metadata = {
     title:
       "Unearthed Local - Privacy-First Readwise Alternative | One-Time Purchase",
     description:
-      "Open-source privacy-first Readwise alternative. One-time purchase desktop app for local-only Kindle and KOReader highlight syncing to Obsidian. No subscriptions, complete data ownership.",
+      "Open-source privacy-first Readwise alternative. One-time purchase desktop app for local-only Kindle and KOReader highlight syncing to Obsidian with built-in RSS reader. No subscriptions, complete data ownership.",
     type: "website",
     url: "https://unearthed.app/local",
     siteName: "Unearthed",
@@ -78,141 +93,213 @@ export const metadata: Metadata = {
     site: "@unearthedapp",
     title: "Unearthed Local – Privacy-First Readwise Alternative",
     description:
-      "One-time purchase privacy-first Readwise alternative. Local-only Kindle sync to Obsidian with complete data ownership.",
+      "One-time purchase privacy-first Readwise alternative. Local-only Kindle sync to Obsidian with RSS reader and article highlighting.",
     images: ["https://unearthed.app/images/banner.webp"],
   },
 };
+
+const FEATURES = [
+  {
+    icon: BookOpen,
+    title: "Kindle Sync",
+    description:
+      "Import all your Kindle highlights and notes through a built-in browser. Auto-sync every hour in the background.",
+  },
+  {
+    icon: Rss,
+    title: "RSS Feed Reader",
+    description:
+      "Subscribe to RSS feeds and YouTube channels. Browse, filter, import, and annotate articles locally.",
+  },
+  {
+    icon: FileText,
+    title: "Obsidian Export",
+    description:
+      "Smart export to Markdown with customizable templates. Only adds new quotes on re-export.",
+  },
+  {
+    icon: Wifi,
+    title: "KOReader Sync",
+    description:
+      "Built-in API server for wireless highlight syncing from your e-reader. No USB cable needed.",
+  },
+  {
+    icon: Highlighter,
+    title: "Article Highlighting",
+    description:
+      "Color-coded highlights and notes on imported RSS articles, just like your Kindle books.",
+  },
+  {
+    icon: Search,
+    title: "Global Search",
+    description:
+      "Cmd+K to instantly search across all your books, quotes, notes, and articles.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Daily Reflection",
+    description:
+      "A random quote added to your Obsidian daily note. Supports custom date formats and heading insertion.",
+  },
+  {
+    icon: Monitor,
+    title: "Cross-Platform",
+    description:
+      "Windows, macOS, and Linux. One purchase, all Desktop platforms. Run in the background or from the menu bar.",
+  },
+  {
+    icon: Shield,
+    title: "100% Private",
+    description:
+      "All data stored locally in SQLite. No cloud, no accounts, no tracking. Your data stays yours.",
+  },
+];
+
+const STEPS = [
+  {
+    number: "01",
+    title: "Install",
+    description: "Download for your platform and run the installer",
+  },
+  {
+    number: "02",
+    title: "Connect",
+    description: "Log into Kindle, paste RSS feeds, or set up KOReader",
+  },
+  {
+    number: "03",
+    title: "Configure",
+    description: "Point Unearthed at your Obsidian vault",
+  },
+  {
+    number: "04",
+    title: "Done",
+    description:
+      "Auto-sync keeps everything up to date. You don't even need to open the app again.",
+  },
+];
 
 const UnearthedLocal = () => {
   return (
     <>
       <div className="min-h-screen p-4 pt-16 md:pt-24">
         <NonPremiumNavigation currentPage="local" />
-        <div className="font-mono flex flex-col items-center justify-center">
-
-          <header className="w-full text-center border-b-4 border-black pb-4 mb-8">
-            <h1 className="text-5xl font-extrabold uppercase">
-              Unearthed Local
+        <div className="font-mono flex flex-col items-center">
+          {/* Hero */}
+          <header className="w-full max-w-4xl text-center mb-16">
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 leading-[0.95]">
+              Your Highlights.
+              <br />
+              <span className="text-primary">Your Machine.</span>
             </h1>
-            <p className="text-xl mt-2">Kindle/KOReader → Obsidian</p>
-            <p className="text-base mt-2 italic">
-              Yes this is different to unearthed.app
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-4 leading-relaxed">
+              Sync Kindle and KOReader highlights to Obsidian. Subscribe to RSS
+              feeds and annotate articles.{" "}
+              <strong>Designed to stay out of your way</strong> and sync in the
+              background, or become a reading companion to help you discover,
+              highlight, and annotate new content.{" "}
+              <strong>You don't even need to open it after setup</strong> if you
+              don't want to. All local. No subscriptions. No cloud.
             </p>
+            <p className="text-sm text-muted-foreground mb-10 italic">
+              This is a desktop app &mdash; different to unearthed.app
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <CheckoutLocal />
+              <Button variant="brutal" asChild>
+                <a href="/local-docs">
+                  Read the Docs
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
+              </Button>{" "}
+            </div>
           </header>
 
-          {/* Docs Link Banner */}
-          <a
-            href="/local-docs"
-            className="group w-full max-w-2xl mb-10 block"
-          >
-            <div className="relative bg-alternate dark:bg-primary text-primary-foreground border-4 border-black p-5 shadow-[6px_6px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-150">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-                    <path d="M8 7h6" />
-                    <path d="M8 11h8" />
-                  </svg>
-                  <div>
-                    <p className="text-xl font-black uppercase tracking-wide">Read the Docs</p>
-                    <p className="text-sm opacity-90">Installation guides, features, troubleshooting</p>
-                  </div>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 transition-transform">
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
-                </svg>
-              </div>
-            </div>
-          </a>
-
+          {/* Bento Screenshot Grid */}
           <LocalScreenshots />
 
-          <main className="max-w-4xl w-full rounded-xl border-4 border-black p-8 shadow-[8px_8px_0px_rgba(0,0,0,1)]">
-            <section className="mb-8">
-              <h2 className="text-3xl font-bold underline mb-4">
-                Full Local Control.
-              </h2>
-              <p className="text-lg leading-relaxed">
-                Unearthed <strong>Local</strong> syncs your Kindle books and
-                highlights <strong>directly</strong> to your computer. No cloud.
-                No middleman. No monthly bill. Perfect for{" "}
-                <strong>Obsidian</strong>.
-                <br />
-                <br />
-                You don&apos;t need a special Obsidian plugin.
-                <br />
-                <br />
-                You don&apos;t need to plug in a device.
-                <br />
-                <br />
-                You&apos;ll even get a Daily Reflection added to your Obsidian
-                daily note.
-                <br /> <br />
-                <span className="font-bold">
-                  Take back your gathered thoughts and store them where{" "}
-                  <u>you</u> want them.
-                </span>
-              </p>
-              <p className="text-lg leading-relaxed">
-                BTW this also works with KOReader, so get all your notes and
-                highlights in one place!
-              </p>
-            </section>
+          {/* Features Grid */}
+          <section className="w-full max-w-5xl mb-20 px-4">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-12 uppercase">
+              Everything You Need
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {FEATURES.map((feature) => {
+                const Icon = feature.icon;
+                return (
+                  <div
+                    key={feature.title}
+                    className="group border-2 border-black dark:border-white/20 rounded-xl p-5 hover:border-primary dark:hover:border-primary transition-colors bg-card/50"
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                        <Icon className="h-5 w-5 text-primary" />
+                      </div>
+                      <h3 className="text-base font-bold">{feature.title}</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
 
-            <section className="mb-8">
-              <h2 className="text-3xl font-bold underline mb-4">
-                No Subscriptions.
+          {/* How It Works */}
+          <section className="w-full max-w-4xl mb-20 px-4">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-12 uppercase">
+              Simple Setup
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {STEPS.map((step) => (
+                <div key={step.number} className="text-center">
+                  <div className="text-4xl font-black text-primary mb-3">
+                    {step.number}
+                  </div>
+                  <h3 className="text-lg font-bold mb-1">{step.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Version Policy */}
+          <section className="w-full max-w-3xl mb-20 px-4">
+            <div className="border-2 border-black dark:border-white/20 rounded-2xl p-8 text-center bg-card/50">
+              <h2 className="text-2xl md:text-3xl font-extrabold mb-4 uppercase">
+                Buy Once. Keep Forever.
               </h2>
-              <p className="text-lg leading-relaxed">
-                Buy <strong>once</strong>. Keep <strong>forever</strong>. You
-                will get free updates for whatever version that you purchase.{" "}
-                <span className="italic">
-                  EG. If you buy version <code>1.0.6</code>, you can download
-                  every update up to <code>1.9.9</code> for free.
-                </span>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+                No subscriptions. No lock-in. Free updates within your major
+                version.
               </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-3xl font-bold underline mb-4">
-                Cross-Platform.
-              </h2>
-              <p className="text-lg leading-relaxed">
-                Unearthed Local works on <strong>Windows</strong>,{" "}
-                <strong>macOS</strong>, and <strong>Linux</strong>.
-                One-time purchase across all platforms. Download and run on
-                whatever system you prefer.
+              <p className="text-sm text-muted-foreground italic">
+                Buy version 1.x &mdash; get every update up to 1.9.9 for free.
               </p>
-            </section>
+            </div>
+          </section>
 
-            <section className="mb-8">
-              <h2 className="text-3xl font-bold underline mb-4">
-                Simple Setup.
-              </h2>
-              <ul className="list-disc pl-6 text-lg space-y-2">
-                <li>
-                  Connect Kindle (and/or KOReader) to the app (no Amazon
-                  credentials stored or viewed) - note you do{" "}
-                  <strong>not</strong> need to plug in a device to your computer
-                </li>
-                <li>Tell Unearthed where your vault is</li>
-                <li>Let the auto sync keep your library up to date</li>
-                <li>
-                  Done - You can let it run in the background if you&apos;d like
-                  - You don&apos;t even need to open the app after that!
-                </li>
-              </ul>
-            </section>
-
-            <section className="mt-12 border-t-4 border-black pt-8 text-center">
-              <h2 className="text-2xl font-bold mb-4">Own Your Reading Life</h2>
-              <p className="mb-8 text-lg">No subscriptions. No lock-in.</p>
+          {/* Final CTA */}
+          <section className="w-full max-w-2xl mb-16 px-4 text-center">
+            <h2 className="text-2xl font-bold mb-4">Own Your Reading Life</h2>
+            <p className="text-muted-foreground mb-8">
+              No subscriptions. No lock-in. All platforms.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <CheckoutLocal />
-            </section>
-          </main>
+              <Button variant="brutal" asChild>
+                <a href="/local-docs">
+                  Read the Docs
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
+              </Button>{" "}
+            </div>
+          </section>
 
-          <footer className="mt-12 text-sm text-center opacity-70">
+          <footer className="mt-8 mb-8 text-sm text-center text-muted-foreground">
             &copy; 2025 Unearthed App. All rights reserved.
           </footer>
         </div>

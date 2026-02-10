@@ -1143,35 +1143,6 @@ export const ignoreAllSources = async () => {
   }
 };
 
-export const getLatestLocalVersion = async () => {
-  try {
-    // Get the latest version (highest version number) from the database
-    const latestVersion = await db.query.unearthedLocalVersions.findFirst({
-      orderBy: (t, { desc }) => [desc(t.version)],
-    });
-
-    if (!latestVersion) {
-      return { error: "No versions found" };
-    }
-
-    return {
-      success: true,
-      data: {
-        version: latestVersion.version,
-        productName: latestVersion.productName,
-        productLinkWindows: latestVersion.productLinkWindows,
-        productLinkMacIntel: latestVersion.productLinkMacIntel,
-        productLinkMacSilicon: latestVersion.productLinkMacSilicon,
-        productLinkLinux: latestVersion.productLinkLinux,
-        productLinkLinuxRpm: latestVersion.productLinkLinuxRpm,
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching latest version:", error);
-    return { error: "Failed to fetch latest version" };
-  }
-};
-
 export const stopIgnoreAllSources = async () => {
   const { userId }: { userId: string | null } = await auth();
   if (!userId) {

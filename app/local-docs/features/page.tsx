@@ -21,6 +21,9 @@ import {
   Monitor as TrayIcon,
   Keyboard,
   Palette,
+  Rss,
+  Highlighter,
+  Youtube,
 } from "lucide-react";
 
 function FeatureSection({
@@ -212,7 +215,7 @@ export default function FeaturesPage() {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground">
                 <ul className="list-disc list-inside space-y-1">
-                  <li>YAML front-matter (title, author, type, origin, ASIN, tags)</li>
+                  <li>YAML front-matter (title, author, type, origin — Kindle, KOReader, or RSS — ASIN, tags)</li>
                   <li>All highlights formatted with customizable templates</li>
                   <li>
                     Obsidian wiki-links for authors (<CodeInline>[[Author Name]]</CodeInline>)
@@ -264,6 +267,184 @@ export default function FeaturesPage() {
           </p>
         </FeatureSection>
 
+        {/* RSS Feed Reader */}
+        <FeatureSection
+          id="rss-feeds"
+          icon={Rss}
+          title="RSS Feed Reader"
+          // badge="v1.3.0"
+        >
+          <p>
+            Subscribe to RSS feeds, browse articles from all your subscriptions,
+            and import them into your local library for highlighting and
+            note-taking.
+          </p>
+
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="subscribing">
+              <AccordionTrigger className="text-sm">
+                Subscribing to feeds
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <ol className="list-decimal list-inside space-y-1.5">
+                  <li>
+                    Navigate to the <strong>RSS Feeds</strong> tab
+                  </li>
+                  <li>
+                    Paste a feed URL into the input field and click{" "}
+                    <strong>Subscribe</strong>
+                  </li>
+                  <li>
+                    The feed title, description, and image are detected
+                    automatically
+                  </li>
+                  <li>
+                    Both RSS 2.0 and Atom feed formats are supported
+                  </li>
+                  <li>
+                    YouTube channels can be subscribed to as RSS feeds,
+                    letting you follow a channel&apos;s uploads directly in
+                    Unearthed with embedded video playback and transcripts
+                  </li>
+                </ol>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="browsing">
+              <AccordionTrigger className="text-sm">
+                Browsing &amp; filtering articles
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  Articles from all subscribed feeds are displayed newest-first
+                  with powerful filtering options:
+                </p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>
+                    <strong>Filter by feed</strong> &mdash; view articles from a
+                    specific feed or all feeds
+                  </li>
+                  <li>
+                    <strong>Import status</strong> &mdash; All, Imported, or Not
+                    Imported
+                  </li>
+                  <li>
+                    <strong>Sort order</strong> &mdash; newest or oldest first
+                  </li>
+                  <li>
+                    <strong>Show/hide hidden</strong> &mdash; toggle visibility
+                    of hidden articles
+                  </li>
+                  <li>
+                    <strong>Search</strong> &mdash; filter articles by title
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="article-actions">
+              <AccordionTrigger className="text-sm">
+                Article actions
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <ul className="list-disc list-inside space-y-1">
+                  <li>
+                    <strong>View</strong> &mdash; read the full article in the
+                    in-app reader
+                  </li>
+                  <li>
+                    <strong>Import</strong> &mdash; save the article to your
+                    local database as a source (type: Article, origin: RSS)
+                  </li>
+                  <li>
+                    <strong>Open</strong> &mdash; launch the editor for imported
+                    articles to add highlights and notes
+                  </li>
+                  <li>
+                    <strong>Hide</strong> &mdash; declutter your feed without
+                    deleting the article
+                  </li>
+                  <li>
+                    <strong>Delete</strong> &mdash; permanently remove the
+                    article (confirmation dialog warns RSS articles may reappear
+                    on refresh)
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="feed-management">
+              <AccordionTrigger className="text-sm">
+                Feed management
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <ul className="list-disc list-inside space-y-1">
+                  <li>
+                    <strong>Refresh</strong> &mdash; per-feed refresh or bulk
+                    &quot;Refresh All Feeds&quot;
+                  </li>
+                  <li>
+                    <strong>Edit URL</strong> &mdash; click the pencil icon on
+                    any feed to update its URL
+                  </li>
+                  <li>
+                    <strong>Delete feed</strong> &mdash; removes the feed and
+                    all its articles
+                  </li>
+                  <li>
+                    <strong>Auto-refresh</strong> &mdash; all feeds are
+                    automatically refreshed when the app starts
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </FeatureSection>
+
+        {/* Article Reader & Highlighting */}
+        <FeatureSection
+          id="article-reader"
+          icon={Highlighter}
+          title="Article Highlighting &amp; Notes"
+          // badge="v1.3.0"
+        >
+          <p>
+            Imported RSS articles can be opened in an advanced editor with
+            color-coded highlighting and note-taking, just like Kindle
+            highlights.
+          </p>
+          <div className="rounded-lg border bg-card p-3 space-y-1.5">
+            <p className="text-xs font-medium">Capabilities:</p>
+            <ul className="list-disc list-inside text-xs space-y-0.5">
+              <li>Select text and highlight with four colors: yellow, blue, pink, orange</li>
+              <li>Add text notes to any highlight</li>
+              <li>Edit or delete existing highlights</li>
+              <li>Search within article text</li>
+              <li>Highlights are stored in the database and exported to Obsidian like book quotes</li>
+            </ul>
+          </div>
+          <p className="text-xs">
+            <strong>Home tab:</strong> The latest 10 RSS articles are displayed
+            on the Home tab with quick-access actions (view, import, open, hide).
+          </p>
+        </FeatureSection>
+
+        {/* YouTube Embeds */}
+        <FeatureSection
+          id="youtube"
+          icon={Youtube}
+          title="YouTube Embed Support"
+          // badge="v1.3.0"
+        >
+          <p>
+            RSS articles containing YouTube links are automatically detected and
+            displayed with an embedded video player. Video transcripts are
+            fetched and injected into the article content when available.
+          </p>
+          <p className="text-xs">
+            <strong>Rate limiting:</strong> Transcript fetching retries
+            automatically on rate limits (up to 3 attempts with exponential
+            backoff).
+          </p>
+        </FeatureSection>
+
         <FeatureSection
           id="daily-reflection"
           icon={Lightbulb}
@@ -277,8 +458,18 @@ export default function FeaturesPage() {
           <div className="rounded-lg border bg-card p-3 space-y-1.5">
             <p className="text-xs font-medium">Configurable options:</p>
             <ul className="list-disc list-inside text-xs space-y-0.5">
-              <li>Date format: YYYY-MM-DD, YYYYMMDD, or DD-MM-YYYY</li>
+              <li>
+                Date format: full moment.js-compatible tokens (e.g.{" "}
+                <CodeInline>YYYY-MM-DD</CodeInline>,{" "}
+                <CodeInline>YYYY/MM-MMMM/YYYY-MM-DD-dddd</CodeInline>)
+              </li>
+              <li>Slashes in the format create subfolders automatically</li>
               <li>Daily notes folder path</li>
+              <li>
+                Append Under Heading: insert reflections under a specific
+                markdown heading (e.g. <CodeInline>### Daily Reflection</CodeInline>)
+                instead of at the end of the file
+              </li>
               <li>Create Obsidian Daily Note if it doesn&apos;t exist</li>
               <li>Add Daily Reflection on Startup</li>
               <li>
@@ -406,6 +597,7 @@ export default function FeaturesPage() {
                   ["Ctrl/Cmd + F", "Search within quote viewer"],
                   ["Escape", "Close current modal or browser"],
                   ["Arrow Up/Down", "Navigate search results"],
+                  ["Arrow Left/Right", "Previous/next article in reader"],
                   ["Enter", "Open selected search result"],
                   ["Tab", "Cycle focus within modals"],
                 ].map(([key, action]) => (

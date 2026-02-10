@@ -18,7 +18,7 @@ import {
   Monitor,
   Apple,
   Terminal,
-  Search,
+  Rss,
 } from "lucide-react";
 
 function TroubleshootSection({
@@ -76,29 +76,6 @@ function CodeInline({ children }: { children: React.ReactNode }) {
 }
 
 export default function TroubleshootPage() {
-  // const [errorSearch, setErrorSearch] = useState("");
-
-  // const errorCodes = [
-  //   { code: "EPERM", category: "Permission", desc: "Operation not permitted" },
-  //   { code: "EACCES", category: "Permission", desc: "Access denied to file/directory" },
-  //   { code: "ENOENT", category: "Path", desc: "File or directory not found" },
-  //   { code: "ENOSPC", category: "Disk", desc: "No space left on device" },
-  //   { code: "EBUSY", category: "Lock", desc: "Database file is locked" },
-  //   { code: "SQLITE_CORRUPT", category: "Database", desc: "Database file is corrupted" },
-  //   { code: "SQLITE_LOCKED", category: "Database", desc: "Database table is locked" },
-  //   { code: "SQLITE_BUSY", category: "Database", desc: "Database is busy" },
-  //   { code: "SQLITE_READONLY", category: "Permission", desc: "Database is read-only" },
-  //   { code: "ECONNREFUSED", category: "Network", desc: "Connection refused (API server)" },
-  // ];
-
-  // const filteredCodes = errorSearch
-  //   ? errorCodes.filter(
-  //       (e) =>
-  //         e.code.toLowerCase().includes(errorSearch.toLowerCase()) ||
-  //         e.desc.toLowerCase().includes(errorSearch.toLowerCase()) ||
-  //         e.category.toLowerCase().includes(errorSearch.toLowerCase())
-  //     )
-  //   : errorCodes;
 
   return (
     <div>
@@ -261,6 +238,72 @@ export default function TroubleshootPage() {
         </Accordion>
       </TroubleshootSection>
 
+      {/* RSS Feeds */}
+      <TroubleshootSection id="rss-feeds" icon={Rss} title="RSS Feeds">
+        <Accordion type="single" collapsible className="w-full">
+          <ProblemSolution problem="Feed subscription fails or returns no articles">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                Verify the URL is a valid RSS or Atom feed (not just a website
+                URL)
+              </li>
+              <li>
+                Try opening the feed URL directly in a browser &mdash; it
+                should show XML content
+              </li>
+              <li>
+                Some sites require the full feed path (e.g.{" "}
+                <CodeInline>/feed</CodeInline>,{" "}
+                <CodeInline>/rss</CodeInline>, or{" "}
+                <CodeInline>/atom.xml</CodeInline>)
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Articles reappear after deletion">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                This is expected &mdash; deleting an RSS article removes it
+                from your local database, but the next feed refresh will
+                re-fetch it from the source
+              </li>
+              <li>
+                Use <strong>Hide</strong> instead of Delete to permanently
+                declutter articles without re-fetching
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Images not loading in article reader">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                External images require an internet connection to load
+              </li>
+              <li>
+                Some feeds serve images from domains that may be blocked by
+                network restrictions
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="YouTube video not playing in article">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                YouTube embeds require an internet connection
+              </li>
+              <li>
+                If the transcript fails to load, the app retries up to 3
+                times with exponential backoff
+              </li>
+              <li>
+                Repeated rate limiting (HTTP 429) may require waiting a few
+                minutes before retrying
+              </li>
+            </ul>
+          </ProblemSolution>
+        </Accordion>
+      </TroubleshootSection>
+
       {/* Database */}
       <TroubleshootSection id="database" icon={Database} title="Database">
         <Accordion type="single" collapsible className="w-full">
@@ -400,62 +443,6 @@ export default function TroubleshootPage() {
           </TabsContent>
         </Tabs>
       </TroubleshootSection>
-
-      {/* Error Codes */}
-      {/* <section id="error-codes" className="scroll-mt-20 mb-8">
-        <h2 className="text-lg font-semibold mb-3">Error Codes</h2>
-        <div className="mb-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search error codes..."
-              value={errorSearch}
-              onChange={(e) => setErrorSearch(e.target.value)}
-              className="w-full rounded-md border bg-card pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-        </div>
-
-        <div className="rounded-lg border overflow-hidden">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b bg-muted/50">
-                <th className="text-left font-medium px-3 py-2">Code</th>
-                <th className="text-left font-medium px-3 py-2">Category</th>
-                <th className="text-left font-medium px-3 py-2">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredCodes.map((error) => (
-                <tr key={error.code} className="border-b last:border-0">
-                  <td className="px-3 py-2 font-mono font-medium">
-                    {error.code}
-                  </td>
-                  <td className="px-3 py-2">
-                    <Badge variant="outline" className="text-[10px]">
-                      {error.category}
-                    </Badge>
-                  </td>
-                  <td className="px-3 py-2 text-muted-foreground">
-                    {error.desc}
-                  </td>
-                </tr>
-              ))}
-              {filteredCodes.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={3}
-                    className="px-3 py-6 text-center text-muted-foreground"
-                  >
-                    No matching error codes
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section> */}
 
       {/* Still stuck */}
       <div className="rounded-lg border bg-primary/5 p-4">
