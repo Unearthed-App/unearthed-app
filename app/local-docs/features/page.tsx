@@ -582,36 +582,335 @@ export default function FeaturesPage() {
           id="keyboard"
           icon={Keyboard}
           title="Keyboard Shortcuts"
+          badge="v1.3.2"
         >
-          <div className="rounded-lg border overflow-hidden">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b bg-muted/50">
-                  <th className="text-left font-medium px-3 py-2">Shortcut</th>
-                  <th className="text-left font-medium px-3 py-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  ["Ctrl/Cmd + K", "Open global search"],
-                  ["Ctrl/Cmd + F", "Search within quote viewer"],
-                  ["Escape", "Close current modal or browser"],
-                  ["Arrow Up/Down", "Navigate search results"],
-                  ["Arrow Left/Right", "Previous/next article in reader"],
-                  ["Enter", "Open selected search result"],
-                  ["Tab", "Cycle focus within modals"],
-                ].map(([key, action]) => (
-                  <tr key={key} className="border-b last:border-0">
-                    <td className="px-3 py-2">
-                      <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
-                        {key}
-                      </kbd>
-                    </td>
-                    <td className="px-3 py-2 text-muted-foreground">{action}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <p>
+            Unearthed Local is designed for keyboard-first navigation with 40+
+            shortcuts across every part of the app. All shortcuts are{" "}
+            <strong>completely customisable</strong> — remap any shortcut to your
+            preferred key combination in{" "}
+            <strong>Settings &rarr; Keyboard Shortcuts</strong>. Custom bindings
+            are saved automatically and take effect immediately without restarting.
+          </p>
+          <p>
+            Press{" "}
+            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+              Ctrl/Cmd + /
+            </kbd>{" "}
+            at any time to view the shortcuts help overlay inside the app.
+          </p>
+
+          <Accordion type="multiple" className="w-full">
+            <AccordionItem value="global-shortcuts">
+              <AccordionTrigger className="text-sm">
+                Global Shortcuts
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                <p className="mb-2 text-xs">Available everywhere in the app.</p>
+                <div className="rounded-lg border overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
+                        <th className="text-left font-medium px-3 py-2">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["Ctrl/Cmd + K", "Open Global Search"],
+                        ["Ctrl/Cmd + 1", "Go to Home tab"],
+                        ["Ctrl/Cmd + 2", "Go to Kindle tab"],
+                        ["Ctrl/Cmd + 3", "Go to RSS Feeds tab"],
+                        ["Ctrl/Cmd + 4", "Go to Library tab"],
+                        ["Ctrl/Cmd + ,", "Open Settings"],
+                        ["Ctrl/Cmd + D", "Toggle Dark Mode"],
+                        ["Ctrl/Cmd + /", "Show Keyboard Shortcuts"],
+                        ["Escape", "Close Browser View"],
+                      ].map(([key, action]) => (
+                        <tr key={key} className="border-b last:border-0">
+                          <td className="px-3 py-2">
+                            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+                              {key}
+                            </kbd>
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="home-shortcuts">
+              <AccordionTrigger className="text-sm">
+                Home Tab
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                <div className="rounded-lg border overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
+                        <th className="text-left font-medium px-3 py-2">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["R", "New Random Reflection"],
+                        ["C", "Copy Current Reflection"],
+                        ["S", "Next Article"],
+                        ["A", "Previous Article"],
+                        ["Enter", "Open Selected Article"],
+                        ["I", "Import Selected Article"],
+                        ["H", "Hide/Unhide Selected Article"],
+                        ["D", "Delete Selected Article"],
+                        ["Ctrl/Cmd + F", "Focus Article Search"],
+                      ].map(([key, action]) => (
+                        <tr key={key} className="border-b last:border-0">
+                          <td className="px-3 py-2">
+                            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+                              {key}
+                            </kbd>
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="rss-shortcuts">
+              <AccordionTrigger className="text-sm">
+                RSS Feeds Tab
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                <div className="rounded-lg border overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
+                        <th className="text-left font-medium px-3 py-2">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["S", "Next Article"],
+                        ["A", "Previous Article"],
+                        ["Enter", "Open Selected Article"],
+                        ["I", "Import Selected Article"],
+                        ["H", "Hide/Unhide Selected Article"],
+                        ["D", "Delete Selected Article"],
+                        ["Ctrl/Cmd + H", "Toggle Show Hidden Articles"],
+                        ["Ctrl/Cmd + F", "Focus Article Search"],
+                      ].map(([key, action]) => (
+                        <tr key={key} className="border-b last:border-0">
+                          <td className="px-3 py-2">
+                            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+                              {key}
+                            </kbd>
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="kindle-shortcuts">
+              <AccordionTrigger className="text-sm">
+                Kindle Tab
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                <div className="rounded-lg border overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
+                        <th className="text-left font-medium px-3 py-2">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["Ctrl/Cmd + Shift + S", "Refresh Kindle Books"],
+                      ].map(([key, action]) => (
+                        <tr key={key} className="border-b last:border-0">
+                          <td className="px-3 py-2">
+                            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+                              {key}
+                            </kbd>
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="library-shortcuts">
+              <AccordionTrigger className="text-sm">
+                Library Tab
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                <div className="rounded-lg border overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
+                        <th className="text-left font-medium px-3 py-2">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["Ctrl/Cmd + F", "Focus Search"],
+                        ["Ctrl/Cmd + A", "Select All Sources"],
+                        ["Ctrl/Cmd + Shift + D", "Deselect All"],
+                        ["Escape", "Clear Selection / Search"],
+                      ].map(([key, action]) => (
+                        <tr key={key} className="border-b last:border-0">
+                          <td className="px-3 py-2">
+                            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+                              {key}
+                            </kbd>
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="search-modal-shortcuts">
+              <AccordionTrigger className="text-sm">
+                Search Modal
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                <div className="rounded-lg border overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
+                        <th className="text-left font-medium px-3 py-2">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["Arrow Down / Up", "Navigate Results"],
+                        ["Enter", "Select Result"],
+                        ["Escape", "Close"],
+                      ].map(([key, action]) => (
+                        <tr key={key} className="border-b last:border-0">
+                          <td className="px-3 py-2">
+                            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+                              {key}
+                            </kbd>
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="article-reader-shortcuts">
+              <AccordionTrigger className="text-sm">
+                Article Viewer
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                <div className="rounded-lg border overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
+                        <th className="text-left font-medium px-3 py-2">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["I", "Import Article"],
+                        ["H", "Hide/Unhide Article"],
+                        ["D", "Delete Article"],
+                        ["Space", "Play/Pause Video"],
+                        ["Arrow Left", "Previous Article"],
+                        ["Arrow Right", "Next Article"],
+                        ["Arrow Up", "Scroll Up"],
+                        ["Arrow Down", "Scroll Down"],
+                        ["Escape", "Close"],
+                      ].map(([key, action]) => (
+                        <tr key={key} className="border-b last:border-0">
+                          <td className="px-3 py-2">
+                            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+                              {key}
+                            </kbd>
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="highlighter-shortcuts">
+              <AccordionTrigger className="text-sm">
+                Article Highlighter
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                <div className="rounded-lg border overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
+                        <th className="text-left font-medium px-3 py-2">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["Ctrl/Cmd + F", "Focus Search"],
+                        ["Space", "Play/Pause Video"],
+                        ["Arrow Left", "Previous Source"],
+                        ["Arrow Right", "Next Source"],
+                        ["Arrow Up", "Scroll Up"],
+                        ["Arrow Down", "Scroll Down"],
+                        ["Enter", "Next Search Result"],
+                        ["Shift + Enter", "Previous Search Result"],
+                        ["Escape", "Close"],
+                      ].map(([key, action]) => (
+                        <tr key={key} className="border-b last:border-0">
+                          <td className="px-3 py-2">
+                            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+                              {key}
+                            </kbd>
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 mt-2">
+            <p className="text-xs font-medium mb-1">Customising Shortcuts</p>
+            <p className="text-xs text-muted-foreground">
+              Open <strong>Settings &rarr; Keyboard Shortcuts</strong> to remap
+              any shortcut. Click on a shortcut, press your desired key
+              combination, and save. Your custom bindings are persisted across
+              sessions and apply instantly — no restart required.
+            </p>
           </div>
         </FeatureSection>
 

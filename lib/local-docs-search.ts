@@ -618,9 +618,19 @@ export const searchIndex: SearchItem[] = [
     section: "Advanced Usage",
     category: "Advanced",
     content:
-      "Ctrl/Cmd+K: global search. Ctrl/Cmd+F: search within quote viewer. Escape: close modal or browser. Arrow keys: navigate search results. Enter: open selected result. Tab: cycle focus.",
+      "40+ fully customisable keyboard shortcuts across 8 contexts: global (Ctrl+K search, Ctrl+1-4 tabs, Ctrl+D dark mode, Ctrl+/ help), Home (R new reflection, S/A navigate, I import, H hide, D delete), RSS Feeds, Kindle (Ctrl+Shift+S sync), Library (Ctrl+A select all), Search Modal, Article Viewer, Article Highlighter. All shortcuts can be remapped in Settings.",
     href: "/local-docs/features#keyboard",
-    keywords: ["keyboard", "shortcut", "ctrl", "cmd", "hotkey"],
+    keywords: ["keyboard", "shortcut", "ctrl", "cmd", "hotkey", "customise", "remap", "keybinding"],
+  },
+  {
+    id: "settings-keyboard-shortcuts",
+    title: "Custom Keyboard Shortcuts",
+    section: "Settings",
+    category: "Settings",
+    content:
+      "All keyboard shortcuts are fully customisable. Open Settings → Keyboard Shortcuts or press Ctrl/Cmd+/ to view and remap any shortcut. Supports Ctrl/Cmd, Shift, and Alt modifiers. Changes apply instantly without restart. Custom bindings persisted in settings.json.",
+    href: "/local-docs/settings#keyboard-shortcuts",
+    keywords: ["keyboard", "shortcut", "custom", "remap", "keybinding", "settings", "customise"],
   },
 ];
 

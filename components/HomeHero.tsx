@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { Crimson_Pro } from "next/font/google";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
@@ -131,7 +131,7 @@ export function HomeHero() {
         </motion.p>
 
         <motion.div
-          className="flex flex-col sm:flex-row gap-5 justify-center items-center mb-16"
+          className="flex flex-col sm:flex-row gap-5 justify-center items-center mb-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -169,13 +169,34 @@ export function HomeHero() {
         </motion.div>
 
         <motion.div
+          className="flex justify-center my-12"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <motion.div
+            whileHover={{ scale: 1.05, y: -1 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            <Link
+              href="/local-docs"
+              className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-black bg-card shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_rgba(0,0,0,1)] transition-all duration-300 dark:bg-accent/50"
+            >
+              <BookOpen className="w-4 h-4 text-primary" />
+              <span className="text-sm font-bold">Local Docs</span>
+              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+            </Link>
+          </motion.div>
+        </motion.div>
+
+        <motion.div
           className="flex flex-wrap justify-center gap-8 md:gap-16"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.3, duration: 0.8 }}
         >
           {[
-            { value: "100%", label: "Open Source" },
+            { value: "100%", label: "Open Source (Online)" },
             { value: "0", label: "Amazon Credentials" },
             { value: "∞", label: "Knowledge" },
           ].map((stat, index) => (

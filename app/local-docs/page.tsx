@@ -13,6 +13,7 @@ import {
   Rss,
   Info,
   Wifi,
+  Keyboard,
 } from "lucide-react";
 
 const SECTIONS = [
@@ -73,6 +74,12 @@ const HIGHLIGHTS = [
     description:
       "Powerful search to quickly find and navigate to specific quotes or notes.",
   },
+  {
+    icon: Keyboard,
+    title: "Keyboard Shortcuts",
+    description:
+      "40+ shortcuts for fast navigation, article actions, and more — all fully customisable.",
+  },
 ];
 
 export default function LocalDocsPage() {
@@ -82,7 +89,7 @@ export default function LocalDocsPage() {
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
           <BookOpen className="h-6 w-6 text-primary" />
-          <span className="text-sm font-medium text-primary">v1.3.1</span>
+          <span className="text-sm font-medium text-primary">v1.3.2</span>
         </div>
         <h1 className="text-3xl font-bold tracking-tight mb-3">
           Unearthed Local

@@ -18,6 +18,7 @@ import {
   Palette,
   Sparkles,
   Monitor,
+  Keyboard,
 } from "lucide-react";
 
 function SettingSection({
@@ -146,6 +147,47 @@ export default function SettingsPage() {
               "This setting only appears on macOS",
             ]}
           />
+        </SettingSection>
+
+        {/* Keyboard Shortcuts */}
+        <SettingSection
+          id="keyboard-shortcuts"
+          icon={Keyboard}
+          title="Keyboard Shortcuts"
+        >
+          <p>
+            All keyboard shortcuts in Unearthed Local are fully customisable.
+            Remap any shortcut to your preferred key combination — your custom
+            bindings are saved automatically and take effect immediately.
+          </p>
+
+          <SettingItem
+            name="Custom Keyboard Shortcuts"
+            description="Click any shortcut in the list to remap it. Press your desired key combination (including modifier keys like Ctrl, Shift, or Alt) and save."
+            tips={[
+              "Open via Settings → Keyboard Shortcuts, or press Ctrl/Cmd + /",
+              "Supports modifier combinations: Ctrl/Cmd, Shift, Alt",
+              "Changes apply instantly — no restart required",
+              "Custom bindings are persisted across sessions in settings.json",
+              "Use 'Reset' to restore any shortcut to its default binding",
+            ]}
+          />
+
+          <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
+            <p className="text-xs font-medium mb-1">40+ shortcuts available</p>
+            <p className="text-xs text-muted-foreground">
+              Shortcuts cover every part of the app: global navigation, Home tab,
+              RSS Feeds tab, Kindle tab, Library tab, Search Modal, Article
+              Viewer, and Article Highlighter. See the{" "}
+              <a
+                href="/local-docs/features#keyboard"
+                className="text-primary hover:underline"
+              >
+                Features &rarr; Keyboard Shortcuts
+              </a>{" "}
+              page for the complete reference.
+            </p>
+          </div>
         </SettingSection>
 
         {/* API Endpoint (KOReader) */}
