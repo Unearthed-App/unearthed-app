@@ -222,6 +222,10 @@ export default function FeaturesPage() {
                   </li>
                   <li>Color-coded highlights (background gradient or text color)</li>
                   <li>Zero-width space markers for duplicate detection on re-export</li>
+                  <li>
+                    Optional full article content export (enable in Settings &rarr;{" "}
+                    <strong>Include Article Content in Obsidian Export</strong>)
+                  </li>
                 </ul>
               </AccordionContent>
             </AccordionItem>
@@ -306,6 +310,13 @@ export default function FeaturesPage() {
                     letting you follow a channel&apos;s uploads directly in
                     Unearthed with embedded video playback and transcripts
                   </li>
+                  <li>
+                    <strong>Web Page Import:</strong> paste any web page URL
+                    into the RSS feed tab to import it as an article —
+                    content, images, and metadata are extracted using Mozilla
+                    Readability (the same technology behind Firefox Reader
+                    View), ready for highlighting and annotation
+                  </li>
                 </ol>
               </AccordionContent>
             </AccordionItem>
@@ -335,7 +346,15 @@ export default function FeaturesPage() {
                     of hidden articles
                   </li>
                   <li>
-                    <strong>Search</strong> &mdash; filter articles by title
+                    <strong>Search</strong> &mdash; searches all articles in the
+                    database (not just loaded articles) while respecting
+                    active filters
+                  </li>
+                  <li>
+                    <strong>Read It Later</strong> &mdash; bookmark articles
+                    to read later with the <kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">R</kbd> key
+                    or bookmark button; toggle the blue filter on the RSS
+                    tab to show only bookmarked articles
                   </li>
                 </ul>
               </AccordionContent>
@@ -366,6 +385,12 @@ export default function FeaturesPage() {
                     <strong>Delete</strong> &mdash; permanently remove the
                     article (confirmation dialog warns RSS articles may reappear
                     on refresh)
+                  </li>
+                  <li>
+                    <strong>Read Later</strong> &mdash; bookmark the article
+                    to read later; a blue &quot;Read Later&quot; badge appears
+                    on bookmarked cards (hiding an article automatically
+                    clears its Read It Later status)
                   </li>
                 </ul>
               </AccordionContent>
@@ -416,6 +441,7 @@ export default function FeaturesPage() {
               <li>Select text and highlight with four colors: yellow, blue, pink, orange</li>
               <li>Add text notes to any highlight</li>
               <li>Edit or delete existing highlights</li>
+              <li>Copy selected text to clipboard via the selection toolbar</li>
               <li>Search within article text</li>
               <li>Highlights are stored in the database and exported to Obsidian like book quotes</li>
             </ul>
@@ -582,10 +608,10 @@ export default function FeaturesPage() {
           id="keyboard"
           icon={Keyboard}
           title="Keyboard Shortcuts"
-          badge="v1.3.2"
+          badge="v1.3.3"
         >
           <p>
-            Unearthed Local is designed for keyboard-first navigation with 40+
+            Unearthed Local is designed for keyboard-first navigation with 55+
             shortcuts across every part of the app. All shortcuts are{" "}
             <strong>completely customisable</strong> — remap any shortcut to your
             preferred key combination in{" "}
@@ -622,6 +648,7 @@ export default function FeaturesPage() {
                         ["Ctrl/Cmd + 2", "Go to Kindle tab"],
                         ["Ctrl/Cmd + 3", "Go to RSS Feeds tab"],
                         ["Ctrl/Cmd + 4", "Go to Library tab"],
+                        ["Ctrl/Cmd + R", "Go to Read It Later"],
                         ["Ctrl/Cmd + ,", "Open Settings"],
                         ["Ctrl/Cmd + D", "Toggle Dark Mode"],
                         ["Ctrl/Cmd + /", "Show Keyboard Shortcuts"],
@@ -657,14 +684,15 @@ export default function FeaturesPage() {
                     </thead>
                     <tbody>
                       {[
-                        ["R", "New Random Reflection"],
+                        ["Z", "New Random Reflection"],
                         ["C", "Copy Current Reflection"],
-                        ["S", "Next Article"],
+                        ["D", "Next Article"],
                         ["A", "Previous Article"],
-                        ["Enter", "Open Selected Article"],
-                        ["I", "Import Selected Article"],
-                        ["H", "Hide/Unhide Selected Article"],
-                        ["D", "Delete Selected Article"],
+                        ["Space", "Open Selected Article"],
+                        ["E", "Import Selected Article"],
+                        ["Q", "Hide/Unhide Selected Article"],
+                        ["X", "Delete Selected Article"],
+                        ["R", "Read It Later"],
                         ["Ctrl/Cmd + F", "Focus Article Search"],
                       ].map(([key, action]) => (
                         <tr key={key} className="border-b last:border-0">
@@ -697,12 +725,14 @@ export default function FeaturesPage() {
                     </thead>
                     <tbody>
                       {[
-                        ["S", "Next Article"],
+                        ["D", "Next Article"],
                         ["A", "Previous Article"],
-                        ["Enter", "Open Selected Article"],
-                        ["I", "Import Selected Article"],
-                        ["H", "Hide/Unhide Selected Article"],
-                        ["D", "Delete Selected Article"],
+                        ["Space", "Open Selected Article"],
+                        ["E", "Import Selected Article"],
+                        ["Q", "Hide/Unhide Selected Article"],
+                        ["X", "Delete Selected Article"],
+                        ["R", "Read It Later"],
+                        ["Ctrl/Cmd + L", "Toggle Read It Later Filter"],
                         ["Ctrl/Cmd + H", "Toggle Show Hidden Articles"],
                         ["Ctrl/Cmd + F", "Focus Article Search"],
                       ].map(([key, action]) => (
@@ -837,14 +867,15 @@ export default function FeaturesPage() {
                     </thead>
                     <tbody>
                       {[
-                        ["I", "Import Article"],
-                        ["H", "Hide/Unhide Article"],
-                        ["D", "Delete Article"],
+                        ["E", "Import Article"],
+                        ["Q", "Hide/Unhide Article"],
+                        ["X", "Delete Article"],
+                        ["R", "Read It Later"],
                         ["Space", "Play/Pause Video"],
-                        ["Arrow Left", "Previous Article"],
-                        ["Arrow Right", "Next Article"],
-                        ["Arrow Up", "Scroll Up"],
-                        ["Arrow Down", "Scroll Down"],
+                        ["A", "Previous Article"],
+                        ["D", "Next Article"],
+                        ["W", "Scroll Up"],
+                        ["S", "Scroll Down"],
                         ["Escape", "Close"],
                       ].map(([key, action]) => (
                         <tr key={key} className="border-b last:border-0">
@@ -879,10 +910,10 @@ export default function FeaturesPage() {
                       {[
                         ["Ctrl/Cmd + F", "Focus Search"],
                         ["Space", "Play/Pause Video"],
-                        ["Arrow Left", "Previous Source"],
-                        ["Arrow Right", "Next Source"],
-                        ["Arrow Up", "Scroll Up"],
-                        ["Arrow Down", "Scroll Down"],
+                        ["A", "Previous Source"],
+                        ["D", "Next Source"],
+                        ["W", "Scroll Up"],
+                        ["S", "Scroll Down"],
                         ["Enter", "Next Search Result"],
                         ["Shift + Enter", "Previous Search Result"],
                         ["Escape", "Close"],

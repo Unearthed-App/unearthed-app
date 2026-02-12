@@ -14,6 +14,7 @@ import {
   Info,
   Wifi,
   Keyboard,
+  Bookmark,
 } from "lucide-react";
 
 const SECTIONS = [
@@ -54,7 +55,7 @@ const HIGHLIGHTS = [
     icon: Rss,
     title: "RSS Reader",
     description:
-      "Subscribe to RSS feeds, read articles in-app, and import them with color-coded highlights and notes.",
+      "Subscribe to RSS feeds, import any web page, read articles in-app, and annotate them with color-coded highlights and notes.",
   },
   {
     icon: Shield,
@@ -75,10 +76,16 @@ const HIGHLIGHTS = [
       "Powerful search to quickly find and navigate to specific quotes or notes.",
   },
   {
+    icon: Bookmark,
+    title: "Read It Later",
+    description:
+      "Bookmark articles to read later. Filter your feed to show only saved articles with a single shortcut.",
+  },
+  {
     icon: Keyboard,
     title: "Keyboard Shortcuts",
     description:
-      "40+ shortcuts for fast navigation, article actions, and more — all fully customisable.",
+      "55+ shortcuts for fast navigation, article actions, and more — all fully customisable.",
   },
 ];
 
@@ -89,7 +96,7 @@ export default function LocalDocsPage() {
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
           <BookOpen className="h-6 w-6 text-primary" />
-          <span className="text-sm font-medium text-primary">v1.3.2</span>
+          <span className="text-sm font-medium text-primary">v1.3.3</span>
         </div>
         <h1 className="text-3xl font-bold tracking-tight mb-3">
           Unearthed Local

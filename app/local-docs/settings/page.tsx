@@ -174,7 +174,7 @@ export default function SettingsPage() {
           />
 
           <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
-            <p className="text-xs font-medium mb-1">40+ shortcuts available</p>
+            <p className="text-xs font-medium mb-1">55+ shortcuts available</p>
             <p className="text-xs text-muted-foreground">
               Shortcuts cover every part of the app: global navigation, Home tab,
               RSS Feeds tab, Kindle tab, Library tab, Search Modal, Article
@@ -242,6 +242,28 @@ export default function SettingsPage() {
               "Books are organized as: [Location]/[Root Folder]/Books/",
               "Articles go in: [Location]/[Root Folder]/Articles/",
               "Change this to match your vault structure",
+            ]}
+          />
+
+          <SettingItem
+            name="Auto Export to Obsidian"
+            defaultValue={true}
+            description="Automatically export all highlights and notes to your Obsidian vault every hour."
+            tips={[
+              "Requires an Obsidian vault location to be configured",
+              "Only new or changed highlights are written on each export (smart export)",
+              "Runs alongside Auto Fetch from Kindle for a fully automated pipeline",
+            ]}
+          />
+
+          <SettingItem
+            name="Include Article Content in Obsidian Export"
+            defaultValue={false}
+            description="When enabled, the full article content is exported alongside your quotes and notes when exporting articles to Obsidian."
+            tips={[
+              "Only applies to articles (RSS / Web Page imports), not Kindle books",
+              "Disabled by default — enable if you want a full local copy of article text in your vault",
+              "Article content is appended after the quotes section in the exported Markdown file",
             ]}
           />
         </SettingSection>
@@ -334,9 +356,9 @@ export default function SettingsPage() {
           />
 
           <SettingItem
-            name="Auto Sync"
+            name="Auto Fetch from Kindle"
             defaultValue={true}
-            description="Automatically fetch new Kindle highlights every hour in the background."
+            description="Automatically fetch new highlights from Kindle every hour in the background."
             tips={[
               "Requires 'Keep App Running' to be enabled",
               "Syncs silently without interrupting your work",

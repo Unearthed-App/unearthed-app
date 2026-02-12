@@ -30,6 +30,7 @@ import {
   Lightbulb,
   Monitor,
   Shield,
+  Bookmark,
   ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -66,6 +67,9 @@ export const metadata: Metadata = {
     "readwise without subscription",
     "readwise desktop app",
     "open source readwise",
+    "read it later",
+    "web page import",
+    "web clipper",
   ],
   alternates: {
     canonical: "https://unearthed.app/local",
@@ -109,13 +113,13 @@ const FEATURES = [
     icon: Rss,
     title: "RSS Feed Reader",
     description:
-      "Subscribe to RSS feeds and YouTube channels. Browse, filter, import, and annotate articles locally.",
+      "Subscribe to RSS feeds and YouTube channels, or import any web page. Browse, filter, bookmark, and annotate articles locally.",
   },
   {
     icon: FileText,
     title: "Obsidian Export",
     description:
-      "Smart export to Markdown with customizable templates. Only adds new quotes on re-export.",
+      "Smart export to Markdown with customizable templates. Optionally include full article content. Only adds new quotes on re-export.",
   },
   {
     icon: Wifi,
@@ -127,7 +131,13 @@ const FEATURES = [
     icon: Highlighter,
     title: "Article Highlighting",
     description:
-      "Color-coded highlights and notes on imported RSS articles, just like your Kindle books.",
+      "Color-coded highlights, notes, and copy-to-clipboard on imported articles, just like your Kindle books.",
+  },
+  {
+    icon: Bookmark,
+    title: "Read It Later",
+    description:
+      "Bookmark articles to read later. Filter your feed to show only saved articles. Keyboard-driven with a single key press.",
   },
   {
     icon: Search,
