@@ -281,7 +281,9 @@ export default function FeaturesPage() {
           <p>
             Subscribe to RSS feeds, browse articles from all your subscriptions,
             and import them into your local library for highlighting and
-            note-taking.
+            note-taking. The article list fills the full screen height for
+            comfortable scrolling, and controls are collapsible to maximise
+            reading space.
           </p>
 
           <Accordion type="single" collapsible className="w-full">
@@ -316,6 +318,10 @@ export default function FeaturesPage() {
                     content, images, and metadata are extracted using Mozilla
                     Readability (the same technology behind Firefox Reader
                     View), ready for highlighting and annotation
+                  </li>
+                  <li>
+                    Add Feed, YouTube, and Web Page buttons auto-focus the
+                    text input when opened for faster workflow
                   </li>
                 </ol>
               </AccordionContent>
@@ -442,6 +448,7 @@ export default function FeaturesPage() {
               <li>Add text notes to any highlight</li>
               <li>Edit or delete existing highlights</li>
               <li>Copy selected text to clipboard via the selection toolbar</li>
+              <li>Delete articles with <kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">X</kbd> — styled confirmation dialog with <kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">Enter</kbd>/<kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">Escape</kbd> support (disabled during search/editing)</li>
               <li>Search within article text</li>
               <li>Highlights are stored in the database and exported to Obsidian like book quotes</li>
             </ul>
@@ -576,6 +583,11 @@ export default function FeaturesPage() {
             When <strong>Keep App Running</strong> is enabled, closing the
             window minimizes to the system tray instead of quitting. The app
             continues running for auto-sync and API server availability.
+          </p>
+          <p className="text-xs">
+            <strong>Status bar:</strong> A compact single-line status bar shows
+            sync activity at a glance, with an expandable log panel for detailed
+            output.
           </p>
 
           <Tabs defaultValue="tray-menu" className="w-full mt-2">
@@ -909,6 +921,7 @@ export default function FeaturesPage() {
                     <tbody>
                       {[
                         ["Ctrl/Cmd + F", "Focus Search"],
+                        ["X", "Delete Article"],
                         ["Space", "Play/Pause Video"],
                         ["A", "Previous Source"],
                         ["D", "Next Source"],

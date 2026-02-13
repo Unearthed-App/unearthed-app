@@ -113,7 +113,7 @@ const FEATURES = [
     icon: Rss,
     title: "RSS Feed Reader",
     description:
-      "Subscribe to RSS feeds and YouTube channels, or import any web page. Browse, filter, bookmark, and annotate articles locally.",
+      "Subscribe to RSS feeds and YouTube channels, or import any web page. Full-height article list with collapsible controls for maximum reading space.",
   },
   {
     icon: FileText,
@@ -131,7 +131,7 @@ const FEATURES = [
     icon: Highlighter,
     title: "Article Highlighting",
     description:
-      "Color-coded highlights, notes, and copy-to-clipboard on imported articles, just like your Kindle books.",
+      "Color-coded highlights, notes, and copy-to-clipboard on imported articles. Styled delete confirmations and keyboard-driven workflow.",
   },
   {
     icon: Bookmark,
