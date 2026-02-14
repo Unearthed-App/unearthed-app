@@ -21,8 +21,9 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 // Client page that calls a server-side public API to fetch available downloads
 export default function UnearthedLocalDownload() {
@@ -44,6 +45,21 @@ export default function UnearthedLocalDownload() {
   const [error, setError] = useState<string | null>(null);
   const [productName, setProductName] = useState<string | null>(null);
   const [versions, setVersions] = useState<LocalVersion[] | null>(null);
+  const [expandedVersions, setExpandedVersions] = useState<Set<string>>(
+    new Set()
+  );
+
+  const toggleVersion = (versionId: string) => {
+    setExpandedVersions((prev) => {
+      const next = new Set(prev);
+      if (next.has(versionId)) {
+        next.delete(versionId);
+      } else {
+        next.add(versionId);
+      }
+      return next;
+    });
+  };
 
   const downloadLinks = (v: LocalVersion) => {
     return [
@@ -141,7 +157,9 @@ export default function UnearthedLocalDownload() {
                 <div
                   key={v.id}
                   className={`border-2 border-black rounded-md overflow-hidden shadow-[4px_4px_0px_rgba(0,0,0,1)] bg-card ${
-                    index === 0 ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""
+                    index === 0
+                      ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                      : ""
                   }`}
                 >
                   <div className="flex items-center gap-3 px-4 py-3 border-b-2 border-black bg-muted/50">
@@ -157,16 +175,37 @@ export default function UnearthedLocalDownload() {
 
                   <div className="p-4 space-y-4">
                     {v.changes && (
-                      <div className="text-sm border-2 border-black/20 dark:border-white/20 rounded-md p-3 bg-muted/30">
-                        <h4 className="font-bold text-xs uppercase tracking-wide text-muted-foreground mb-2">
-                          Changes
-                        </h4>
-                        <ReactMarkdown
-                          className="prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_li]:my-0.5 [&_p]:my-1 [&_h1]:text-base [&_h2]:text-sm [&_h3]:text-sm [&_code]:text-xs [&_code]:bg-black/10 [&_code]:dark:bg-white/10 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded"
-                          remarkPlugins={[remarkGfm]}
+                      <div className="text-sm border-2 border-cyan-500/30 rounded-md overflow-hidden bg-cyan-500/5">
+                        <button
+                          onClick={() => toggleVersion(v.id)}
+                          className="w-full flex items-center justify-between px-3 py-2 hover:bg-cyan-500/10 transition-colors"
                         >
-                          {v.changes}
-                        </ReactMarkdown>
+                          <h4 className="font-bold text-xs uppercase tracking-wide">
+                            <span className="text-muted-foreground">
+                              Changes
+                            </span>{" "}
+                            {!expandedVersions.has(v.id) && (
+                              <span className="text-[10px] ml-2 font-bold text-cyan-500">
+                                (click to expand)
+                              </span>
+                            )}
+                          </h4>
+                          {expandedVersions.has(v.id) ? (
+                            <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4 text-cyan-500" />
+                          )}
+                        </button>
+                        {expandedVersions.has(v.id) && (
+                          <div className="px-3 pb-3 border-t-2 border-black/20 dark:border-white/20 pt-3">
+                            <ReactMarkdown
+                              className="prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_li]:my-0.5 [&_p]:my-1 [&_h1]:text-lg [&_h1]:font-bold [&_h1]:mt-3 [&_h1]:mb-2 [&_h2]:text-base [&_h2]:font-bold [&_h2]:mt-2 [&_h2]:mb-1 [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-2 [&_h3]:mb-1 [&_h4]:text-sm [&_h4]:font-medium [&_h5]:text-xs [&_h5]:font-medium [&_h6]:text-xs [&_code]:text-xs [&_code]:bg-black/10 [&_code]:dark:bg-white/10 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded"
+                              remarkPlugins={[remarkGfm]}
+                            >
+                              {v.changes}
+                            </ReactMarkdown>
+                          </div>
+                        )}
                       </div>
                     )}
 

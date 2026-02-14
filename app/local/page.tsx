@@ -32,6 +32,7 @@ import {
   Shield,
   Bookmark,
   ArrowRight,
+  Keyboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -146,10 +147,22 @@ const FEATURES = [
       "Cmd+K to instantly search across all your books, quotes, notes, and articles.",
   },
   {
+    icon: Keyboard,
+    title: "System-Wide Shortcuts",
+    description:
+      "Press Ctrl+Shift+I from anywhere to import a URL instantly, even when the app is minimized. Quick access to RSS feeds with Ctrl+Shift+O.",
+  },
+  {
     icon: Lightbulb,
     title: "Daily Reflection",
     description:
       "A random quote added to your Obsidian daily note. Supports custom date formats and heading insertion.",
+  },
+  {
+    icon: Keyboard,
+    title: "Keyboard Shortcuts",
+    description:
+      "55+ shortcuts for fast navigation, article actions, and more — all fully customisable. System-wide shortcuts let you import content from anywhere.",
   },
   {
     icon: Monitor,

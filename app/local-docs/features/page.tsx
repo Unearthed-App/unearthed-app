@@ -88,9 +88,9 @@ export default function FeaturesPage() {
           // badge="Core"
         >
           <p>
-            Log into your Amazon account through a built-in browser, and Unearthed
-            automatically imports all your books and highlights. Everything is stored
-            locally on your computer.
+            Log into your Amazon account through a built-in browser, and
+            Unearthed automatically imports all your books and highlights.
+            Everything is stored locally on your computer.
           </p>
 
           <Accordion type="single" collapsible className="w-full">
@@ -125,9 +125,7 @@ export default function FeaturesPage() {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="auto-sync">
-              <AccordionTrigger className="text-sm">
-                Auto-Sync
-              </AccordionTrigger>
+              <AccordionTrigger className="text-sm">Auto-Sync</AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground">
                 Enable in Settings to automatically fetch new highlights every
                 hour. The sync runs in the background and updates your library
@@ -140,12 +138,13 @@ export default function FeaturesPage() {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground space-y-2">
                 <p>
-                  If you have the same book in both Kindle and KOReader, Unearthed
-                  automatically merges them into a single entry based on title and author.
+                  If you have the same book in both Kindle and KOReader,
+                  Unearthed automatically merges them into a single entry based
+                  on title and author.
                 </p>
                 <p>
-                  All quotes from both sources are combined and deduplicated, so you
-                  never have duplicate entries in your Obsidian export.
+                  All quotes from both sources are combined and deduplicated, so
+                  you never have duplicate entries in your Obsidian export.
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -160,17 +159,17 @@ export default function FeaturesPage() {
           // badge="API"
         >
           <p>
-            Unearthed runs a local HTTP API server on a specific port that KOReader can
-            send highlights to.
+            Unearthed runs a local HTTP API server on a specific port that
+            KOReader can send highlights to.
           </p>
           <div className="rounded-lg border bg-card p-3 space-y-2">
             <p className="text-xs font-medium">Setup Steps:</p>
             <ol className="list-decimal list-inside text-xs space-y-1">
               <li>Open Settings &rarr; API Endpoint section</li>
-              <li>Note your device&apos;s local IP (displayed automatically)</li>
               <li>
-                Copy the API URL
+                Note your device&apos;s local IP (displayed automatically)
               </li>
+              <li>Copy the API URL</li>
               <li>
                 Configure the Unearthed KOReader Plugin with this URL and your
                 secret token
@@ -179,8 +178,8 @@ export default function FeaturesPage() {
             </ol>
           </div>
           <p className="text-xs">
-            <strong>Note:</strong> Both KOReader and Unearthed need to have the same 
-            secret token set for the connection to work.
+            <strong>Note:</strong> Both KOReader and Unearthed need to have the
+            same secret token set for the connection to work.
           </p>
         </FeatureSection>
 
@@ -198,7 +197,7 @@ export default function FeaturesPage() {
 
           <div className="rounded-lg border bg-[hsl(169.4,43.6%,7.6%)] text-gray-100 p-3">
             <pre className="text-xs overflow-x-auto">
-{`YourVault/
+              {`YourVault/
 └── Unearthed (your choice)/
     ├── Books/
     │   ├── Book Title.md
@@ -215,15 +214,25 @@ export default function FeaturesPage() {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground">
                 <ul className="list-disc list-inside space-y-1">
-                  <li>YAML front-matter (title, author, type, origin — Kindle, KOReader, or RSS — ASIN, tags)</li>
+                  <li>
+                    YAML front-matter (title, author, type, origin — Kindle,
+                    KOReader, or RSS — ASIN, tags)
+                  </li>
                   <li>All highlights formatted with customizable templates</li>
                   <li>
-                    Obsidian wiki-links for authors (<CodeInline>[[Author Name]]</CodeInline>)
+                    Obsidian wiki-links for authors (
+                    <CodeInline>[[Author Name]]</CodeInline>)
                   </li>
-                  <li>Color-coded highlights (background gradient or text color)</li>
-                  <li>Zero-width space markers for duplicate detection on re-export</li>
                   <li>
-                    Optional full article content export (enable in Settings &rarr;{" "}
+                    Color-coded highlights (background gradient or text color)
+                  </li>
+                  <li>
+                    Zero-width space markers for duplicate detection on
+                    re-export
+                  </li>
+                  <li>
+                    Optional full article content export (enable in Settings
+                    &rarr;{" "}
                     <strong>Include Article Content in Obsidian Export</strong>)
                   </li>
                 </ul>
@@ -235,12 +244,14 @@ export default function FeaturesPage() {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground space-y-2">
                 <p>
-                  When you re-export, Unearthed intelligently detects which quotes
-                  are already in your Obsidian files and only adds the new ones.
+                  When you re-export, Unearthed intelligently detects which
+                  quotes are already in your Obsidian files and only adds the
+                  new ones.
                 </p>
                 <p>
-                  This is done using invisible zero-width space markers. You can safely
-                  edit your Obsidian files without worrying about duplicates on re-export.
+                  This is done using invisible zero-width space markers. You can
+                  safely edit your Obsidian files without worrying about
+                  duplicates on re-export.
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -251,8 +262,18 @@ export default function FeaturesPage() {
               <AccordionContent className="text-sm text-muted-foreground">
                 <ul className="list-disc list-inside space-y-1">
                   <li>Root folder name (default: &quot;Unearthed&quot;)</li>
-                  <li>Filename template: <CodeInline>{`{{title}}`}</CodeInline>, <CodeInline>{`{{author}}`}</CodeInline>, <CodeInline>{`{{type}}`}</CodeInline></li>
-                  <li>Quote template with variables: <CodeInline>{`{{content}}`}</CodeInline>, <CodeInline>{`{{note}}`}</CodeInline>, <CodeInline>{`{{location}}`}</CodeInline>, <CodeInline>{`{{color}}`}</CodeInline></li>
+                  <li>
+                    Filename template: <CodeInline>{`{{title}}`}</CodeInline>,{" "}
+                    <CodeInline>{`{{author}}`}</CodeInline>,{" "}
+                    <CodeInline>{`{{type}}`}</CodeInline>
+                  </li>
+                  <li>
+                    Quote template with variables:{" "}
+                    <CodeInline>{`{{content}}`}</CodeInline>,{" "}
+                    <CodeInline>{`{{note}}`}</CodeInline>,{" "}
+                    <CodeInline>{`{{location}}`}</CodeInline>,{" "}
+                    <CodeInline>{`{{color}}`}</CodeInline>
+                  </li>
                   <li>Source template (YAML front-matter)</li>
                   <li>Color mode: none, background, or text</li>
                   <li>Custom color hex values for all 10 highlight colors</li>
@@ -263,7 +284,11 @@ export default function FeaturesPage() {
         </FeatureSection>
 
         {/* CSV Export */}
-        <FeatureSection id="csv-export" icon={FileSpreadsheet} title="CSV Export">
+        <FeatureSection
+          id="csv-export"
+          icon={FileSpreadsheet}
+          title="CSV Export"
+        >
           <p>
             Export your entire library as CSV files for spreadsheets or other
             tools. One file per book with columns: Quote, Note, Location, Color,
@@ -304,24 +329,22 @@ export default function FeaturesPage() {
                     The feed title, description, and image are detected
                     automatically
                   </li>
+                  <li>Both RSS 2.0 and Atom feed formats are supported</li>
                   <li>
-                    Both RSS 2.0 and Atom feed formats are supported
-                  </li>
-                  <li>
-                    YouTube channels can be subscribed to as RSS feeds,
-                    letting you follow a channel&apos;s uploads directly in
-                    Unearthed with embedded video playback and transcripts
+                    YouTube channels can be subscribed to as RSS feeds, letting
+                    you follow a channel&apos;s uploads directly in Unearthed
+                    with embedded video playback and transcripts
                   </li>
                   <li>
                     <strong>Web Page Import:</strong> paste any web page URL
-                    into the RSS feed tab to import it as an article —
-                    content, images, and metadata are extracted using Mozilla
-                    Readability (the same technology behind Firefox Reader
-                    View), ready for highlighting and annotation
+                    into the RSS feed tab to import it as an article — content,
+                    images, and metadata are extracted using Mozilla Readability
+                    (the same technology behind Firefox Reader View), ready for
+                    highlighting and annotation
                   </li>
                   <li>
-                    Add Feed, YouTube, and Web Page buttons auto-focus the
-                    text input when opened for faster workflow
+                    Add Feed, YouTube, and Web Page buttons auto-focus the text
+                    input when opened for faster workflow
                   </li>
                 </ol>
               </AccordionContent>
@@ -353,13 +376,16 @@ export default function FeaturesPage() {
                   </li>
                   <li>
                     <strong>Search</strong> &mdash; searches all articles in the
-                    database (not just loaded articles) while respecting
-                    active filters
+                    database (not just loaded articles) while respecting active
+                    filters
                   </li>
                   <li>
-                    <strong>Read It Later</strong> &mdash; bookmark articles
-                    to read later with the <kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">R</kbd> key
-                    or bookmark button; toggle the blue filter on the RSS
+                    <strong>Read It Later</strong> &mdash; bookmark articles to
+                    read later with the{" "}
+                    <kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">
+                      R
+                    </kbd>{" "}
+                    key or bookmark button; toggle the blue filter on the RSS
                     tab to show only bookmarked articles
                   </li>
                 </ul>
@@ -393,10 +419,10 @@ export default function FeaturesPage() {
                     on refresh)
                   </li>
                   <li>
-                    <strong>Read Later</strong> &mdash; bookmark the article
-                    to read later; a blue &quot;Read Later&quot; badge appears
-                    on bookmarked cards (hiding an article automatically
-                    clears its Read It Later status)
+                    <strong>Read Later</strong> &mdash; bookmark the article to
+                    read later; a blue &quot;Read Later&quot; badge appears on
+                    bookmarked cards (hiding an article automatically clears its
+                    Read It Later status)
                   </li>
                 </ul>
               </AccordionContent>
@@ -444,18 +470,39 @@ export default function FeaturesPage() {
           <div className="rounded-lg border bg-card p-3 space-y-1.5">
             <p className="text-xs font-medium">Capabilities:</p>
             <ul className="list-disc list-inside text-xs space-y-0.5">
-              <li>Select text and highlight with four colors: yellow, blue, pink, orange</li>
+              <li>
+                Select text and highlight with four colors: yellow, blue, pink,
+                orange
+              </li>
               <li>Add text notes to any highlight</li>
               <li>Edit or delete existing highlights</li>
               <li>Copy selected text to clipboard via the selection toolbar</li>
-              <li>Delete articles with <kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">X</kbd> — styled confirmation dialog with <kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">Enter</kbd>/<kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">Escape</kbd> support (disabled during search/editing)</li>
+              <li>
+                Delete articles with{" "}
+                <kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">
+                  X
+                </kbd>{" "}
+                — styled confirmation dialog with{" "}
+                <kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">
+                  Enter
+                </kbd>
+                /
+                <kbd className="rounded border bg-primary/10 px-1 py-0.5 text-[10px] font-medium">
+                  Escape
+                </kbd>{" "}
+                support (disabled during search/editing)
+              </li>
               <li>Search within article text</li>
-              <li>Highlights are stored in the database and exported to Obsidian like book quotes</li>
+              <li>
+                Highlights are stored in the database and exported to Obsidian
+                like book quotes
+              </li>
             </ul>
           </div>
           <p className="text-xs">
             <strong>Home tab:</strong> The latest 10 RSS articles are displayed
-            on the Home tab with quick-access actions (view, import, open, hide).
+            on the Home tab with quick-access actions (view, import, open,
+            hide).
           </p>
         </FeatureSection>
 
@@ -500,13 +547,15 @@ export default function FeaturesPage() {
               <li>Daily notes folder path</li>
               <li>
                 Append Under Heading: insert reflections under a specific
-                markdown heading (e.g. <CodeInline>### Daily Reflection</CodeInline>)
-                instead of at the end of the file
+                markdown heading (e.g.{" "}
+                <CodeInline>### Daily Reflection</CodeInline>) instead of at the
+                end of the file
               </li>
               <li>Create Obsidian Daily Note if it doesn&apos;t exist</li>
               <li>Add Daily Reflection on Startup</li>
               <li>
-                Template with variables: <CodeInline>{`{{content}}`}</CodeInline>,{" "}
+                Template with variables:{" "}
+                <CodeInline>{`{{content}}`}</CodeInline>,{" "}
                 <CodeInline>{`{{bookTitle}}`}</CodeInline>,{" "}
                 <CodeInline>{`{{author}}`}</CodeInline>,{" "}
                 <CodeInline>{`{{fileName}}`}</CodeInline>
@@ -514,22 +563,22 @@ export default function FeaturesPage() {
             </ul>
           </div>
           <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 mt-2">
-            <p className="text-xs font-medium mb-1">How these settings work together:</p>
+            <p className="text-xs font-medium mb-1">
+              How these settings work together:
+            </p>
             <p className="text-xs text-muted-foreground">
-              If <strong>&quot;Create Daily Note&quot;</strong> is <em>disabled</em> but{" "}
-              <strong>&quot;Add Reflection on Startup&quot;</strong> is <em>enabled</em>,
-              Unearthed will wait until you manually create your daily note in Obsidian,
-              then it will automatically add the reflection to it.
+              If <strong>&quot;Create Daily Note&quot;</strong> is{" "}
+              <em>disabled</em> but{" "}
+              <strong>&quot;Add Reflection on Startup&quot;</strong> is{" "}
+              <em>enabled</em>, Unearthed will wait until you manually create
+              your daily note in Obsidian, then it will automatically add the
+              reflection to it.
             </p>
           </div>
         </FeatureSection>
 
         {/* Global Search */}
-        <FeatureSection
-          id="global-search"
-          icon={Search}
-          title="Global Search"
-        >
+        <FeatureSection id="global-search" icon={Search} title="Global Search">
           <p>
             Search across all books, quotes, and notes using{" "}
             <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
@@ -543,9 +592,14 @@ export default function FeaturesPage() {
           </p>
           <ul className="list-disc list-inside text-xs space-y-0.5">
             <li>Full-text search across titles, authors, content, and notes</li>
-            <li>Results grouped by source with match type indicators (title, quote, note)</li>
+            <li>
+              Results grouped by source with match type indicators (title,
+              quote, note)
+            </li>
             <li>Keyboard navigation with arrow keys and Enter</li>
-            <li>Click a result to open the book and scroll to the specific quote</li>
+            <li>
+              Click a result to open the book and scroll to the specific quote
+            </li>
           </ul>
         </FeatureSection>
 
@@ -561,7 +615,10 @@ export default function FeaturesPage() {
             <li>Toggle ignored status (excluded from Obsidian export)</li>
             <li>Delete individual sources or their quotes</li>
             <li>Batch select and operate on multiple sources</li>
-            <li>View all quotes for any source in a detailed modal with color-coded accent bars</li>
+            <li>
+              View all quotes for any source in a detailed modal with
+              color-coded accent bars
+            </li>
           </ul>
         </FeatureSection>
 
@@ -574,11 +631,7 @@ export default function FeaturesPage() {
         </FeatureSection>
 
         {/* System Tray */}
-        <FeatureSection
-          id="tray"
-          icon={TrayIcon}
-          title="System Tray & Startup"
-        >
+        <FeatureSection id="tray" icon={TrayIcon} title="System Tray & Startup">
           <p>
             When <strong>Keep App Running</strong> is enabled, closing the
             window minimizes to the system tray instead of quitting. The app
@@ -597,19 +650,33 @@ export default function FeaturesPage() {
             </TabsList>
             <TabsContent value="tray-menu" className="mt-3 space-y-2">
               <ul className="list-disc list-inside text-xs space-y-0.5">
-                <li><strong>Show App</strong> &mdash; Bring window to foreground</li>
-                <li><strong>Quit</strong> &mdash; Fully exit the application</li>
+                <li>
+                  <strong>Show App</strong> &mdash; Bring window to foreground
+                </li>
+                <li>
+                  <strong>Quit</strong> &mdash; Fully exit the application
+                </li>
               </ul>
             </TabsContent>
             <TabsContent value="startup" className="mt-3 space-y-2">
               <ul className="list-disc list-inside text-xs space-y-0.5">
-                <li><strong>Windows:</strong> Use the in-app &quot;Run on Startup&quot; toggle in Settings</li>
                 <li>
-                  <strong>macOS:</strong> Right-click the Unearthed icon in the Dock &rarr;{" "}
-                  <strong>Options</strong> &rarr; <strong>Open at Login</strong>{" "}
-                  <span className="text-muted-foreground">(no in-app setting)</span>
+                  <strong>Windows:</strong> Use the in-app &quot;Run on
+                  Startup&quot; toggle in Settings
                 </li>
-                <li><strong>Linux:</strong> Creates <CodeInline>.desktop</CodeInline> file in <CodeInline>~/.config/autostart/</CodeInline></li>
+                <li>
+                  <strong>macOS:</strong> Right-click the Unearthed icon in the
+                  Dock &rarr; <strong>Options</strong> &rarr;{" "}
+                  <strong>Open at Login</strong>{" "}
+                  <span className="text-muted-foreground">
+                    (no in-app setting)
+                  </span>
+                </li>
+                <li>
+                  <strong>Linux:</strong> Creates{" "}
+                  <CodeInline>.desktop</CodeInline> file in{" "}
+                  <CodeInline>~/.config/autostart/</CodeInline>
+                </li>
               </ul>
             </TabsContent>
           </Tabs>
@@ -620,15 +687,16 @@ export default function FeaturesPage() {
           id="keyboard"
           icon={Keyboard}
           title="Keyboard Shortcuts"
-          badge="v1.3.3"
+          badge="v1.3.5"
         >
           <p>
             Unearthed Local is designed for keyboard-first navigation with 55+
             shortcuts across every part of the app. All shortcuts are{" "}
-            <strong>completely customisable</strong> — remap any shortcut to your
-            preferred key combination in{" "}
+            <strong>completely customisable</strong> — remap any shortcut to
+            your preferred key combination in{" "}
             <strong>Settings &rarr; Keyboard Shortcuts</strong>. Custom bindings
-            are saved automatically and take effect immediately without restarting.
+            are saved automatically and take effect immediately without
+            restarting.
           </p>
           <p>
             Press{" "}
@@ -639,6 +707,82 @@ export default function FeaturesPage() {
           </p>
 
           <Accordion type="multiple" className="w-full">
+            <AccordionItem value="system-wide-shortcuts">
+              <AccordionTrigger className="text-sm">
+                System-Wide Shortcuts
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                <p className="mb-2 text-xs">
+                  Work from any application, even when Unearthed is minimized.
+                </p>
+                <div className="rounded-lg border overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left font-medium px-3 py-2">
+                          Shortcut
+                        </th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        [
+                          "Ctrl/Cmd + Shift + I",
+                          "Quick Import URL (opens floating dialog for YouTube, RSS, or web pages)",
+                        ],
+                        [
+                          "Ctrl/Cmd + Shift + O",
+                          "Go to RSS Feed (opens app and navigates to RSS tab)",
+                        ],
+                      ].map(([key, action]) => (
+                        <tr key={key} className="border-b last:border-0">
+                          <td className="px-3 py-2">
+                            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+                              {key}
+                            </kbd>
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground">
+                            {action}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 mt-3">
+                  <p className="text-xs font-medium mb-1">
+                    Quick Import Dialog Features
+                  </p>
+                  <ul className="list-disc list-inside text-xs text-muted-foreground space-y-0.5">
+                    <li>
+                      Automatically detects URL type: YouTube videos, RSS feeds,
+                      or web pages
+                    </li>
+                    <li>Shows success/error feedback inline</li>
+                    <li>
+                      Auto-closes after successful import (except RSS feeds)
+                    </li>
+                    <li>
+                      &quot;Go to Feed&quot; button to open main app and
+                      navigate to RSS tab
+                    </li>
+                    <li>Respects dark/light mode theme</li>
+                    <li>
+                      Auto-focuses and selects text after import for quick
+                      re-use
+                    </li>
+                    <li>
+                      Closes automatically when clicking outside or pressing
+                      Escape
+                    </li>
+                  </ul>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
             <AccordionItem value="global-shortcuts">
               <AccordionTrigger className="text-sm">
                 Global Shortcuts
@@ -649,8 +793,12 @@ export default function FeaturesPage() {
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b bg-muted/50">
-                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
-                        <th className="text-left font-medium px-3 py-2">Action</th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Shortcut
+                        </th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -672,7 +820,9 @@ export default function FeaturesPage() {
                               {key}
                             </kbd>
                           </td>
-                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                          <td className="px-3 py-2 text-muted-foreground">
+                            {action}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -682,16 +832,18 @@ export default function FeaturesPage() {
             </AccordionItem>
 
             <AccordionItem value="home-shortcuts">
-              <AccordionTrigger className="text-sm">
-                Home Tab
-              </AccordionTrigger>
+              <AccordionTrigger className="text-sm">Home Tab</AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground">
                 <div className="rounded-lg border overflow-hidden">
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b bg-muted/50">
-                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
-                        <th className="text-left font-medium px-3 py-2">Action</th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Shortcut
+                        </th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -713,7 +865,9 @@ export default function FeaturesPage() {
                               {key}
                             </kbd>
                           </td>
-                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                          <td className="px-3 py-2 text-muted-foreground">
+                            {action}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -731,8 +885,12 @@ export default function FeaturesPage() {
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b bg-muted/50">
-                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
-                        <th className="text-left font-medium px-3 py-2">Action</th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Shortcut
+                        </th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -754,7 +912,9 @@ export default function FeaturesPage() {
                               {key}
                             </kbd>
                           </td>
-                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                          <td className="px-3 py-2 text-muted-foreground">
+                            {action}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -772,23 +932,29 @@ export default function FeaturesPage() {
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b bg-muted/50">
-                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
-                        <th className="text-left font-medium px-3 py-2">Action</th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Shortcut
+                        </th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {[
-                        ["Ctrl/Cmd + Shift + S", "Refresh Kindle Books"],
-                      ].map(([key, action]) => (
-                        <tr key={key} className="border-b last:border-0">
-                          <td className="px-3 py-2">
-                            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
-                              {key}
-                            </kbd>
-                          </td>
-                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
-                        </tr>
-                      ))}
+                      {[["Ctrl/Cmd + Shift + S", "Refresh Kindle Books"]].map(
+                        ([key, action]) => (
+                          <tr key={key} className="border-b last:border-0">
+                            <td className="px-3 py-2">
+                              <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+                                {key}
+                              </kbd>
+                            </td>
+                            <td className="px-3 py-2 text-muted-foreground">
+                              {action}
+                            </td>
+                          </tr>
+                        )
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -804,8 +970,12 @@ export default function FeaturesPage() {
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b bg-muted/50">
-                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
-                        <th className="text-left font-medium px-3 py-2">Action</th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Shortcut
+                        </th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -821,7 +991,9 @@ export default function FeaturesPage() {
                               {key}
                             </kbd>
                           </td>
-                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                          <td className="px-3 py-2 text-muted-foreground">
+                            {action}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -839,8 +1011,12 @@ export default function FeaturesPage() {
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b bg-muted/50">
-                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
-                        <th className="text-left font-medium px-3 py-2">Action</th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Shortcut
+                        </th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -855,7 +1031,9 @@ export default function FeaturesPage() {
                               {key}
                             </kbd>
                           </td>
-                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                          <td className="px-3 py-2 text-muted-foreground">
+                            {action}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -873,8 +1051,12 @@ export default function FeaturesPage() {
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b bg-muted/50">
-                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
-                        <th className="text-left font-medium px-3 py-2">Action</th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Shortcut
+                        </th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -896,7 +1078,9 @@ export default function FeaturesPage() {
                               {key}
                             </kbd>
                           </td>
-                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                          <td className="px-3 py-2 text-muted-foreground">
+                            {action}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -914,8 +1098,12 @@ export default function FeaturesPage() {
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b bg-muted/50">
-                        <th className="text-left font-medium px-3 py-2">Shortcut</th>
-                        <th className="text-left font-medium px-3 py-2">Action</th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Shortcut
+                        </th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -937,7 +1125,9 @@ export default function FeaturesPage() {
                               {key}
                             </kbd>
                           </td>
-                          <td className="px-3 py-2 text-muted-foreground">{action}</td>
+                          <td className="px-3 py-2 text-muted-foreground">
+                            {action}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -965,8 +1155,9 @@ export default function FeaturesPage() {
           title="Custom Highlight Colors"
         >
           <p>
-            Override the default color hex values in Settings &rarr; Quote Colors.
-            Three color modes available: none, background (gradient), text.
+            Override the default color hex values in Settings &rarr; Quote
+            Colors. Three color modes available: none, background (gradient),
+            text.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
             {[
@@ -1014,12 +1205,27 @@ export default function FeaturesPage() {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground">
                 <ul className="list-disc list-inside text-xs space-y-0.5">
-                  <li><CodeInline>{`{{title}}`}</CodeInline> &mdash; Book title</li>
-                  <li><CodeInline>{`{{subtitle}}`}</CodeInline> &mdash; Book subtitle</li>
-                  <li><CodeInline>{`{{author}}`}</CodeInline> &mdash; Author name</li>
-                  <li><CodeInline>{`{{type}}`}</CodeInline> &mdash; Source type (Book, Article)</li>
-                  <li><CodeInline>{`{{origin}}`}</CodeInline> &mdash; Import source (Kindle, KOReader)</li>
-                  <li><CodeInline>{`{{asin}}`}</CodeInline> &mdash; Amazon ASIN</li>
+                  <li>
+                    <CodeInline>{`{{title}}`}</CodeInline> &mdash; Book title
+                  </li>
+                  <li>
+                    <CodeInline>{`{{subtitle}}`}</CodeInline> &mdash; Book
+                    subtitle
+                  </li>
+                  <li>
+                    <CodeInline>{`{{author}}`}</CodeInline> &mdash; Author name
+                  </li>
+                  <li>
+                    <CodeInline>{`{{type}}`}</CodeInline> &mdash; Source type
+                    (Book, Article)
+                  </li>
+                  <li>
+                    <CodeInline>{`{{origin}}`}</CodeInline> &mdash; Import
+                    source (Kindle, KOReader)
+                  </li>
+                  <li>
+                    <CodeInline>{`{{asin}}`}</CodeInline> &mdash; Amazon ASIN
+                  </li>
                 </ul>
               </AccordionContent>
             </AccordionItem>
@@ -1029,10 +1235,22 @@ export default function FeaturesPage() {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground">
                 <ul className="list-disc list-inside text-xs space-y-0.5">
-                  <li><CodeInline>{`{{content}}`}</CodeInline> &mdash; The highlighted text</li>
-                  <li><CodeInline>{`{{note}}`}</CodeInline> &mdash; Personal annotation</li>
-                  <li><CodeInline>{`{{location}}`}</CodeInline> &mdash; Page number or location</li>
-                  <li><CodeInline>{`{{color}}`}</CodeInline> &mdash; Highlight color name</li>
+                  <li>
+                    <CodeInline>{`{{content}}`}</CodeInline> &mdash; The
+                    highlighted text
+                  </li>
+                  <li>
+                    <CodeInline>{`{{note}}`}</CodeInline> &mdash; Personal
+                    annotation
+                  </li>
+                  <li>
+                    <CodeInline>{`{{location}}`}</CodeInline> &mdash; Page
+                    number or location
+                  </li>
+                  <li>
+                    <CodeInline>{`{{color}}`}</CodeInline> &mdash; Highlight
+                    color name
+                  </li>
                 </ul>
               </AccordionContent>
             </AccordionItem>
@@ -1043,9 +1261,18 @@ export default function FeaturesPage() {
               <AccordionContent className="text-sm text-muted-foreground">
                 <p className="mb-1">All quote variables above, plus:</p>
                 <ul className="list-disc list-inside text-xs space-y-0.5">
-                  <li><CodeInline>{`{{bookTitle}}`}</CodeInline> &mdash; Source book title</li>
-                  <li><CodeInline>{`{{author}}`}</CodeInline> &mdash; Source author</li>
-                  <li><CodeInline>{`{{fileName}}`}</CodeInline> &mdash; Generated filename for Obsidian link</li>
+                  <li>
+                    <CodeInline>{`{{bookTitle}}`}</CodeInline> &mdash; Source
+                    book title
+                  </li>
+                  <li>
+                    <CodeInline>{`{{author}}`}</CodeInline> &mdash; Source
+                    author
+                  </li>
+                  <li>
+                    <CodeInline>{`{{fileName}}`}</CodeInline> &mdash; Generated
+                    filename for Obsidian link
+                  </li>
                 </ul>
               </AccordionContent>
             </AccordionItem>

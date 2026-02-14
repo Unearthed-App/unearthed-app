@@ -20,7 +20,8 @@ import {
 const SECTIONS = [
   {
     title: "Installation",
-    description: "Download and set up Unearthed Local on Windows, macOS, or Linux",
+    description:
+      "Download and set up Unearthed Local on Windows, macOS, or Linux",
     href: "/local-docs/install",
     icon: Download,
     color: "text-blue-600 dark:text-blue-400",
@@ -85,7 +86,7 @@ const HIGHLIGHTS = [
     icon: Keyboard,
     title: "Keyboard Shortcuts",
     description:
-      "55+ shortcuts for fast navigation, article actions, and more — all fully customisable.",
+      "55+ shortcuts for fast navigation, article actions, and more — all fully customisable. Includes system-wide shortcuts for quick URL import and RSS feed access.",
   },
 ];
 
@@ -96,7 +97,7 @@ export default function LocalDocsPage() {
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
           <BookOpen className="h-6 w-6 text-primary" />
-          <span className="text-sm font-medium text-primary">v1.3.3</span>
+          <span className="text-sm font-medium text-primary">v1.3.5</span>
         </div>
         <h1 className="text-3xl font-bold tracking-tight mb-3">
           Unearthed Local
@@ -208,8 +209,8 @@ export default function LocalDocsPage() {
             </span>
             <span>
               Your highlights appear in your configured location as Markdown
-              files. Explore the <strong>RSS Feeds</strong> tab to subscribe
-              to feeds and import articles.
+              files. Explore the <strong>RSS Feeds</strong> tab to subscribe to
+              feeds and import articles.
             </span>
           </li>
         </ol>
@@ -222,10 +223,14 @@ export default function LocalDocsPage() {
           <div>
             <h3 className="font-semibold text-sm mb-1">Data Safety</h3>
             <p className="text-sm text-muted-foreground">
-              <strong>Read-only sources:</strong> Your Kindle, KOReader, and RSS feed data are never modified by Unearthed—they are used as sources only.
+              <strong>Read-only sources:</strong> Your Kindle, KOReader, and RSS
+              feed data are never modified by Unearthed—they are used as sources
+              only.
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              <strong>Modified by Unearthed:</strong> The local Unearthed database and your Obsidian vault will be modified during syncing and export.
+              <strong>Modified by Unearthed:</strong> The local Unearthed
+              database and your Obsidian vault will be modified during syncing
+              and export.
             </p>
           </div>
         </div>
