@@ -133,6 +133,18 @@ export default function SettingsPage() {
               "Linux: Creates .desktop file in ~/.config/autostart/",
             ]}
           />
+
+          <SettingItem
+            name="Enable System Global Shortcuts"
+            defaultValue={false}
+            description="Register system-wide keyboard shortcuts so Unearthed responds even when the app is minimized or another application is in focus."
+            tips={[
+              "Unlocks Quick Import (Ctrl/Cmd+Shift+I) and Go to RSS Feeds (Ctrl/Cmd+Shift+O) from any app",
+              "macOS: Accessibility permissions required — grant in System Preferences → Privacy & Security → Accessibility",
+              "If a shortcut conflicts with another app, reassign it in Settings → Keyboard Shortcuts",
+              "Works best combined with Keep App Running in Background",
+            ]}
+          />
         </SettingSection>
 
         {/* macOS Dock */}
@@ -363,6 +375,21 @@ export default function SettingsPage() {
               "Requires 'Keep App Running' to be enabled",
               "Syncs silently without interrupting your work",
               "Manual sync always available via 'Refresh Kindle Books' button",
+            ]}
+          />
+        </SettingSection>
+
+        {/* RSS Articles */}
+        <SettingSection id="rss-auto-delete" icon={Cog} title="RSS Articles">
+          <SettingItem
+            name="Delete non-imported articles after (days)"
+            defaultValue={'7'}
+            description="Automatically remove unimported RSS articles that are older than the specified number of days to keep your feed tidy."
+            tips={[
+              "Set to 0 to keep all articles indefinitely",
+              "Only articles you have NOT imported are deleted — anything saved to your library is kept forever",
+              "Applies to all subscribed feeds",
+              "Articles are deleted silently in the background",
             ]}
           />
         </SettingSection>

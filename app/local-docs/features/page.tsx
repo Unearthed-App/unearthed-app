@@ -24,6 +24,7 @@ import {
   Rss,
   Highlighter,
   Youtube,
+  Smartphone,
 } from "lucide-react";
 
 function FeatureSection({
@@ -1189,6 +1190,237 @@ export default function FeaturesPage() {
               </div>
             ))}
           </div>
+        </FeatureSection>
+
+        {/* Mobile App */}
+        <FeatureSection
+          id="mobile"
+          icon={Smartphone}
+          title="Mobile App — Android (APK)"
+          badge="v1.4.0"
+        >
+          <p>
+            Unearthed is available as a native Android app, distributed as an
+            APK. Everything in your library — RSS feeds, articles, Kindle
+            highlights, KOReader notes, and personal quotes — travels with you.
+            When both devices are on the same Wi-Fi network, the mobile app
+            syncs automatically with the desktop, keeping everything perfectly
+            in step.
+          </p>
+
+          <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 mb-3">
+            <p className="text-xs font-medium mb-1 flex items-center gap-2">
+              <Badge variant="outline" className="text-[10px]">
+                Pricing
+              </Badge>
+            </p>
+            <p className="text-xs text-muted-foreground">
+              The Android app is free for now with an Unearthed Local single
+              purchase. Free updates are not guaranteed for the current APK.
+              Once the app is listed on the Apple App Store (iOS) and Google
+              Play Store (Android), there will be free updates and there may be
+              an additional one-time cost for the mobile app.
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
+            <p className="text-xs font-medium mb-1">
+              One library. Every device. All local.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Sync happens entirely over your home network — no cloud account,
+              no third-party servers. Your data never leaves your home.
+            </p>
+          </div>
+
+          <Accordion type="multiple" className="w-full">
+            <AccordionItem value="mobile-sync-setup">
+              <AccordionTrigger className="text-sm">
+                Setting up sync (similar to KOReader setup)
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <ol className="list-decimal list-inside space-y-1.5">
+                  <li>
+                    On the desktop, go to{" "}
+                    <strong>Settings &rarr; API Endpoint</strong> — note the IP
+                    address and Secret Token shown there
+                  </li>
+                  <li>
+                    Open the mobile app, go to <strong>Settings</strong>, and
+                    enter the same IP address, port (
+                    <code className="text-xs bg-primary/10 px-1 py-0.5 rounded font-mono">
+                      6543
+                    </code>
+                    ), and token
+                  </li>
+                  <li>
+                    Tap <strong>Test Connection</strong> to confirm the link
+                  </li>
+                  <li>
+                    Tap <strong>Sync</strong> or wait for the auto-sync interval
+                    (configurable: 5, 15, 30, or 60 minutes)
+                  </li>
+                </ol>
+                <p className="text-xs">
+                  <strong>Note:</strong> Both devices must be on the same Wi-Fi
+                  network. The desktop app must be running.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="mobile-sync-content">
+              <AccordionTrigger className="text-sm">
+                What gets synced
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                <ul className="list-disc list-inside space-y-1">
+                  <li>
+                    <strong>RSS feeds</strong> — subscribe on either device and
+                    it appears on both
+                  </li>
+                  <li>
+                    <strong>Articles</strong> — including hidden status, Read It
+                    Later bookmarks, and imported state
+                  </li>
+                  <li>
+                    <strong>Sources</strong> — Kindle books, KOReader notes, and
+                    web imports from the desktop appear on mobile
+                  </li>
+                  <li>
+                    <strong>Highlights &amp; notes</strong> — quotes created on
+                    mobile sync to the desktop and can be exported to Obsidian
+                  </li>
+                  <li>
+                    <strong>Deletions</strong> — articles or feeds deleted on
+                    one device are removed from the other on the next sync
+                  </li>
+                </ul>
+                <p className="text-xs mt-2">
+                  Conflict resolution always keeps the most recently changed
+                  version.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="mobile-reading">
+              <AccordionTrigger className="text-sm">
+                Reading &amp; browsing on mobile
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <ul className="list-disc list-inside space-y-1">
+                  <li>
+                    Browse all your RSS articles in the <strong>Feed</strong>{" "}
+                    tab, sorted newest-first
+                  </li>
+                  <li>
+                    Filter by feed, sort order, hidden status, or Read It Later
+                  </li>
+                  <li>Pull down to refresh all subscribed feeds at once</li>
+                  <li>
+                    Tap any article to open the full-text reader; swipe between
+                    adjacent articles
+                  </li>
+                  <li>
+                    YouTube videos from subscribed channels play inline with a
+                    single tap
+                  </li>
+                  <li>
+                    All synced content is available <strong>offline</strong>{" "}
+                    once it has been synced
+                  </li>
+                  <li>
+                    The <strong>Home</strong> screen shows your daily reflection
+                    — a new quote from your library each morning
+                  </li>
+                  <li>
+                    The <strong>Sources</strong> tab lets you browse every book,
+                    article, and web page with all its highlights
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="mobile-capture">
+              <AccordionTrigger className="text-sm">
+                Capturing quotes from physical books
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  The mobile app lets you photograph highlighted text in a
+                  physical book and Unearthed reads it automatically using{" "}
+                  <strong>OCR</strong> — no typing required.
+                </p>
+                <ol className="list-decimal list-inside space-y-1">
+                  <li>Tap the camera (Capture) button on the Home screen</li>
+                  <li>Select which book the quote belongs to</li>
+                  <li>
+                    Take a photo of the highlighted passage — crop to the
+                    relevant area
+                  </li>
+                  <li>
+                    Unearthed extracts the text automatically; edit it if needed
+                  </li>
+                  <li>Add a personal note and choose a highlight color</li>
+                  <li>Save — the quote syncs to your desktop on next sync</li>
+                </ol>
+                <p className="text-xs">
+                  You can also type quotes manually if you prefer. Captured
+                  quotes are exported to Obsidian (after syncing with Unearthed
+                  Local) just like Kindle highlights.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="mobile-gestures">
+              <AccordionTrigger className="text-sm">
+                Touch gestures &amp; swipe actions
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <ul className="list-disc list-inside space-y-1">
+                  <li>
+                    <strong>Swipe left / right</strong> on article cards —
+                    configurable action: hide or Read It Later (set in Settings
+                    &rarr; Gestures)
+                  </li>
+                  <li>
+                    <strong>Swipe between articles</strong> in the reader
+                    without going back to the list
+                  </li>
+                  <li>
+                    <strong>Pull to refresh</strong> on the feed list to fetch
+                    new articles from all subscriptions
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="mobile-add-content">
+              <AccordionTrigger className="text-sm">
+                Adding content from the mobile app
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                <p className="mb-2">
+                  You don&apos;t need the desktop to save new content. From
+                  mobile you can:
+                </p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Subscribe to a new RSS feed by pasting its URL</li>
+                  <li>
+                    Import a YouTube video (with transcript) via URL or video ID
+                  </li>
+                  <li>
+                    Save any web article by pasting its URL — full text is
+                    extracted automatically
+                  </li>
+                  <li>Capture a quote from a physical book using the camera</li>
+                </ul>
+                <p className="text-xs mt-2">
+                  Everything added on mobile syncs to the desktop on the next
+                  sync cycle.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </FeatureSection>
 
         {/* Templates */}

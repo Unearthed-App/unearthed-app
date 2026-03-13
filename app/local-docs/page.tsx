@@ -15,6 +15,7 @@ import {
   Wifi,
   Keyboard,
   Bookmark,
+  Smartphone,
 } from "lucide-react";
 
 const SECTIONS = [
@@ -88,6 +89,12 @@ const HIGHLIGHTS = [
     description:
       "55+ shortcuts for fast navigation, article actions, and more — all fully customisable. Includes system-wide shortcuts for quick URL import and RSS feed access.",
   },
+  {
+    icon: Smartphone,
+    title: "Mobile App",
+    description:
+      "Native Android app (APK). Syncs feeds, articles, highlights, and bookmarks with the desktop over your home Wi-Fi. Also captures quotes from physical books via camera.",
+  },
 ];
 
 export default function LocalDocsPage() {
@@ -97,7 +104,7 @@ export default function LocalDocsPage() {
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
           <BookOpen className="h-6 w-6 text-primary" />
-          <span className="text-sm font-medium text-primary">v1.3.5</span>
+          <span className="text-sm font-medium text-primary">v1.4.0</span>
         </div>
         <h1 className="text-3xl font-bold tracking-tight mb-3">
           Unearthed Local
@@ -105,7 +112,9 @@ export default function LocalDocsPage() {
         <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
           A privacy-first desktop app that syncs your Kindle and KOReader
           highlights into Obsidian, with a built-in RSS feed reader for
-          importing and annotating articles. Runs entirely on your machine.
+          importing and annotating articles. Runs entirely on your machine —
+          with a companion Android app that keeps everything in sync over your
+          home Wi-Fi.
         </p>
       </div>
 

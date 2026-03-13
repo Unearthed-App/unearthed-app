@@ -19,6 +19,7 @@ import {
   Apple,
   Terminal,
   Rss,
+  Smartphone,
 } from "lucide-react";
 
 function TroubleshootSection({
@@ -442,6 +443,107 @@ export default function TroubleshootPage() {
             </div>
           </TabsContent>
         </Tabs>
+      </TroubleshootSection>
+
+      {/* Mobile Sync */}
+      <TroubleshootSection
+        id="mobile-sync"
+        icon={Smartphone}
+        title="Android App & Sync"
+      >
+        <Accordion type="single" collapsible className="w-full">
+          <ProblemSolution problem="Mobile app can't connect to the desktop">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                Both devices must be on the <strong>same Wi-Fi network</strong>
+              </li>
+              <li>
+                Check the IP address in desktop{" "}
+                <strong>Settings &rarr; API Endpoint</strong> — routers
+                sometimes assign a new IP, so copy the freshest one
+              </li>
+              <li>
+                Confirm the port is{" "}
+                <CodeInline>6543</CodeInline> and the token matches exactly
+                (case-sensitive)
+              </li>
+              <li>
+                Make sure Unearthed is open and running on the desktop — the
+                sync server only runs while the app is active
+              </li>
+              <li>
+                <strong>Windows:</strong> Allow Unearthed through Windows
+                Defender Firewall when prompted, or add a manual inbound rule
+                for port 6543
+              </li>
+              <li>
+                <strong>macOS:</strong> Allow incoming connections when macOS
+                asks on first sync
+              </li>
+              <li>
+                Tap <strong>Test Connection</strong> in mobile Settings to
+                diagnose — a success message confirms the link is working
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Sync completes but some content is missing">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                Run a second sync — the first sync may have timed out on a
+                large library
+              </li>
+              <li>
+                Check that the desktop app is not in the middle of another
+                operation (Kindle refresh, Obsidian export) during sync
+              </li>
+              <li>
+                Feeds and articles sync first; sources and quotes follow in a
+                second pass — allow both to complete
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Changes made on mobile don't appear on desktop">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                Trigger a manual sync from the mobile app (sync icon in the
+                RSS header or Settings page)
+              </li>
+              <li>
+                The desktop shows a toast notification when a mobile sync
+                completes — if you don&apos;t see it, the sync did not reach
+                the desktop
+              </li>
+              <li>
+                Confirm the desktop is reachable (Test Connection) and that
+                the Wi-Fi connection hasn&apos;t dropped
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Global shortcuts (Ctrl+Shift+I / Ctrl+Shift+O) not working">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                Enable <strong>System Global Shortcuts</strong> in Settings
+                &rarr; General (off by default)
+              </li>
+              <li>
+                <strong>macOS:</strong> Grant Accessibility permissions when
+                prompted — System Preferences &rarr; Privacy &amp; Security
+                &rarr; Accessibility &rarr; enable Unearthed
+              </li>
+              <li>
+                Another app may be using the same shortcut — reassign it in
+                Settings &rarr; Keyboard Shortcuts
+              </li>
+              <li>
+                Keep App Running in Background must be enabled for global
+                shortcuts to work when the main window is closed
+              </li>
+            </ul>
+          </ProblemSolution>
+        </Accordion>
       </TroubleshootSection>
 
       {/* Still stuck */}

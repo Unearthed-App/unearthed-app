@@ -33,6 +33,10 @@ import {
   Bookmark,
   ArrowRight,
   Keyboard,
+  Smartphone,
+  Camera,
+  PlayCircle,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -43,7 +47,7 @@ export const metadata: Metadata = {
   title:
     "Unearthed Local – Privacy-First Readwise Alternative | One-Time Purchase",
   description:
-    "Open-source privacy-first Readwise alternative. One-time purchase desktop app for local-only Kindle and KOReader highlight syncing to Obsidian. Built-in RSS feed reader with article highlighting. No subscriptions, no cloud, complete data ownership.",
+    "Open-source privacy-first Readwise alternative. One-time purchase desktop app for local-only Kindle and KOReader highlight syncing to Obsidian. Built-in RSS feed reader with article highlighting. Companion mobile app for iPhone and Android. No subscriptions, no cloud, complete data ownership.",
   keywords: [
     "readwise alternative",
     "privacy-first readwise",
@@ -71,6 +75,11 @@ export const metadata: Metadata = {
     "read it later",
     "web page import",
     "web clipper",
+    "mobile app",
+    "ios app",
+    "android app",
+    "kindle mobile",
+    "highlights mobile",
   ],
   alternates: {
     canonical: "https://unearthed.app/local",
@@ -165,6 +174,12 @@ const FEATURES = [
       "55+ shortcuts for fast navigation, article actions, and more — all fully customisable. System-wide shortcuts let you import content from anywhere.",
   },
   {
+    icon: Smartphone,
+    title: "Mobile App",
+    description:
+      "Your library on your phone. The Unearthed Mobile app for iPhone and Android syncs feeds, articles, highlights, sources, and read-it-later status with the desktop over your home Wi-Fi.",
+  },
+  {
     icon: Monitor,
     title: "Cross-Platform",
     description:
@@ -174,7 +189,7 @@ const FEATURES = [
     icon: Shield,
     title: "100% Private",
     description:
-      "All data stored locally in SQLite. No cloud, no accounts, no tracking. Your data stays yours.",
+      "All data stored locally in SQLite. No cloud, no accounts, no tracking. Your data never leaves your home.",
   },
 ];
 
@@ -267,6 +282,188 @@ const UnearthedLocal = () => {
                 BTW this also works with KOReader, so get all your notes and
                 highlights in one place!
               </p>
+            </div>
+          </section>
+
+          {/* Content Power Section */}
+          <section className="w-full max-w-4xl mb-20 px-4">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl md:text-3xl font-extrabold uppercase mb-2">
+                The Full Content
+              </h2>
+              <p className="text-sm text-muted-foreground">No more previews</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* YouTube Transcript */}
+              <div className="rounded-2xl border-2 border-red-500/40 bg-red-500/5 p-6">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500 text-white mb-4">
+                  <PlayCircle className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-extrabold mb-3 uppercase">
+                  YouTube + Full Transcript
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Subscribe to any YouTube channel as an RSS feed. When a video
+                  is published, Unearthed imports it automatically — along with
+                  the <strong>full transcript</strong> (optional). Highlight the
+                  transcript, add notes, and export everything to Obsidian.
+                  Treat YouTube like any other reading source.
+                </p>
+              </div>
+
+              {/* Get Full Article */}
+              <div className="rounded-2xl border-2 border-emerald-500/40 bg-emerald-500/5 p-6">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500 text-white mb-4">
+                  <Zap className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-extrabold mb-3 uppercase">
+                  Full Article, Instantly
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                  RSS feeds often only deliver a summary or the first few
+                  paragraphs. One click on <strong>Get Full Article</strong>{" "}
+                  fetches and displays the complete text — without leaving the
+                  app.
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Or skip the button entirely. Enable{" "}
+                  <strong>automatic full-article download</strong> per feed and
+                  the complete content is already waiting when you open
+                  anything. Configure it once per feed — only auto-download what
+                  you actually want.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Mobile App Section */}
+          <section className="w-full max-w-4xl mb-20 px-4">
+            <div className="border-2 border-primary rounded-2xl p-8 bg-primary/5 relative overflow-hidden">
+              {/* Badge */}
+              <div className="absolute top-4 right-4">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-primary text-primary-foreground">
+                  New in v1.4.0
+                </span>
+              </div>
+
+              {/* Header */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                  <Smartphone className="h-6 w-6" />
+                </div>
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-extrabold uppercase">
+                    Unearthed Mobile
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    iPhone &amp; Android — Free with Unearthed Local
+                  </p>
+                </div>
+              </div>
+
+              {/* Intro */}
+              <p className="text-lg leading-relaxed mb-6">
+                A native companion app for <strong>iPhone and Android</strong>{" "}
+                that keeps your entire reading library with you — wherever you
+                are. Everything syncs over your{" "}
+                <strong>home Wi-Fi, directly between your devices</strong>. No
+                cloud account. No subscription. Nothing ever leaves your
+                network.
+              </p>
+
+              {/* How they work together */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="rounded-xl border border-primary/30 bg-card p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Monitor className="h-4 w-4 text-primary" />
+                    <p className="font-bold text-sm">
+                      Unearthed Local — Desktop
+                    </p>
+                  </div>
+                  <ul className="text-sm text-muted-foreground space-y-1.5">
+                    <li>• Kindle &amp; KOReader highlight sync</li>
+                    <li>• RSS feeds, web pages &amp; YouTube imports</li>
+                    <li>
+                      • Export to Obsidian — full article text, plus your
+                      highlights &amp; notes
+                    </li>
+                    <li>• Daily reflection &amp; background auto-sync</li>
+                    <li>• The sync hub everything connects to</li>
+                  </ul>
+                </div>
+                <div className="rounded-xl border border-primary/30 bg-card p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Smartphone className="h-4 w-4 text-primary" />
+                    <p className="font-bold text-sm">
+                      Unearthed Mobile — iPhone &amp; Android
+                    </p>
+                  </div>
+                  <ul className="text-sm text-muted-foreground space-y-1.5">
+                    <li>• Browse your full Kindle &amp; KOReader library</li>
+                    <li>• Subscribe to RSS feeds &amp; YouTube channels</li>
+                    <li>
+                      • Save any article, web page, or YouTube video to read
+                      later
+                    </li>
+                    <li>• YouTube imports include the full transcript</li>
+                    <li>• Capture quotes from physical books</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Companion framing */}
+              <p className="text-lg leading-relaxed mb-6">
+                Think of it as a <strong>companion app</strong> for Unearthed
+                Local (without Unearthed Local, the mobile app will have limited
+                functionalty).
+                <br />
+                Start reading an article on your phone during your commute —
+                open the desktop when you get home and it&apos;s there,
+                highlights and all. Subscribe to a new RSS feed on your phone
+                and it appears on your desktop. Your entire Kindle and KOReader
+                highlight database is always searchable on your phone.
+                <strong>One library. Pick it up on any device.</strong>
+              </p>
+
+              {/* Capture feature */}
+              <div className="rounded-xl border border-primary/30 bg-card p-5 mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Camera className="h-5 w-5 text-primary" />
+                  <p className="font-bold">Capture: Physical Book Highlights</p>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                  I wanted a single place for <em>all</em> my reading notes —
+                  not just Kindle and RSS, but the physical books on my shelf
+                  too. Unearthed Mobile was built to solve that.
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                  Tell the app what you&apos;re currently reading and it
+                  remembers. Every time you want to save a highlight, open it up
+                  and capture: it already knows the book and author. Point your
+                  camera at the page, add a note if you want, and it&apos;s
+                  saved — right alongside your Kindle highlights, KOReader
+                  notes, and annotated articles. Ready for Obsidian export.
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  No more sticky notes. No separate app for physical books. Your
+                  dog-eared paperback now lives in the same library as
+                  everything else you read.
+                </p>
+              </div>
+
+              {/* Privacy callout */}
+              <div className="flex items-start gap-3 rounded-xl bg-card border border-primary/30 p-4">
+                <Shield className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-sm mb-1">100% Local. Always.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Sync happens directly between your phone and your computer
+                    over your home Wi-Fi. No cloud servers are involved at any
+                    point. No accounts to create, no data to upload, nothing
+                    leaving your home network. Your library stays yours.
+                  </p>
+                </div>
+              </div>
             </div>
           </section>
 

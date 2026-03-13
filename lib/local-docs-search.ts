@@ -4,7 +4,7 @@ export interface SearchItem {
   id: string;
   title: string;
   section: string;
-  category: "Install" | "Features" | "Settings" | "Troubleshoot" | "Advanced";
+  category: "Install" | "Features" | "Settings" | "Troubleshoot" | "Advanced" | "Mobile";
   content: string;
   href: string;
   keywords: string[];
@@ -260,7 +260,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Keep App Running minimizes to system tray instead of quitting. Run on Startup launches app at OS login. Platform-specific: Windows setLoginItemSettings, macOS openAsHidden, Linux .desktop autostart file.",
+      "Keep App Running minimizes Unearthed to the system tray instead of quitting, so it stays ready to accept global shortcuts even when all windows are closed. Run on Startup launches the app automatically at OS login. Combined with the Quick Import shortcut (Ctrl/Cmd+Shift+I) you can save content to Unearthed at any moment without ever opening the main window. Platform-specific: Windows taskbar tray, macOS menu bar, Linux .desktop autostart file.",
     href: "/local-docs/features#tray",
     keywords: [
       "tray",
@@ -269,6 +269,8 @@ export const searchIndex: SearchItem[] = [
       "background",
       "autostart",
       "login",
+      "menu bar",
+      "quick import",
     ],
   },
 
@@ -618,9 +620,9 @@ export const searchIndex: SearchItem[] = [
     section: "Advanced Usage",
     category: "Advanced",
     content:
-      "40+ fully customisable keyboard shortcuts across 8 contexts: global (Ctrl+K search, Ctrl+1-4 tabs, Ctrl+D dark mode, Ctrl+/ help), Home (R new reflection, S/A navigate, I import, H hide, D delete), RSS Feeds, Kindle (Ctrl+Shift+S sync), Library (Ctrl+A select all), Search Modal, Article Viewer, Article Highlighter. All shortcuts can be remapped in Settings.",
+      "40+ fully customisable keyboard shortcuts across 8 contexts. System-wide (any app): Ctrl/Cmd+Shift+I Quick Import, Ctrl/Cmd+Shift+O Go to RSS Feeds. In-app global: Ctrl/Cmd+K search, Ctrl/Cmd+1-4 tabs, Ctrl/Cmd+D dark mode, Ctrl/Cmd+/ help, Ctrl/Cmd+R Read It Later. Home tab: Z new reflection, C copy, D/A navigate, Space open, E import, Q hide, X delete, R read later. RSS tab: D/A navigate, Space open, E import, Q hide, X delete, R read later, Ctrl/Cmd+L read-later filter. Kindle: Ctrl/Cmd+Shift+S sync. Library: Ctrl/Cmd+A select all. Article Reader: E import, Q hide, X delete, R read later, W/S scroll, A/D prev/next, Space play video. Article Highlighter: Ctrl/Cmd+F search, W/S scroll, A/D prev/next, Space play video. All shortcuts remappable in Settings → Keyboard Shortcuts.",
     href: "/local-docs/features#keyboard",
-    keywords: ["keyboard", "shortcut", "ctrl", "cmd", "hotkey", "customise", "remap", "keybinding"],
+    keywords: ["keyboard", "shortcut", "ctrl", "cmd", "hotkey", "customise", "remap", "keybinding", "quick import", "read later"],
   },
   {
     id: "settings-keyboard-shortcuts",
@@ -631,6 +633,236 @@ export const searchIndex: SearchItem[] = [
       "All keyboard shortcuts are fully customisable. Open Settings → Keyboard Shortcuts or press Ctrl/Cmd+/ to view and remap any shortcut. Supports Ctrl/Cmd, Shift, and Alt modifiers. Changes apply instantly without restart. Custom bindings persisted in settings.json.",
     href: "/local-docs/settings#keyboard-shortcuts",
     keywords: ["keyboard", "shortcut", "custom", "remap", "keybinding", "settings", "customise"],
+  },
+
+  // Features – missing entries
+  {
+    id: "feature-read-it-later",
+    title: "Read It Later",
+    section: "Features",
+    category: "Features",
+    content:
+      "Bookmark any article to read later with a single key press or tap. Press R in the article list or inside the Article Reader to toggle the bookmark. A blue badge appears on bookmarked cards. Filter the RSS feed to show only bookmarked articles with the blue toggle or Ctrl/Cmd+L shortcut. Jump straight to your reading list from anywhere with the global Ctrl/Cmd+R shortcut. Hiding an article automatically clears its Read It Later bookmark. Syncs with the Unearthed Mobile app so bookmarks follow you between desktop and phone.",
+    href: "/local-docs/features#read-it-later",
+    keywords: ["read later", "bookmark", "save", "reading list", "ctrl+l", "ctrl+r", "blue", "filter"],
+  },
+  {
+    id: "feature-web-page-import",
+    title: "Web Page Import",
+    section: "Features",
+    category: "Features",
+    content:
+      "Import any article or blog post from the web directly into your library. Paste a URL in the RSS tab and Unearthed fetches the full text using the same Reader View technology as Firefox — stripping ads, sidebars, and clutter. The clean article is saved to your database, ready for highlighting and annotation. Works with the Quick Import shortcut too: press Ctrl/Cmd+Shift+I, paste a link, and the page is saved instantly even while the app is in the background.",
+    href: "/local-docs/features#web-import",
+    keywords: ["web", "page", "import", "url", "article", "readability", "reader view", "blog", "paste"],
+  },
+  {
+    id: "feature-quick-import-shortcut",
+    title: "Quick Import — System-wide Shortcut",
+    section: "Features",
+    category: "Features",
+    content:
+      "Save content to Unearthed from any app, without switching windows. Press Ctrl+Shift+I on Windows/Linux or Cmd+Shift+I on macOS to open a lightweight import dialog. Paste any URL — YouTube video, RSS feed, or web article — and Unearthed detects the type automatically and imports it. The dialog closes itself after a successful import, so you can stay in your flow. Shortcut can be customised in Settings → Keyboard Shortcuts. Enable global shortcuts in General Settings first.",
+    href: "/local-docs/features#quick-import-shortcut",
+    keywords: ["quick import", "global shortcut", "ctrl+shift+i", "cmd+shift+i", "background", "minimized", "url", "system shortcut"],
+  },
+  {
+    id: "feature-global-rss-shortcut",
+    title: "Go to RSS Feeds — System-wide Shortcut",
+    section: "Features",
+    category: "Features",
+    content:
+      "Jump straight to your RSS feed from any application. Press Ctrl+Shift+O on Windows/Linux or Cmd+Shift+O on macOS to instantly bring Unearthed to the front and land on the RSS Feeds tab, with your feed list automatically refreshed. Perfect for quickly scanning new articles without breaking your workflow. Shortcut can be customised in Settings → Keyboard Shortcuts. Enable global shortcuts in General Settings first.",
+    href: "/local-docs/features#global-rss-shortcut",
+    keywords: ["global shortcut", "rss", "ctrl+shift+o", "cmd+shift+o", "jump", "open", "feeds", "system shortcut"],
+  },
+  {
+    id: "feature-get-full-article",
+    title: "Get Full Article",
+    section: "Features",
+    category: "Features",
+    content:
+      "Many RSS feeds only publish a teaser or short summary. With Unearthed you can fetch the complete article text directly from the source website with one click. The full content is stored locally and available for offline reading, highlighting, and export to Obsidian — no need to leave the app or open a browser.",
+    href: "/local-docs/features#get-full-article",
+    keywords: ["full article", "fetch", "scrape", "truncated", "summary", "read more", "content"],
+  },
+
+  // Settings – missing entries
+  {
+    id: "settings-include-article-content",
+    title: "Include Article Content in Obsidian Export",
+    section: "Settings",
+    category: "Settings",
+    content:
+      "When enabled, Unearthed includes the full article body alongside your quotes and notes when exporting to Obsidian. Disabled by default so exported files stay focused on your highlights. Turn it on in Settings → Obsidian if you want a complete record of the original text in your vault.",
+    href: "/local-docs/settings#include-article-content",
+    keywords: ["obsidian", "export", "article content", "full text", "include", "body"],
+  },
+  {
+    id: "settings-rss-auto-delete",
+    title: "Auto-Delete Old RSS Articles",
+    section: "Settings",
+    category: "Settings",
+    content:
+      "Keep your feed tidy by automatically removing unread articles after a set number of days. Only articles you have not imported are deleted — anything you have saved to your library is kept forever. Set the threshold (default 7 days) in Settings → RSS Articles, or set it to 0 to keep all articles indefinitely.",
+    href: "/local-docs/settings#rss-auto-delete",
+    keywords: ["auto delete", "clean up", "old articles", "days", "rss", "expiry", "retention"],
+  },
+  {
+    id: "settings-global-shortcuts",
+    title: "Enable System Global Shortcuts",
+    section: "Settings",
+    category: "Settings",
+    content:
+      "Turn on system-wide keyboard shortcuts so Unearthed responds even when the app is minimized or in the background. Enabling this unlocks Quick Import (Ctrl/Cmd+Shift+I) and Go to RSS Feeds (Ctrl/Cmd+Shift+O) from any application. Toggle in Settings → General. Individual shortcuts can be customised in Settings → Keyboard Shortcuts.",
+    href: "/local-docs/settings#global-shortcuts",
+    keywords: ["global shortcuts", "system shortcut", "background", "minimized", "enable", "general"],
+  },
+
+  // Advanced – missing entries
+  {
+    id: "advanced-global-shortcuts-reference",
+    title: "Global System Shortcut Reference",
+    section: "Advanced Usage",
+    category: "Advanced",
+    content:
+      "System-wide shortcuts (work from any app): Ctrl+Shift+I / Cmd+Shift+I = Quick Import dialog; Ctrl+Shift+O / Cmd+Shift+O = Open RSS Feeds tab. In-app global shortcuts: Ctrl+K / Cmd+K = Search; Ctrl+1-4 / Cmd+1-4 = Switch tabs; Ctrl+D / Cmd+D = Toggle dark mode; Ctrl+/ / Cmd+/ = Keyboard Shortcuts reference; Ctrl+R / Cmd+R = Read It Later feed; Ctrl+, / Cmd+, = Settings. All shortcuts customisable in Settings → Keyboard Shortcuts.",
+    href: "/local-docs/features#keyboard",
+    keywords: ["global", "system shortcut", "quick import", "rss shortcut", "reference", "all shortcuts"],
+  },
+
+  // Troubleshooting – missing entries
+  {
+    id: "troubleshoot-global-shortcuts",
+    title: "Global Shortcuts Not Working",
+    section: "Troubleshooting",
+    category: "Troubleshoot",
+    content:
+      "If Ctrl/Cmd+Shift+I or Ctrl/Cmd+Shift+O do nothing: make sure 'Enable System Global Shortcuts' is turned on in Settings → General. On macOS, grant Accessibility permissions when prompted (System Preferences → Privacy & Security → Accessibility). Conflicts with other apps using the same shortcut can prevent registration — reassign the shortcut in Settings → Keyboard Shortcuts.",
+    href: "/local-docs/troubleshoot#global-shortcuts",
+    keywords: ["global shortcut", "not working", "accessibility", "macos", "permissions", "conflict", "ctrl+shift+i"],
+  },
+
+  // Mobile App – all new
+  {
+    id: "mobile-overview",
+    title: "Unearthed Mobile App",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "Unearthed is available as a native Android app (APK). Your entire reading life — RSS feeds, saved articles, Kindle highlights, KOReader notes, and personal quotes — is always with you. The mobile app works beautifully on its own, and when you are at your desk it stays perfectly in sync with Unearthed on your desktop over your home Wi-Fi. Everything you save, highlight, or bookmark on your phone appears on your computer, and vice versa.",
+    href: "/local-docs/mobile#overview",
+    keywords: ["mobile", "ios", "iphone", "android", "app", "phone", "tablet"],
+  },
+  {
+    id: "mobile-companion",
+    title: "Mobile + Desktop: Better Together",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "Unearthed Local (desktop) and Unearthed Mobile are designed to work hand-in-hand. Subscribe to a feed on your phone and it appears on your desktop. Import a Kindle book on your computer and your highlights are ready to browse on your phone during your commute. Read Later bookmarks, hidden articles, and imported sources all sync bidirectionally — you are always looking at the same library, regardless of which device you are on. Sync happens automatically over your local network, so your data never leaves your home.",
+    href: "/local-docs/mobile#companion",
+    keywords: ["sync", "desktop", "mobile", "together", "bidirectional", "local network", "wifi"],
+  },
+  {
+    id: "mobile-sync-setup",
+    title: "Setting Up Mobile Sync",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "To connect the mobile app to your desktop: open Unearthed on your desktop and go to Settings → API Endpoint — you will see your local IP address and sync token. In the mobile app, go to Settings and enter that IP address, port (6543), and token. Tap Test Connection to confirm. Once connected, tap Sync or wait for the auto-sync interval. Both devices must be on the same Wi-Fi network.",
+    href: "/local-docs/mobile#setup",
+    keywords: ["setup", "connect", "ip address", "port", "6543", "token", "wifi", "network", "mobile sync"],
+  },
+  {
+    id: "mobile-sync-content",
+    title: "What Syncs Between Mobile and Desktop",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "Unearthed syncs the following between desktop and mobile: RSS feed subscriptions, all feed articles (including hidden and read-later status), imported sources (Kindle books, KOReader notes, web articles), highlights and personal notes, and deletions. Conflict resolution favours the most recently changed version, so edits on either device are never lost. You can trigger a sync manually or set the mobile app to sync automatically every 5, 15, 30, or 60 minutes.",
+    href: "/local-docs/mobile#sync-content",
+    keywords: ["sync", "what syncs", "feeds", "articles", "highlights", "quotes", "read later", "hidden", "auto sync"],
+  },
+  {
+    id: "mobile-reading",
+    title: "Reading on Mobile",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "The mobile app's Feed tab shows all your RSS articles in a clean, distraction-free layout optimised for small screens. Swipe left or right between articles, pull down to refresh, and tap any article to open the full-text reader. Videos from YouTube channels you follow play inline with a single tap. Articles synced from the desktop — including Kindle chapters and web imports — are available to read offline once synced.",
+    href: "/local-docs/mobile#reading",
+    keywords: ["reading", "feed", "articles", "mobile", "swipe", "offline", "youtube", "reader"],
+  },
+  {
+    id: "mobile-capture",
+    title: "Capture Quotes on Mobile",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "Never lose a great passage from a physical book again. The Capture button (camera icon) in the mobile app lets you photograph highlighted text and Unearthed reads it automatically using OCR — no typing required. You can also type quotes manually. Attach a note and a colour, choose which book it belongs to, and save. Captured quotes sync to your desktop library and can be exported to Obsidian just like Kindle highlights.",
+    href: "/local-docs/mobile#capture",
+    keywords: ["capture", "camera", "ocr", "quote", "photo", "physical book", "highlight", "manual", "type"],
+  },
+  {
+    id: "mobile-gestures",
+    title: "Swipe Gestures & Touch Controls",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "Unearthed Mobile is built for one-handed use. Swipe left between adjacent articles without going back to the list. Configure what a left or right swipe does on article cards — hide the article or bookmark it for Read Later — in Settings → Gestures. Pull down on the feed list to refresh all subscribed feeds at once. The app respects your phone's notch, home bar, and screen edges so nothing is hidden behind hardware cutouts.",
+    href: "/local-docs/mobile#gestures",
+    keywords: ["swipe", "gesture", "touch", "left", "right", "hide", "read later", "pull to refresh", "one-handed"],
+  },
+  {
+    id: "mobile-daily-reflection",
+    title: "Daily Reflection on Mobile",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "Open the mobile app to your Home screen and find a handpicked quote waiting for you each morning — drawn from your entire library of Kindle highlights, KOReader notes, and captured passages. Tap the refresh icon to shuffle to a different quote, or select a specific book from the 'Currently Reading' picker to focus reflections on one source. A running count shows how many highlights you have collected so far.",
+    href: "/local-docs/mobile#daily-reflection",
+    keywords: ["daily", "reflection", "quote", "home", "shuffle", "currently reading", "highlights", "morning"],
+  },
+  {
+    id: "mobile-library",
+    title: "Browse Your Library on Mobile",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "The Sources tab on mobile shows your entire reading library — every book, article, and web page you have collected highlights from. Search by title or author, filter by source type (Kindle, KOReader, web, manual), and tap any source to browse its quotes. Everything synced from the desktop is available here, alongside quotes you captured directly on your phone.",
+    href: "/local-docs/mobile#library",
+    keywords: ["library", "sources", "books", "quotes", "browse", "search", "filter", "kindle", "koreader"],
+  },
+  {
+    id: "mobile-add-content",
+    title: "Add Content in the Mobile App",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "You don't need the desktop to add content. From the mobile app you can: subscribe to a new RSS feed by pasting a URL, import a YouTube video (with transcript), save any web article by its URL, or capture a quote from a physical book using the camera. Content added on mobile syncs to the desktop automatically on the next sync cycle.",
+    href: "/local-docs/mobile#add-content",
+    keywords: ["add", "import", "rss", "youtube", "web page", "url", "camera", "new", "subscribe", "mobile"],
+  },
+  {
+    id: "mobile-troubleshoot-sync",
+    title: "Mobile Sync Troubleshooting",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "Can't connect mobile to desktop: both devices must be on the same Wi-Fi network. Double-check the IP address in desktop Settings → API Endpoint (it can change when your router assigns a new address). Verify the token matches exactly — it is case-sensitive. Make sure Unearthed is running on the desktop and not blocked by a firewall on port 6543. Tap 'Test Connection' in mobile Settings to diagnose the issue. On Windows, allow Unearthed through Windows Defender Firewall if prompted.",
+    href: "/local-docs/mobile#troubleshoot",
+    keywords: ["mobile sync", "cannot connect", "ip", "token", "firewall", "port 6543", "wifi", "test connection", "troubleshoot"],
+  },
+  {
+    id: "mobile-offline",
+    title: "Using Mobile Offline",
+    section: "Mobile App",
+    category: "Mobile",
+    content:
+      "Unearthed Mobile stores everything locally on your device. Once content has been synced, you can read articles, browse highlights, and capture new quotes without any internet connection. Newly captured quotes and any changes you make offline are queued and synced to the desktop the next time both devices are on the same network.",
+    href: "/local-docs/mobile#offline",
+    keywords: ["offline", "no internet", "local", "stored", "queued", "sync later"],
   },
 ];
 
