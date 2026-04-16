@@ -220,7 +220,7 @@ export function HomePagePublic() {
           {/* ── OPTION 1: LOCAL ─────────────────────────────── */}
           <section className="flex flex-col gap-6">
             <div
-              className="p-10 rounded-3xl relative overflow-hidden flex-1"
+              className="p-6 md:p-10 rounded-3xl relative overflow-hidden flex-1"
               style={{
                 background: C.surfaceContainerLow,
                 border: `4px solid ${C.border}`,
@@ -412,7 +412,7 @@ export function HomePagePublic() {
           {/* ── OPTION B: ONLINE ────────────────────────────── */}
           <section className="flex flex-col gap-6">
             <div
-              className="p-10 rounded-3xl relative overflow-hidden flex-1"
+              className="p-6 md:p-10 rounded-3xl relative overflow-hidden flex-1"
               style={{
                 background: C.surfaceContainer,
                 border: `4px solid ${C.borderLight}`,
@@ -729,7 +729,7 @@ export function HomePagePublic() {
         {/* ── Mobile Section ───────────────────────────────────────────── */}
         <section className="mt-4 max-w-5xl mx-auto">
           <div
-            className="rounded-3xl p-12 md:p-20 relative overflow-hidden"
+            className="rounded-3xl p-6 md:p-12 lg:p-20 relative overflow-hidden"
             style={{
               background: C.surfaceContainerLow,
               border: `4px solid ${C.borderLight}`,
@@ -857,7 +857,7 @@ export function HomePagePublic() {
                 computer.
               </p>
               <div
-                className="p-10 rounded-2xl"
+                className="p-6 md:p-10 rounded-2xl"
                 style={{ background: C.cardBgStrong }}
               >
                 <p className={`${crimsonPro.className} italic text-2xl mb-6`}>
