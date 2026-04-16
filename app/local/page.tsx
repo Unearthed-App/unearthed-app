@@ -198,14 +198,6 @@ const FEATURES = [
     gradient: "from-emerald-500 to-teal-500",
   },
   {
-    icon: Smartphone,
-    title: "Mobile Companion",
-    description:
-      "A companion app for your phone. Syncs your entire library, RSS feeds, and read-it-later queue directly with your desktop over home Wi-Fi.",
-    color: "rose",
-    gradient: "from-rose-500 to-red-500",
-  },
-  {
     icon: Monitor,
     title: "Cross-Platform",
     description:
@@ -305,7 +297,7 @@ const UnearthedLocal = () => {
               </span>
               <span className="flex items-center gap-2 px-4 py-2 rounded-full border border-orange-600/40 bg-orange-500/10 text-sm text-orange-700 dark:text-orange-400 font-medium">
                 <Smartphone className="h-4 w-4 shrink-0" />
-                Pairs with the mobile app over home Wi-Fi (optional)
+                Pairs with the mobile app over home Wi-Fi (additional)
               </span>
             </div>
 
@@ -497,7 +489,7 @@ const UnearthedLocal = () => {
                 Buy Once. Keep Forever.
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-                No subscriptions. No lock-in. Free updates within your major
+                No subscriptions. No lock in. Free updates within your major
                 version.
               </p>
               <p className="text-sm text-muted-foreground italic">
@@ -510,7 +502,7 @@ const UnearthedLocal = () => {
           <section className="w-full max-w-2xl mb-16 px-4 text-center">
             <h2 className="text-2xl font-bold mb-4">Own Your Reading Life</h2>
             <p className="text-muted-foreground mb-8">
-              No subscriptions. No lock-in. All platforms.
+              No subscriptions. No lockin.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <CheckoutLocal className="bg-orange-600 hover:bg-orange-700 border-orange-900 shadow-[4px_4px_0px_rgb(154,52,18)] text-white dark:text-white dark:hover:bg-orange-700" />
