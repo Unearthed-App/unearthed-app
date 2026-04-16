@@ -238,7 +238,7 @@ export function PublicNavbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed top-[72px] left-0 right-0 z-40 flex justify-center px-4 md:hidden"
+            className="fixed top-[72px] left-0 right-0 z-50 flex justify-center px-4 md:hidden"
           >
             <div className="w-full max-w-sm rounded-2xl border-[3px] border-foreground/80 bg-background/95 p-2 shadow-xl backdrop-blur-xl dark:border-white/80 dark:bg-background/90">
               <div className="flex flex-col gap-0.5">
@@ -280,7 +280,7 @@ export function PublicNavbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-30 bg-black/20 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden"
             onClick={() => setMobileOpen(false)}
           />
         )}
