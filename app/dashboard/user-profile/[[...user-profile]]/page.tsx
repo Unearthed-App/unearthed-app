@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +34,11 @@ export default function UserProfilePage() {
     if (isLoaded && userId) {
       const fetchPremiumStatus = async () => {
         try {
-          const response = await fetch('/api/auth/premium-status');
+          const response = await fetch("/api/auth/premium-status");
           const data = await response.json();
           setIsPremium(data.isPremium || false);
         } catch (error) {
-          console.error('Error fetching premium status:', error);
+          console.error("Error fetching premium status:", error);
           setIsPremium(false);
         }
       };

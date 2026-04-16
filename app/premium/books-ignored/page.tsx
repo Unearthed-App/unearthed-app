@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 "use client";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import { z } from "zod";
 import { Button } from "@/components/ui/button";

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ export function generateUUID() {
   const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
     /[xy]/g,
     function (c) {
-      const r = (dt + Math.random() * 16) % 16 | 0;
+      const r = ((dt + Math.random() * 16) % 16) | 0;
       dt = Math.floor(dt / 16);
       return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
     }

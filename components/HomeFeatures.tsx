@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import React, { useState, useRef } from "react";
+import { motion, useMotionValue, useSpring, useMotionTemplate } from "motion/react";
 import {
   BookOpen,
   Brain,
@@ -19,54 +20,48 @@ const features = [
     title: "Auto Sync Highlights",
     description:
       "Automatically sync from Kindle and KOReader. Works seamlessly with both cloud and local solutions.",
+    color: "blue",
     gradient: "from-blue-500 to-cyan-500",
-    bgGradient:
-      "from-blue-50/50 to-cyan-50/50 dark:from-blue-950/20 dark:to-cyan-950/20",
   },
   {
     icon: Brain,
     title: "Smart Merge",
     description:
       "Intelligently merges your Kindle and KOReader highlights for the same book into one unified view. No duplicates, manual merging required.",
+    color: "purple",
     gradient: "from-purple-500 to-pink-500",
-    bgGradient:
-      "from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20",
   },
   {
     icon: Zap,
     title: "Daily Reflections",
     description:
       "Get personalised daily reflections that surface your most important quotes and ideas. Available in both Online and Local.",
+    color: "amber",
     gradient: "from-amber-500 to-orange-500",
-    bgGradient:
-      "from-amber-50/50 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/20",
   },
   {
     icon: Shield,
     title: "Privacy First",
     description:
       "Your data stays yours. No Amazon credentials stored. Complete control over your reading data.",
+    color: "emerald",
     gradient: "from-emerald-500 to-teal-500",
-    bgGradient:
-      "from-emerald-50/50 to-teal-50/50 dark:from-emerald-950/20 dark:to-teal-950/20",
   },
   {
     icon: LinkIcon,
     title: "Seamless Integrations",
     description:
       "Sync to Notion, Obsidian, Capacities, and Supernotes. Choose 'Unearthed Online' for all platforms or 'Unearthed Local' for direct Obsidian sync.",
+    color: "rose",
     gradient: "from-rose-500 to-red-500",
-    bgGradient:
-      "from-rose-50/50 to-red-50/50 dark:from-rose-950/20 dark:to-red-950/20",
   },
   {
     icon: Search,
     title: "Powerful Search",
     description:
       "Search across all your books, highlights, and notes. Find connections you never knew existed.",
+    color: "indigo",
     gradient: "from-indigo-500 to-violet-500",
-    bgGradient:
-      "from-indigo-50/50 to-violet-50/50 dark:from-indigo-950/20 dark:to-violet-950/20",
   },
 ];
 
@@ -75,57 +70,113 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.2,
+      staggerChildren: 0.1,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    scale: 1,
     transition: {
-      duration: 0.6,
+      duration: 0.8,
       ease: [0.16, 1, 0.3, 1],
     },
   },
 };
 
+function FeatureCard({ feature }: { feature: (typeof features)[0] }) {
+  const Icon = feature.icon;
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  const background = useMotionTemplate`
+    radial-gradient(
+      650px circle at ${mouseX}px ${mouseY}px,
+      rgba(var(--spotlight-color), 0.15),
+      transparent 80%
+    )
+  `;
+
+  return (
+    <motion.div
+      variants={itemVariants}
+      onMouseMove={handleMouseMove}
+      className="group relative h-full rounded-[2.5rem] border border-border/50 bg-muted/5 p-8 transition-colors hover:bg-muted/10 overflow-hidden"
+      style={
+        {
+          "--spotlight-color": feature.color === "blue" ? "59, 130, 246" : 
+                               feature.color === "purple" ? "168, 85, 247" :
+                               feature.color === "amber" ? "245, 158, 11" :
+                               feature.color === "emerald" ? "16, 185, 129" :
+                               feature.color === "rose" ? "244, 63, 94" : "99, 102, 241"
+        } as React.CSSProperties
+      }
+    >
+      <motion.div
+        className="pointer-events-none absolute -inset-px rounded-[2.5rem] opacity-0 transition duration-300 group-hover:opacity-100"
+        style={{ background }}
+      />
+      
+      <div className="relative z-10 flex flex-col items-start">
+        <div className="relative mb-8">
+          <div className={`absolute inset-0 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity bg-gradient-to-br ${feature.gradient}`} />
+          <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center bg-background border border-border/50 shadow-sm group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
+            <Icon className="w-7 h-7 text-foreground/70 group-hover:text-foreground transition-colors" />
+          </div>
+        </div>
+
+        <h3 className={`${crimsonPro.className} font-black text-2xl mb-4 text-foreground/90 group-hover:text-foreground transition-colors`}>
+          {feature.title}
+        </h3>
+        
+        <p className="text-muted-foreground leading-relaxed text-base font-light group-hover:text-foreground/80 transition-colors">
+          {feature.description}
+        </p>
+      </div>
+
+      <div className="absolute inset-x-0 bottom-0 h-1 overflow-hidden rounded-b-[2.5rem]">
+        <div className={`h-full w-0 bg-gradient-to-r ${feature.gradient} transition-all duration-500 group-hover:w-full`} />
+      </div>
+    </motion.div>
+  );
+}
 export function HomeFeatures() {
   return (
-    <section className="relative w-full py-24 md:py-40 px-4 md:px-8 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/20 to-background" />
+    <section className="relative w-full py-24 md:py-32 px-4 md:px-8 overflow-hidden bg-background">
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10" />
+      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[120px] -z-10" />
 
       <div className="container mx-auto max-w-7xl relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-20"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+          {/* <motion.span 
+            className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-muted/50 border border-border mb-6"
+            initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-block mb-4"
+            transition={{ delay: 0.2 }}
           >
-            <span className="px-4 py-2 rounded-full border-2 border-black bg-gradient-to-r from-primary/10 via-primary/5 to-transparent shadow-[3px_3px_0px_rgba(0,0,0,1)] text-sm font-bold uppercase tracking-wider">
-              Some Features
-            </span>
-          </motion.div>
-
-          <h2
-            className={`${crimsonPro.className} font-black text-4xl md:text-5xl lg:text-6xl mb-6 `}
-          >
+            Capabilities
+          </motion.span> */}
+          <h2 className={`${crimsonPro.className} font-black text-4xl md:text-5xl lg:text-6xl pb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70`}>
             Create Lasting Knowledge
           </h2>
-          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light tracking-wide">
-            Transform your reading highlights into a powerful knowledge system.
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light">
+            Transform your reading highlights into a powerful knowledge system with tools designed for deep thinkers.
           </p>
         </motion.div>
 
@@ -134,86 +185,13 @@ export function HomeFeatures() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="group relative"
-              >
-                <motion.div
-                  whileHover={{
-                    y: -8,
-                    transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
-                  }}
-                  className="h-full relative"
-                >
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-                  />
-
-                  <div className="relative h-full p-8 border-3 border-black rounded-xl bg-card shadow-[6px_6px_0px_rgba(0,0,0,1)] group-hover:shadow-[10px_10px_0px_rgba(0,0,0,1)] transition-all duration-300 overflow-hidden">
-                    <motion.div
-                      className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${feature.gradient} opacity-5 rounded-full blur-2xl group-hover:opacity-10 transition-opacity duration-500`}
-                    />
-
-                    <motion.div
-                      className="relative"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 10,
-                      }}
-                    >
-                      <div
-                        className={`mb-6 inline-flex items-center justify-center w-16 h-16 border-3 border-black rounded-xl bg-gradient-to-br ${feature.gradient} shadow-[4px_4px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_rgba(0,0,0,1)] transition-all duration-300`}
-                      >
-                        <motion.div
-                          animate={{
-                            rotate: [0, 5, -5, 0],
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            repeatDelay: 5,
-                            ease: "easeInOut",
-                          }}
-                        >
-                          <Icon className="w-8 h-8 text-white drop-shadow-lg" />
-                        </motion.div>
-                      </div>
-                    </motion.div>
-
-                    <h3
-                      className={`font-black text-2xl mb-3 bg-gradient-to-br ${feature.gradient} bg-clip-text text-transparent`}
-                    >
-                      {feature.title}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed text-base">
-                      {feature.description}
-                    </p>
-
-                    <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-black/10 to-transparent"
-                      initial={{ scaleX: 0 }}
-                      whileInView={{ scaleX: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.8, delay: index * 0.1 }}
-                    />
-                  </div>
-                </motion.div>
-              </motion.div>
-            );
-          })}
+          {features.map((feature, index) => (
+            <FeatureCard key={index} feature={feature} />
+          ))}
         </motion.div>
       </div>
-
-      <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl opacity-50" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-tl from-secondary/10 to-transparent rounded-full blur-3xl opacity-50" />
     </section>
   );
 }

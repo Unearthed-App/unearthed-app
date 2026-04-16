@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import { db } from "@/db";
 import { purchases, unearthedLocalVersions } from "@/db/schema";
@@ -128,23 +128,48 @@ export default async function UnearthedLocalSuccess({
           <div className="relative bg-alternate dark:bg-primary text-primary-foreground border-4 border-black p-5 shadow-[6px_6px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all duration-150">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-                <path d="M8 7h6" />
-                <path d="M8 11h8" />
-              </svg>
-              <div>
-                <p className="text-xl font-black uppercase tracking-wide">Read the Docs</p>
-                <p className="text-sm opacity-90">Installation guides, features, troubleshooting</p>
+                  <path d="M8 7h6" />
+                  <path d="M8 11h8" />
+                </svg>
+                <div>
+                  <p className="text-xl font-black uppercase tracking-wide">
+                    Read the Docs
+                  </p>
+                  <p className="text-sm opacity-90">
+                    Installation guides, features, troubleshooting
+                  </p>
+                </div>
               </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="group-hover:translate-x-1 transition-transform"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
             </div>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 transition-transform">
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
           </div>
-        </div>
-      </a>
+        </a>
 
         {/* Purchase ID */}
         <div className="mb-12">
@@ -155,15 +180,22 @@ export default async function UnearthedLocalSuccess({
           <div className="border-2 border-black rounded-md overflow-hidden shadow-[4px_4px_0px_rgba(0,0,0,1)] bg-card">
             <div className="p-4 space-y-4">
               <p className="text-sm text-muted-foreground">
-                Save this Purchase ID in a safe place — you&apos;ll need it
-                for future updates.
+                Save this Purchase ID in a safe place — you&apos;ll need it for
+                future updates.
               </p>
               <CopyDistinctId distinctId={distinctId} />
               <p className="text-sm text-muted-foreground leading-relaxed">
-                This is a <strong>one-time payment</strong> for this version
-                of Unearthed Local. For Example: if you purchase version one,
-                you can download updates from <code className="text-xs bg-black/10 dark:bg-white/10 px-1 py-0.5 rounded">1.0.0</code> up to{" "}
-                <code className="text-xs bg-black/10 dark:bg-white/10 px-1 py-0.5 rounded">1.9.9</code> by returning to{" "}
+                This is a <strong>one-time payment</strong> for this version of
+                Unearthed Local. For Example: if you purchase version one, you
+                can download updates from{" "}
+                <code className="text-xs bg-black/10 dark:bg-white/10 px-1 py-0.5 rounded">
+                  1.0.0
+                </code>{" "}
+                up to{" "}
+                <code className="text-xs bg-black/10 dark:bg-white/10 px-1 py-0.5 rounded">
+                  1.9.9
+                </code>{" "}
+                by returning to{" "}
                 <a
                   href="https://unearthed.app/local-download"
                   className="underline font-bold"
@@ -187,7 +219,9 @@ export default async function UnearthedLocalSuccess({
               <div
                 key={v.id}
                 className={`border-2 border-black rounded-md overflow-hidden shadow-[4px_4px_0px_rgba(0,0,0,1)] bg-card ${
-                  index === 0 ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""
+                  index === 0
+                    ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                    : ""
                 }`}
               >
                 <div className="flex items-center gap-3 px-4 py-3 border-b-2 border-black bg-muted/50">

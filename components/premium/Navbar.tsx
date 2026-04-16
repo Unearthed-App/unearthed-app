@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,13 @@ import dynamic from "next/dynamic";
 import { Crimson_Pro } from "next/font/google";
 import { QuoteFormDialog } from "./QuoteForm/QuoteFormDialog";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
-const ConnectionsGraph = dynamic(() => import("@/components/premium/ConnectionsGraph").then(mod => ({ default: mod.ConnectionsGraph })), { ssr: false });
+const ConnectionsGraph = dynamic(
+  () =>
+    import("@/components/premium/ConnectionsGraph").then((mod) => ({
+      default: mod.ConnectionsGraph,
+    })),
+  { ssr: false }
+);
 
 export function Navbar() {
   const isDesktop = useMediaQuery("(min-width: 768px)");

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,13 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getBookTitles } from "@/server/actions";
 import { OnboardingCard } from "@/components/OnboardingCard";
-import FAQ from "@/components/FAQ";
+// import FAQ from "@/components/FAQ";
 import { LoggedInHome } from "@/components/LoggedInHome";
-import { HomeHero } from "@/components/HomeHero";
-import { HomeFeatures } from "@/components/HomeFeatures";
-import { HomeDualOptions } from "@/components/HomeDualOptions";
+// import { HomeHero } from "@/components/HomeHero";
+// import { HomeFeatures } from "@/components/HomeFeatures";
+// import { HomeDualOptions } from "@/components/HomeDualOptions";
+// import { PhoneMockupSection } from "@/components/PhoneMockup";
+import { HomePagePublic } from "@/components/HomePagePublic";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatedLoader } from "@/components/AnimatedLoader";
 import { useState, useEffect } from "react";
@@ -46,7 +48,7 @@ export default function App() {
   const { data: premiumStatus } = useQuery({
     queryKey: ["premiumStatus"],
     queryFn: async () => {
-      const response = await fetch('/api/auth/premium-status');
+      const response = await fetch("/api/auth/premium-status");
       return response.json();
     },
     enabled: !!user,
@@ -105,10 +107,7 @@ export default function App() {
       </SignedIn>
       <SignedOut>
         <main className="w-full">
-          <HomeHero />
-          <HomeFeatures />
-          <HomeDualOptions />
-          <FAQ />
+          <HomePagePublic />
         </main>
       </SignedOut>
     </>

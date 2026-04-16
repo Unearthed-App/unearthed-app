@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ import PostHogClient from "@/app/posthog";
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 import { z } from "zod";
-import { profiles, purchases } from "@/db/schema";
+import { profiles, purchases, purchasesMobile } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { generateUUID } from "@/lib/utils";
@@ -83,17 +83,55 @@ export async function POST(req: NextRequest) {
             throw new Error("No customer email found in session");
           }
 
-          // Check if this is a local purchase (no userId required)
+          // Check if this is a local or mobile purchase (no userId required)
           const isLocalPurchase =
             productName === process.env.STRIPE_LOCAL_PRODUCT_NAME;
+          const isMobilePurchase =
+            productName === process.env.STRIPE_MOBILE_PRODUCT_NAME;
 
-          if (!userId && !isLocalPurchase) {
+          if (!userId && !isLocalPurchase && !isMobilePurchase) {
             throw new Error(
               "No userId found in session metadata for premium purchase"
             );
           }
 
-          if (isLocalPurchase) {
+          if (isMobilePurchase) {
+            // Handle mobile purchase - no user account required
+            console.log(
+              `Processing completed mobile checkout for email ${customerEmail}`
+            );
+
+            posthogClient.capture({
+              distinctId: session.metadata?.purchaseId || generateUUID(),
+              event: `${event.type}`,
+              properties: {
+                productName,
+                customerEmail,
+                isMobilePurchase: true,
+              },
+            });
+
+            try {
+              await db
+                .insert(purchasesMobile)
+                .values({
+                  purchaseId: session.metadata?.purchaseId || generateUUID(),
+                  email: customerEmail,
+                  sessionId: session.id,
+                  productName: session.metadata?.productName || "",
+                  productId: session.metadata?.productId || "",
+                  priceId: session.metadata?.priceId || "",
+                  status: session.payment_status || "unknown",
+                })
+                .onConflictDoNothing();
+
+              console.log(`Mobile purchase recorded for ${customerEmail}`);
+            } catch (error) {
+              console.error("Failed to record mobile purchase:", error);
+            }
+
+            console.log(`Mobile purchase completed for ${customerEmail}`);
+          } else if (isLocalPurchase) {
             // Handle local purchase - no user account required
             console.log(
               `Processing completed local checkout for email ${customerEmail}`

@@ -1,17 +1,7 @@
 "use client";
 
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import rssLight from "./rss_light.webp";
-import rssDark from "./rss_dark.webp";
-import localLight from "./local_light.webp";
-import localDark from "./local_dark.webp";
-import searchLight from "./search_light.webp";
-import searchDark from "./search_dark.webp";
-import articleLight from "./article_light.webp";
-import articleDark from "./article_dark.webp";
-import databaseLight from "./database_light.webp";
-import databaseDark from "./database_dark.webp";
 
 const SCREENSHOTS: {
   label: string;
@@ -19,8 +9,8 @@ const SCREENSHOTS: {
   hoverRotate: string;
   delay: number;
   priority: boolean;
-  light: StaticImageData;
-  dark: StaticImageData;
+  light: string;
+  dark: string;
 }[] = [
   {
     label: "Local Dashboard",
@@ -28,8 +18,8 @@ const SCREENSHOTS: {
     hoverRotate: "-1deg",
     delay: 0,
     priority: true,
-    light: localLight,
-    dark: localDark,
+    light: "/mockups/local_light.webp",
+    dark: "/mockups/local_dark.webp",
   },
   {
     label: "RSS Feeds",
@@ -37,8 +27,8 @@ const SCREENSHOTS: {
     hoverRotate: "1deg",
     delay: 100,
     priority: false,
-    light: rssLight,
-    dark: rssDark,
+    light: "/mockups/rss_light.webp",
+    dark: "/mockups/rss_dark.webp",
   },
   {
     label: "Article Reader",
@@ -46,8 +36,8 @@ const SCREENSHOTS: {
     hoverRotate: "-1deg",
     delay: 200,
     priority: false,
-    light: articleLight,
-    dark: articleDark,
+    light: "/mockups/article_light.webp",
+    dark: "/mockups/article_dark.webp",
   },
   {
     label: "Smart Search",
@@ -55,8 +45,8 @@ const SCREENSHOTS: {
     hoverRotate: "1deg",
     delay: 300,
     priority: false,
-    light: searchLight,
-    dark: searchDark,
+    light: "/mockups/search_light.webp",
+    dark: "/mockups/search_dark.webp",
   },
   {
     label: "Database View",
@@ -64,8 +54,8 @@ const SCREENSHOTS: {
     hoverRotate: "-1deg",
     delay: 400,
     priority: false,
-    light: databaseLight,
-    dark: databaseDark,
+    light: "/mockups/database_light.webp",
+    dark: "/mockups/database_dark.webp",
   },
 ];
 
@@ -135,6 +125,8 @@ export const LocalScreenshots = () => {
                 quality={85}
                 priority={screenshot.priority}
                 sizes="(max-width: 768px) 100vw, 896px"
+                width={1200}
+                height={800}
               />
               <Image
                 src={screenshot.dark}
@@ -143,6 +135,8 @@ export const LocalScreenshots = () => {
                 quality={85}
                 priority={screenshot.priority}
                 sizes="(max-width: 768px) 100vw, 896px"
+                width={1200}
+                height={800}
               />
             </div>
           </div>

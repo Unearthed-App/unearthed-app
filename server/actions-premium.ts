@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1292,7 +1292,7 @@ export const generateBlindSpotsAnalysis =
       model: process.env.AI_GOOGLE_MODEL!,
     });
 
-    const prompt = `Analyze these books:
+    const prompt = `Analyse these books:
   ${JSON.stringify(books, null, 2)}
 
   Provide a reading pattern analysis and identify potential blind spots in the reader's book selection.

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-2xl text-xs font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -35,19 +35,19 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        brutal: `h-12 border-2 p-2.5 rounded-md transition-all duration-200
+        brutal: `h-12 border-2 p-2.5 transition-all duration-200
           bg-card border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
           hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
           active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
-          dark:hover:bg-accent dark:bg-[rgb(238,157,138)] dark:text-black
+          dark:hover:bg-accent dark:bg-[hsl(175,35%,28%)] dark:text-white
         `,
-        brutalprimary: `bg-primary h-12 border-2 p-2.5 rounded-md transition-all duration-200
+        brutalprimary: `bg-primary h-12 border-2 p-2.5 transition-all duration-200
           hover:bg-muted border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
           hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
           active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
           dark:hover:bg-muted dark:text-black
         `,
-        destructivebrutal: `bg-destructive h-12 border-2 p-2.5 rounded-md transition-all duration-200
+        destructivebrutal: `bg-destructive h-12 border-2 p-2.5 transition-all duration-200
           hover:bg-muted border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
           hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
           active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
@@ -55,7 +55,7 @@ const buttonVariants = cva(
         `,
         brutalshimmer: `
           animate-shimmer bg-[linear-gradient(70deg,#e7d0ca,45%,#ffffff,55%,#e7d0ca)] dark:bg-[linear-gradient(70deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] transition-colors
-          bg-primary h-12 border-2 p-2.5 rounded-md transition-all
+          bg-primary h-12 border-2 p-2.5 transition-all
           hover:bg-muted border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
           hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
           active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
@@ -78,7 +78,8 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }

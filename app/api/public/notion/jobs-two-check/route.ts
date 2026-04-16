@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -348,30 +348,30 @@ export async function GET() {
           let notionColor = "gray";
           const lowerCaseColor = quote.color?.toLowerCase();
 
-            if (
-              lowerCaseColor?.includes("grey") ||
-              lowerCaseColor?.includes("gray")
-            ) {
-              notionColor = "gray";
-            } else if (lowerCaseColor?.includes("yellow")) {
-              notionColor = "yellow";
-            } else if (lowerCaseColor?.includes("blue")) {
-              notionColor = "blue";
-            } else if (lowerCaseColor?.includes("pink")) {
-              notionColor = "pink";
-            } else if (lowerCaseColor?.includes("orange")) {
-              notionColor = "orange";
-            } else if (lowerCaseColor?.includes("red")) {
-              notionColor = "red";
-            } else if (lowerCaseColor?.includes("green")) {
-              notionColor = "green";
-            } else if (lowerCaseColor?.includes("olive")) {
-              notionColor = "olive";
-            } else if (lowerCaseColor?.includes("cyan")) {
-              notionColor = "cyan";
-            } else if (lowerCaseColor?.includes("purple")) {
-              notionColor = "purple";
-            }
+          if (
+            lowerCaseColor?.includes("grey") ||
+            lowerCaseColor?.includes("gray")
+          ) {
+            notionColor = "gray";
+          } else if (lowerCaseColor?.includes("yellow")) {
+            notionColor = "yellow";
+          } else if (lowerCaseColor?.includes("blue")) {
+            notionColor = "blue";
+          } else if (lowerCaseColor?.includes("pink")) {
+            notionColor = "pink";
+          } else if (lowerCaseColor?.includes("orange")) {
+            notionColor = "orange";
+          } else if (lowerCaseColor?.includes("red")) {
+            notionColor = "red";
+          } else if (lowerCaseColor?.includes("green")) {
+            notionColor = "green";
+          } else if (lowerCaseColor?.includes("olive")) {
+            notionColor = "olive";
+          } else if (lowerCaseColor?.includes("cyan")) {
+            notionColor = "cyan";
+          } else if (lowerCaseColor?.includes("purple")) {
+            notionColor = "purple";
+          }
 
           const quoteBlocks = splitLongContent(
             quote.content || "No quote...",

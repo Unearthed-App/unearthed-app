@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ export function DualOptionSection({ className = "" }: DualOptionSectionProps) {
       aria-labelledby="dual-options-heading"
     >
       <div className="container mx-auto px-4 max-w-7xl">
-        <motion.header 
+        <motion.header
           className="text-center mb-16 md:mb-20"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -112,7 +112,8 @@ export function DualOptionSection({ className = "" }: DualOptionSectionProps) {
             Choose Your Unearthed Experience
           </h2>
           <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light tracking-wide">
-            Unearthed now comes in two varieties. Choose the option that best fits your needs.
+            Unearthed now comes in two varieties. Choose the option that best
+            fits your needs.
           </p>
         </motion.header>
 

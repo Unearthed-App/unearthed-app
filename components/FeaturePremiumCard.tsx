@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,10 @@ import { CheckItemSmall } from "./CheckItemSmall";
 
 export function FeaturePremiumCard({
   showButtons = false,
+  buttonClassName,
 }: {
   showButtons?: boolean;
+  buttonClassName?: string;
 }) {
   return (
     <div className="flex flex-wrap sm:flex-nowrap justify-center">
@@ -82,7 +84,10 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="Help keep this app alive ☺️" />
           {showButtons && (
             <Link href="/dashboard/get-premium">
-              <Button variant="brutalprimary" className="mt-2 w-full">
+              <Button
+                variant="brutalprimary"
+                className={`mt-2 w-full ${buttonClassName ?? ""}`}
+              >
                 <span className="hover:motion-preset-confetti">
                   Get Unearthed Online
                 </span>

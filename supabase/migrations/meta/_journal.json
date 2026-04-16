@@ -190,6 +190,20 @@
       "when": 1769567021203,
       "tag": "0032_omniscient_goliath",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1776160349458,
+      "tag": "0033_silly_wolfsbane",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1776165075432,
+      "tag": "0034_needy_war_machine",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,7 +238,7 @@ Do not use markdown formatting or code blocks in your response. Return only the 
           { role: "user", parts: [{ text: systemMessage }] },
           {
             role: "model",
-            parts: [{ text: "I understand. I'll help analyze the book." }],
+            parts: [{ text: "I understand. I'll help analyse the book." }],
           },
           { role: "user", parts: [{ text: userMessage }] },
         ],

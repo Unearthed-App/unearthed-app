@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,24 +15,24 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { SignedIn, SignedOut } from "@clerk/nextjs";
-
 import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 import { Button } from "@/components/ui/button";
-import { Crown, LogIn } from "lucide-react";
+import { Crown, LogIn, Cloud, Sparkles } from "lucide-react";
+import { NonPremiumNavigation } from "@/components/NonPremiumNavigation";
 
 import Link from "next/link";
 import { UnearthedInAndOut } from "@/components/UnearthedInAndOut";
-import { AnimatedCards } from "@/components/AnimatedCards";
+// import { AnimatedCards } from "@/components/AnimatedCards";
 import { HomeHeader } from "@/components/HomeHeader";
 import { HomeCarousel } from "@/components/HomeCarousel";
 import { FeaturePremiumCard } from "@/components/FeaturePremiumCard";
 import { Metadata } from "next";
 import FeatureSection from "@/components/FeatureSection";
+// import { PublicNavbar } from "@/components/PublicNavbar";
 
-export const dynamic = 'force-static';
+export const dynamic = "force-static";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
@@ -101,18 +101,12 @@ export const metadata: Metadata = {
 export default function UnearthedOnline() {
   return (
     <>
-      <main className="w-full flex flex-wrap items-center justify-center">
+      {/* <PublicNavbar /> */}
+      <main className="w-full flex flex-wrap items-center justify-center pt-32 relative">
+        {/* Primary top gradient */}
+        <div className="absolute inset-x-0 top-0 h-[600px] bg-gradient-to-b from-primary/[0.13] to-transparent pointer-events-none -z-10" />
+        <NonPremiumNavigation currentPage="online" />
         <div className="absolute top-0 right-0 flex items-center justify-center space-x-2 p-3">
-          <div className="flex justify-center">
-            <h1
-              className={
-                crimsonPro.className +
-                " select-none motion-blur-in-2xl motion-duration-[6000ms] motion-delay-500 font-black text-xl bg-clip-text text-transparent bg-gradient-to-t from-[rgb(238,157,138)] to-red-700"
-              }
-            >
-              unearthed
-            </h1>
-          </div>
           <div className="flex justify-center">
             <svg
               className="text-red-500 motion-blur-in-xl motion-duration-[6000ms] h-8 w-8"
@@ -160,6 +154,61 @@ export default function UnearthedOnline() {
           </div>
         </div>
 
+        {/* Hero */}
+        <header className="w-full max-w-4xl text-center px-4 mx-auto">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/50 bg-primary/10 text-primary dark:text-primary text-sm font-bold tracking-widest uppercase mb-8">
+            <Cloud className="h-4 w-4" />
+            Unearthed Online · Sync From Anywhere
+          </div>
+
+          <h1
+            className={`${crimsonPro.className} text-4xl md:text-5xl lg:text-7xl font-black tracking-tight mb-6 flex flex-col items-center justify-center gap-2`}
+          >
+            <span className="relative inline-block">
+              <span className="bg-gradient-to-br from-primary via-primary to-primary/80 bg-clip-text text-transparent drop-shadow-sm relative z-10">
+                Flexibility
+              </span>
+              <span className="absolute -inset-2 bg-primary/10 blur-2xl -z-10 rounded-full" />
+            </span>
+            <span
+              className="text-2xl md:text-3xl lg:text-4xl text-foreground opacity-80"
+              style={{
+                textDecoration: "underline",
+                textDecorationStyle: "wavy",
+                textDecorationColor: "rgb(38 177 166 / 0.7)",
+                textUnderlineOffset: "6px",
+              }}
+            >
+              Sync From Anywhere
+            </span>
+          </h1>
+
+          <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto mb-8 leading-relaxed">
+            Cloud-synced Kindle and KOReader highlights with AI-powered
+            insights. <strong>Chat with your books, detect blind spots</strong>,
+            and discover forgotten ideas. Export to Notion, Obsidian,
+            Capacities, and Supernotes.{" "}
+          </p>
+
+          {/* Callout pills */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+            <span className="flex items-center gap-2 px-4 py-2 rounded-full border border-secondary/40 bg-secondary/10 text-sm text-secondary dark:text-secondary font-medium">
+              <Sparkles className="h-4 w-4 shrink-0" />
+              AI-powered reading insights (optional)
+            </span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/sign-in">
+              <Button variant="brutalprimary">
+                <LogIn className="mr-2 h-4 w-4" />
+                Sign In/Up
+              </Button>
+            </Link>
+          </div>
+        </header>
+
         <div className="w-full">
           <HomeHeader />
         </div>
@@ -177,24 +226,8 @@ export default function UnearthedOnline() {
             <FeaturePremiumCard showButtons />
           </div>
 
-          <div className="mt-12">
-            <AnimatedCards />
-          </div>
-
           <div className="mt-24 w-full flex justify-center">
             <HomeCarousel />
-          </div>
-
-          <div className="w-full flex justify-center">
-            <div className="grid grid-cols-1 mt-8 max-w-[630px]">
-              <Link href="/" className="w-full md:w-auto">
-                <Button className="w-full mt-2 flex px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[1000ms]">
-                  <span className="text-base md:text-xl uppercase">
-                    Go Back
-                  </span>
-                </Button>
-              </Link>
-            </div>
           </div>
         </div>
       </main>

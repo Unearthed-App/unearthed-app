@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -253,7 +253,6 @@ export const quoteTags = pgTable("quote_tags", {
     .references(() => tags.id),
 });
 
-
 export const purchases = pgTable("purchases", {
   id: uuid("id").primaryKey().defaultRandom().notNull(),
   version: integer("version").notNull(),
@@ -261,9 +260,25 @@ export const purchases = pgTable("purchases", {
   productId: text("product_id").notNull(),
   priceId: text("price_id").notNull(),
   email: text("email").notNull(),
-  sessionId: text("session_id").notNull(),
+  sessionId: text("session_id").notNull().unique(),
   distinctId: text("distinct_id").notNull(),
   status: text("status").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const purchasesMobile = pgTable("purchases_mobile", {
+  id: uuid("id").primaryKey().defaultRandom().notNull(),
+  purchaseId: text("purchase_id").notNull().unique(),
+  email: text("email").notNull(),
+  sessionId: text("session_id").notNull(),
+  productName: text("product_name").notNull(),
+  productId: text("product_id").notNull(),
+  priceId: text("price_id").notNull(),
+  status: text("status").notNull(),
+  validationSuccessCount: integer("validation_success_count")
+    .notNull()
+    .default(0),
+  validationFailCount: integer("validation_fail_count").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -416,6 +431,8 @@ export const selectUnearthedKeySchema = createSelectSchema(unearthedKeys);
 export const insertPurchasesSchema = createInsertSchema(purchases);
 export const selectPurchasesSchema = createSelectSchema(purchases);
 
+export const insertPurchasesMobileSchema = createInsertSchema(purchasesMobile);
+export const selectPurchasesMobileSchema = createSelectSchema(purchasesMobile);
 
 export const insertSourceSchema = createInsertSchema(sources);
 export const insertQuoteSchema = createInsertSchema(quotes);

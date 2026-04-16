@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import QueryClientContextProvider from "@/components/QueryClientContextProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import {
-  ClerkProvider,
-} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import { neobrutalism } from "@clerk/themes";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -32,6 +30,7 @@ import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { NoiseBackground } from "@/components/NoiseBackground";
 import { ClientAuthLayout } from "@/components/ClientAuthLayout";
+import NextTopLoader from "nextjs-toploader";
 
 const ConditionalPH = dynamic(() => import("@/components/ConditionalPH"));
 
@@ -115,15 +114,21 @@ export default function RootLayout({
       }}
     >
       <QueryClientContextProvider>
-        <html lang="en" className="h-full">
-          <NoiseBackground />
+        <html lang="en" className="h-full" suppressHydrationWarning>
           <body className={poppins.className + " h-full"}>
+            <NoiseBackground />
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
               enableSystem
               disableTransitionOnChange
             >
+              <NextTopLoader
+                color="#f24053"
+                height={4}
+                showSpinner={false}
+                shadow={false}
+              />
               <ClientAuthLayout>
                 <ConditionalPH>
                   <NextSSRPlugin

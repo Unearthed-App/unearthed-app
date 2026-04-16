@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -565,7 +565,7 @@ export function ProfileForm() {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="mt-4">
                     <h3 className="w-full font-semibold">User ID</h3>
                     <div className="mt-1 flex space-x-2 justify-between items-end">

@@ -48,18 +48,12 @@ export function HomeHero() {
           className="mb-8"
         >
           <motion.div
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-3 border-black bg-gradient-to-r from-card via-primary/5 to-card shadow-[5px_5px_0px_rgba(0,0,0,1)] hover:shadow-[7px_7px_0px_rgba(0,0,0,1)] transition-all duration-300 mb-6 backdrop-blur-sm"
-            initial={{ opacity: 0, scale: 0.85, rotateX: -15 }}
-            animate={{ opacity: 1, scale: 1, rotateX: 0 }}
-            transition={{
-              delay: 0.2,
-              type: "spring",
-              stiffness: 300,
-              damping: 20,
-            }}
-            whileHover={{ scale: 1.05 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/8 mb-6"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
-            <span className="text-sm font-bold bg-gradient-to-r from-primary via-primary to-secondary bg-clip-text text-transparent">
+            <span className="text-xs font-semibold tracking-widest uppercase">
               Transform Your Reading Insights
             </span>
           </motion.div>
@@ -131,60 +125,58 @@ export function HomeHero() {
         </motion.p>
 
         <motion.div
-          className="flex flex-col sm:flex-row gap-5 justify-center items-center mb-5"
+          className="flex flex-col items-center gap-3 mb-14"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <motion.div
-            whileHover={{ scale: 1.03, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Link href="/online">
-              <Button
-                variant="brutalprimary"
-                size="lg"
-                className="group text-lg px-10 py-7 min-w-[240px] font-bold shadow-[6px_6px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_rgba(0,0,0,1)] transition-all duration-300 bg-gradient-to-br from-primary to-primary/90 border-3"
-              >
-                Unearthed Online
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
-              </Button>
-            </Link>
-          </motion.div>
-          <motion.div
-            whileHover={{ scale: 1.03, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Link href="/local">
-              <Button
-                variant="brutal"
-                size="lg"
-                className="group text-lg px-10 py-7 min-w-[240px] font-bold shadow-[6px_6px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_rgba(0,0,0,1)] transition-all duration-300 border-3"
-              >
-                Unearthed Local
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
-              </Button>
-            </Link>
-          </motion.div>
-        </motion.div>
+          {/* Primary + Secondary CTAs — side by side, same size */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-center">
+            <motion.div
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              className="w-full sm:w-auto"
+            >
+              <Link href="/online" className="block w-full sm:w-auto">
+                <Button
+                  variant="brutalprimary"
+                  className="w-full sm:w-[200px] h-12 text-sm font-bold tracking-wide"
+                >
+                  Unearthed Online
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
+            </motion.div>
 
-        <motion.div
-          className="flex justify-center my-12"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        >
+            <motion.div
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              className="w-full sm:w-auto"
+            >
+              <Link href="/local" className="block w-full sm:w-auto">
+                <Button
+                  variant="brutal"
+                  className="w-full sm:w-[200px] h-12 text-sm font-bold tracking-wide"
+                >
+                  Unearthed Local
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* Tertiary ghost link — sits naturally below */}
           <motion.div
-            whileHover={{ scale: 1.05, y: -1 }}
+            whileHover={{ y: -1 }}
             whileTap={{ scale: 0.97 }}
           >
             <Link
               href="/local-docs"
-              className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-black bg-card shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_rgba(0,0,0,1)] transition-all duration-300 dark:bg-accent/50"
+              className="mt-4 group inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
             >
-              <BookOpen className="w-4 h-4 text-primary" />
-              <span className="text-sm font-bold">Local Docs</span>
-              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+              <BookOpen className="w-3.5 h-3.5 text-primary/70 group-hover:text-primary transition-colors duration-200" />
+              <span className="font-medium">Local Docs</span>
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-200" />
             </Link>
           </motion.div>
         </motion.div>

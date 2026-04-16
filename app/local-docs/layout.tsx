@@ -16,6 +16,7 @@ import {
   Settings,
 } from "lucide-react";
 import { DocsSearchDialog } from "./search-dialog";
+// import { PublicNavbar } from "@/components/PublicNavbar";
 
 const NAV_ITEMS = [
   {
@@ -134,6 +135,7 @@ export default function LocalDocsLayout({
 
   return (
     <div className="min-h-screen bg-background">
+      {/* <PublicNavbar /> */}
       {/* Top bar */}
       <header className="pt-24 sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6">

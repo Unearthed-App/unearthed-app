@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ const Einkle = () => {
             <h1 className="text-sm mb-4">Scroll me...</h1>
             <div className="border-2 border-black border-dashed p-4 rounded-lg mb-4">
               <h2 className="text-3xl font-semibold italic mb-2">
-                Something new ⚆_⚆
+                Kindle and KOReader together ⚆_⚆
               </h2>
               <h2 className="text-xl font-semibold italic mb-2">
                 KOReader highlights can now be synced and merged with your
@@ -113,7 +113,6 @@ const Einkle = () => {
                 >
                   Check it out on GitHub
                 </a>{" "}
-                ...more info to come...
               </h1>
             </div>
             <p className=" mb-4">
@@ -125,9 +124,9 @@ const Einkle = () => {
             </p>
             <p className=" mb-4">
               With automatic Kindle/KOReader sync, instant global search, and
-              seamless integration with popular note-taking apps like Notion,
-              Obsidian, Supernotes, and Capacities, your past knowledge becomes
-              a constant stream of inspiration.
+              integration with note-taking apps like Notion, Obsidian,
+              Supernotes, and Capacities, your past knowledge becomes a constant
+              stream of inspiration.
             </p>
             <p className="mb-4 font-black italic uppercase text-4xl">
               NO AMAZON CREDENTIALS

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { NextResponse } from "next/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { clerkClient } from "@clerk/nextjs/server";
+import {
+  getClientIp,
+  isPublicExtInsertPath,
+  rateLimitPublicInsert,
+} from "@/lib/public-api-rate-limit";
 
 // Routes that don't need any protection
 const allowedRoutes = createRouteMatcher([
@@ -34,6 +40,25 @@ const premiumRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  const pathname = req.nextUrl.pathname;
+
+  if (pathname.startsWith("/api/public")) {
+    if (
+      req.method === "POST" &&
+      isPublicExtInsertPath(pathname) &&
+      !rateLimitPublicInsert(getClientIp(req), pathname)
+    ) {
+      return NextResponse.json(
+        { error: "Too many requests" },
+        {
+          status: 429,
+          headers: { "Retry-After": "60" },
+        }
+      );
+    }
+    return NextResponse.next();
+  }
+
   const { userId }: { userId: string | null } = await auth();
 
   let isPremium = false;

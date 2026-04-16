@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import Einkle from "./Einkle";
 import { SignUpButton } from "@clerk/nextjs";
 
-
-export const HomeHeader = () => {
+export const HomeHeader = ({ ctaClassName }: { ctaClassName?: string }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   return (
@@ -43,7 +42,7 @@ export const HomeHeader = () => {
           <SignUpButton forceRedirectUrl="/dashboard/get-premium">
             <Button
               variant="brutalprimary"
-              className="w-full mt-2 flex px-8 sm:px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms] min-h-[56px] touch-manipulation"
+              className={`w-full mt-2 flex px-8 sm:px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms] min-h-[56px] touch-manipulation ${ctaClassName ?? ""}`}
               tabIndex={-1}
             >
               <Crown className="mr-2" aria-hidden="true" />

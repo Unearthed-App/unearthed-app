@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,9 +120,7 @@ export function Navbar() {
             <Link href="/dashboard/free-no-more">
               <Button variant="destructivebrutal">
                 <AlertTriangle className="mr-1" />
-                <span className="">
-                  Changes!
-                </span>
+                <span className="">Changes!</span>
               </Button>
             </Link>
             <SearchDialog />

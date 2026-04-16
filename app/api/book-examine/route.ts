@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
         summary: "No quotes found in this book.",
         themes: [],
         takeaways: [],
-        readerPerspective: "Unable to analyze without any quotes or notes.",
+        readerPerspective: "Unable to analyse without any quotes or notes.",
       });
     }
 
@@ -174,7 +174,7 @@ ${q.note ? `Reader's Note: ${q.note}` : ""}`
       if (!parsedResponse) {
         return NextResponse.json(
           {
-            summary: "Failed to analyze the book content.",
+            summary: "Failed to analyse the book content.",
             themes: ["Parsing Error"],
             takeaways: ["Failed to parse AI response"],
             readerPerspective: "Error in analysis.",
@@ -233,7 +233,7 @@ ${q.note ? `Reader's Note: ${q.note}` : ""}`
       if (!parsedResponse) {
         return NextResponse.json(
           {
-            summary: "Failed to analyze the book content.",
+            summary: "Failed to analyse the book content.",
             themes: ["Parsing Error"],
             takeaways: ["Failed to parse AI response"],
             readerPerspective: "Error in analysis.",

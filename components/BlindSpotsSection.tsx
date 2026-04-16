@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ export function BlindSpotsSection() {
             </TooltipTrigger>
             <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
               <p>
-                Analyze your reading patterns to discover
+                Analyse your reading patterns to discover
                 <br />
                 potential knowledge gaps and get
                 <br />
@@ -159,14 +159,14 @@ export function BlindSpotsSection() {
             <div className="flex flex-col items-center justify-center py-8 space-y-4">
               <Loader2 className="h-8 w-8 animate-spin" />
               <p className="text-sm text-muted-foreground">
-                Analyzing your reading patterns...
+                Analysing your reading patterns...
               </p>
             </div>
           ) : error ? (
             <div className="text-red-500">
               {error instanceof Error
                 ? error.message
-                : "Failed to analyze blind spots"}
+                : "Failed to analyse blind spots"}
             </div>
           ) : blindSpots ? (
             <>

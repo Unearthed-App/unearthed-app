@@ -1,0 +1,1 @@
+ALTER TABLE "purchases" ADD CONSTRAINT "purchases_session_id_unique" UNIQUE("session_id");

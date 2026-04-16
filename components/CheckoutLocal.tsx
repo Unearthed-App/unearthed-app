@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +19,18 @@
 
 import { Button } from "./ui/button";
 
-export function CheckoutLocal() {
+export function CheckoutLocal({ className }: { className?: string }) {
   const handleCheckout = async () => {
     try {
-      const response = await fetch("/api/public/stripe-checkout-session-local", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        "/api/public/stripe-checkout-session-local",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const { url } = await response.json();
       window.location.href = url;
@@ -37,7 +40,11 @@ export function CheckoutLocal() {
   };
 
   return (
-    <Button variant="brutalprimary" onClick={handleCheckout}>
+    <Button
+      variant="brutalprimary"
+      onClick={handleCheckout}
+      className={className}
+    >
       <span className="">Get Unearthed Local</span>
     </Button>
   );

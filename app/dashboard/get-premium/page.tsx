@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import { Checkout } from "@/components/Checkout";
 import { FeaturePremiumCard } from "@/components/FeaturePremiumCard";

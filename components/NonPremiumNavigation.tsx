@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import { useTheme } from "next-themes";
 
 interface NonPremiumNavigationProps {
   className?: string;
-  currentPage?: "home" | "local" | "premium" | "profile";
+  currentPage?: "home" | "local" | "online" | "premium" | "profile";
 }
 
 export function NonPremiumNavigation({
@@ -41,11 +41,11 @@ export function NonPremiumNavigation({
   useEffect(() => {
     const fetchPremiumStatus = async () => {
       try {
-        const response = await fetch('/api/auth/premium-status');
+        const response = await fetch("/api/auth/premium-status");
         const data = await response.json();
         setIsPremium(data.isPremium || false);
       } catch (error) {
-        console.error('Error fetching premium status:', error);
+        console.error("Error fetching premium status:", error);
         setIsPremium(false);
       } finally {
         setIsLoading(false);
@@ -113,13 +113,26 @@ export function NonPremiumNavigation({
               href="/local"
               className={`flex items-center px-3 py-2 md:px-4 md:py-2 border-2 transition-colors text-sm md:text-base touch-manipulation min-h-[44px] focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md ${
                 currentPage === "local"
-                  ? "border-green-600 dark:border-green-500 bg-green-600 dark:bg-green-500 text-white"
-                  : "border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 hover:bg-green-600 dark:hover:bg-green-500 hover:text-white focus:ring-green-600 dark:focus:ring-green-500"
+                  ? "border-orange-600 dark:border-orange-500 bg-orange-600 dark:bg-orange-500 text-white"
+                  : "border-orange-600 dark:border-orange-500 text-orange-600 dark:text-orange-400 hover:bg-orange-600 dark:hover:bg-orange-500 hover:text-white focus:ring-orange-600 dark:focus:ring-orange-500"
               }`}
               aria-label="Learn about Unearthed Local app"
             >
               <Download className="mr-2 h-4 w-4" aria-hidden="true" />
               <span>Local App</span>
+            </Link>
+
+            <Link
+              href="/online"
+              className={`flex items-center px-3 py-2 md:px-4 md:py-2 border-2 transition-colors text-sm md:text-base touch-manipulation min-h-[44px] focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md ${
+                currentPage === "online"
+                  ? "border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-500 text-white"
+                  : "border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-600 dark:hover:bg-blue-500 hover:text-white focus:ring-blue-600 dark:focus:ring-blue-500"
+              }`}
+              aria-label="Learn about Unearthed Online"
+            >
+              <Crown className="mr-2 h-4 w-4" aria-hidden="true" />
+              <span>Online</span>
             </Link>
 
             <Link

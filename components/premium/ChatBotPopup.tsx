@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -325,7 +325,7 @@ ${quotes
         <DialogTrigger asChild>
           <Button variant="brutalprimary">
             <MessageCircleQuestion className="mr-2 h-6 w-6" />
-            Analyze
+            Analyse
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[800px] h-[80vh]" forceMount>

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */ 
+ */
 
 "use client";
 import { useState, useEffect, useRef } from "react";
@@ -36,7 +36,11 @@ type Feature = {
 
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
-const FeatureSection = () => {
+const FeatureSection = ({
+  promoButtonClassName,
+}: {
+  promoButtonClassName?: string;
+}) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [activeTab, setActiveTab] = useState("contrary");
   const [loadedVideos, setLoadedVideos] = useState<string[]>(["contrary"]);
@@ -189,7 +193,7 @@ const FeatureSection = () => {
       title: "Blind Spot Detection",
       image: "/images/eye.png",
       description:
-        "Your entire reading history is analyzed to identify potential knowledge gaps and areas for improvement.",
+        "Your entire reading history is analysed to identify potential knowledge gaps and areas for improvement.",
       videoUrl: "/videos/blind-spot.mp4",
       fallbackImageUrl: "/images/blind-spot.webp",
     },
@@ -225,7 +229,7 @@ const FeatureSection = () => {
       title: "Auto Extract Key Ideas",
       image: "/images/sparkles.png",
       description:
-        "Unearthed identifies and extracts the most important ideas from your highlights, saving you time and effort. You can edit these later, but it's a great starting point.",
+        "Unearthed identifies and extracts the most important ideas from your highlights. You can edit these later, but it can be a good starting point.",
       videoUrl: "/videos/generating-tags.mp4",
       fallbackImageUrl: "/images/generating-tags.webp",
     },
@@ -234,6 +238,11 @@ const FeatureSection = () => {
   return (
     <section className="bg-popover py-16 shadow-cyan-300/10 shadow-xl">
       <div className="container mx-auto px-4">
+        <div>
+          <div className="mt-12 w-full flex justify-center">
+            <PromoBanner buttonClassName={promoButtonClassName} />
+          </div>
+        </div>
         <div className="text-center mb-12">
           <div className="w-full flex justify-center">
             <Image
@@ -251,8 +260,8 @@ const FeatureSection = () => {
             Meaning
           </h3>
           <p className="text-lg max-w-2xl mx-auto mt-2">
-            Transform your reading experience with AI that analyses your books,
-            generates insights, and helps you discover new perspectives
+            These features are optional and completely opt-in. AI is helpful if
+            used correctly. Use it to help you learn, not to be lazy.
           </p>
         </div>
 
@@ -456,18 +465,12 @@ const FeatureSection = () => {
             ))}
           </div>
         )}
-
-        <div>
-          <div className="mt-12 w-full flex justify-center">
-            <PromoBanner />
-          </div>
-        </div>
       </div>
     </section>
   );
 };
 
-const PromoBanner = () => (
+const PromoBanner = ({ buttonClassName }: { buttonClassName?: string }) => (
   <div className="p-8 max-w-[750px]">
     <div className="flex flex-col md:flex-row gap-8">
       <div className="md:w-1/2">
@@ -501,7 +504,7 @@ const PromoBanner = () => (
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Button variant="brutalshimmer">
+          <Button variant="brutalshimmer" className={buttonClassName}>
             <PackageOpen className="mr-2 h-4 w-4" />
             View on GitHub
           </Button>

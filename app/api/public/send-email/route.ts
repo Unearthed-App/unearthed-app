@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,14 +54,17 @@ interface DailyReflection {
 }
 
 export async function GET() {
-  const requestTimeout = new Promise<never>((_, reject) => 
-    setTimeout(() => reject(new Error('Request timeout - processing took too long')), 60000)
+  const requestTimeout = new Promise<never>((_, reject) =>
+    setTimeout(
+      () => reject(new Error("Request timeout - processing took too long")),
+      60000
+    )
   );
 
   const processEmails = async () => {
     const startTime = Date.now();
     console.log(`[${new Date().toISOString()}] Starting email processing job`);
-    
+
     const posthogClient = PostHogClient();
 
     const headersList = await headers();
@@ -84,20 +87,22 @@ export async function GET() {
     });
 
     const userIds = profileResults.map((profile) => profile.userId);
-    console.log(`[${new Date().toISOString()}] Found ${profileResults.length} active profiles`);
-    
+    console.log(
+      `[${new Date().toISOString()}] Found ${profileResults.length} active profiles`
+    );
+
     // Fetch all users in parallel with timeout
     const userPromises = userIds.map(async (userId) => {
       try {
         const client = await clerkClient();
-        const timeoutPromise = new Promise<never>((_, reject) => 
-          setTimeout(() => reject(new Error('Clerk API timeout')), 10000)
+        const timeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("Clerk API timeout")), 10000)
         );
-        
+
         const userPromise = client.users.getUser(userId);
-        const user = await Promise.race([userPromise, timeoutPromise]) as any;
+        const user = (await Promise.race([userPromise, timeoutPromise])) as any;
         const isPremium = user.privateMetadata.isPremium as boolean;
-        
+
         return isPremium ? user : null;
       } catch (error) {
         console.log(`Error fetching user ${userId}:`, error);
@@ -107,11 +112,17 @@ export async function GET() {
 
     const userResults = await Promise.allSettled(userPromises);
     const premiumUsers = userResults
-      .filter((result) => result.status === 'fulfilled' && result.value !== null)
+      .filter(
+        (result) => result.status === "fulfilled" && result.value !== null
+      )
       .map((result) => (result as PromiseFulfilledResult<any>).value);
 
-    const failedUserFetches = userResults.filter((result) => result.status === 'rejected').length;
-    console.log(`[${new Date().toISOString()}] Found ${premiumUsers.length} premium users, ${failedUserFetches} failed user fetches`);
+    const failedUserFetches = userResults.filter(
+      (result) => result.status === "rejected"
+    ).length;
+    console.log(
+      `[${new Date().toISOString()}] Found ${premiumUsers.length} premium users, ${failedUserFetches} failed user fetches`
+    );
 
     // Process users in parallel with concurrency limit
     const BATCH_SIZE = 5; // Process 5 users at a time to avoid overwhelming APIs
@@ -122,7 +133,9 @@ export async function GET() {
         const encryptionKey = user.privateMetadata.encryptionKey as string;
 
         if (!encryptionKey) {
-          console.log(`[${new Date().toISOString()}] User ${user.id} missing encryption key`);
+          console.log(
+            `[${new Date().toISOString()}] User ${user.id} missing encryption key`
+          );
           return null;
         }
 
@@ -131,7 +144,9 @@ export async function GET() {
         );
 
         if (!profile || profile.utcOffset == null || !profile.dailyEmails) {
-          console.log(`[${new Date().toISOString()}] User ${user.id} profile invalid or daily emails disabled`);
+          console.log(
+            `[${new Date().toISOString()}] User ${user.id} profile invalid or daily emails disabled`
+          );
           return null;
         }
 
@@ -141,22 +156,40 @@ export async function GET() {
           encryptionKey
         );
 
-        if (dailyReflectionExisting && typeof dailyReflectionExisting === 'object' && 'emailSent' in dailyReflectionExisting && dailyReflectionExisting.emailSent) {
+        if (
+          dailyReflectionExisting &&
+          typeof dailyReflectionExisting === "object" &&
+          "emailSent" in dailyReflectionExisting &&
+          dailyReflectionExisting.emailSent
+        ) {
           return null;
         }
 
         let dailyReflection: DailyReflection | null = null;
-        if (dailyReflectionExisting && typeof dailyReflectionExisting === 'object' && 'id' in dailyReflectionExisting) {
+        if (
+          dailyReflectionExisting &&
+          typeof dailyReflectionExisting === "object" &&
+          "id" in dailyReflectionExisting
+        ) {
           dailyReflection = dailyReflectionExisting as DailyReflection;
         } else {
-          const newReflection = await createDailyReflection(profile, encryptionKey);
-          if (newReflection && typeof newReflection === 'object' && 'id' in newReflection) {
+          const newReflection = await createDailyReflection(
+            profile,
+            encryptionKey
+          );
+          if (
+            newReflection &&
+            typeof newReflection === "object" &&
+            "id" in newReflection
+          ) {
             dailyReflection = newReflection as DailyReflection;
           }
         }
 
         if (!dailyReflection || !dailyReflection.source) {
-          console.log(`[${new Date().toISOString()}] User ${user.id} no source available for daily reflection`);
+          console.log(
+            `[${new Date().toISOString()}] User ${user.id} no source available for daily reflection`
+          );
           return null;
         }
 
@@ -188,12 +221,15 @@ export async function GET() {
         };
 
         // Add timeout to email sending
-        const emailTimeoutPromise = new Promise<never>((_, reject) => 
-          setTimeout(() => reject(new Error('Email send timeout')), 15000)
+        const emailTimeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("Email send timeout")), 15000)
         );
-        
+
         const emailPromise = resend.emails.send(sendData);
-        const { data, error } = await Promise.race([emailPromise, emailTimeoutPromise]) as any;
+        const { data, error } = (await Promise.race([
+          emailPromise,
+          emailTimeoutPromise,
+        ])) as any;
 
         if (error) {
           posthogClient.capture({
@@ -201,7 +237,9 @@ export async function GET() {
             event: `send-email ERROR 1`,
             properties: {
               message:
-                error instanceof Error ? error.message : "Unknown error occurred",
+                error instanceof Error
+                  ? error.message
+                  : "Unknown error occurred",
             },
           });
           return null;
@@ -236,16 +274,25 @@ export async function GET() {
       const batch = premiumUsers.slice(i, i + BATCH_SIZE);
       const batchPromises = batch.map(processUser);
       const batchResults = await Promise.allSettled(batchPromises);
-      
+
       const successfulIds = batchResults
-        .filter((result) => result.status === 'fulfilled' && result.value !== null)
-        .map((result) => (result as PromiseFulfilledResult<string | null>).value as string);
-      
-      const failedEmails = batchResults.filter((result) => result.status === 'rejected').length;
+        .filter(
+          (result) => result.status === "fulfilled" && result.value !== null
+        )
+        .map(
+          (result) =>
+            (result as PromiseFulfilledResult<string | null>).value as string
+        );
+
+      const failedEmails = batchResults.filter(
+        (result) => result.status === "rejected"
+      ).length;
       const batchDuration = Date.now() - batchStartTime;
-      
-      console.log(`[${new Date().toISOString()}] Batch ${Math.floor(i / BATCH_SIZE) + 1}: ${successfulIds.length} emails sent, ${failedEmails} failed, took ${batchDuration}ms`);
-      
+
+      console.log(
+        `[${new Date().toISOString()}] Batch ${Math.floor(i / BATCH_SIZE) + 1}: ${successfulIds.length} emails sent, ${failedEmails} failed, took ${batchDuration}ms`
+      );
+
       dailyQuoteIdsToUpdate.push(...successfulIds);
     }
 
@@ -256,33 +303,47 @@ export async function GET() {
           emailSent: true,
         })
         .where(inArray(dailyQuotes.id, dailyQuoteIdsToUpdate));
-      
-      console.log(`[${new Date().toISOString()}] Updated ${dailyQuoteIdsToUpdate.length} daily quotes as emailSent=true`);
+
+      console.log(
+        `[${new Date().toISOString()}] Updated ${dailyQuoteIdsToUpdate.length} daily quotes as emailSent=true`
+      );
     }
 
     const totalDuration = Date.now() - startTime;
-    console.log(`[${new Date().toISOString()}] Email processing job completed in ${totalDuration}ms`);
+    console.log(
+      `[${new Date().toISOString()}] Email processing job completed in ${totalDuration}ms`
+    );
 
-    return NextResponse.json({ 
-      success: true, 
-      processed: premiumUsers.length,
-      emailsSent: dailyQuoteIdsToUpdate.length,
-      duration: totalDuration
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        processed: premiumUsers.length,
+        emailsSent: dailyQuoteIdsToUpdate.length,
+        duration: totalDuration,
+      },
+      { status: 200 }
+    );
   };
 
   try {
     const result = await Promise.race([processEmails(), requestTimeout]);
     return result as NextResponse;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`[${new Date().toISOString()}] Request timeout or error:`, errorMessage);
-    
-    return NextResponse.json({ 
-      error: 'Request timeout or processing error',
-      message: errorMessage,
-      timestamp: new Date().toISOString()
-    }, { status: 504 });
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error(
+      `[${new Date().toISOString()}] Request timeout or error:`,
+      errorMessage
+    );
+
+    return NextResponse.json(
+      {
+        error: "Request timeout or processing error",
+        message: errorMessage,
+        timestamp: new Date().toISOString(),
+      },
+      { status: 504 }
+    );
   }
 }
 
@@ -296,7 +357,10 @@ const getDailyReflection = async (
 
     // Use Drizzle query builder for better optimization
     const dailyQuoteWithRelationsResult = await db.query.dailyQuotes.findFirst({
-      where: and(eq(dailyQuotes.day, todaysDate), eq(dailyQuotes.userId, userId)),
+      where: and(
+        eq(dailyQuotes.day, todaysDate),
+        eq(dailyQuotes.userId, userId)
+      ),
       with: {
         quote: {
           with: {
@@ -318,7 +382,8 @@ const getDailyReflection = async (
       return {
         id: dailyQuoteWithRelationsResult.id,
         emailSent: dailyQuoteWithRelationsResult.emailSent,
-        source: dailyQuoteWithRelationsResult.quote.source as DailyReflection['source'],
+        source: dailyQuoteWithRelationsResult.quote
+          .source as DailyReflection["source"],
         quote: {
           ...dailyQuoteWithRelationsResult.quote,
           note: decryptedNote,
@@ -367,9 +432,13 @@ const createDailyReflection = async (
       return {};
     }
 
-    const randomQuoteIndex = Math.floor(Math.random() * quotesResultFiltered.length);
-    const randomQuote = quotesResultFiltered[randomQuoteIndex] as QuoteWithRelations;
-    const randomSource = randomQuote.source as DailyReflection['source'];
+    const randomQuoteIndex = Math.floor(
+      Math.random() * quotesResultFiltered.length
+    );
+    const randomQuote = quotesResultFiltered[
+      randomQuoteIndex
+    ] as QuoteWithRelations;
+    const randomSource = randomQuote.source as DailyReflection["source"];
 
     const toInsert = {
       quoteId: randomQuote.id,
@@ -385,7 +454,11 @@ const createDailyReflection = async (
 
     if (newDailyQuote.length === 0) {
       // Handle conflict case - quote already exists for today
-      return await getDailyReflection(profile.userId, profile.utcOffset as number, encryptionKey);
+      return await getDailyReflection(
+        profile.userId,
+        profile.utcOffset as number,
+        encryptionKey
+      );
     }
 
     const decryptedNote = randomQuote.note

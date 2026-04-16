@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2025 Unearthed App
+ * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -771,7 +771,8 @@ export const ConnectionsGraph = () => {
       if (result.sources.length == 0) {
         toast({
           title: "Error",
-          description: "No data found, make sure you have synced some books first",
+          description:
+            "No data found, make sure you have synced some books first",
           variant: "destructive",
         });
         return;
