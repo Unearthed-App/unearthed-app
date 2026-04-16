@@ -11,6 +11,7 @@ Unearthed bridges the gap between reading and knowledge retention by automatical
 ### The Unearthed Ecosystem
 
 - **[Unearthed Local](https://unearthed.app/local)** - Local desktop application (one-time purchase, no subscriptions)
+- **[Unearthed Mobile](https://unearthed.app/mobile)** - Progressive Web App (PWA) for iOS and Android, works alongside Unearthed Local
 - **[Unearthed Online](https://unearthed.app)** - This Next.js web application with AI-powered features and cloud sync
 - **Browser Extension** - Automatic Kindle sync from Amazon's Kindle Notebook
 - **Obsidian Plugin** - Direct integration with your Obsidian vault
@@ -64,6 +65,33 @@ Unearthed bridges the gap between reading and knowledge retention by automatical
 - **Daily Reflections**: Automatic integration with daily notes
 - **Tag Management**: Sync tags and create connections in your vault
 
+### Unearthed Mobile
+
+Unearthed Mobile is a Progressive Web App (PWA), designed as a mobile companion to [Unearthed Local](https://unearthed.app/local). It runs on iOS and Android and communicates directly with your Local instance over your home network — no cloud account required.
+
+- **Works with Unearthed Local**: Connects to your Local desktop app to browse and read your highlights on the go
+- **No subscription required**: Included with Unearthed Local
+- **Native feel**: Installable as a PWA on iOS and Android for a full-screen, app-like experience
+- **RSS, web import, YouTube**: Fetched directly from the device — works on WiFi and mobile data
+
+#### Installing the PWA on iOS (Safari)
+
+1. Open [unearthed.app/mobile](https://unearthed.app/mobile) in **Safari** (must be Safari, not Chrome or Firefox)
+2. Tap the **Share** button (box with arrow pointing up) at the bottom of the screen
+3. Scroll down and tap **Add to Home Screen**
+4. Give it a name (e.g. "Unearthed") and tap **Add**
+5. The app icon will appear on your home screen — tap it to launch in full-screen mode
+
+#### Installing the PWA on Android (Chrome)
+
+1. Open [unearthed.app/mobile](https://unearthed.app/mobile) in **Chrome**
+2. Tap the **three-dot menu** (⋮) in the top-right corner
+3. Tap **Add to Home screen** (or **Install app** if prompted automatically by a banner)
+4. Tap **Add** to confirm
+5. The app icon will appear on your home screen — tap it to launch in full-screen mode
+
+> **Tip**: On Android, Chrome may show an automatic "Install app" prompt at the bottom of the screen — tap it to skip the menu steps.
+
 ### KOReader Plugin
 - **Compatibility**: Works with both [Unearthed Local](https://unearthed.app/local) and [Unearthed Online](https://unearthed.app/online)
 - **Wireless Sync**: No need to physically connect devices
@@ -110,6 +138,13 @@ Unearthed bridges the gap between reading and knowledge retention by automatical
 2. Install the desktop application
 3. Set up local sync with your devices and platforms
 4. Enjoy complete privacy and ownership
+
+### For Unearthed Mobile (PWA)
+
+1. Install [Unearthed Local](https://unearthed.app/local) on your desktop first
+2. Open [unearthed.app/mobile](https://unearthed.app/mobile) on your phone
+3. Install it as a PWA (see [iOS](#installing-the-pwa-on-ios-safari) / [Android](#installing-the-pwa-on-android-chrome) instructions above)
+4. Connect to your Local instance over your home network
 
 ## 🤝 Contributing
 
