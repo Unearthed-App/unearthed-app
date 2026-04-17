@@ -80,7 +80,6 @@ export const metadata: Metadata = {
     "web page import",
     "web clipper",
     "mobile app",
-    "ios app",
     "android app",
     "kindle mobile",
     "highlights mobile",

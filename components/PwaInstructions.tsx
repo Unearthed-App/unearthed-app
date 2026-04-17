@@ -25,38 +25,6 @@ import {
 } from "@/components/ui/accordion";
 import { BookOpen, Smartphone } from "lucide-react";
 
-const IOS_STEPS = [
-  {
-    step: "1",
-    title: "Open in Safari",
-    detail:
-      "Visit mobile.unearthed.app in Safari on your iPhone or iPad. Safari is required — other iOS browsers cannot install PWAs.",
-  },
-  {
-    step: "2",
-    title: "Tap the Share button",
-    detail:
-      "Tap the Share icon (the box with an arrow pointing up) at the bottom of the screen.",
-  },
-  {
-    step: "3",
-    title: '"Add to Home Screen"',
-    detail: 'Scroll down the share sheet and tap "Add to Home Screen".',
-  },
-  {
-    step: "4",
-    title: "Confirm",
-    detail:
-      'Optionally rename the app, then tap "Add" in the top-right corner.',
-  },
-  {
-    step: "5",
-    title: "Open from your home screen",
-    detail:
-      "Find the Unearthed icon on your home screen. It opens fullscreen, just like a native app.",
-  },
-];
-
 const ANDROID_STEPS = [
   {
     step: "1",
@@ -88,7 +56,7 @@ const ANDROID_STEPS = [
   },
 ];
 
-function StepList({ steps }: { steps: typeof IOS_STEPS }) {
+function StepList({ steps }: { steps: typeof ANDROID_STEPS }) {
   return (
     <ol className="space-y-3">
       {steps.map((item) => (
@@ -122,19 +90,6 @@ export function PwaInstructions({ className }: { className?: string }) {
           </AccordionTrigger>
           <AccordionContent className="border-t-2 border-black dark:border-border">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0 divide-y-2 md:divide-y-0 md:divide-x-2 divide-black dark:divide-border">
-              {/* iOS */}
-              <div className="p-4 space-y-3">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center border border-black">
-                    <BookOpen className="h-3.5 w-3.5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-black text-sm">iPhone / iPad</p>
-                    <p className="text-xs text-muted-foreground">Use Safari</p>
-                  </div>
-                </div>
-                <StepList steps={IOS_STEPS} />
-              </div>
 
               {/* Android */}
               <div className="p-4 space-y-3">

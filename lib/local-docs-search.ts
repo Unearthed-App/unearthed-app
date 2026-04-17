@@ -752,7 +752,7 @@ export const searchIndex: SearchItem[] = [
     content:
       "Unearthed is available as a native Android app (APK). Your entire reading life — RSS feeds, saved articles, Kindle highlights, KOReader notes, and personal quotes — is always with you. The mobile app works beautifully on its own, and when you are at your desk it stays perfectly in sync with Unearthed on your desktop over your home Wi-Fi. Everything you save, highlight, or bookmark on your phone appears on your computer, and vice versa.",
     href: "/local-docs/mobile#overview",
-    keywords: ["mobile", "ios", "iphone", "android", "app", "phone", "tablet"],
+    keywords: ["mobile", "android", "app", "phone", "tablet"],
   },
   {
     id: "mobile-companion",

@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Settings,
+  Smartphone,
 } from "lucide-react";
 import { DocsSearchDialog } from "./search-dialog";
 // import { PublicNavbar } from "@/components/PublicNavbar";
@@ -39,6 +40,11 @@ const NAV_ITEMS = [
     title: "Settings",
     href: "/local-docs/settings",
     icon: Settings,
+  },
+  {
+    title: "Mobile App",
+    href: "/local-docs/mobile",
+    icon: Smartphone,
   },
   {
     title: "Troubleshooting",

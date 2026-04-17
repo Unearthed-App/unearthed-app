@@ -11,7 +11,7 @@ Unearthed bridges the gap between reading and knowledge retention by automatical
 ### The Unearthed Ecosystem
 
 - **[Unearthed Local](https://unearthed.app/local)** - Local desktop application (one-time purchase, no subscriptions)
-- **[Unearthed Mobile](https://unearthed.app/mobile)** - Progressive Web App (PWA) for iOS and Android, works alongside Unearthed Local
+- **[Unearthed Mobile](https://unearthed.app/mobile)** - Progressive Web App (PWA) for Android, works alongside Unearthed Local
 - **[Unearthed Online](https://unearthed.app)** - This Next.js web application with AI-powered features and cloud sync
 - **Browser Extension** - Automatic Kindle sync from Amazon's Kindle Notebook
 - **Obsidian Plugin** - Direct integration with your Obsidian vault
@@ -67,20 +67,12 @@ Unearthed bridges the gap between reading and knowledge retention by automatical
 
 ### Unearthed Mobile
 
-Unearthed Mobile is a Progressive Web App (PWA), designed as a mobile companion to [Unearthed Local](https://unearthed.app/local). It runs on iOS and Android and communicates directly with your Local instance over your home network — no cloud account required.
+Unearthed Mobile is a Progressive Web App (PWA), designed as a mobile companion to [Unearthed Local](https://unearthed.app/local). It runs on Android and communicates directly with your Local instance over your home network — no cloud account required.
 
 - **Works with Unearthed Local**: Connects to your Local desktop app to browse and read your highlights on the go
 - **No subscription required**: Included with Unearthed Local
-- **Native feel**: Installable as a PWA on iOS and Android for a full-screen, app-like experience
+- **Native feel**: Installable as a PWA on Android for a full-screen, app-like experience
 - **RSS, web import, YouTube**: Fetched directly from the device — works on WiFi and mobile data
-
-#### Installing the PWA on iOS (Safari)
-
-1. Open [unearthed.app/mobile](https://unearthed.app/mobile) in **Safari** (must be Safari, not Chrome or Firefox)
-2. Tap the **Share** button (box with arrow pointing up) at the bottom of the screen
-3. Scroll down and tap **Add to Home Screen**
-4. Give it a name (e.g. "Unearthed") and tap **Add**
-5. The app icon will appear on your home screen — tap it to launch in full-screen mode
 
 #### Installing the PWA on Android (Chrome)
 
@@ -143,7 +135,7 @@ Unearthed Mobile is a Progressive Web App (PWA), designed as a mobile companion 
 
 1. Install [Unearthed Local](https://unearthed.app/local) on your desktop first
 2. Open [unearthed.app/mobile](https://unearthed.app/mobile) on your phone
-3. Install it as a PWA (see [iOS](#installing-the-pwa-on-ios-safari) / [Android](#installing-the-pwa-on-android-chrome) instructions above)
+3. Install it as a PWA ( [Android](#installing-the-pwa-on-android-chrome) instructions above)
 4. Connect to your Local instance over your home network
 
 ## 🤝 Contributing

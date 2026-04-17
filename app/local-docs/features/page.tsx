@@ -1196,17 +1196,26 @@ export default function FeaturesPage() {
         <FeatureSection
           id="mobile"
           icon={Smartphone}
-          title="Mobile App — Android (APK)"
+          title="Mobile App — Android (PWA)"
           badge="v1.4.0"
         >
           <p>
-            Unearthed is available as a native Android app, distributed as an
-            APK. Everything in your library — RSS feeds, articles, Kindle
-            highlights, KOReader notes, and personal quotes — travels with you.
-            When both devices are on the same Wi-Fi network, the mobile app
-            syncs automatically with the desktop, keeping everything perfectly
-            in step.
+            Unearthed is available as a Progressive Web App (PWA) for Android.
+            Everything in your library — RSS feeds, articles, Kindle highlights,
+            KOReader notes, and personal quotes — travels with you. When both
+            devices are on the same Wi-Fi network, the mobile app syncs
+            automatically with the desktop, keeping everything perfectly in
+            step.
           </p>
+
+          <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 mb-3">
+            <p className="text-xs font-medium mb-1">Android only</p>
+            <p className="text-xs text-muted-foreground">
+              The PWA is currently available for Android only. Install it by
+              opening the Unearthed mobile URL in Chrome and tapping{" "}
+              <strong>Add to Home Screen</strong>.
+            </p>
+          </div>
 
           <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 mb-3">
             <p className="text-xs font-medium mb-1 flex items-center gap-2">
@@ -1215,11 +1224,8 @@ export default function FeaturesPage() {
               </Badge>
             </p>
             <p className="text-xs text-muted-foreground">
-              The Android app is free for now with an Unearthed Local single
-              purchase. Free updates are not guaranteed for the current APK.
-              Once the app is listed on the Apple App Store (iOS) and Google
-              Play Store (Android), there will be free updates and there may be
-              an additional one-time cost for the mobile app.
+              The Android PWA is an additional one-time purchase, separate from
+              Unearthed Local.
             </p>
           </div>
 
