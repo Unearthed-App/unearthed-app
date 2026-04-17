@@ -935,7 +935,7 @@ export function ProfileForm() {
                     <div className="w-full">
                       AI
                       <span className="text-sm ml-2">
-                        (using Google Gemini 2.0)
+                        (using Google Gemini)
                       </span>
                     </div>
                     <TooltipProvider>
