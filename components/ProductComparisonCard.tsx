@@ -36,40 +36,60 @@ export interface ProductComparisonCardProps {
   features: string[];
   ctaText: string;
   ctaLink: string;
-  colorScheme: "local" | "online";
+  colorScheme: "local" | "online" | "mobile";
   className?: string;
+  customCta?: React.ReactNode;
+  nestedCard?: React.ReactNode;
 }
 
 const colorSchemes = {
-  local: {
-    background:
-      "bg-gradient-to-br from-green-50 via-emerald-50 to-green-50 dark:from-green-950/30 dark:via-emerald-950/30 dark:to-green-950/30",
-    border: "border-green-600 dark:border-green-500",
-    accent: "text-green-600 dark:text-green-400",
-    accentGradient:
-      "bg-gradient-to-br from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400",
-    shadow: "shadow-[8px_8px_0px_rgba(22,163,74,1)]",
-    hoverShadow: "hover:shadow-[12px_12px_0px_rgba(22,163,74,1)]",
-    activeShadow: "active:shadow-[6px_6px_0px_rgba(22,163,74,1)]",
-    checkIcon: "text-white",
-    checkBg:
-      "bg-gradient-to-br from-green-600 to-emerald-600 dark:from-green-500 dark:to-emerald-500",
-    glowColor: "from-green-500/20 to-emerald-500/20",
-  },
   online: {
     background:
-      "bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-50 dark:from-blue-950/30 dark:via-cyan-950/30 dark:to-blue-950/30",
-    border: "border-blue-600 dark:border-blue-500",
-    accent: "text-blue-600 dark:text-blue-400",
+      "bg-gradient-to-br from-teal-50 via-cyan-50 to-teal-50 dark:from-teal-950/30 dark:via-cyan-950/30 dark:to-teal-950/30",
+    border: "border-teal-500 dark:border-teal-400",
+    accent: "text-teal-600 dark:text-teal-400",
     accentGradient:
-      "bg-gradient-to-br from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400",
-    shadow: "shadow-[8px_8px_0px_rgba(37,99,235,1)]",
-    hoverShadow: "hover:shadow-[12px_12px_0px_rgba(37,99,235,1)]",
-    activeShadow: "active:shadow-[6px_6px_0px_rgba(37,99,235,1)]",
+      "bg-gradient-to-br from-teal-600 to-cyan-500 dark:from-teal-400 dark:to-cyan-400",
+    shadow: "shadow-[8px_8px_0px_rgba(37,177,166,1)]",
+    hoverShadow: "hover:shadow-[12px_12px_0px_rgba(37,177,166,1)]",
+    activeShadow: "active:shadow-[6px_6px_0px_rgba(37,177,166,1)]",
     checkIcon: "text-white",
     checkBg:
-      "bg-gradient-to-br from-blue-600 to-cyan-600 dark:from-blue-500 dark:to-cyan-500",
-    glowColor: "from-blue-500/20 to-cyan-500/20",
+      "bg-gradient-to-br from-teal-500 to-cyan-500 dark:from-teal-500 dark:to-cyan-500",
+    glowColor: "from-teal-500/20 to-cyan-500/20",
+    focusRing: "focus-within:ring-teal-500",
+  },
+  local: {
+    background:
+      "bg-gradient-to-br from-orange-50 via-amber-50 to-orange-50 dark:from-orange-950/30 dark:via-amber-950/30 dark:to-orange-950/30",
+    border: "border-orange-500 dark:border-orange-400",
+    accent: "text-orange-600 dark:text-orange-400",
+    accentGradient:
+      "bg-gradient-to-br from-orange-600 via-orange-500 to-red-600 dark:from-orange-400 dark:to-red-400",
+    shadow: "shadow-[8px_8px_0px_rgba(246,110,27,1)]",
+    hoverShadow: "hover:shadow-[12px_12px_0px_rgba(246,110,27,1)]",
+    activeShadow: "active:shadow-[6px_6px_0px_rgba(246,110,27,1)]",
+    checkIcon: "text-white",
+    checkBg:
+      "bg-gradient-to-br from-orange-600 to-red-600 dark:from-orange-500 dark:to-red-500",
+    glowColor: "from-orange-500/20 to-red-500/20",
+    focusRing: "focus-within:ring-orange-500",
+  },
+  mobile: {
+    background:
+      "bg-gradient-to-br from-purple-50 via-violet-50 to-purple-50 dark:from-purple-950/30 dark:via-violet-950/30 dark:to-purple-950/30",
+    border: "border-purple-500 dark:border-purple-400",
+    accent: "text-purple-600 dark:text-purple-400",
+    accentGradient:
+      "bg-gradient-to-br from-purple-600 to-violet-600 dark:from-purple-400 dark:to-violet-400",
+    shadow: "shadow-[8px_8px_0px_rgba(124,58,237,1)]",
+    hoverShadow: "hover:shadow-[12px_12px_0px_rgba(124,58,237,1)]",
+    activeShadow: "active:shadow-[6px_6px_0px_rgba(124,58,237,1)]",
+    checkIcon: "text-white",
+    checkBg:
+      "bg-gradient-to-br from-purple-600 to-violet-600 dark:from-purple-500 dark:to-violet-500",
+    glowColor: "from-purple-500/20 to-violet-500/20",
+    focusRing: "focus-within:ring-purple-500",
   },
 } as const;
 
@@ -82,9 +102,11 @@ export function ProductComparisonCard({
   ctaLink,
   colorScheme,
   className = "",
+  customCta,
+  nestedCard,
 }: ProductComparisonCardProps) {
   const colors = colorSchemes[colorScheme];
-  const buttonVariant = colorScheme === "local" ? "brutal" : "brutalprimary";
+  const buttonVariant = colorScheme === "online" ? "brutalprimary" : "brutal";
 
   return (
     <div className="group relative h-full">
@@ -95,15 +117,15 @@ export function ProductComparisonCard({
       <motion.article
         className={`
           relative
-          ${colors.background} 
-          ${colors.border} 
+          ${colors.background}
+          ${colors.border}
           ${colors.shadow}
           ${colors.hoverShadow}
           ${colors.activeShadow}
           border-3 rounded-2xl p-6 sm:p-8 transition-all duration-300
           flex flex-col h-full
           focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-background
-          ${colorScheme === "local" ? "focus-within:ring-green-500" : "focus-within:ring-blue-500"}
+          ${colors.focusRing}
           overflow-hidden
           ${className}
         `}
@@ -129,9 +151,7 @@ export function ProductComparisonCard({
             id={`${colorScheme}-title`}
             className={`${crimsonPro.className} font-black text-2xl sm:text-3xl md:text-4xl mb-3 leading-tight`}
           >
-            <span
-              className={`${colors.accentGradient} bg-clip-text text-transparent`}
-            >
+            <span className={`${colors.accentGradient} bg-clip-text text-transparent`}>
               {title}
             </span>
           </h3>
@@ -165,7 +185,7 @@ export function ProductComparisonCard({
         </header>
 
         <section
-          className="flex-grow mb-8 relative"
+          className="flex-grow mb-6 relative"
           aria-label={`Features of ${title}`}
         >
           <ul className="space-y-3 sm:space-y-4" role="list">
@@ -193,22 +213,34 @@ export function ProductComparisonCard({
           </ul>
         </section>
 
+        {nestedCard && (
+          <div className="mb-6 relative">
+            {nestedCard}
+          </div>
+        )}
+
         <footer className="mt-auto relative">
-          <Link
-            href={ctaLink}
-            className="block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background rounded-xl"
-            aria-label={`${ctaText} for ${title}`}
-          >
+          {customCta ? (
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                variant={buttonVariant}
-                className="w-full text-base md:text-lg font-black min-h-[52px] touch-manipulation shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_rgba(0,0,0,1)] transition-all duration-300 border-3"
-                tabIndex={-1}
-              >
-                {ctaText}
-              </Button>
+              {customCta}
             </motion.div>
-          </Link>
+          ) : (
+            <Link
+              href={ctaLink}
+              className="block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background rounded-xl"
+              aria-label={`${ctaText} for ${title}`}
+            >
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  variant={buttonVariant}
+                  className="w-full text-base md:text-lg font-black min-h-[52px] touch-manipulation shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_rgba(0,0,0,1)] transition-all duration-300 border-3"
+                  tabIndex={-1}
+                >
+                  {ctaText}
+                </Button>
+              </motion.div>
+            </Link>
+          )}
         </footer>
       </motion.article>
     </div>

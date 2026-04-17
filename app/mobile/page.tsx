@@ -219,6 +219,7 @@ export default function MobilePage() {
             <Link
               href="/local"
               className="underline font-semibold hover:text-purple-600 dark:hover:text-purple-400"
+              target="_blank"
             >
               Unearthed Local
             </Link>
@@ -275,7 +276,7 @@ export default function MobilePage() {
           </div>
 
           {/* Companion framing */}
-          <ul className="text-base leading-relaxed mb-6 space-y-2 px-12">
+          <ul className="text-base leading-relaxed mb-6 space-y-2 px-0 md:px-12">
             {[
               "Subscribe to a new RSS feed on your phone and it appears on your desktop.",
               "Mark something to 'Read it later' and it will be ready for you on any device",

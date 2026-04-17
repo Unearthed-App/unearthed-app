@@ -111,6 +111,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const MAX_QUOTES = 50;
+    const sampledQuotes =
+      quotesDecrypted.length <= MAX_QUOTES
+        ? quotesDecrypted
+        : quotesDecrypted.filter((_, i) =>
+            i % Math.ceil(quotesDecrypted.length / MAX_QUOTES) === 0
+          );
+
     const systemMessage = `You are a thoughtful literary analyst. Given quotes from "${validatedRequest.bookTitle}" by ${validatedRequest.bookAuthor}", generate an insightful reflection question about the book's themes, character development, or author's perspective. Then provide a well-reasoned answer based on the available quotes.
 
 Your response MUST be a valid JSON object in this exact format, with NO special characters or escape sequences except for \\" when quoting text:
@@ -121,7 +129,7 @@ Your response MUST be a valid JSON object in this exact format, with NO special 
 
 Do not use markdown formatting or code blocks in your response. Return only the JSON object.`;
 
-    const userMessage = `Here are some quotes from the book:\n${quotesDecrypted
+    const userMessage = `Here are some quotes from the book:\n${sampledQuotes
       .map(
         (q) =>
           `Quote: "${q.content}"\nLocation: ${q.location}\n${

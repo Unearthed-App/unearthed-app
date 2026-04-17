@@ -220,7 +220,7 @@ export function HomePagePublic() {
           {/* ── OPTION 1: LOCAL ─────────────────────────────── */}
           <section className="flex flex-col gap-6">
             <div
-              className="p-6 md:p-10 rounded-3xl relative overflow-hidden flex-1"
+              className="pt-10 p-6 md:p-10 rounded-3xl relative overflow-hidden flex-1"
               style={{
                 background: C.surfaceContainerLow,
                 border: `4px solid ${C.border}`,
@@ -853,8 +853,8 @@ export function HomePagePublic() {
                 It is a PWA that talks to Unearthed Local over your wifi. Grabs
                 everything that Unearthed Local has and adds to it. E.g. you can
                 manage your RSS feeds on mobile. It also maintains a database on
-                the phone itself so that it is accessible offline and you don&apos;t fully rely on your
-                computer.
+                the phone itself so that it is accessible offline and you
+                don&apos;t fully rely on your computer.
               </p>
               <div
                 className="p-6 md:p-10 rounded-2xl"

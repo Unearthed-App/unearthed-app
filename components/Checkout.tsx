@@ -20,7 +20,7 @@
 import { Crown } from "lucide-react";
 import { Button } from "./ui/button";
 
-export function Checkout() {
+export function Checkout({ className }: { className?: string }) {
   const handleCheckout = async () => {
     try {
       const response = await fetch("/api/stripe-checkout-session", {
@@ -38,7 +38,7 @@ export function Checkout() {
   };
 
   return (
-    <Button variant="brutalprimary" onClick={handleCheckout}>
+    <Button variant="brutalprimary" onClick={handleCheckout} className={className}>
       <Crown className="mr-0 md:mr-2" />
       <span className="">Get Unearthed Online</span>
     </Button>

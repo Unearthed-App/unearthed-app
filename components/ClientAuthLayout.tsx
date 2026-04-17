@@ -3,6 +3,7 @@
 import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import { Navbar as NavBarPremium } from "@/components/premium/Navbar";
 import { PublicNavbar } from "@/components/PublicNavbar";
+import { NonPremiumNavigation } from "@/components/NonPremiumNavigation";
 import { useEffect, useState } from "react";
 
 export function ClientAuthLayout({ children }: { children: React.ReactNode }) {
@@ -30,7 +31,9 @@ export function ClientAuthLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <SignedIn>{isPremium && <NavBarPremium />}</SignedIn>
+      <SignedIn>
+        {isPremium ? <NavBarPremium /> : <NonPremiumNavigation />}
+      </SignedIn>
       <SignedOut>
         <PublicNavbar />
       </SignedOut>

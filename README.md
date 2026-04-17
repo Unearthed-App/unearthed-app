@@ -30,7 +30,7 @@ Unearthed bridges the gap between reading and knowledge retention by automatical
 
 - **AI-Powered Insights**: Optional AI analysis to detect blind spots and extract themes
 - **Daily Reflections**: Curated highlights delivered via email or daily notes
-- **Interactive Graph View**: Visualize connections between books, highlights, and tags
+- **Interactive Graph View**: visualise connections between books, highlights, and tags
 - **Book Recommendations**: Discover similar and contrasting viewpoints
 - **Chat with Books**: AI-powered conversations with individual books
 

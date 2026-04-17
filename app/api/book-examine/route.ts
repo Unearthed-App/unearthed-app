@@ -121,6 +121,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    const MAX_QUOTES = 75;
+    const sampledQuotes =
+      quotesDecrypted.length <= MAX_QUOTES
+        ? quotesDecrypted
+        : quotesDecrypted.filter((_, i) =>
+            i % Math.ceil(quotesDecrypted.length / MAX_QUOTES) === 0
+          );
+
     const systemMessage = `You are a literary analyst and reading coach. Examine the provided book quotes, notes, and locations to create a comprehensive analysis report. Structure your response in this exact JSON format:
 
 {
@@ -134,7 +142,7 @@ Base your analysis solely on the provided content. Be specific and reference act
 
     const userMessage = `Book: "${validatedRequest.bookTitle}" by ${validatedRequest.bookAuthor}
 Quotes and Notes:
-${quotesDecrypted
+${sampledQuotes
   .map(
     (q) =>
       `Quote: "${q.content}"

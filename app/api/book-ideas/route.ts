@@ -36,6 +36,51 @@ const IdeasRequestSchema = z.object({
 
 type IdeasRequest = z.infer<typeof IdeasRequestSchema>;
 
+const CHUNK_SIZE = 30;
+
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
+}
+
+type IdeaItem = {
+  tag: string;
+  description: string;
+  quoteIndices: number[];
+};
+
+function mergeIdeas(
+  chunkedResults: Array<{ ideas: IdeaItem[] }>,
+  chunkOffsets: number[]
+): { ideas: IdeaItem[] } {
+  const tagMap = new Map<string, IdeaItem>();
+
+  chunkedResults.forEach((result, chunkIdx) => {
+    const offset = chunkOffsets[chunkIdx];
+    for (const idea of result.ideas ?? []) {
+      const key = idea.tag.toLowerCase();
+      const offsetIndices = (idea.quoteIndices ?? []).map((i) => i + offset);
+      if (tagMap.has(key)) {
+        const existing = tagMap.get(key)!;
+        existing.quoteIndices = [
+          ...new Set([...existing.quoteIndices, ...offsetIndices]),
+        ];
+      } else {
+        tagMap.set(key, {
+          tag: idea.tag,
+          description: idea.description,
+          quoteIndices: offsetIndices,
+        });
+      }
+    }
+  });
+
+  return { ideas: Array.from(tagMap.values()) };
+}
+
 function cleanAndParseJSON(text: string | null | undefined) {
   if (!text) return null;
 
@@ -202,15 +247,6 @@ Your response MUST be a valid JSON object in this exact format, using only stand
 Keep tags concise (1-3 words). Descriptions should be 1-2 sentences. For each idea, include quoteIndices array with the indices of quotes that support this idea (0-based index in the order provided). Return as many ideas as you can find.
 Do not use single quotes or smart quotes. Use \\" for quotes within the text. Do not include any markdown formatting or any other formatting outside of this JSON structure.`;
 
-    const userMessage = `Here are some quotes from the book:\n${quotesDecrypted
-      .map(
-        (q) =>
-          `Quote: "${q.content}"\nLocation: ${q.location}\n${
-            q.note ? `Reader's Note: ${q.note}\n` : ""
-          }`
-      )
-      .join("\n")}`;
-
     if (profile.aiApiModel || profile.aiApiKey) {
       posthogClient.capture({
         distinctId: userId,
@@ -226,27 +262,48 @@ Do not use single quotes or smart quotes. Use \\" for quotes within the text. Do
         apiKey: profile.aiApiKey!,
       });
 
-      const completion = await openai.chat.completions.create({
-        model: profile.aiApiModel!,
-        messages: [
-          { role: "system", content: systemMessage },
-          { role: "user", content: userMessage },
-        ],
-        temperature: 0.7,
-      });
+      const chunks = chunkArray(quotesDecrypted, CHUNK_SIZE);
+      const chunkOffsets = chunks.map((_, i) => i * CHUNK_SIZE);
 
-      const responseContent = completion.choices[0].message.content;
-      console.log("OpenAI raw response:", responseContent);
+      const chunkResults = await Promise.all(
+        chunks.map(async (chunk, i) => {
+          const chunkUserMessage = `Here are some quotes from the book (batch ${i + 1} of ${chunks.length}):\n${chunk
+            .map(
+              (q) =>
+                `Quote: "${q.content}"\nLocation: ${q.location}\n${
+                  q.note ? `Reader's Note: ${q.note}\n` : ""
+                }`
+            )
+            .join("\n")}`;
 
-      let parsedResponse = cleanAndParseJSON(responseContent);
-      if (
-        !parsedResponse ||
-        !parsedResponse.ideas ||
-        !Array.isArray(parsedResponse.ideas) ||
-        (parsedResponse.ideas.length === 1 &&
-          parsedResponse.ideas[0].tag === "Parsing Error" &&
-          parsedResponse.ideas[0].description === "Failed to parse AI response")
-      ) {
+          const completion = await openai.chat.completions.create({
+            model: profile.aiApiModel!,
+            messages: [
+              { role: "system", content: systemMessage },
+              { role: "user", content: chunkUserMessage },
+            ],
+            temperature: 0.7,
+          });
+
+          const responseContent = completion.choices[0].message.content;
+          console.log(`OpenAI raw response (chunk ${i + 1}):`, responseContent);
+          return cleanAndParseJSON(responseContent);
+        })
+      );
+
+      const validChunks = chunkResults.filter(
+        (r) =>
+          r &&
+          r.ideas &&
+          Array.isArray(r.ideas) &&
+          !(
+            r.ideas.length === 1 &&
+            r.ideas[0].tag === "Parsing Error" &&
+            r.ideas[0].description === "Failed to parse AI response"
+          )
+      );
+
+      if (validChunks.length === 0) {
         return NextResponse.json(
           {
             error: "Failed to parse AI response",
@@ -256,6 +313,7 @@ Do not use single quotes or smart quotes. Use \\" for quotes within the text. Do
         );
       }
 
+      const parsedResponse = mergeIdeas(validChunks, chunkOffsets);
       return NextResponse.json(parsedResponse, { status: 200 });
     } else {
       const aiPercentageUsed = await calculateAiUsage(profile);
@@ -270,46 +328,70 @@ Do not use single quotes or smart quotes. Use \\" for quotes within the text. Do
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: modelName });
 
-      const result = await model.generateContent({
-        contents: [
-          { role: "user", parts: [{ text: systemMessage }] },
-          { role: "user", parts: [{ text: userMessage }] },
-        ],
-        generationConfig: { temperature: 0.7 },
-      });
+      const chunks = chunkArray(quotesDecrypted, CHUNK_SIZE);
+      const chunkOffsets = chunks.map((_, i) => i * CHUNK_SIZE);
 
-      console.log("Gemini raw response:", result.response.text());
+      let totalInputTokens = 0;
+      let totalOutputTokens = 0;
 
-      const inputTokens = result.response.usageMetadata?.promptTokenCount || 0;
-      const outputTokens =
-        result.response.usageMetadata?.candidatesTokenCount || 0;
+      const chunkResults = await Promise.all(
+        chunks.map(async (chunk, i) => {
+          const chunkUserMessage = `Here are some quotes from the book (batch ${i + 1} of ${chunks.length}):\n${chunk
+            .map(
+              (q) =>
+                `Quote: "${q.content}"\nLocation: ${q.location}\n${
+                  q.note ? `Reader's Note: ${q.note}\n` : ""
+                }`
+            )
+            .join("\n")}`;
+
+          const result = await model.generateContent({
+            contents: [
+              { role: "user", parts: [{ text: systemMessage }] },
+              { role: "user", parts: [{ text: chunkUserMessage }] },
+            ],
+            generationConfig: { temperature: 0.7 },
+          });
+
+          console.log(`Gemini raw response (chunk ${i + 1}):`, result.response.text());
+
+          totalInputTokens += result.response.usageMetadata?.promptTokenCount || 0;
+          totalOutputTokens += result.response.usageMetadata?.candidatesTokenCount || 0;
+
+          return cleanAndParseJSON(result.response.text());
+        })
+      );
 
       posthogClient.capture({
         distinctId: userId,
         event: `book-ideas (gemini) complete`,
         properties: {
-          inputTokens,
-          outputTokens,
+          inputTokens: totalInputTokens,
+          outputTokens: totalOutputTokens,
         },
       });
 
       await db
         .update(profiles)
         .set({
-          aiInputTokensUsed: (profile?.aiInputTokensUsed || 0) + inputTokens,
-          aiOutputTokensUsed: (profile.aiOutputTokensUsed || 0) + outputTokens,
+          aiInputTokensUsed: (profile?.aiInputTokensUsed || 0) + totalInputTokens,
+          aiOutputTokensUsed: (profile.aiOutputTokensUsed || 0) + totalOutputTokens,
         })
         .where(eq(profiles.userId, userId));
 
-      let parsedResponse = cleanAndParseJSON(result.response.text());
-      if (
-        !parsedResponse ||
-        !parsedResponse.ideas ||
-        !Array.isArray(parsedResponse.ideas) ||
-        (parsedResponse.ideas.length === 1 &&
-          parsedResponse.ideas[0].tag === "Parsing Error" &&
-          parsedResponse.ideas[0].description === "Failed to parse AI response")
-      ) {
+      const validChunks = chunkResults.filter(
+        (r) =>
+          r &&
+          r.ideas &&
+          Array.isArray(r.ideas) &&
+          !(
+            r.ideas.length === 1 &&
+            r.ideas[0].tag === "Parsing Error" &&
+            r.ideas[0].description === "Failed to parse AI response"
+          )
+      );
+
+      if (validChunks.length === 0) {
         return NextResponse.json(
           {
             error: "Failed to parse AI response",
@@ -319,6 +401,7 @@ Do not use single quotes or smart quotes. Use \\" for quotes within the text. Do
         );
       }
 
+      const parsedResponse = mergeIdeas(validChunks, chunkOffsets);
       return NextResponse.json(parsedResponse, { status: 200 });
     }
   } catch (error) {

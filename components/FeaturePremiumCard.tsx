@@ -64,7 +64,7 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="Daily Reflection sent to Capacities" />
           <CheckItemSmall content="Daily Reflection emailed to you" />
           <CheckItemSmall content="KOReader highlights and notes imported" />
-          <CheckItemSmall content="Interactive map to visualize connections between books, quotes, notes, and tags" />
+          <CheckItemSmall content="Interactive map to visualise connections between books, quotes, notes, and tags" />
           <CheckItemSmall content="Book recommendations based on similar books" />
           <CheckItemSmall content="Book recommendations based on opposing viewpoints" />
           <CheckItemSmall content="Personalised blind spot detection" />
