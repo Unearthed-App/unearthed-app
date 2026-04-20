@@ -25,6 +25,53 @@ import {
 } from "@/components/ui/accordion";
 import { BookOpen, Smartphone } from "lucide-react";
 
+
+const IOS_STEPS = [
+  {
+    step: "1",
+    title: "Open in Safari",
+    detail:
+      "Visit mobile.unearthed.app in Safari on your iPhone or iPad. Safari is required — other iOS browsers cannot install the security certificate needed for desktop sync.",
+  },
+  {
+    step: "2",
+    title: "Unlock the app",
+    detail:
+      "Enter your Purchase ID to unlock the app. Do this now, before adding to your home screen.",
+  },
+  {
+    step: "3",
+    title: "Connect to your desktop",
+    detail:
+      "Tap Settings and enter your desktop IP and sync token. When prompted, follow the certificate setup steps — you'll download and install a security certificate so your iPhone can talk to your desktop over your local network.",
+  },
+  {
+    step: "4",
+    title: "Install the certificate",
+    detail:
+      "Tap the download link to get the certificate, then go to Settings → General → VPN & Device Management to install it. Finally, go to Settings → General → About → Certificate Trust Settings and toggle Unearthed Local on.",
+  },
+  {
+    step: "5",
+    title: "Add to Home Screen",
+    detail:
+      'Back in Safari, tap the Share icon (the box with an arrow pointing up) and select "Add to Home Screen". Complete this step after the certificate is installed — the app needs Safari permissions to work correctly.',
+  },
+  {
+    step: "6",
+    title: "Confirm",
+    detail:
+      'Optionally rename the app, then tap "Add" in the top-right corner.',
+  },
+  {
+    step: "7",
+    title: "Open from your home screen",
+    detail:
+      "Find the Unearthed icon on your home screen. It opens fullscreen, just like a native app, with desktop sync ready to go.",
+  },
+];
+
+
 const ANDROID_STEPS = [
   {
     step: "1",
@@ -90,6 +137,20 @@ export function PwaInstructions({ className }: { className?: string }) {
           </AccordionTrigger>
           <AccordionContent className="border-t-2 border-black dark:border-border">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0 divide-y-2 md:divide-y-0 md:divide-x-2 divide-black dark:divide-border">
+
+              {/* iOS */}
+              <div className="p-4 space-y-3">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border border-black">
+                    <Smartphone className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-black text-sm">iPhone / iPad</p>
+                    <p className="text-xs text-muted-foreground">Use Safari</p>
+                  </div>
+                </div>
+                <StepList steps={IOS_STEPS} />
+              </div>
 
               {/* Android */}
               <div className="p-4 space-y-3">

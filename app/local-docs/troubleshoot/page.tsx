@@ -449,7 +449,7 @@ export default function TroubleshootPage() {
       <TroubleshootSection
         id="mobile-sync"
         icon={Smartphone}
-        title="Android App & Sync"
+        title="Mobile App & Sync"
       >
         <Accordion type="single" collapsible className="w-full">
           <ProblemSolution problem="Mobile app can't connect to the desktop">

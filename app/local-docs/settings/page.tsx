@@ -202,32 +202,41 @@ export default function SettingsPage() {
           </div>
         </SettingSection>
 
-        {/* API Endpoint (KOReader) */}
-        <SettingSection id="api" icon={Link} title="API Endpoint (KOReader)">
+        {/* API Endpoint */}
+        <SettingSection id="api" icon={Link} title="API Endpoint">
           <p>
-            Unearthed runs a local HTTP server that KOReader can send highlights
-            to. The API URLs are automatically generated based on your network
-            interfaces.
+            Unearthed runs two local servers for device connections. Connection details — including IP address, port, and copy buttons — are displayed automatically in Settings based on your network.
           </p>
 
           <SettingItem
-            name="API URLs"
-            description="Automatically detected local network addresses where the API server is accessible."
+            name="KOReader / iOS Connection (Port 6543 — HTTPS)"
+            description="Secure HTTPS endpoint for KOReader e-readers and the Unearthed iOS app. iOS requires HTTPS and a trusted certificate."
             tips={[
-              "Multiple URLs may appear if you have VPN or multiple network adapters",
-              "Try each URL in KOReader if one doesn't work",
-              "Format: http://[IP_ADDRESS]:6543",
-              "Copy button available for each URL",
+              "Format: https://[IP_ADDRESS]:6543",
+              "Copy button available next to each URL",
+              "iOS users: download and trust the certificate shown in Settings before connecting",
+              "KOReader users: use this port and URL in the Unearthed plugin settings",
+            ]}
+          />
+
+          <SettingItem
+            name="Android Connection (Port 6545 — HTTP)"
+            description="Plain HTTP endpoint for Android devices. Android Chrome blocks self-signed HTTPS certificates, so this separate port avoids the certificate trust step entirely."
+            tips={[
+              "Format: http://[IP_ADDRESS]:6545",
+              "In the Unearthed mobile app on Android, enter port 6545 (not 6543)",
+              "No certificate installation required on Android",
             ]}
           />
 
           <SettingItem
             name="Secret Token"
             // defaultValue=""
-            description="Authentication token that KOReader must provide to send data to this app."
+            description="Authentication token that KOReader and the mobile app must provide to connect."
             tips={[
               "Can be any text you choose",
-              "Must match exactly in KOReader plugin settings",
+              "Must match exactly in KOReader plugin settings and the mobile app",
+              "Use the Generate button to create a secure random token",
               "Leave empty to disable authentication (not recommended)",
             ]}
           />

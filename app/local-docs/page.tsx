@@ -93,7 +93,7 @@ const HIGHLIGHTS = [
     icon: Smartphone,
     title: "Mobile App",
     description:
-      "Native Android app (APK). Syncs feeds, articles, highlights, and bookmarks with the desktop over your home Wi-Fi. Also captures quotes from physical books via camera.",
+      "Android &amp; iOS PWA. Syncs feeds, articles, highlights, and bookmarks with the desktop over your home Wi-Fi. Also captures quotes from physical books via camera.",
   },
 ];
 
@@ -113,7 +113,7 @@ export default function LocalDocsPage() {
           A privacy-first desktop app that syncs your Kindle and KOReader
           highlights into Obsidian, with a built-in RSS feed reader for
           importing and annotating articles. Runs entirely on your machine —
-          with a companion Android app that keeps everything in sync over your
+          with a companion mobile app (Android &amp; iOS) that keeps everything in sync over your
           home Wi-Fi.
         </p>
       </div>

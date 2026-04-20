@@ -81,6 +81,8 @@ export const metadata: Metadata = {
     "web clipper",
     "mobile app",
     "android app",
+    "ios app",
+    "iphone app",
     "kindle mobile",
     "highlights mobile",
   ],

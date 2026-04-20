@@ -1196,11 +1196,11 @@ export default function FeaturesPage() {
         <FeatureSection
           id="mobile"
           icon={Smartphone}
-          title="Mobile App — Android (PWA)"
+          title="Mobile App — Android &amp; iOS (PWA)"
           badge="v1.4.0"
         >
           <p>
-            Unearthed is available as a Progressive Web App (PWA) for Android.
+            Unearthed is available as a Progressive Web App (PWA) for Android and iOS.
             Everything in your library — RSS feeds, articles, Kindle highlights,
             KOReader notes, and personal quotes — travels with you. When both
             devices are on the same Wi-Fi network, the mobile app syncs
@@ -1209,11 +1209,10 @@ export default function FeaturesPage() {
           </p>
 
           <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 mb-3">
-            <p className="text-xs font-medium mb-1">Android only</p>
+            <p className="text-xs font-medium mb-1">Android &amp; iOS</p>
             <p className="text-xs text-muted-foreground">
-              The PWA is currently available for Android only. Install it by
-              opening the Unearthed mobile URL in Chrome and tapping{" "}
-              <strong>Add to Home Screen</strong>.
+              Install on Android by opening the Unearthed mobile URL in Chrome and tapping{" "}
+              <strong>Add to Home Screen</strong>. On iPhone/iPad, use Safari and tap the Share icon.
             </p>
           </div>
 
@@ -1224,7 +1223,7 @@ export default function FeaturesPage() {
               </Badge>
             </p>
             <p className="text-xs text-muted-foreground">
-              The Android PWA is an additional one-time purchase, separate from
+              The mobile PWA is an additional one-time purchase, separate from
               Unearthed Local.
             </p>
           </div>
@@ -1253,11 +1252,19 @@ export default function FeaturesPage() {
                   </li>
                   <li>
                     Open the mobile app, go to <strong>Settings</strong>, and
-                    enter the same IP address, port (
+                    enter the IP address and token
+                  </li>
+                  <li>
+                    For the port:{" "}
+                    <strong>iOS</strong> uses{" "}
                     <code className="text-xs bg-primary/10 px-1 py-0.5 rounded font-mono">
                       6543
-                    </code>
-                    ), and token
+                    </code>{" "}
+                    (HTTPS); <strong>Android</strong> uses{" "}
+                    <code className="text-xs bg-primary/10 px-1 py-0.5 rounded font-mono">
+                      6545
+                    </code>{" "}
+                    (HTTP, no certificate required)
                   </li>
                   <li>
                     Tap <strong>Test Connection</strong> to confirm the link

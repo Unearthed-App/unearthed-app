@@ -54,12 +54,12 @@ export default function MobilePage() {
         Mobile App
       </h1>
       <p className="text-muted-foreground mb-2">
-        Unearthed for Android : a Progressive Web App (PWA) that keeps your
+        Unearthed for Android &amp; iOS : a Progressive Web App (PWA) that keeps your
         entire library with you.
       </p>
 
       <div className="flex flex-wrap gap-2 mb-8">
-        <Badge variant="outline" className="text-[10px]">Android only</Badge>
+        <Badge variant="outline" className="text-[10px]">Android &amp; iOS</Badge>
         <Badge variant="outline" className="text-[10px]">PWA</Badge>
       </div>
 
@@ -69,18 +69,14 @@ export default function MobilePage() {
         <Section id="overview" icon={Smartphone} title="Overview">
           <p>
             The Unearthed mobile app is a Progressive Web App (PWA) for
-            Android. It is currently Android-only and is a separate one-time
-            purchase from Unearthed Local.
+            Android and iOS. It is a separate one-time purchase from Unearthed Local.
           </p>
 
           <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
             <p className="text-xs font-medium mb-1">Installing the PWA</p>
             <ol className="list-decimal list-inside text-xs space-y-1 text-muted-foreground">
-              <li>Open the Unearthed mobile URL in Chrome on Android</li>
-              <li>
-                Tap the browser menu and select{" "}
-                <strong>Add to Home Screen</strong>
-              </li>
+              <li><strong>Android:</strong> Open the Unearthed mobile URL in Chrome, tap the menu and select <strong>Add to Home Screen</strong></li>
+              <li><strong>iPhone / iPad:</strong> Open the URL in Safari, tap the Share icon and select <strong>Add to Home Screen</strong> (certificate setup required for desktop sync)</li>
               <li>The app icon appears on your home screen like a native app</li>
             </ol>
           </div>

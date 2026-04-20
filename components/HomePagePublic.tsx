@@ -767,7 +767,7 @@ export function HomePagePublic() {
                   </p>
                   <p>
                     It does nearly everything Unearthed Local does, but lives on
-                    your phone (Android).
+                    your phone (Android &amp; iOS).
                   </p>
                   <p>
                     Mainly relies on Unearthed Local for Kindle and KOReader

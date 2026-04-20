@@ -294,11 +294,11 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "settings-api",
-    title: "API Endpoint (KOReader)",
+    title: "API Endpoint",
     section: "Settings",
     category: "Settings",
     content:
-      "Local HTTP server for KOReader integration. Auto-detected API URLs based on network interfaces. Secret token for Bearer authentication. Port 6543.",
+      "Two local servers for device connections. KOReader and iOS use port 6543 (HTTPS) with a self-signed certificate. Android uses port 6545 (HTTP) — no certificate required. Auto-detected IP address with copy buttons. Secret token for authentication.",
     href: "/local-docs/settings#api",
     keywords: [
       "api",
@@ -307,7 +307,13 @@ export const searchIndex: SearchItem[] = [
       "token",
       "port",
       "6543",
+      "6545",
+      "android",
+      "ios",
+      "https",
+      "http",
       "url",
+      "connection details",
     ],
   },
   {
@@ -756,7 +762,7 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "mobile-companion",
-    title: "Mobile + Desktop: Better Together",
+    title: "Mobile + Desktop",
     section: "Mobile App",
     category: "Mobile",
     content:
@@ -770,9 +776,9 @@ export const searchIndex: SearchItem[] = [
     section: "Mobile App",
     category: "Mobile",
     content:
-      "To connect the mobile app to your desktop: open Unearthed on your desktop and go to Settings → API Endpoint — you will see your local IP address and sync token. In the mobile app, go to Settings and enter that IP address, port (6543), and token. Tap Test Connection to confirm. Once connected, tap Sync or wait for the auto-sync interval. Both devices must be on the same Wi-Fi network.",
+      "To connect the mobile app to your desktop: open Unearthed on your desktop and go to Settings → API Endpoint — you will see your local IP address and sync token. In the mobile app, go to Settings and enter the IP address and token. iOS uses port 6543 (HTTPS); Android uses port 6545 (HTTP, no certificate required). Tap Test Connection to confirm. Both devices must be on the same Wi-Fi network.",
     href: "/local-docs/mobile#setup",
-    keywords: ["setup", "connect", "ip address", "port", "6543", "token", "wifi", "network", "mobile sync"],
+    keywords: ["setup", "connect", "ip address", "port", "6543", "6545", "android", "ios", "token", "wifi", "network", "mobile sync"],
   },
   {
     id: "mobile-sync-content",
