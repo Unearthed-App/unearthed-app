@@ -217,7 +217,8 @@ export default function InstallPage() {
             <StepItem step={3} title="Grant permissions">
               <p>
                 Grant file access permissions when prompted. These are needed for
-                exporting to your Obsidian vault.
+                exporting to your Obsidian vault. (Craft export only needs network access
+                — no extra permissions.)
               </p>
             </StepItem>
             <StepItem step={4} title="Run on Startup (optional)" last>
@@ -253,12 +254,23 @@ export default function InstallPage() {
       <section id="first-launch" className="mb-10">
         <h2 className="text-lg font-semibold mb-4">First Launch Setup</h2>
         <div className="space-y-1">
-          <StepItem step={1} title="Configure Obsidian Vault">
+          <StepItem step={1} title="Configure Export Destination">
             <p>
-              Open <strong>Settings</strong> &rarr; <strong>Obsidian</strong>{" "}
-              section &rarr; click <strong>Browse</strong> to select your vault
-              folder.
+              Open <strong>Settings</strong> and configure either (or both) export
+              destinations:
             </p>
+            <ul className="list-disc list-inside mt-2 space-y-1.5 text-sm">
+              <li>
+                <strong>Obsidian</strong> &mdash; click <strong>Browse</strong> in the
+                Obsidian section to select your vault folder
+              </li>
+              <li>
+                <strong>Craft Docs</strong> &mdash; in the Craft Docs section, paste
+                your <strong>Connection URL</strong> and <strong>API Key</strong> from
+                Craft &rarr; Imagine &rarr; API Connection, then click{" "}
+                <strong>Test Connection</strong>
+              </li>
+            </ul>
           </StepItem>
           <StepItem step={2} title="Connect to Kindle">
             <p>
@@ -313,8 +325,9 @@ export default function InstallPage() {
           </StepItem>
           <StepItem step={5} title="Done!" last>
             <p>
-            Your highlights are now in your configured Obsidian vault location
-              as Markdown files. They update automatically on each sync.
+              Your highlights are now in your configured destination — as Markdown
+              files in your Obsidian vault, and/or as collection rows in your Craft
+              space. They update automatically on each sync.
             </p>
             <div className="flex items-center gap-1.5 mt-2 text-green-600 dark:text-green-400">
               <CheckCircle className="h-4 w-4" />

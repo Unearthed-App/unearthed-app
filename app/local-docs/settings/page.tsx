@@ -19,6 +19,7 @@ import {
   Sparkles,
   Monitor,
   Keyboard,
+  Notebook,
 } from "lucide-react";
 
 function SettingSection({
@@ -140,7 +141,7 @@ export default function SettingsPage() {
             description="Register system-wide keyboard shortcuts so Unearthed responds even when the app is minimized or another application is in focus."
             tips={[
               "Unlocks Quick Import (Ctrl/Cmd+Shift+I) and Go to RSS Feeds (Ctrl/Cmd+Shift+O) from any app",
-              "macOS: Accessibility permissions required — grant in System Preferences → Privacy & Security → Accessibility",
+              "macOS: Accessibility permissions required : grant in System Preferences → Privacy & Security → Accessibility",
               "If a shortcut conflicts with another app, reassign it in Settings → Keyboard Shortcuts",
               "Works best combined with Keep App Running in Background",
             ]}
@@ -169,7 +170,7 @@ export default function SettingsPage() {
         >
           <p>
             All keyboard shortcuts in Unearthed Local are fully customisable.
-            Remap any shortcut to your preferred key combination — your custom
+            Remap any shortcut to your preferred key combination : your custom
             bindings are saved automatically and take effect immediately.
           </p>
 
@@ -179,7 +180,7 @@ export default function SettingsPage() {
             tips={[
               "Open via Settings → Keyboard Shortcuts, or press Ctrl/Cmd + /",
               "Supports modifier combinations: Ctrl/Cmd, Shift, Alt",
-              "Changes apply instantly — no restart required",
+              "Changes apply instantly : no restart required",
               "Custom bindings are persisted across sessions in settings.json",
               "Use 'Reset' to restore any shortcut to its default binding",
             ]}
@@ -205,11 +206,11 @@ export default function SettingsPage() {
         {/* API Endpoint */}
         <SettingSection id="api" icon={Link} title="API Endpoint">
           <p>
-            Unearthed runs two local servers for device connections. Connection details — including IP address, port, and copy buttons — are displayed automatically in Settings based on your network.
+            Unearthed runs two local servers for device connections. Connection details : including IP address, port, and copy buttons : are displayed automatically in Settings based on your network.
           </p>
 
           <SettingItem
-            name="KOReader / iOS Connection (Port 6543 — HTTPS)"
+            name="KOReader / iOS Connection (Port 6543 : HTTPS)"
             description="Secure HTTPS endpoint for KOReader e-readers and the Unearthed iOS app. iOS requires HTTPS and a trusted certificate."
             tips={[
               "Format: https://[IP_ADDRESS]:6543",
@@ -220,7 +221,7 @@ export default function SettingsPage() {
           />
 
           <SettingItem
-            name="Android Connection (Port 6545 — HTTP)"
+            name="Android Connection (Port 6545 : HTTP)"
             description="Plain HTTP endpoint for Android devices. Android Chrome blocks self-signed HTTPS certificates, so this separate port avoids the certificate trust step entirely."
             tips={[
               "Format: http://[IP_ADDRESS]:6545",
@@ -283,10 +284,159 @@ export default function SettingsPage() {
             description="When enabled, the full article content is exported alongside your quotes and notes when exporting articles to Obsidian."
             tips={[
               "Only applies to articles (RSS / Web Page imports), not Kindle books",
-              "Disabled by default — enable if you want a full local copy of article text in your vault",
+              "Disabled by default : enable if you want a full local copy of article text in your vault",
               "Article content is appended after the quotes section in the exported Markdown file",
             ]}
           />
+        </SettingSection>
+
+        {/* Craft Docs */}
+        <SettingSection id="craft" icon={Notebook} title="Craft Docs">
+          <p>
+            Export your highlights to <strong>Craft Docs</strong> alongside Obsidian.
+            Each source type (Books, Articles, etc.) becomes a Craft collection in your
+            chosen root folder, and each source becomes a row whose page holds the
+            highlights and (optionally) the article content.
+          </p>
+
+          <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
+            <p className="text-xs font-medium mb-1">How to connect</p>
+            <ol className="list-decimal list-inside text-xs text-muted-foreground space-y-0.5">
+              <li>Open Craft and the space you want Unearthed to write to</li>
+              <li>
+                Click <strong>Imagine</strong> and add a new{" "}
+                <strong>API Connection</strong>
+              </li>
+              <li>
+                Name it <em>Unearthed</em>, set <strong>Permission Level</strong> to{" "}
+                <strong>Read and Write</strong>, and <strong>Access Mode</strong> to{" "}
+                <strong>API Key</strong>
+              </li>
+              <li>
+                Under <strong>API Keys</strong>, click <strong>+</strong> to generate a key
+                : Craft shows the value once
+              </li>
+              <li>
+                Copy the <strong>Connection URL</strong> and the <strong>API Key</strong>{" "}
+                into the fields below
+              </li>
+              <li>
+                Click <strong>Test Connection</strong> to verify
+              </li>
+            </ol>
+          </div>
+
+          <SettingItem
+            name="Connection URL"
+            description="The Craft API connection URL from Craft → Settings → Connect to API."
+            tips={[
+              "Format: https://connect.craft.do/links/XXXXX/api/v1",
+              "Each Craft space has its own connection URL",
+            ]}
+          />
+
+          <SettingItem
+            name="API Token"
+            description="Bearer token from the same Craft connection page. Stored encrypted via Electron safeStorage."
+            tips={[
+              "Treat the token like a password : Craft only displays it once",
+              "Use Replace to swap the saved token, or Clear to remove it",
+              "Test Connection verifies the URL + token combination and shows the connected space name on success",
+            ]}
+          />
+
+          <SettingItem
+            name="Root Folder"
+            defaultValue="Unearthed"
+            description="Top-level folder created in your Craft space. Per-type collection documents (Books, Articles, etc.) and an Authors document live inside this folder."
+            tips={[
+              "Created automatically on first export if it doesn't exist",
+              "Change this to match your Craft organisation",
+            ]}
+          />
+
+          <SettingItem
+            name="Combine Sources"
+            defaultValue={true}
+            description="When enabled, all sources of the same type share a single collection (Books, Articles, etc.). When disabled, separate collections are created per type."
+            tips={[]}
+          />
+
+          <SettingItem
+            name="Include Full Article Content in Craft Export"
+            defaultValue={false}
+            description="When enabled, the full article body is prepended to the Craft document on first sync, followed by a Highlights heading."
+            tips={[
+              "Only applies to articles (RSS / Web Page imports), not Kindle books",
+              "YouTube article URLs are inserted as a richUrl block above the article text",
+              "Long article text is split into multiple text blocks (≈6000 chars each) to stay within Craft's per-block limit",
+              "Only inserted on first sync : re-syncing the same source will not duplicate the content",
+            ]}
+          />
+
+          <SettingItem
+            name="Append Daily Reflection to Craft Daily Note"
+            defaultValue={false}
+            description="Sends today's random highlight to your Craft daily note alongside Obsidian (if configured)."
+            tips={[
+              "Auto-appends as soon as Unearthed opens : no need to press 'New Reflection'",
+              "Recorded in the database so the reflection is appended at most once per day, even after restarts",
+              "A compact 'Appended to Craft' pill confirms success",
+            ]}
+          />
+
+          <SettingItem
+            name="Auto-export to Craft (hourly)"
+            defaultValue={false}
+            description="Automatically sync new highlights to Craft every hour, alongside Obsidian (if configured)."
+            tips={[
+              "Toggled independently from Obsidian auto-export",
+              "Requires 'Keep App Running' to continue syncing in the background",
+              "Only new or changed quotes are sent on each run (resumable sync)",
+            ]}
+          />
+
+          <SettingItem
+            name="Craft Quote Color Mode"
+            defaultValue="highlight"
+            description="How highlight colors are rendered inside Craft."
+            tips={[
+              "highlight: maps each Unearthed color to the nearest Craft palette color (yellow, blue, pink, red, green, cyan, purple, gray)",
+              "none: no color styling applied",
+              "Orange and olive map to yellow and green respectively (Craft has no exact equivalents)",
+            ]}
+          />
+
+          <SettingItem
+            name="Reset Craft Sync Data"
+            description="Clears Unearthed's internal mapping of which Craft documents and blocks it previously created. Forces a clean re-export on the next run."
+            tips={[
+              "Does NOT delete anything in Craft itself",
+              "Use this if documents ended up in the wrong location, or if you deleted individual quotes in Craft and want them re-synced",
+              "If you deleted a document in Craft, empty it from Craft's Trash first so Unearthed can recreate it",
+              "Clears craftAllAuthorsDocId and craftAllAuthorsCollectionId immediately; per-source IDs are cleared too",
+            ]}
+          />
+
+          <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+            <p className="text-xs font-medium mb-1">Stale recovery</p>
+            <p className="text-xs text-muted-foreground">
+              If a Craft document is permanently deleted, the next export recreates it
+              and re-uploads all quotes in a single pass. Individual deleted blocks are
+              detected and re-synced automatically : no manual reset required.
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
+            <p className="text-xs font-medium mb-1">Templates</p>
+            <p className="text-xs text-muted-foreground">
+              Craft uses the same Quote, Source, and Daily Reflection templates as
+              Obsidian (or the built-in defaults). Wikilinks like{" "}
+              <CodeInline>[[Author]]</CodeInline> are stripped to plain text and YAML
+              frontmatter is converted to a Craft <CodeInline>&lt;callout&gt;</CodeInline>{" "}
+              block automatically.
+            </p>
+          </div>
         </SettingSection>
 
         {/* Daily Reflection */}
@@ -346,7 +496,7 @@ export default function SettingsPage() {
               "Example: ### Daily Reflection",
               "Finds the heading in your daily note and inserts content below it",
               "If the heading is not found, falls back to appending at the end",
-              "Respects heading hierarchy — content is placed before the next same-level heading",
+              "Respects heading hierarchy : content is placed before the next same-level heading",
             ]}
           />
 
@@ -396,7 +546,7 @@ export default function SettingsPage() {
             description="Automatically remove unimported RSS articles that are older than the specified number of days to keep your feed tidy."
             tips={[
               "Set to 0 to keep all articles indefinitely",
-              "Only articles you have NOT imported are deleted — anything saved to your library is kept forever",
+              "Only articles you have NOT imported are deleted : anything saved to your library is kept forever",
               "Applies to all subscribed feeds",
               "Articles are deleted silently in the background",
             ]}
@@ -455,7 +605,7 @@ export default function SettingsPage() {
           title="Template Settings"
         >
           <p>
-            Customize how your exported Markdown files are formatted using
+            Customise how your exported Markdown files are formatted using
             template variables. Leave empty to use the default templates.
           </p>
 

@@ -61,7 +61,7 @@ Unearthed bridges the gap between reading and knowledge retention by automatical
 ### Obsidian Plugin
 
 - **Compatibility**: Works with [Unearthed Online](https://unearthed.app/online)
-- **Custom Templates**: Fully customizable formatting for books and highlights
+- **Custom Templates**: Fully customisable formatting for books and highlights
 - **Daily Reflections**: Automatic integration with daily notes
 - **Tag Management**: Sync tags and create connections in your vault
 

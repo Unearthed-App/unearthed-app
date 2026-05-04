@@ -20,6 +20,7 @@ import {
   Terminal,
   Rss,
   Smartphone,
+  Notebook,
 } from "lucide-react";
 
 function TroubleshootSection({
@@ -196,6 +197,117 @@ export default function TroubleshootPage() {
               </li>
               <li>If you manually edited the markers, duplicates may appear</li>
               <li>Re-export will not create duplicates for unmodified files</li>
+            </ul>
+          </ProblemSolution>
+        </Accordion>
+      </TroubleshootSection>
+
+      {/* Craft Docs Export */}
+      <TroubleshootSection id="craft" icon={Notebook} title="Craft Docs Export">
+        <Accordion type="single" collapsible className="w-full">
+          <ProblemSolution problem="Connection URL or API token rejected">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                Verify the URL matches the format{" "}
+                <CodeInline>https://connect.craft.do/links/XXXXX/api/v1</CodeInline>
+              </li>
+              <li>
+                Generate a new API key in Craft &rarr; Imagine &rarr; API Connection &rarr;
+                API Keys (Craft only displays the key once)
+              </li>
+              <li>
+                Confirm the connection&apos;s <strong>Permission Level</strong> is set to{" "}
+                <strong>Read and Write</strong>, not Read-only
+              </li>
+              <li>
+                Click <strong>Test Connection</strong> — a successful test shows the
+                connected space name
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Documents ended up in the wrong folder or were deleted in Craft">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                Open <strong>Settings &rarr; Craft Docs &rarr; Reset Craft Sync Data</strong>
+              </li>
+              <li>
+                This clears Unearthed&apos;s ID mapping but does NOT delete anything in
+                Craft
+              </li>
+              <li>
+                If you deleted a Craft document and want it recreated, empty Craft&apos;s
+                Trash first — otherwise Craft refuses the new document with the same name
+              </li>
+              <li>
+                Re-run the export — Unearthed will recreate the missing documents and
+                re-upload all quotes
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Quotes deleted in Craft re-appear / don't re-appear">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                Individual deleted blocks are detected on the next export and re-synced
+                automatically — no action needed
+              </li>
+              <li>
+                If they don&apos;t re-appear, run a manual export from the library
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Export is slow or hits rate limits">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                Craft&apos;s API allows roughly 2 requests/second; Unearthed throttles
+                to that limit and retries on HTTP 429 with exponential backoff
+              </li>
+              <li>
+                Quotes are sent in chunks of 25; failed chunks fall back to per-quote
+                retries so one bad quote doesn&apos;t abort the source
+              </li>
+              <li>
+                The first full export of a large library can take several minutes —
+                subsequent runs only send new/changed quotes
+              </li>
+              <li>
+                Use the <strong>Cancel</strong> button mid-run to stop without losing
+                already-synced quotes
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Article content not appearing in Craft document">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                Enable <strong>Settings &rarr; Craft Docs &rarr; Include Full Article
+                Content</strong> — disabled by default
+              </li>
+              <li>
+                Article content is inserted only on <strong>first sync</strong> of a
+                source. Use <strong>Reset Craft Sync Data</strong> if you want to
+                re-import the body for an existing source
+              </li>
+              <li>
+                Articles with very short bodies (&lt;100 chars) are inserted as a single
+                block; longer bodies are split into ≈6000-char text blocks
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Wrong colors or color names in Craft">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                Craft has a smaller color palette than Unearthed — orange and olive map
+                to <CodeInline>yellow</CodeInline> and <CodeInline>green</CodeInline>
+                respectively
+              </li>
+              <li>
+                Set <strong>Craft Quote Color Mode</strong> to <CodeInline>none</CodeInline>{" "}
+                in Settings if you want plain (uncolored) quotes
+              </li>
             </ul>
           </ProblemSolution>
         </Accordion>

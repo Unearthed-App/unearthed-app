@@ -120,6 +120,53 @@ export default function MobilePage() {
     <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-32 pb-16 relative">
       {/* Purple top gradient */}
       <div className="absolute left-1/2 -translate-x-1/2 top-0 w-screen h-[600px] bg-gradient-to-b from-purple-500/[0.13] to-transparent pointer-events-none -z-10" />
+      <div className="fixed mt-3 top-0 right-0 flex items-center justify-center space-x-2 p-3">
+        <div className="flex justify-center">
+          <svg
+            className="text-red-500 motion-blur-in-xl motion-duration-[6000ms] h-8 w-8"
+            fill="currentColor"
+            version="1.2"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 400 400"
+            width="400"
+            height="400"
+          >
+            <title>Unearthed Logo</title>
+            <g id="g4">
+              <path
+                id="path2"
+                fillRule="evenodd"
+                className="s0"
+                d="m101.8 41.3c12.3-12.8 32.7-13.2 45.5-0.9 12.9 12.3 13.3 32.7 0.9 45.6-37.4 38.9-61.1 93.1-60.9 139.8 0.1 25.3 7.3 48.3 26.3 62.4 18.3 13.6 36.8 18.3 53.7 15 27.4-5.3 49.6-29.1 61.5-59.5 6.5-16.5 25.2-24.7 41.8-18.1 16.5 6.5 24.7 25.2 18.2 41.7-20.6 52.3-62 89.9-109.2 99.1-32.8 6.3-69-0.2-104.3-26.4-35.3-26.1-52.3-67.2-52.4-114-0.2-61.4 29.6-133.4 78.9-184.7z"
+              />
+            </g>
+            <g id="g8">
+              <path
+                id="path6"
+                fillRule="evenodd"
+                className="s0"
+                d="m243.3 189.6c-7.6-3.2-11.1-11.8-8-19.3 3.1-7.5 11.8-11.1 19.3-8 22.1 9.2 59.7 28.8 80.7 45.1 6.4 5 7.6 14.2 2.6 20.7-5 6.4-14.2 7.6-20.7 2.6-19.2-14.8-53.7-32.7-73.9-41.1z"
+              />
+            </g>
+            <g id="g12">
+              <path
+                id="path10"
+                fillRule="evenodd"
+                className="s0"
+                d="m280 107.1c-7.5-3.1-11.1-11.8-7.9-19.3 3.1-7.5 11.8-11.1 19.3-7.9 22.1 9.2 59.7 28.8 80.7 45 6.4 5 7.6 14.3 2.6 20.7-5 6.5-14.3 7.6-20.7 2.7-19.2-14.9-53.8-32.7-74-41.2z"
+              />
+            </g>
+            <g id="g16">
+              <path
+                id="path14"
+                fillRule="evenodd"
+                className="s0"
+                d="m261.1 148.6c-7.5-3.1-11.1-11.8-7.9-19.3 3.1-7.5 11.8-11.1 19.3-7.9 22.1 9.2 59.7 28.8 80.7 45 6.4 5 7.6 14.3 2.6 20.7-5 6.5-14.3 7.6-20.7 2.7-19.2-14.9-53.8-32.7-74-41.2z"
+              />
+            </g>
+          </svg>
+        </div>
+      </div>
       <div className="text-center mb-0">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/50 bg-purple-500/10 text-purple-700 dark:text-purple-400 text-sm font-bold tracking-widest uppercase mb-8">
           <Smartphone className="h-4 w-4" />
@@ -197,7 +244,7 @@ export default function MobilePage() {
           {/* Badge */}
           <div className="absolute top-4 right-4">
             <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-600 text-white">
-              New in Local v1.4.2
+              New in Local v1.4.2+
             </span>
           </div>
 

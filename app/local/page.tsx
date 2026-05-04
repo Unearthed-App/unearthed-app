@@ -43,6 +43,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export const dynamic = "force-static";
 export const revalidate = 3600;
@@ -136,9 +137,9 @@ const FEATURES = [
   },
   {
     icon: FileText,
-    title: "Obsidian Export",
+    title: "Export",
     description:
-      "Smart export to Markdown with customizable templates. Optionally include full article content. Only adds new quotes on re-export.",
+      "Smart export to Markdown with customisable templates. Sync your highlights to your Obsidian vault or your Craft workspace — or both. Optionally include full article content. Only adds new quotes on re-export.",
     color: "amber",
     gradient: "from-amber-500 to-orange-500",
   },
@@ -230,7 +231,8 @@ const STEPS = [
   {
     number: "03",
     title: "Configure",
-    description: "Point Unearthed at your Obsidian vault",
+    description:
+      "Point Unearthed at your Obsidian vault and/or connect your Craft workspace",
   },
   {
     number: "04",
@@ -249,6 +251,53 @@ const UnearthedLocal = () => {
         {/* Green top gradient */}
         <div className="absolute left-1/2 -translate-x-1/2 top-0 w-screen h-[600px] bg-gradient-to-b from-orange-500/[0.13] to-transparent pointer-events-none -z-10" />
         <NonPremiumNavigation currentPage="local" />
+        <div className="absolute mt-3 top-0 right-0 flex items-center justify-center space-x-2 p-3">
+          <div className="flex justify-center">
+            <svg
+              className="text-red-500 motion-blur-in-xl motion-duration-[6000ms] h-8 w-8"
+              fill="currentColor"
+              version="1.2"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 400 400"
+              width="400"
+              height="400"
+            >
+              <title>Unearthed Logo</title>
+              <g id="g4">
+                <path
+                  id="path2"
+                  fillRule="evenodd"
+                  className="s0"
+                  d="m101.8 41.3c12.3-12.8 32.7-13.2 45.5-0.9 12.9 12.3 13.3 32.7 0.9 45.6-37.4 38.9-61.1 93.1-60.9 139.8 0.1 25.3 7.3 48.3 26.3 62.4 18.3 13.6 36.8 18.3 53.7 15 27.4-5.3 49.6-29.1 61.5-59.5 6.5-16.5 25.2-24.7 41.8-18.1 16.5 6.5 24.7 25.2 18.2 41.7-20.6 52.3-62 89.9-109.2 99.1-32.8 6.3-69-0.2-104.3-26.4-35.3-26.1-52.3-67.2-52.4-114-0.2-61.4 29.6-133.4 78.9-184.7z"
+                />
+              </g>
+              <g id="g8">
+                <path
+                  id="path6"
+                  fillRule="evenodd"
+                  className="s0"
+                  d="m243.3 189.6c-7.6-3.2-11.1-11.8-8-19.3 3.1-7.5 11.8-11.1 19.3-8 22.1 9.2 59.7 28.8 80.7 45.1 6.4 5 7.6 14.2 2.6 20.7-5 6.4-14.2 7.6-20.7 2.6-19.2-14.8-53.7-32.7-73.9-41.1z"
+                />
+              </g>
+              <g id="g12">
+                <path
+                  id="path10"
+                  fillRule="evenodd"
+                  className="s0"
+                  d="m280 107.1c-7.5-3.1-11.1-11.8-7.9-19.3 3.1-7.5 11.8-11.1 19.3-7.9 22.1 9.2 59.7 28.8 80.7 45 6.4 5 7.6 14.3 2.6 20.7-5 6.5-14.3 7.6-20.7 2.7-19.2-14.9-53.8-32.7-74-41.2z"
+                />
+              </g>
+              <g id="g16">
+                <path
+                  id="path14"
+                  fillRule="evenodd"
+                  className="s0"
+                  d="m261.1 148.6c-7.5-3.1-11.1-11.8-7.9-19.3 3.1-7.5 11.8-11.1 19.3-7.9 22.1 9.2 59.7 28.8 80.7 45 6.4 5 7.6 14.3 2.6 20.7-5 6.5-14.3 7.6-20.7 2.7-19.2-14.9-53.8-32.7-74-41.2z"
+                />
+              </g>
+            </svg>
+          </div>
+        </div>
         <div className="flex flex-col items-center">
           {/* Hero */}
           <header className="w-full max-w-4xl text-center mb-16">
@@ -280,9 +329,50 @@ const UnearthedLocal = () => {
               </span>
             </h1>
 
+            {/* Syncs-to logos */}
+            <div className="flex flex-col items-center gap-3 mb-10">
+              <p className="text-xs font-bold tracking-widest uppercase text-foreground/40">
+                Can also sync directly to
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-orange-600/25 bg-orange-500/8">
+                  <div className="relative w-8 h-8 shrink-0">
+                    <Image
+                      src="/obsidian.svg"
+                      alt="Obsidian"
+                      fill
+                      sizes="32px"
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
+                  <span className="text-base font-bold text-foreground/80">
+                    Obsidian
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-orange-600/25 bg-orange-500/8">
+                  <div
+                    className="relative w-8 h-8 shrink-0 overflow-hidden"
+                    style={{ borderRadius: "22%" }}
+                  >
+                    <Image
+                      src="/craft_app_icon.png"
+                      alt="Craft"
+                      fill
+                      sizes="32px"
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
+                  <span className="text-base font-bold text-foreground/80">
+                    Craft
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto mb-8 leading-relaxed">
-              Sync Kindle and KOReader highlights to Obsidian. Subscribe to RSS
-              feeds and annotate articles.{" "}
+              Sync Kindle and KOReader highlights to Obsidian and/or Craft.
+              Subscribe to RSS feeds and annotate articles.{" "}
               <strong>Designed to stay out of your way</strong> and sync in the
               background, or become a reading companion to help you discover,
               highlight, and annotate new content.{" "}
@@ -324,17 +414,19 @@ const UnearthedLocal = () => {
           <section className="w-full max-w-3xl mb-20 px-4">
             <div className="border-2 border-black dark:border-white/20 rounded-2xl p-8 bg-card/50">
               <p className="text-lg leading-relaxed mb-4">
-                <strong>Obsidian</strong>.
+                <strong>Obsidian</strong> and <strong>Craft</strong>.
               </p>
               <p className="text-lg leading-relaxed mb-4">
-                You don&apos;t need a special Obsidian plugin.
+                You don&apos;t need a special Obsidian plugin — Local handles it
+                directly. And for Craft, it connects via the Craft API. No extra
+                tools needed for either.
               </p>
               <p className="text-lg leading-relaxed mb-4">
                 You don&apos;t need to plug in a device.
               </p>
               <p className="text-lg leading-relaxed mb-4">
                 You&apos;ll even get a Daily Reflection added to your Obsidian
-                daily note.
+                or Craft daily note.
               </p>
               <p className="text-lg leading-relaxed mb-6">
                 <span className="font-bold">

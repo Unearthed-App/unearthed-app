@@ -143,7 +143,7 @@ export const LocalScreenshots = () => {
         ))}
       </div>
       <p className="text-center mt-10 text-sm text-muted-foreground italic">
-        100% local &mdash; your data never leaves your machine
+        100% local &mdash; your data never leaves your machine (unless you want it to)
       </p>
     </div>
   );

@@ -25,6 +25,7 @@ import {
   Highlighter,
   Youtube,
   Smartphone,
+  Notebook,
 } from "lucide-react";
 
 function FeatureSection({
@@ -219,7 +220,7 @@ export default function FeaturesPage() {
                     YAML front-matter (title, author, type, origin — Kindle,
                     KOReader, or RSS — ASIN, tags)
                   </li>
-                  <li>All highlights formatted with customizable templates</li>
+                  <li>All highlights formatted with customisable templates</li>
                   <li>
                     Obsidian wiki-links for authors (
                     <CodeInline>[[Author Name]]</CodeInline>)
@@ -258,7 +259,7 @@ export default function FeaturesPage() {
             </AccordionItem>
             <AccordionItem value="customization">
               <AccordionTrigger className="text-sm">
-                Customization options
+                Customisation options
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground">
                 <ul className="list-disc list-inside space-y-1">
@@ -278,6 +279,311 @@ export default function FeaturesPage() {
                   <li>Source template (YAML front-matter)</li>
                   <li>Color mode: none, background, or text</li>
                   <li>Custom color hex values for all 10 highlight colors</li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </FeatureSection>
+
+        {/* Craft Docs Export */}
+        <FeatureSection
+          id="craft-export"
+          icon={Notebook}
+          title="Export to Craft Docs"
+          badge="v1.6.1"
+        >
+          <p>
+            Sync your highlights to <strong>Craft Docs</strong> alongside Obsidian. Each
+            source type lives in its own Craft <strong>collection</strong> document — a
+            spreadsheet-style page with columns for Type, Quotes, and Notes — and each
+            source becomes a row whose page contains the highlights and (optionally) the
+            full article body.
+          </p>
+
+          <div className="rounded-lg border bg-[hsl(169.4,43.6%,7.6%)] text-gray-100 p-3">
+            <pre className="text-xs overflow-x-auto">
+              {`Your Craft space/
+└── Unearthed (your choice)/
+    ├── Books         — collection (rows = books)
+    ├── Articles      — collection (rows = articles / web pages)
+    ├── Videos        — collection (rows = YouTube sources)
+    └── Authors       — collection (rows = authors, linked from Books)`}
+            </pre>
+          </div>
+
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="craft-setup">
+              <AccordionTrigger className="text-sm">
+                Setup &mdash; getting your Connection URL and API Key
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <ol className="list-decimal list-inside space-y-1.5">
+                  <li>Open Craft and the space you want Unearthed to write to</li>
+                  <li>
+                    Click <strong>Imagine</strong> and add a new{" "}
+                    <strong>API Connection</strong>
+                  </li>
+                  <li>
+                    Name it <em>Unearthed</em>, set <strong>Permission Level</strong> to{" "}
+                    <strong>Read and Write</strong> and <strong>Access Mode</strong> to{" "}
+                    <strong>API Key</strong>
+                  </li>
+                  <li>
+                    Under <strong>API Keys</strong>, click <strong>+</strong> to generate
+                    a key — Craft displays it once, so copy it immediately
+                  </li>
+                  <li>
+                    Paste the <strong>Connection URL</strong> and{" "}
+                    <strong>API Key</strong> into Settings &rarr; Craft Docs
+                  </li>
+                  <li>
+                    Click <strong>Test Connection</strong> — on success the connected
+                    space name is displayed
+                  </li>
+                </ol>
+                <p className="text-xs">
+                  The API key is encrypted at rest with Electron{" "}
+                  <CodeInline>safeStorage</CodeInline>. Use{" "}
+                  <strong>Replace</strong> to swap the saved token, or{" "}
+                  <strong>Clear</strong> to remove it.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="craft-collections">
+              <AccordionTrigger className="text-sm">
+                Collection-based export
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  Sources are grouped by type into a Craft collection document. Each row
+                  has columns for <strong>Type</strong>, <strong>Quotes</strong>,{" "}
+                  <strong>Notes</strong>, and (for Books) an <strong>Author</strong>{" "}
+                  relation column linking back to the Authors collection.
+                </p>
+                <ul className="list-disc list-inside text-xs space-y-0.5">
+                  <li>
+                    Tap any row to open its page — highlights live there as text blocks
+                  </li>
+                  <li>
+                    With <strong>Combine Sources</strong> on (default), one collection per
+                    type; off creates separate collections for finer organisation
+                  </li>
+                  <li>
+                    The <strong>Authors</strong> document is populated before Books so the
+                    relation column is available immediately
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="craft-resumable">
+              <AccordionTrigger className="text-sm">
+                Resumable, incremental sync
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <ul className="list-disc list-inside text-xs space-y-0.5">
+                  <li>
+                    Per-quote Craft block IDs are persisted in the local database — re-runs
+                    only insert <strong>new</strong> quotes
+                  </li>
+                  <li>
+                    Quote and note counts on each row are updated on every export
+                  </li>
+                  <li>
+                    Quotes are sent in chunks of 25 with throttling at 2 requests/second
+                    to respect Craft API limits
+                  </li>
+                  <li>
+                    A <strong>Cancel</strong> button stops a long-running export mid-way
+                    without losing already-synced quotes
+                  </li>
+                  <li>
+                    Failures fall back to per-quote retries so one bad quote doesn&apos;t
+                    abort the whole source
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="craft-article-content">
+              <AccordionTrigger className="text-sm">
+                Article content &amp; YouTube embeds
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  When <strong>Include Full Article Content</strong> is enabled,
+                  imported RSS / web articles get their body prepended to the Craft page
+                  on first sync, followed by a <strong>Highlights</strong> heading.
+                </p>
+                <ul className="list-disc list-inside text-xs space-y-0.5">
+                  <li>
+                    YouTube article URLs are inserted as a Craft{" "}
+                    <CodeInline>richUrl</CodeInline> block above the article text
+                  </li>
+                  <li>
+                    Long article text is split into ≈6000-char text blocks to stay
+                    within Craft&apos;s per-block limit
+                  </li>
+                  <li>
+                    Inserted only on first sync — subsequent re-exports do not duplicate
+                    article content
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="craft-colors">
+              <AccordionTrigger className="text-sm">
+                Color rendering
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  When <strong>Craft Quote Color Mode</strong> is set to{" "}
+                  <CodeInline>highlight</CodeInline>, each Unearthed color is mapped to
+                  the nearest Craft palette color:
+                </p>
+                <div className="rounded-lg border overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left font-medium px-3 py-2">
+                          Unearthed color
+                        </th>
+                        <th className="text-left font-medium px-3 py-2">
+                          Craft color
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["Yellow", "yellow"],
+                        ["Blue", "blue"],
+                        ["Pink", "pink"],
+                        ["Orange", "yellow"],
+                        ["Red", "red"],
+                        ["Green", "green"],
+                        ["Olive", "green"],
+                        ["Cyan", "cyan"],
+                        ["Purple", "purple"],
+                        ["Gray / Grey", "gray"],
+                      ].map(([from, to]) => (
+                        <tr key={from} className="border-b last:border-0">
+                          <td className="px-3 py-2">{from}</td>
+                          <td className="px-3 py-2 text-muted-foreground">{to}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs">
+                  Set color mode to <CodeInline>none</CodeInline> to skip color styling
+                  in Craft entirely.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="craft-template-translation">
+              <AccordionTrigger className="text-sm">
+                Template &amp; markdown translation
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  Craft uses the same Quote, Source, and Daily Reflection templates as
+                  Obsidian (or the built-in defaults). Obsidian-only syntax is translated
+                  before sending to Craft:
+                </p>
+                <ul className="list-disc list-inside text-xs space-y-0.5">
+                  <li>
+                    Wikilinks <CodeInline>{`[[Page]]`}</CodeInline> /{" "}
+                    <CodeInline>{`[[Page|Display]]`}</CodeInline> are flattened to plain
+                    text
+                  </li>
+                  <li>
+                    YAML frontmatter is converted to a Craft{" "}
+                    <CodeInline>&lt;callout&gt;</CodeInline> block
+                  </li>
+                  <li>
+                    Zero-width-space dedup markers (an Obsidian-only artifact) are
+                    stripped
+                  </li>
+                  <li>
+                    <CodeInline>&lt;script&gt;</CodeInline> tags are stripped as
+                    defense-in-depth
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="craft-daily-reflection">
+              <AccordionTrigger className="text-sm">
+                Daily reflection in Craft
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  When <strong>Append Daily Reflection to Craft Daily Note</strong> is
+                  enabled, today&apos;s random highlight is sent to your Craft daily note
+                  alongside Obsidian (if configured) — both targets receive the same
+                  quote independently.
+                </p>
+                <ul className="list-disc list-inside text-xs space-y-0.5">
+                  <li>
+                    Auto-appends as soon as Unearthed opens — no need to press &quot;New
+                    Reflection&quot;
+                  </li>
+                  <li>
+                    Per-destination success is recorded in the database, so the
+                    reflection is appended at most once per day across restarts
+                  </li>
+                  <li>
+                    Compact pills (&quot;Appended to Obsidian&quot;, &quot;Appended to
+                    Craft&quot;) confirm which destinations received the quote
+                  </li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="craft-auto-export">
+              <AccordionTrigger className="text-sm">
+                Hourly auto-export
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  Toggle <strong>Auto-export to Craft</strong> in Settings &rarr; Craft
+                  Docs to sync new highlights every hour. Runs in the background
+                  alongside the Obsidian auto-export and is toggled independently.
+                </p>
+                <p className="text-xs">
+                  Requires <strong>Keep App Running</strong> to continue syncing while
+                  the window is closed.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="craft-recovery">
+              <AccordionTrigger className="text-sm">
+                Stale document &amp; block recovery
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <ul className="list-disc list-inside text-xs space-y-0.5">
+                  <li>
+                    If a Craft document is permanently deleted, the next export
+                    recreates it and re-uploads all quotes in a single pass
+                  </li>
+                  <li>
+                    If individual blocks are deleted in Craft, they are detected on the
+                    next export and re-synced automatically
+                  </li>
+                  <li>
+                    For a full reset, use{" "}
+                    <strong>Settings &rarr; Craft Docs &rarr; Reset Craft Sync Data</strong>{" "}
+                    — this clears Unearthed&apos;s ID mapping but does NOT delete anything
+                    in Craft
+                  </li>
+                  <li>
+                    If you deleted a Craft document and want it recreated cleanly, empty
+                    Craft&apos;s Trash first so Unearthed can reuse the same name
+                  </li>
                 </ul>
               </AccordionContent>
             </AccordionItem>
@@ -1197,7 +1503,7 @@ export default function FeaturesPage() {
           id="mobile"
           icon={Smartphone}
           title="Mobile App — Android &amp; iOS (PWA)"
-          badge="v1.4.0"
+          badge="v1.4.2+"
         >
           <p>
             Unearthed is available as a Progressive Web App (PWA) for Android and iOS.
@@ -1439,7 +1745,7 @@ export default function FeaturesPage() {
         {/* Templates */}
         <FeatureSection id="templates" icon={FileText} title="Custom Templates">
           <p>
-            Customize how your exports look with template variables in Settings
+            Customise how your exports look with template variables in Settings
             &rarr; Template Settings.
           </p>
 

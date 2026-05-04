@@ -106,7 +106,7 @@ export default function UnearthedOnline() {
         {/* Primary top gradient */}
         <div className="absolute inset-x-0 top-0 h-[600px] bg-gradient-to-b from-primary/[0.13] to-transparent pointer-events-none -z-10" />
         <NonPremiumNavigation currentPage="online" />
-        <div className="absolute top-0 right-0 flex items-center justify-center space-x-2 p-3">
+        <div className="absolute mt-3 top-0 right-0 flex items-center justify-center space-x-2 p-3">
           <div className="flex justify-center">
             <svg
               className="text-red-500 motion-blur-in-xl motion-duration-[6000ms] h-8 w-8"

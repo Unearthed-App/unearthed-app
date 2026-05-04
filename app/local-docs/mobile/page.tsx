@@ -152,6 +152,7 @@ export default function MobilePage() {
                   <li>
                     <strong>Highlights &amp; notes</strong> : quotes created on
                     mobile sync to the desktop and can be exported to Obsidian
+                    or Craft Docs
                   </li>
                   <li>
                     <strong>Deletions</strong> : articles or feeds deleted on
@@ -266,8 +267,8 @@ export default function MobilePage() {
           </ol>
           <p className="text-xs">
             You can also type quotes manually. Captured quotes are exported to
-            Obsidian (after syncing with Unearthed Local) just like Kindle
-            highlights.
+            Obsidian and/or Craft Docs (after syncing with Unearthed Local) just
+            like Kindle highlights.
           </p>
         </Section>
 

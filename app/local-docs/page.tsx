@@ -16,6 +16,7 @@ import {
   Keyboard,
   Bookmark,
   Smartphone,
+  Notebook,
 } from "lucide-react";
 
 const SECTIONS = [
@@ -30,7 +31,8 @@ const SECTIONS = [
   },
   {
     title: "Features",
-    description: "Kindle sync, Obsidian export, KOReader integration, and more",
+    description:
+      "Kindle sync, Obsidian + Craft Docs export, KOReader integration, and more",
     href: "/local-docs/features",
     icon: Layers,
     color: "text-green-600 dark:text-green-400",
@@ -58,6 +60,12 @@ const HIGHLIGHTS = [
     title: "RSS Reader",
     description:
       "Subscribe to RSS feeds, import any web page, read articles in-app, and annotate them with color-coded highlights and notes.",
+  },
+  {
+    icon: Notebook,
+    title: "Obsidian + Craft Export",
+    description:
+      "Sync highlights to your Obsidian vault and to Craft Docs collections, side-by-side. Hourly auto-export and daily reflection supported on both.",
   },
   {
     icon: Shield,
@@ -104,17 +112,17 @@ export default function LocalDocsPage() {
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
           <BookOpen className="h-6 w-6 text-primary" />
-          <span className="text-sm font-medium text-primary">v1.4.0</span>
+          <span className="text-sm font-medium text-primary">v1.6.1</span>
         </div>
         <h1 className="text-3xl font-bold tracking-tight mb-3">
           Unearthed Local
         </h1>
         <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
           A privacy-first desktop app that syncs your Kindle and KOReader
-          highlights into Obsidian, with a built-in RSS feed reader for
-          importing and annotating articles. Runs entirely on your machine —
-          with a companion mobile app (Android &amp; iOS) that keeps everything in sync over your
-          home Wi-Fi.
+          highlights into <strong>Obsidian</strong> and <strong>Craft Docs</strong>,
+          with a built-in RSS feed reader for importing and annotating articles.
+          Runs entirely on your machine — with a companion mobile app (Android
+          &amp; iOS) that keeps everything in sync over your home Wi-Fi.
         </p>
       </div>
 
@@ -191,7 +199,8 @@ export default function LocalDocsPage() {
             </span>
             <span>
               Open Settings and configure your{" "}
-              <strong>Obsidian vault path</strong>
+              <strong>Obsidian vault path</strong> and/or your{" "}
+              <strong>Craft connection URL + API token</strong>
             </span>
           </li>
           <li className="flex gap-2">
@@ -217,9 +226,10 @@ export default function LocalDocsPage() {
               5
             </span>
             <span>
-              Your highlights appear in your configured location as Markdown
-              files. Explore the <strong>RSS Feeds</strong> tab to subscribe to
-              feeds and import articles.
+              Your highlights appear in your configured Obsidian vault as
+              Markdown files and/or in your Craft space as collection rows.
+              Explore the <strong>RSS Feeds</strong> tab to subscribe to feeds
+              and import articles.
             </span>
           </li>
         </ol>
@@ -238,8 +248,8 @@ export default function LocalDocsPage() {
             </p>
             <p className="text-sm text-muted-foreground mt-1">
               <strong>Modified by Unearthed:</strong> The local Unearthed
-              database and your Obsidian vault will be modified during syncing
-              and export.
+              database, your Obsidian vault, and your Craft space (if
+              configured) will be modified during syncing and export.
             </p>
           </div>
         </div>
