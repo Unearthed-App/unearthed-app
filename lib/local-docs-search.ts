@@ -4,7 +4,13 @@ export interface SearchItem {
   id: string;
   title: string;
   section: string;
-  category: "Install" | "Features" | "Settings" | "Troubleshoot" | "Advanced" | "Mobile";
+  category:
+    | "Install"
+    | "Features"
+    | "Settings"
+    | "Troubleshoot"
+    | "Advanced"
+    | "Mobile";
   content: string;
   href: string;
   keywords: string[];
@@ -125,14 +131,7 @@ export const searchIndex: SearchItem[] = [
     content:
       "Export highlights as Markdown files into Obsidian vault. YAML front-matter with metadata. Customisable templates for filenames, quotes, and sources. Color-coded highlights. Zero-width space markers for duplicate detection.",
     href: "/local-docs/features#obsidian-export",
-    keywords: [
-      "obsidian",
-      "export",
-      "markdown",
-      "yaml",
-      "template",
-      "vault",
-    ],
+    keywords: ["obsidian", "export", "markdown", "yaml", "template", "vault"],
   },
   {
     id: "feature-craft-export",
@@ -281,13 +280,7 @@ export const searchIndex: SearchItem[] = [
     content:
       "Toggle Auto-export to Craft in Settings → Craft Docs to sync new highlights every hour. Runs in the background alongside the Obsidian auto-export and is toggled independently. Requires Keep App Running to continue syncing while the window is closed.",
     href: "/local-docs/features#craft-export",
-    keywords: [
-      "craft",
-      "auto export",
-      "hourly",
-      "background",
-      "auto sync",
-    ],
+    keywords: ["craft", "auto export", "hourly", "background", "auto sync"],
   },
   {
     id: "feature-craft-recovery",
@@ -362,7 +355,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "RSS articles containing YouTube links display embedded video players. Video transcripts are fetched and injected into article content. Retries on rate limiting with exponential backoff.",
+      "RSS articles containing YouTube links display embedded video players. Video transcripts are fetched and injected into article content. Retries on rate limiting with exponential backoff. Playback position is saved automatically and resumes where you left off — syncs between desktop and mobile.",
     href: "/local-docs/features#youtube",
     keywords: [
       "youtube",
@@ -370,6 +363,8 @@ export const searchIndex: SearchItem[] = [
       "embed",
       "transcript",
       "player",
+      "resume",
+      "position",
     ],
   },
   {
@@ -408,7 +403,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "View, search, filter, and manage all sources. Filter by All, Active, or Ignored. Toggle ignored status. Batch select and delete. View quotes per source with color-coded accent bars.",
+      "View, search, filter, and manage all sources. Filter by All, Active, or Ignored. Filter by type (Book, Article, Collection, Video) or origin (Kindle, KOReader, RSS, Manual). Toggle ignored status. Batch select and delete. View quotes per source with color-coded accent bars.",
     href: "/local-docs/features#library",
     keywords: [
       "library",
@@ -418,6 +413,11 @@ export const searchIndex: SearchItem[] = [
       "batch",
       "delete",
       "sources",
+      "type",
+      "origin",
+      "collection",
+      "video",
+      "manual",
     ],
   },
   {
@@ -459,14 +459,7 @@ export const searchIndex: SearchItem[] = [
     content:
       "Keep App Running in Background minimizes to system tray. Private Mode masks sensitive paths for screen sharing. Run on System Startup launches at login.",
     href: "/local-docs/settings#general",
-    keywords: [
-      "general",
-      "background",
-      "tray",
-      "private",
-      "startup",
-      "login",
-    ],
+    keywords: ["general", "background", "tray", "private", "startup", "login"],
   },
   {
     id: "settings-api",
@@ -500,14 +493,7 @@ export const searchIndex: SearchItem[] = [
     content:
       "Configure Obsidian vault location with Browse button. Root Folder name (default: Unearthed) for organizing books and articles inside vault.",
     href: "/local-docs/settings#obsidian",
-    keywords: [
-      "obsidian",
-      "vault",
-      "location",
-      "browse",
-      "root",
-      "folder",
-    ],
+    keywords: ["obsidian", "vault", "location", "browse", "root", "folder"],
   },
   {
     id: "settings-craft",
@@ -608,14 +594,7 @@ export const searchIndex: SearchItem[] = [
     content:
       "Craft Quote Color Mode controls how highlight colors are rendered inside Craft. 'highlight' (default) maps each Unearthed color to the nearest Craft palette color (yellow, blue, pink, red, green, cyan, purple, gray). 'none' applies no color styling. Orange and olive map to yellow and green respectively (Craft has no exact equivalents).",
     href: "/local-docs/settings#craft",
-    keywords: [
-      "craft",
-      "color",
-      "color mode",
-      "highlight",
-      "palette",
-      "none",
-    ],
+    keywords: ["craft", "color", "color mode", "highlight", "palette", "none"],
   },
   {
     id: "settings-craft-reset-sync",
@@ -663,13 +642,7 @@ export const searchIndex: SearchItem[] = [
     content:
       "macOS only. When disabled, the app runs solely from the menu bar without a Dock icon. Automatically enables Keep App Running in Background.",
     href: "/local-docs/settings#macos-dock",
-    keywords: [
-      "macos",
-      "dock",
-      "menu bar",
-      "tray",
-      "hide",
-    ],
+    keywords: ["macos", "dock", "menu bar", "tray", "hide"],
   },
   {
     id: "settings-kindle",
@@ -679,14 +652,7 @@ export const searchIndex: SearchItem[] = [
     content:
       "Kindle URL (default: read.amazon.com), change to regional domain if needed. Auto Sync toggle to fetch new highlights every hour in background.",
     href: "/local-docs/settings#kindle",
-    keywords: [
-      "kindle",
-      "url",
-      "amazon",
-      "auto",
-      "sync",
-      "region",
-    ],
+    keywords: ["kindle", "url", "amazon", "auto", "sync", "region"],
   },
   {
     id: "settings-filename",
@@ -696,14 +662,7 @@ export const searchIndex: SearchItem[] = [
     content:
       "Source filename template with variables (title, author, type). Replace spaces in filenames. Lowercase option. Include ignored books in CSV export.",
     href: "/local-docs/settings#filename",
-    keywords: [
-      "filename",
-      "template",
-      "spaces",
-      "lowercase",
-      "csv",
-      "ignored",
-    ],
+    keywords: ["filename", "template", "spaces", "lowercase", "csv", "ignored"],
   },
   {
     id: "settings-templates",
@@ -731,14 +690,7 @@ export const searchIndex: SearchItem[] = [
     content:
       "Quote color mode: none, background gradient, or text color. Custom hex values for all 10 highlight colors (yellow, blue, pink, orange, red, green, olive, cyan, purple, gray).",
     href: "/local-docs/settings#colors",
-    keywords: [
-      "color",
-      "quote",
-      "hex",
-      "background",
-      "highlight",
-      "mode",
-    ],
+    keywords: ["color", "quote", "hex", "background", "highlight", "mode"],
   },
   {
     id: "settings-clean-values",
@@ -763,7 +715,7 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "Show database file path for manual backups. Delete Database to permanently remove all local data and reinitialize. Reset All Settings restores defaults without affecting database.",
+      "Show database file path for manual backups. Delete Database to permanently remove all local data and reinitialize. Purge Soft-Deleted permanently removes any articles and feeds that are currently in a soft-deleted state, with a confirmation dialog summarising the count. Reset All Settings restores defaults without affecting database.",
     href: "/local-docs/settings#database",
     keywords: [
       "database",
@@ -772,6 +724,8 @@ export const searchIndex: SearchItem[] = [
       "backup",
       "path",
       "utilities",
+      "purge",
+      "soft-deleted",
     ],
   },
 
@@ -951,9 +905,22 @@ export const searchIndex: SearchItem[] = [
     section: "Advanced Usage",
     category: "Advanced",
     content:
-      "55+ fully customisable keyboard shortcuts across 8 contexts. System-wide (any app): Ctrl/Cmd+Shift+I Quick Import, Ctrl/Cmd+Shift+O Go to RSS Feeds. In-app global: Ctrl/Cmd+K search, Ctrl/Cmd+1-4 tabs, Ctrl/Cmd+D dark mode, Ctrl/Cmd+/ help, Ctrl/Cmd+R Read It Later. Home tab: Z new reflection, C copy, D/A navigate, Space open, E import, Q hide, X delete, R read later. RSS tab: D/A navigate, Space open, E import, Q hide, X delete, R read later, Ctrl/Cmd+L read-later filter. Kindle: Ctrl/Cmd+Shift+S sync. Library: Ctrl/Cmd+A select all. Article Reader: E import, Q hide, X delete, R read later, W/S scroll, A/D prev/next, Space play video. Article Highlighter: Ctrl/Cmd+F search, W/S scroll, A/D prev/next, Space play video. All shortcuts remappable in Settings → Keyboard Shortcuts.",
+      "55+ fully customisable keyboard shortcuts across 8 contexts. System-wide (any app): Ctrl/Cmd+Shift+I Quick Import (URL or Add Quote), Ctrl/Cmd+Shift+O Go to RSS Feeds. In-app global: Ctrl/Cmd+I Add Entry, Ctrl/Cmd+K search, Ctrl/Cmd+1-4 tabs, Ctrl/Cmd+D dark mode, Ctrl/Cmd+/ help, Ctrl/Cmd+R Read It Later. Home tab: Z new reflection, C copy, D/A navigate, Space open, E import, Q hide, X delete, R read later. RSS tab: D/A navigate, Space open, E import, Q hide, X delete, R read later, Ctrl/Cmd+L read-later filter. Kindle: Ctrl/Cmd+Shift+S sync. Library: Ctrl/Cmd+A select all. Article Reader: E import, Q hide, X delete, R read later, W/S scroll, A/D prev/next, Space play video. Article Highlighter: Ctrl/Cmd+F search, W/S scroll, A/D prev/next, Space play video. All shortcuts remappable in Settings → Keyboard Shortcuts.",
     href: "/local-docs/features#keyboard",
-    keywords: ["keyboard", "shortcut", "ctrl", "cmd", "hotkey", "customise", "remap", "keybinding", "quick import", "read later"],
+    keywords: [
+      "keyboard",
+      "shortcut",
+      "ctrl",
+      "cmd",
+      "hotkey",
+      "customise",
+      "remap",
+      "keybinding",
+      "quick import",
+      "read later",
+      "add entry",
+      "add quote",
+    ],
   },
   {
     id: "settings-keyboard-shortcuts",
@@ -963,19 +930,57 @@ export const searchIndex: SearchItem[] = [
     content:
       "All keyboard shortcuts are fully customisable. Open Settings → Keyboard Shortcuts or press Ctrl/Cmd+/ to view and remap any shortcut. Supports Ctrl/Cmd, Shift, and Alt modifiers. Changes apply instantly without restart. Custom bindings persisted in settings.json.",
     href: "/local-docs/settings#keyboard-shortcuts",
-    keywords: ["keyboard", "shortcut", "custom", "remap", "keybinding", "settings", "customise"],
+    keywords: [
+      "keyboard",
+      "shortcut",
+      "custom",
+      "remap",
+      "keybinding",
+      "settings",
+      "customise",
+    ],
   },
-
-  // Features – missing entries
+  {
+    id: "feature-manual-entry",
+    title: "Manual Quote & Source Entry",
+    section: "Features",
+    category: "Features",
+    content:
+      "Add your own quotes and sources directly in Unearthed without Kindle or KOReader. Click the purple + Add button in the header or press Ctrl/Cmd+I. Quote fields: content, note, location, highlight color, and source. Source types: Book, Article, Collection (for thematic groups like 'Wisdom'). If no source is selected, the quote is saved to an auto-created Misc Collection. New sources can be added inline without leaving the form. Manual sources are tagged with origin 'Manual' and filterable in the Library.",
+    href: "/local-docs/features#manual-entry",
+    keywords: [
+      "manual",
+      "add",
+      "quote",
+      "source",
+      "entry",
+      "collection",
+      "misc",
+      "ctrl+i",
+      "plus",
+      "add button",
+      "custom",
+    ],
+  },
   {
     id: "feature-read-it-later",
     title: "Read It Later",
     section: "Features",
     category: "Features",
     content:
-      "Bookmark any article to read later with a single key press or tap. Press R in the article list or inside the Article Reader to toggle the bookmark. A blue badge appears on bookmarked cards. Filter the RSS feed to show only bookmarked articles with the blue toggle or Ctrl/Cmd+L shortcut. Jump straight to your reading list from anywhere with the global Ctrl/Cmd+R shortcut. Hiding an article automatically clears its Read It Later bookmark. Syncs with the Unearthed Mobile app so bookmarks follow you between desktop and phone.",
+      "Bookmark any article to read later with a single key press or tap. Press R in the article list or inside the Article Reader to toggle the bookmark. Imported articles viewed in the Article Content Modal also show a bookmark button (next to the YouTube transcript button). A blue badge appears on bookmarked cards. Filter the RSS feed to show only bookmarked articles with the blue toggle or Ctrl/Cmd+L shortcut. Jump straight to your reading list from anywhere with the global Ctrl/Cmd+R shortcut. Hiding an article automatically clears its Read It Later bookmark. Syncs with the Unearthed Mobile app so bookmarks follow you between desktop and phone.",
     href: "/local-docs/features#read-it-later",
-    keywords: ["read later", "bookmark", "save", "reading list", "ctrl+l", "ctrl+r", "blue", "filter"],
+    keywords: [
+      "read later",
+      "bookmark",
+      "save",
+      "reading list",
+      "ctrl+l",
+      "ctrl+r",
+      "blue",
+      "filter",
+      "modal",
+    ],
   },
   {
     id: "feature-web-page-import",
@@ -985,7 +990,17 @@ export const searchIndex: SearchItem[] = [
     content:
       "Import any article or blog post from the web directly into your library. Paste a URL in the RSS tab and Unearthed fetches the full text using the same Reader View technology as Firefox — stripping ads, sidebars, and clutter. The clean article is saved to your database, ready for highlighting and annotation. Works with the Quick Import shortcut too: press Ctrl/Cmd+Shift+I, paste a link, and the page is saved instantly even while the app is in the background.",
     href: "/local-docs/features#web-import",
-    keywords: ["web", "page", "import", "url", "article", "readability", "reader view", "blog", "paste"],
+    keywords: [
+      "web",
+      "page",
+      "import",
+      "url",
+      "article",
+      "readability",
+      "reader view",
+      "blog",
+      "paste",
+    ],
   },
   {
     id: "feature-quick-import-shortcut",
@@ -993,9 +1008,18 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Save content to Unearthed from any app, without switching windows. Press Ctrl+Shift+I on Windows/Linux or Cmd+Shift+I on macOS to open a lightweight import dialog. Paste any URL — YouTube video, RSS feed, or web article — and Unearthed detects the type automatically and imports it. The dialog closes itself after a successful import, so you can stay in your flow. Shortcut can be customised in Settings → Keyboard Shortcuts. Enable global shortcuts in General Settings first.",
+      "Save content to Unearthed from any app without switching windows. Press Ctrl+Shift+I (Cmd+Shift+I on Mac) to open a lightweight floating dialog with two tabs: Paste URL (YouTube, RSS, web pages) and Add Quote (quote text, note, location, color, source). Shift+Tab switches between tabs; Tab moves between fields. The dialog closes itself after a successful import. Shortcut customisable in Settings → Keyboard Shortcuts. Enable global shortcuts in General Settings first.",
     href: "/local-docs/features#quick-import-shortcut",
-    keywords: ["quick import", "global shortcut", "ctrl+shift+i", "cmd+shift+i", "background", "minimized", "url", "system shortcut"],
+    keywords: [
+      "quick import",
+      "global shortcut",
+      "ctrl+shift+i",
+      "cmd+shift+i",
+      "background",
+      "minimized",
+      "url",
+      "system shortcut",
+    ],
   },
   {
     id: "feature-global-rss-shortcut",
@@ -1005,7 +1029,16 @@ export const searchIndex: SearchItem[] = [
     content:
       "Jump straight to your RSS feed from any application. Press Ctrl+Shift+O on Windows/Linux or Cmd+Shift+O on macOS to instantly bring Unearthed to the front and land on the RSS Feeds tab, with your feed list automatically refreshed. Perfect for quickly scanning new articles without breaking your workflow. Shortcut can be customised in Settings → Keyboard Shortcuts. Enable global shortcuts in General Settings first.",
     href: "/local-docs/features#global-rss-shortcut",
-    keywords: ["global shortcut", "rss", "ctrl+shift+o", "cmd+shift+o", "jump", "open", "feeds", "system shortcut"],
+    keywords: [
+      "global shortcut",
+      "rss",
+      "ctrl+shift+o",
+      "cmd+shift+o",
+      "jump",
+      "open",
+      "feeds",
+      "system shortcut",
+    ],
   },
   {
     id: "feature-get-full-article",
@@ -1015,7 +1048,15 @@ export const searchIndex: SearchItem[] = [
     content:
       "Many RSS feeds only publish a teaser or short summary. With Unearthed you can fetch the complete article text directly from the source website with one click. The full content is stored locally and available for offline reading, highlighting, and export to Obsidian — no need to leave the app or open a browser.",
     href: "/local-docs/features#get-full-article",
-    keywords: ["full article", "fetch", "scrape", "truncated", "summary", "read more", "content"],
+    keywords: [
+      "full article",
+      "fetch",
+      "scrape",
+      "truncated",
+      "summary",
+      "read more",
+      "content",
+    ],
   },
 
   // Settings – missing entries
@@ -1027,7 +1068,14 @@ export const searchIndex: SearchItem[] = [
     content:
       "When enabled, Unearthed includes the full article body alongside your quotes and notes when exporting to Obsidian. Disabled by default so exported files stay focused on your highlights. Turn it on in Settings → Obsidian if you want a complete record of the original text in your vault.",
     href: "/local-docs/settings#include-article-content",
-    keywords: ["obsidian", "export", "article content", "full text", "include", "body"],
+    keywords: [
+      "obsidian",
+      "export",
+      "article content",
+      "full text",
+      "include",
+      "body",
+    ],
   },
   {
     id: "settings-rss-auto-delete",
@@ -1037,7 +1085,15 @@ export const searchIndex: SearchItem[] = [
     content:
       "Keep your feed tidy by automatically removing unread articles after a set number of days. Only articles you have not imported are deleted — anything you have saved to your library is kept forever. Set the threshold (default 7 days) in Settings → RSS Articles, or set it to 0 to keep all articles indefinitely.",
     href: "/local-docs/settings#rss-auto-delete",
-    keywords: ["auto delete", "clean up", "old articles", "days", "rss", "expiry", "retention"],
+    keywords: [
+      "auto delete",
+      "clean up",
+      "old articles",
+      "days",
+      "rss",
+      "expiry",
+      "retention",
+    ],
   },
   {
     id: "settings-global-shortcuts",
@@ -1047,7 +1103,14 @@ export const searchIndex: SearchItem[] = [
     content:
       "Turn on system-wide keyboard shortcuts so Unearthed responds even when the app is minimized or in the background. Enabling this unlocks Quick Import (Ctrl/Cmd+Shift+I) and Go to RSS Feeds (Ctrl/Cmd+Shift+O) from any application. Toggle in Settings → General. Individual shortcuts can be customised in Settings → Keyboard Shortcuts.",
     href: "/local-docs/settings#global-shortcuts",
-    keywords: ["global shortcuts", "system shortcut", "background", "minimized", "enable", "general"],
+    keywords: [
+      "global shortcuts",
+      "system shortcut",
+      "background",
+      "minimized",
+      "enable",
+      "general",
+    ],
   },
 
   // Advanced – missing entries
@@ -1059,7 +1122,14 @@ export const searchIndex: SearchItem[] = [
     content:
       "System-wide shortcuts (work from any app): Ctrl+Shift+I / Cmd+Shift+I = Quick Import dialog; Ctrl+Shift+O / Cmd+Shift+O = Open RSS Feeds tab. In-app global shortcuts: Ctrl+K / Cmd+K = Search; Ctrl+1-4 / Cmd+1-4 = Switch tabs; Ctrl+D / Cmd+D = Toggle dark mode; Ctrl+/ / Cmd+/ = Keyboard Shortcuts reference; Ctrl+R / Cmd+R = Read It Later feed; Ctrl+, / Cmd+, = Settings. All shortcuts customisable in Settings → Keyboard Shortcuts.",
     href: "/local-docs/features#keyboard",
-    keywords: ["global", "system shortcut", "quick import", "rss shortcut", "reference", "all shortcuts"],
+    keywords: [
+      "global",
+      "system shortcut",
+      "quick import",
+      "rss shortcut",
+      "reference",
+      "all shortcuts",
+    ],
   },
 
   // Troubleshooting – missing entries
@@ -1071,7 +1141,15 @@ export const searchIndex: SearchItem[] = [
     content:
       "If Ctrl/Cmd+Shift+I or Ctrl/Cmd+Shift+O do nothing: make sure 'Enable System Global Shortcuts' is turned on in Settings → General. On macOS, grant Accessibility permissions when prompted (System Preferences → Privacy & Security → Accessibility). Conflicts with other apps using the same shortcut can prevent registration — reassign the shortcut in Settings → Keyboard Shortcuts.",
     href: "/local-docs/troubleshoot#global-shortcuts",
-    keywords: ["global shortcut", "not working", "accessibility", "macos", "permissions", "conflict", "ctrl+shift+i"],
+    keywords: [
+      "global shortcut",
+      "not working",
+      "accessibility",
+      "macos",
+      "permissions",
+      "conflict",
+      "ctrl+shift+i",
+    ],
   },
 
   // Mobile App – all new
@@ -1093,7 +1171,15 @@ export const searchIndex: SearchItem[] = [
     content:
       "Unearthed Local (desktop) and Unearthed Mobile are designed to work hand-in-hand. Subscribe to a feed on your phone and it appears on your desktop. Import a Kindle book on your computer and your highlights are ready to browse on your phone during your commute. Read Later bookmarks, hidden articles, and imported sources all sync bidirectionally — you are always looking at the same library, regardless of which device you are on. Sync happens automatically over your local network, so your data never leaves your home.",
     href: "/local-docs/mobile#companion",
-    keywords: ["sync", "desktop", "mobile", "together", "bidirectional", "local network", "wifi"],
+    keywords: [
+      "sync",
+      "desktop",
+      "mobile",
+      "together",
+      "bidirectional",
+      "local network",
+      "wifi",
+    ],
   },
   {
     id: "mobile-sync-setup",
@@ -1103,7 +1189,20 @@ export const searchIndex: SearchItem[] = [
     content:
       "To connect the mobile app to your desktop: open Unearthed on your desktop and go to Settings → API Endpoint — you will see your local IP address and sync token. In the mobile app, go to Settings and enter the IP address and token. iOS uses port 6543 (HTTPS); Android uses port 6545 (HTTP, no certificate required). Tap Test Connection to confirm. Both devices must be on the same Wi-Fi network.",
     href: "/local-docs/mobile#setup",
-    keywords: ["setup", "connect", "ip address", "port", "6543", "6545", "android", "ios", "token", "wifi", "network", "mobile sync"],
+    keywords: [
+      "setup",
+      "connect",
+      "ip address",
+      "port",
+      "6543",
+      "6545",
+      "android",
+      "ios",
+      "token",
+      "wifi",
+      "network",
+      "mobile sync",
+    ],
   },
   {
     id: "mobile-sync-content",
@@ -1113,7 +1212,17 @@ export const searchIndex: SearchItem[] = [
     content:
       "Unearthed syncs the following between desktop and mobile: RSS feed subscriptions, all feed articles (including hidden and read-later status), imported sources (Kindle books, KOReader notes, web articles), highlights and personal notes, and deletions. Conflict resolution favours the most recently changed version, so edits on either device are never lost. You can trigger a sync manually or set the mobile app to sync automatically every 5, 15, 30, or 60 minutes.",
     href: "/local-docs/mobile#sync-content",
-    keywords: ["sync", "what syncs", "feeds", "articles", "highlights", "quotes", "read later", "hidden", "auto sync"],
+    keywords: [
+      "sync",
+      "what syncs",
+      "feeds",
+      "articles",
+      "highlights",
+      "quotes",
+      "read later",
+      "hidden",
+      "auto sync",
+    ],
   },
   {
     id: "mobile-reading",
@@ -1123,7 +1232,16 @@ export const searchIndex: SearchItem[] = [
     content:
       "The mobile app's Feed tab shows all your RSS articles in a clean, distraction-free layout optimised for small screens. Swipe left or right between articles, pull down to refresh, and tap any article to open the full-text reader. Videos from YouTube channels you follow play inline with a single tap. Articles synced from the desktop — including Kindle chapters and web imports — are available to read offline once synced.",
     href: "/local-docs/mobile#reading",
-    keywords: ["reading", "feed", "articles", "mobile", "swipe", "offline", "youtube", "reader"],
+    keywords: [
+      "reading",
+      "feed",
+      "articles",
+      "mobile",
+      "swipe",
+      "offline",
+      "youtube",
+      "reader",
+    ],
   },
   {
     id: "mobile-capture",
@@ -1133,7 +1251,17 @@ export const searchIndex: SearchItem[] = [
     content:
       "Never lose a great passage from a physical book again. The Capture button (camera icon) in the mobile app lets you photograph highlighted text and Unearthed reads it automatically using OCR — no typing required. You can also type quotes manually. Attach a note and a colour, choose which book it belongs to, and save. Captured quotes sync to your desktop library and can be exported to Obsidian just like Kindle highlights.",
     href: "/local-docs/mobile#capture",
-    keywords: ["capture", "camera", "ocr", "quote", "photo", "physical book", "highlight", "manual", "type"],
+    keywords: [
+      "capture",
+      "camera",
+      "ocr",
+      "quote",
+      "photo",
+      "physical book",
+      "highlight",
+      "manual",
+      "type",
+    ],
   },
   {
     id: "mobile-gestures",
@@ -1143,7 +1271,17 @@ export const searchIndex: SearchItem[] = [
     content:
       "Unearthed Mobile is built for one-handed use. Swipe left between adjacent articles without going back to the list. Configure what a left or right swipe does on article cards — hide the article or bookmark it for Read Later — in Settings → Gestures. Pull down on the feed list to refresh all subscribed feeds at once. The app respects your phone's notch, home bar, and screen edges so nothing is hidden behind hardware cutouts.",
     href: "/local-docs/mobile#gestures",
-    keywords: ["swipe", "gesture", "touch", "left", "right", "hide", "read later", "pull to refresh", "one-handed"],
+    keywords: [
+      "swipe",
+      "gesture",
+      "touch",
+      "left",
+      "right",
+      "hide",
+      "read later",
+      "pull to refresh",
+      "one-handed",
+    ],
   },
   {
     id: "mobile-daily-reflection",
@@ -1153,7 +1291,16 @@ export const searchIndex: SearchItem[] = [
     content:
       "Open the mobile app to your Home screen and find a handpicked quote waiting for you each morning — drawn from your entire library of Kindle highlights, KOReader notes, and captured passages. Tap the refresh icon to shuffle to a different quote, or select a specific book from the 'Currently Reading' picker to focus reflections on one source. A running count shows how many highlights you have collected so far.",
     href: "/local-docs/mobile#daily-reflection",
-    keywords: ["daily", "reflection", "quote", "home", "shuffle", "currently reading", "highlights", "morning"],
+    keywords: [
+      "daily",
+      "reflection",
+      "quote",
+      "home",
+      "shuffle",
+      "currently reading",
+      "highlights",
+      "morning",
+    ],
   },
   {
     id: "mobile-library",
@@ -1163,7 +1310,17 @@ export const searchIndex: SearchItem[] = [
     content:
       "The Sources tab on mobile shows your entire reading library — every book, article, and web page you have collected highlights from. Search by title or author, filter by source type (Kindle, KOReader, web, manual), and tap any source to browse its quotes. Everything synced from the desktop is available here, alongside quotes you captured directly on your phone.",
     href: "/local-docs/mobile#library",
-    keywords: ["library", "sources", "books", "quotes", "browse", "search", "filter", "kindle", "koreader"],
+    keywords: [
+      "library",
+      "sources",
+      "books",
+      "quotes",
+      "browse",
+      "search",
+      "filter",
+      "kindle",
+      "koreader",
+    ],
   },
   {
     id: "mobile-add-content",
@@ -1173,7 +1330,18 @@ export const searchIndex: SearchItem[] = [
     content:
       "You don't need the desktop to add content. From the mobile app you can: subscribe to a new RSS feed by pasting a URL, import a YouTube video (with transcript), save any web article by its URL, or capture a quote from a physical book using the camera. Content added on mobile syncs to the desktop automatically on the next sync cycle.",
     href: "/local-docs/mobile#add-content",
-    keywords: ["add", "import", "rss", "youtube", "web page", "url", "camera", "new", "subscribe", "mobile"],
+    keywords: [
+      "add",
+      "import",
+      "rss",
+      "youtube",
+      "web page",
+      "url",
+      "camera",
+      "new",
+      "subscribe",
+      "mobile",
+    ],
   },
   {
     id: "mobile-troubleshoot-sync",
@@ -1183,7 +1351,17 @@ export const searchIndex: SearchItem[] = [
     content:
       "Can't connect mobile to desktop: both devices must be on the same Wi-Fi network. Double-check the IP address in desktop Settings → API Endpoint (it can change when your router assigns a new address). Verify the token matches exactly — it is case-sensitive. Make sure Unearthed is running on the desktop and not blocked by a firewall on port 6543. Tap 'Test Connection' in mobile Settings to diagnose the issue. On Windows, allow Unearthed through Windows Defender Firewall if prompted.",
     href: "/local-docs/mobile#troubleshoot",
-    keywords: ["mobile sync", "cannot connect", "ip", "token", "firewall", "port 6543", "wifi", "test connection", "troubleshoot"],
+    keywords: [
+      "mobile sync",
+      "cannot connect",
+      "ip",
+      "token",
+      "firewall",
+      "port 6543",
+      "wifi",
+      "test connection",
+      "troubleshoot",
+    ],
   },
   {
     id: "mobile-offline",
@@ -1193,7 +1371,14 @@ export const searchIndex: SearchItem[] = [
     content:
       "Unearthed Mobile stores everything locally on your device. Once content has been synced, you can read articles, browse highlights, and capture new quotes without any internet connection. Newly captured quotes and any changes you make offline are queued and synced to the desktop the next time both devices are on the same network.",
     href: "/local-docs/mobile#offline",
-    keywords: ["offline", "no internet", "local", "stored", "queued", "sync later"],
+    keywords: [
+      "offline",
+      "no internet",
+      "local",
+      "stored",
+      "queued",
+      "sync later",
+    ],
   },
 ];
 

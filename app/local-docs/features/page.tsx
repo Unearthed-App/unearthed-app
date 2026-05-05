@@ -26,6 +26,7 @@ import {
   Youtube,
   Smartphone,
   Notebook,
+  PenLine,
 } from "lucide-react";
 
 function FeatureSection({
@@ -293,11 +294,12 @@ export default function FeaturesPage() {
           badge="v1.6.1"
         >
           <p>
-            Sync your highlights to <strong>Craft Docs</strong> alongside Obsidian. Each
-            source type lives in its own Craft <strong>collection</strong> document — a
-            spreadsheet-style page with columns for Type, Quotes, and Notes — and each
-            source becomes a row whose page contains the highlights and (optionally) the
-            full article body.
+            Sync your highlights to <strong>Craft Docs</strong> alongside
+            Obsidian. Each source type lives in its own Craft{" "}
+            <strong>collection</strong> document — a spreadsheet-style page with
+            columns for Type, Quotes, and Notes — and each source becomes a row
+            whose page contains the highlights and (optionally) the full article
+            body.
           </p>
 
           <div className="rounded-lg border bg-[hsl(169.4,43.6%,7.6%)] text-gray-100 p-3">
@@ -307,6 +309,7 @@ export default function FeaturesPage() {
     ├── Books         — collection (rows = books)
     ├── Articles      — collection (rows = articles / web pages)
     ├── Videos        — collection (rows = YouTube sources)
+    ├── Collections   — collection (rows = manual collections e.g. "Wisdom")
     └── Authors       — collection (rows = authors, linked from Books)`}
             </pre>
           </div>
@@ -318,27 +321,31 @@ export default function FeaturesPage() {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground space-y-2">
                 <ol className="list-decimal list-inside space-y-1.5">
-                  <li>Open Craft and the space you want Unearthed to write to</li>
+                  <li>
+                    Open Craft and the space you want Unearthed to write to
+                  </li>
                   <li>
                     Click <strong>Imagine</strong> and add a new{" "}
                     <strong>API Connection</strong>
                   </li>
                   <li>
-                    Name it <em>Unearthed</em>, set <strong>Permission Level</strong> to{" "}
-                    <strong>Read and Write</strong> and <strong>Access Mode</strong> to{" "}
-                    <strong>API Key</strong>
+                    Name it <em>Unearthed</em>, set{" "}
+                    <strong>Permission Level</strong> to{" "}
+                    <strong>Read and Write</strong> and{" "}
+                    <strong>Access Mode</strong> to <strong>API Key</strong>
                   </li>
                   <li>
-                    Under <strong>API Keys</strong>, click <strong>+</strong> to generate
-                    a key — Craft displays it once, so copy it immediately
+                    Under <strong>API Keys</strong>, click <strong>+</strong> to
+                    generate a key — Craft displays it once, so copy it
+                    immediately
                   </li>
                   <li>
                     Paste the <strong>Connection URL</strong> and{" "}
                     <strong>API Key</strong> into Settings &rarr; Craft Docs
                   </li>
                   <li>
-                    Click <strong>Test Connection</strong> — on success the connected
-                    space name is displayed
+                    Click <strong>Test Connection</strong> — on success the
+                    connected space name is displayed
                   </li>
                 </ol>
                 <p className="text-xs">
@@ -356,22 +363,25 @@ export default function FeaturesPage() {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground space-y-2">
                 <p>
-                  Sources are grouped by type into a Craft collection document. Each row
-                  has columns for <strong>Type</strong>, <strong>Quotes</strong>,{" "}
-                  <strong>Notes</strong>, and (for Books) an <strong>Author</strong>{" "}
-                  relation column linking back to the Authors collection.
+                  Sources are grouped by type into a Craft collection document.
+                  Each row has columns for <strong>Type</strong>,{" "}
+                  <strong>Quotes</strong>, <strong>Notes</strong>, and (for
+                  Books) an <strong>Author</strong> relation column linking back
+                  to the Authors collection.
                 </p>
                 <ul className="list-disc list-inside text-xs space-y-0.5">
                   <li>
-                    Tap any row to open its page — highlights live there as text blocks
+                    Tap any row to open its page — highlights live there as text
+                    blocks
                   </li>
                   <li>
-                    With <strong>Combine Sources</strong> on (default), one collection per
-                    type; off creates separate collections for finer organisation
+                    With <strong>Combine Sources</strong> on (default), one
+                    collection per type; off creates separate collections for
+                    finer organisation
                   </li>
                   <li>
-                    The <strong>Authors</strong> document is populated before Books so the
-                    relation column is available immediately
+                    The <strong>Authors</strong> document is populated before
+                    Books so the relation column is available immediately
                   </li>
                 </ul>
               </AccordionContent>
@@ -384,23 +394,24 @@ export default function FeaturesPage() {
               <AccordionContent className="text-sm text-muted-foreground space-y-2">
                 <ul className="list-disc list-inside text-xs space-y-0.5">
                   <li>
-                    Per-quote Craft block IDs are persisted in the local database — re-runs
-                    only insert <strong>new</strong> quotes
+                    Per-quote Craft block IDs are persisted in the local
+                    database — re-runs only insert <strong>new</strong> quotes
                   </li>
                   <li>
-                    Quote and note counts on each row are updated on every export
+                    Quote and note counts on each row are updated on every
+                    export
                   </li>
                   <li>
-                    Quotes are sent in chunks of 25 with throttling at 2 requests/second
-                    to respect Craft API limits
+                    Quotes are sent in chunks of 25 with throttling at 2
+                    requests/second to respect Craft API limits
                   </li>
                   <li>
-                    A <strong>Cancel</strong> button stops a long-running export mid-way
-                    without losing already-synced quotes
+                    A <strong>Cancel</strong> button stops a long-running export
+                    mid-way without losing already-synced quotes
                   </li>
                   <li>
-                    Failures fall back to per-quote retries so one bad quote doesn&apos;t
-                    abort the whole source
+                    Failures fall back to per-quote retries so one bad quote
+                    doesn&apos;t abort the whole source
                   </li>
                 </ul>
               </AccordionContent>
@@ -413,21 +424,23 @@ export default function FeaturesPage() {
               <AccordionContent className="text-sm text-muted-foreground space-y-2">
                 <p>
                   When <strong>Include Full Article Content</strong> is enabled,
-                  imported RSS / web articles get their body prepended to the Craft page
-                  on first sync, followed by a <strong>Highlights</strong> heading.
+                  imported RSS / web articles get their body prepended to the
+                  Craft page on first sync, followed by a{" "}
+                  <strong>Highlights</strong> heading.
                 </p>
                 <ul className="list-disc list-inside text-xs space-y-0.5">
                   <li>
                     YouTube article URLs are inserted as a Craft{" "}
-                    <CodeInline>richUrl</CodeInline> block above the article text
+                    <CodeInline>richUrl</CodeInline> block above the article
+                    text
                   </li>
                   <li>
-                    Long article text is split into ≈6000-char text blocks to stay
-                    within Craft&apos;s per-block limit
+                    Long article text is split into ≈6000-char text blocks to
+                    stay within Craft&apos;s per-block limit
                   </li>
                   <li>
-                    Inserted only on first sync — subsequent re-exports do not duplicate
-                    article content
+                    Inserted only on first sync — subsequent re-exports do not
+                    duplicate article content
                   </li>
                 </ul>
               </AccordionContent>
@@ -440,8 +453,8 @@ export default function FeaturesPage() {
               <AccordionContent className="text-sm text-muted-foreground space-y-2">
                 <p>
                   When <strong>Craft Quote Color Mode</strong> is set to{" "}
-                  <CodeInline>highlight</CodeInline>, each Unearthed color is mapped to
-                  the nearest Craft palette color:
+                  <CodeInline>highlight</CodeInline>, each Unearthed color is
+                  mapped to the nearest Craft palette color:
                 </p>
                 <div className="rounded-lg border overflow-hidden">
                   <table className="w-full text-xs">
@@ -470,15 +483,17 @@ export default function FeaturesPage() {
                       ].map(([from, to]) => (
                         <tr key={from} className="border-b last:border-0">
                           <td className="px-3 py-2">{from}</td>
-                          <td className="px-3 py-2 text-muted-foreground">{to}</td>
+                          <td className="px-3 py-2 text-muted-foreground">
+                            {to}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
                 <p className="text-xs">
-                  Set color mode to <CodeInline>none</CodeInline> to skip color styling
-                  in Craft entirely.
+                  Set color mode to <CodeInline>none</CodeInline> to skip color
+                  styling in Craft entirely.
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -489,23 +504,23 @@ export default function FeaturesPage() {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground space-y-2">
                 <p>
-                  Craft uses the same Quote, Source, and Daily Reflection templates as
-                  Obsidian (or the built-in defaults). Obsidian-only syntax is translated
-                  before sending to Craft:
+                  Craft uses the same Quote, Source, and Daily Reflection
+                  templates as Obsidian (or the built-in defaults).
+                  Obsidian-only syntax is translated before sending to Craft:
                 </p>
                 <ul className="list-disc list-inside text-xs space-y-0.5">
                   <li>
                     Wikilinks <CodeInline>{`[[Page]]`}</CodeInline> /{" "}
-                    <CodeInline>{`[[Page|Display]]`}</CodeInline> are flattened to plain
-                    text
+                    <CodeInline>{`[[Page|Display]]`}</CodeInline> are flattened
+                    to plain text
                   </li>
                   <li>
                     YAML frontmatter is converted to a Craft{" "}
                     <CodeInline>&lt;callout&gt;</CodeInline> block
                   </li>
                   <li>
-                    Zero-width-space dedup markers (an Obsidian-only artifact) are
-                    stripped
+                    Zero-width-space dedup markers (an Obsidian-only artifact)
+                    are stripped
                   </li>
                   <li>
                     <CodeInline>&lt;script&gt;</CodeInline> tags are stripped as
@@ -521,23 +536,25 @@ export default function FeaturesPage() {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground space-y-2">
                 <p>
-                  When <strong>Append Daily Reflection to Craft Daily Note</strong> is
-                  enabled, today&apos;s random highlight is sent to your Craft daily note
-                  alongside Obsidian (if configured) — both targets receive the same
-                  quote independently.
+                  When{" "}
+                  <strong>Append Daily Reflection to Craft Daily Note</strong>{" "}
+                  is enabled, today&apos;s random highlight is sent to your
+                  Craft daily note alongside Obsidian (if configured) — both
+                  targets receive the same quote independently.
                 </p>
                 <ul className="list-disc list-inside text-xs space-y-0.5">
                   <li>
-                    Auto-appends as soon as Unearthed opens — no need to press &quot;New
-                    Reflection&quot;
+                    Auto-appends as soon as Unearthed opens — no need to press
+                    &quot;New Reflection&quot;
                   </li>
                   <li>
                     Per-destination success is recorded in the database, so the
                     reflection is appended at most once per day across restarts
                   </li>
                   <li>
-                    Compact pills (&quot;Appended to Obsidian&quot;, &quot;Appended to
-                    Craft&quot;) confirm which destinations received the quote
+                    Compact pills (&quot;Appended to Obsidian&quot;,
+                    &quot;Appended to Craft&quot;) confirm which destinations
+                    received the quote
                   </li>
                 </ul>
               </AccordionContent>
@@ -549,13 +566,14 @@ export default function FeaturesPage() {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground space-y-2">
                 <p>
-                  Toggle <strong>Auto-export to Craft</strong> in Settings &rarr; Craft
-                  Docs to sync new highlights every hour. Runs in the background
-                  alongside the Obsidian auto-export and is toggled independently.
+                  Toggle <strong>Auto-export to Craft</strong> in Settings
+                  &rarr; Craft Docs to sync new highlights every hour. Runs in
+                  the background alongside the Obsidian auto-export and is
+                  toggled independently.
                 </p>
                 <p className="text-xs">
-                  Requires <strong>Keep App Running</strong> to continue syncing while
-                  the window is closed.
+                  Requires <strong>Keep App Running</strong> to continue syncing
+                  while the window is closed.
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -571,18 +589,21 @@ export default function FeaturesPage() {
                     recreates it and re-uploads all quotes in a single pass
                   </li>
                   <li>
-                    If individual blocks are deleted in Craft, they are detected on the
-                    next export and re-synced automatically
+                    If individual blocks are deleted in Craft, they are detected
+                    on the next export and re-synced automatically
                   </li>
                   <li>
                     For a full reset, use{" "}
-                    <strong>Settings &rarr; Craft Docs &rarr; Reset Craft Sync Data</strong>{" "}
-                    — this clears Unearthed&apos;s ID mapping but does NOT delete anything
-                    in Craft
+                    <strong>
+                      Settings &rarr; Craft Docs &rarr; Reset Craft Sync Data
+                    </strong>{" "}
+                    — this clears Unearthed&apos;s ID mapping but does NOT
+                    delete anything in Craft
                   </li>
                   <li>
-                    If you deleted a Craft document and want it recreated cleanly, empty
-                    Craft&apos;s Trash first so Unearthed can reuse the same name
+                    If you deleted a Craft document and want it recreated
+                    cleanly, empty Craft&apos;s Trash first so Unearthed can
+                    reuse the same name
                   </li>
                 </ul>
               </AccordionContent>
@@ -728,8 +749,12 @@ export default function FeaturesPage() {
                   <li>
                     <strong>Read Later</strong> &mdash; bookmark the article to
                     read later; a blue &quot;Read Later&quot; badge appears on
-                    bookmarked cards (hiding an article automatically clears its
-                    Read It Later status)
+                    bookmarked cards. Articles viewed in the{" "}
+                    <strong>Article Content Modal</strong>
+                    also show a bookmark button (next to the YouTube transcript
+                    button) to mark or unmark Read Later without leaving the
+                    reader. (Hiding an article automatically clears its Read It
+                    Later status)
                   </li>
                 </ul>
               </AccordionContent>
@@ -825,6 +850,12 @@ export default function FeaturesPage() {
             displayed with an embedded video player. Video transcripts are
             fetched and injected into the article content when available.
           </p>
+          <p>
+            <strong>Position resume:</strong> Your playback position is saved
+            automatically as you watch. Reopening the article picks up exactly
+            where you left off — position syncs between desktop and mobile so
+            you can switch devices mid-video.
+          </p>
           <p className="text-xs">
             <strong>Rate limiting:</strong> Transcript fetching retries
             automatically on rate limits (up to 3 attempts with exponential
@@ -859,7 +890,11 @@ export default function FeaturesPage() {
                 end of the file
               </li>
               <li>Create Obsidian Daily Note if it doesn&apos;t exist</li>
-              <li>Add Daily Reflection on Startup</li>
+              <li>
+                Add Daily Reflection on Startup — automatically appends
+                today&apos;s reflection to your daily note when Unearthed opens
+                (at most once per day, per destination)
+              </li>
               <li>
                 Template with variables:{" "}
                 <CodeInline>{`{{content}}`}</CodeInline>,{" "}
@@ -919,6 +954,8 @@ export default function FeaturesPage() {
           <ul className="list-disc list-inside text-xs space-y-0.5">
             <li>Search books by title or author</li>
             <li>Filter: All, Active, or Ignored sources</li>
+            <li>Filter by type: Book, Article, Collection, Video</li>
+            <li>Filter by origin: Kindle, KOReader, RSS, Manual</li>
             <li>Toggle ignored status (excluded from Obsidian export)</li>
             <li>Delete individual sources or their quotes</li>
             <li>Batch select and operate on multiple sources</li>
@@ -927,6 +964,56 @@ export default function FeaturesPage() {
               color-coded accent bars
             </li>
           </ul>
+        </FeatureSection>
+
+        {/* Manual Entry */}
+        <FeatureSection
+          id="manual-entry"
+          icon={PenLine}
+          title="Manual Quote &amp; Source Entry"
+          badge="v1.6.2"
+        >
+          <p>
+            Add your own quotes and sources directly inside Unearthed — no
+            Kindle or KOReader required. Click the purple <strong>+ Add</strong>{" "}
+            button in the header (visible on every tab) or press{" "}
+            <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+              Ctrl/Cmd + I
+            </kbd>{" "}
+            from anywhere to open the entry form.
+          </p>
+          <div className="rounded-lg border bg-card p-3 space-y-1.5">
+            <p className="text-xs font-medium">Quote fields:</p>
+            <ul className="list-disc list-inside text-xs space-y-0.5">
+              <li>Quote text (required)</li>
+              <li>Note / annotation</li>
+              <li>Location (e.g. Page 42)</li>
+              <li>Highlight color (yellow, blue, pink, orange, aqua, green)</li>
+              <li>Source — pick from existing sources or leave blank</li>
+            </ul>
+          </div>
+          <div className="rounded-lg border bg-card p-3 space-y-1.5 mt-2">
+            <p className="text-xs font-medium">Source types:</p>
+            <ul className="list-disc list-inside text-xs space-y-0.5">
+              <li>
+                <strong>Book</strong> — a book with an author
+              </li>
+              <li>
+                <strong>Article</strong> — a web article or essay
+              </li>
+              <li>
+                <strong>Collection</strong> — a thematic group (e.g.
+                &ldquo;Wisdom&rdquo;, &ldquo;Stoicism&rdquo;) that doesn&apos;t
+                fit a traditional book or article format
+              </li>
+            </ul>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            If no source is selected, the quote is filed under a{" "}
+            <strong>Misc</strong> Collection that Unearthed creates
+            automatically. You can also create a new source inline without
+            leaving the quote form.
+          </p>
         </FeatureSection>
 
         {/* Dark Mode */}
@@ -1038,7 +1125,7 @@ export default function FeaturesPage() {
                       {[
                         [
                           "Ctrl/Cmd + Shift + I",
-                          "Quick Import URL (opens floating dialog for YouTube, RSS, or web pages)",
+                          "Quick Import — floating dialog with two tabs: Paste URL (YouTube, RSS, web pages) and Add Quote",
                         ],
                         [
                           "Ctrl/Cmd + Shift + O",
@@ -1065,8 +1152,21 @@ export default function FeaturesPage() {
                   </p>
                   <ul className="list-disc list-inside text-xs text-muted-foreground space-y-0.5">
                     <li>
-                      Automatically detects URL type: YouTube videos, RSS feeds,
-                      or web pages
+                      <strong>Paste URL tab</strong> — automatically detects
+                      YouTube videos, RSS feeds, or web pages
+                    </li>
+                    <li>
+                      <strong>Add Quote tab</strong> — enter a quote with note,
+                      location, color, and source without opening the main
+                      window
+                    </li>
+                    <li>
+                      Press{" "}
+                      <kbd className="rounded border bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium">
+                        Shift+Tab
+                      </kbd>{" "}
+                      to switch between the two tabs; Tab moves between form
+                      fields normally
                     </li>
                     <li>Shows success/error feedback inline</li>
                     <li>
@@ -1077,10 +1177,6 @@ export default function FeaturesPage() {
                       navigate to RSS tab
                     </li>
                     <li>Respects dark/light mode theme</li>
-                    <li>
-                      Auto-focuses and selects text after import for quick
-                      re-use
-                    </li>
                     <li>
                       Closes automatically when clicking outside or pressing
                       Escape
@@ -1110,6 +1206,10 @@ export default function FeaturesPage() {
                     </thead>
                     <tbody>
                       {[
+                        [
+                          "Ctrl/Cmd + I",
+                          "Add Entry — open quote / source entry form",
+                        ],
                         ["Ctrl/Cmd + K", "Open Global Search"],
                         ["Ctrl/Cmd + 1", "Go to Home tab"],
                         ["Ctrl/Cmd + 2", "Go to Kindle tab"],
@@ -1506,19 +1606,20 @@ export default function FeaturesPage() {
           badge="v1.4.2+"
         >
           <p>
-            Unearthed is available as a Progressive Web App (PWA) for Android and iOS.
-            Everything in your library — RSS feeds, articles, Kindle highlights,
-            KOReader notes, and personal quotes — travels with you. When both
-            devices are on the same Wi-Fi network, the mobile app syncs
-            automatically with the desktop, keeping everything perfectly in
-            step.
+            Unearthed is available as a Progressive Web App (PWA) for Android
+            and iOS. Everything in your library — RSS feeds, articles, Kindle
+            highlights, KOReader notes, and personal quotes — travels with you.
+            When both devices are on the same Wi-Fi network, the mobile app
+            syncs automatically with the desktop, keeping everything perfectly
+            in step.
           </p>
 
           <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 mb-3">
             <p className="text-xs font-medium mb-1">Android &amp; iOS</p>
             <p className="text-xs text-muted-foreground">
-              Install on Android by opening the Unearthed mobile URL in Chrome and tapping{" "}
-              <strong>Add to Home Screen</strong>. On iPhone/iPad, use Safari and tap the Share icon.
+              Install on Android by opening the Unearthed mobile URL in Chrome
+              and tapping <strong>Add to Home Screen</strong>. On iPhone/iPad,
+              use Safari and tap the Share icon.
             </p>
           </div>
 
@@ -1561,8 +1662,7 @@ export default function FeaturesPage() {
                     enter the IP address and token
                   </li>
                   <li>
-                    For the port:{" "}
-                    <strong>iOS</strong> uses{" "}
+                    For the port: <strong>iOS</strong> uses{" "}
                     <code className="text-xs bg-primary/10 px-1 py-0.5 rounded font-mono">
                       6543
                     </code>{" "}

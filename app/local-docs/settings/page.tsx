@@ -189,8 +189,8 @@ export default function SettingsPage() {
           <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
             <p className="text-xs font-medium mb-1">55+ shortcuts available</p>
             <p className="text-xs text-muted-foreground">
-              Shortcuts cover every part of the app: global navigation, Home tab,
-              RSS Feeds tab, Kindle tab, Library tab, Search Modal, Article
+              Shortcuts cover every part of the app: global navigation, Home
+              tab, RSS Feeds tab, Kindle tab, Library tab, Search Modal, Article
               Viewer, and Article Highlighter. See the{" "}
               <a
                 href="/local-docs/features#keyboard"
@@ -206,7 +206,9 @@ export default function SettingsPage() {
         {/* API Endpoint */}
         <SettingSection id="api" icon={Link} title="API Endpoint">
           <p>
-            Unearthed runs two local servers for device connections. Connection details : including IP address, port, and copy buttons : are displayed automatically in Settings based on your network.
+            Unearthed runs two local servers for device connections. Connection
+            details : including IP address, port, and copy buttons : are
+            displayed automatically in Settings based on your network.
           </p>
 
           <SettingItem
@@ -293,10 +295,11 @@ export default function SettingsPage() {
         {/* Craft Docs */}
         <SettingSection id="craft" icon={Notebook} title="Craft Docs">
           <p>
-            Export your highlights to <strong>Craft Docs</strong> alongside Obsidian.
-            Each source type (Books, Articles, etc.) becomes a Craft collection in your
-            chosen root folder, and each source becomes a row whose page holds the
-            highlights and (optionally) the article content.
+            Export your highlights to <strong>Craft Docs</strong> alongside
+            Obsidian. Each source type (Books, Articles, etc.) becomes a Craft
+            collection in your chosen root folder, and each source becomes a row
+            whose page holds the highlights and (optionally) the article
+            content.
           </p>
 
           <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
@@ -308,17 +311,18 @@ export default function SettingsPage() {
                 <strong>API Connection</strong>
               </li>
               <li>
-                Name it <em>Unearthed</em>, set <strong>Permission Level</strong> to{" "}
-                <strong>Read and Write</strong>, and <strong>Access Mode</strong> to{" "}
-                <strong>API Key</strong>
+                Name it <em>Unearthed</em>, set{" "}
+                <strong>Permission Level</strong> to{" "}
+                <strong>Read and Write</strong>, and{" "}
+                <strong>Access Mode</strong> to <strong>API Key</strong>
               </li>
               <li>
-                Under <strong>API Keys</strong>, click <strong>+</strong> to generate a key
-                : Craft shows the value once
+                Under <strong>API Keys</strong>, click <strong>+</strong> to
+                generate a key : Craft shows the value once
               </li>
               <li>
-                Copy the <strong>Connection URL</strong> and the <strong>API Key</strong>{" "}
-                into the fields below
+                Copy the <strong>Connection URL</strong> and the{" "}
+                <strong>API Key</strong> into the fields below
               </li>
               <li>
                 Click <strong>Test Connection</strong> to verify
@@ -421,20 +425,21 @@ export default function SettingsPage() {
           <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
             <p className="text-xs font-medium mb-1">Stale recovery</p>
             <p className="text-xs text-muted-foreground">
-              If a Craft document is permanently deleted, the next export recreates it
-              and re-uploads all quotes in a single pass. Individual deleted blocks are
-              detected and re-synced automatically : no manual reset required.
+              If a Craft document is permanently deleted, the next export
+              recreates it and re-uploads all quotes in a single pass.
+              Individual deleted blocks are detected and re-synced automatically
+              : no manual reset required.
             </p>
           </div>
 
           <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
             <p className="text-xs font-medium mb-1">Templates</p>
             <p className="text-xs text-muted-foreground">
-              Craft uses the same Quote, Source, and Daily Reflection templates as
-              Obsidian (or the built-in defaults). Wikilinks like{" "}
-              <CodeInline>[[Author]]</CodeInline> are stripped to plain text and YAML
-              frontmatter is converted to a Craft <CodeInline>&lt;callout&gt;</CodeInline>{" "}
-              block automatically.
+              Craft uses the same Quote, Source, and Daily Reflection templates
+              as Obsidian (or the built-in defaults). Wikilinks like{" "}
+              <CodeInline>[[Author]]</CodeInline> are stripped to plain text and
+              YAML frontmatter is converted to a Craft{" "}
+              <CodeInline>&lt;callout&gt;</CodeInline> block automatically.
             </p>
           </div>
         </SettingSection>
@@ -506,9 +511,9 @@ export default function SettingsPage() {
             </p>
             <p className="text-xs text-muted-foreground">
               If <strong>&quot;Create Daily Note&quot;</strong> is disabled but{" "}
-              <strong>&quot;Add Reflection on Startup&quot;</strong> is enabled, Unearthed
-              will wait until you create your daily note in Obsidian, then
-              automatically add the reflection to it.
+              <strong>&quot;Add Reflection on Startup&quot;</strong> is enabled,
+              Unearthed will wait until you create your daily note in Obsidian,
+              then automatically add the reflection to it.
             </p>
           </div>
         </SettingSection>
@@ -542,7 +547,7 @@ export default function SettingsPage() {
         <SettingSection id="rss-auto-delete" icon={Cog} title="RSS Articles">
           <SettingItem
             name="Delete non-imported articles after (days)"
-            defaultValue={'7'}
+            defaultValue={"7"}
             description="Automatically remove unimported RSS articles that are older than the specified number of days to keep your feed tidy."
             tips={[
               "Set to 0 to keep all articles indefinitely",
@@ -875,14 +880,24 @@ by [[{{author}}]]`}
               "You can re-sync from Kindle/KOReader after deletion",
             ]}
           />
+
+          <SettingItem
+            name="Purge Soft-Deleted"
+            description="Permanently removes any articles and feeds that are currently in a soft-deleted state."
+            tips={[
+              "New button in Settings → General → Database utilities",
+              "Summarises exactly how many of each will be deleted before the action runs",
+              "Helps keep your database size optimized",
+            ]}
+          />
         </SettingSection>
 
         {/* Reset to Defaults */}
         <div className="rounded-lg border bg-card p-4">
           <h3 className="font-semibold mb-2">Reset All Settings</h3>
           <p className="text-sm text-muted-foreground mb-3">
-            The settings modal includes a &quot;Reset to Defaults&quot; button that
-            restores all settings to their original values.
+            The settings modal includes a &quot;Reset to Defaults&quot; button
+            that restores all settings to their original values.
           </p>
           <p className="text-xs text-muted-foreground">
             This does not affect your database or exported files—only the

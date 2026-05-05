@@ -78,7 +78,6 @@ function CodeInline({ children }: { children: React.ReactNode }) {
 }
 
 export default function TroubleshootPage() {
-
   return (
     <div>
       <h1 className="text-2xl font-bold tracking-tight mb-2">
@@ -209,19 +208,21 @@ export default function TroubleshootPage() {
             <ul className="list-disc list-inside space-y-1">
               <li>
                 Verify the URL matches the format{" "}
-                <CodeInline>https://connect.craft.do/links/XXXXX/api/v1</CodeInline>
+                <CodeInline>
+                  https://connect.craft.do/links/XXXXX/api/v1
+                </CodeInline>
               </li>
               <li>
-                Generate a new API key in Craft &rarr; Imagine &rarr; API Connection &rarr;
-                API Keys (Craft only displays the key once)
+                Generate a new API key in Craft &rarr; Imagine &rarr; API
+                Connection &rarr; API Keys (Craft only displays the key once)
               </li>
               <li>
-                Confirm the connection&apos;s <strong>Permission Level</strong> is set to{" "}
-                <strong>Read and Write</strong>, not Read-only
+                Confirm the connection&apos;s <strong>Permission Level</strong>{" "}
+                is set to <strong>Read and Write</strong>, not Read-only
               </li>
               <li>
-                Click <strong>Test Connection</strong> — a successful test shows the
-                connected space name
+                Click <strong>Test Connection</strong> — a successful test shows
+                the connected space name
               </li>
             </ul>
           </ProblemSolution>
@@ -229,19 +230,23 @@ export default function TroubleshootPage() {
           <ProblemSolution problem="Documents ended up in the wrong folder or were deleted in Craft">
             <ul className="list-disc list-inside space-y-1">
               <li>
-                Open <strong>Settings &rarr; Craft Docs &rarr; Reset Craft Sync Data</strong>
+                Open{" "}
+                <strong>
+                  Settings &rarr; Craft Docs &rarr; Reset Craft Sync Data
+                </strong>
               </li>
               <li>
-                This clears Unearthed&apos;s ID mapping but does NOT delete anything in
-                Craft
+                This clears Unearthed&apos;s ID mapping but does NOT delete
+                anything in Craft
               </li>
               <li>
-                If you deleted a Craft document and want it recreated, empty Craft&apos;s
-                Trash first — otherwise Craft refuses the new document with the same name
+                If you deleted a Craft document and want it recreated, empty
+                Craft&apos;s Trash first — otherwise Craft refuses the new
+                document with the same name
               </li>
               <li>
-                Re-run the export — Unearthed will recreate the missing documents and
-                re-upload all quotes
+                Re-run the export — Unearthed will recreate the missing
+                documents and re-upload all quotes
               </li>
             </ul>
           </ProblemSolution>
@@ -249,11 +254,32 @@ export default function TroubleshootPage() {
           <ProblemSolution problem="Quotes deleted in Craft re-appear / don't re-appear">
             <ul className="list-disc list-inside space-y-1">
               <li>
-                Individual deleted blocks are detected on the next export and re-synced
-                automatically — no action needed
+                Individual deleted blocks are detected on the next export and
+                re-synced automatically — no action needed
               </li>
               <li>
-                If they don&apos;t re-appear, run a manual export from the library
+                If they don&apos;t re-appear, run a manual export from the
+                library
+              </li>
+            </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Sync failing with 400 Bad Request error">
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                This usually happened when a source type (like{" "}
+                <strong>Collection</strong>) was missing from your Craft
+                space&apos;s schema.
+              </li>
+              <li>
+                Unearthed now automatically adds any missing type options to
+                your Craft schema before syncing, resolving this error
+                automatically.
+              </li>
+              <li>
+                If you still see 400 errors, try{" "}
+                <strong>Reset Craft Sync Data</strong> in Settings to force a
+                clean re-initialization of the schema.
               </li>
             </ul>
           </ProblemSolution>
@@ -261,20 +287,21 @@ export default function TroubleshootPage() {
           <ProblemSolution problem="Export is slow or hits rate limits">
             <ul className="list-disc list-inside space-y-1">
               <li>
-                Craft&apos;s API allows roughly 2 requests/second; Unearthed throttles
-                to that limit and retries on HTTP 429 with exponential backoff
+                Craft&apos;s API allows roughly 2 requests/second; Unearthed
+                throttles to that limit and retries on HTTP 429 with exponential
+                backoff
               </li>
               <li>
-                Quotes are sent in chunks of 25; failed chunks fall back to per-quote
-                retries so one bad quote doesn&apos;t abort the source
+                Quotes are sent in chunks of 25; failed chunks fall back to
+                per-quote retries so one bad quote doesn&apos;t abort the source
               </li>
               <li>
-                The first full export of a large library can take several minutes —
-                subsequent runs only send new/changed quotes
+                The first full export of a large library can take several
+                minutes — subsequent runs only send new/changed quotes
               </li>
               <li>
-                Use the <strong>Cancel</strong> button mid-run to stop without losing
-                already-synced quotes
+                Use the <strong>Cancel</strong> button mid-run to stop without
+                losing already-synced quotes
               </li>
             </ul>
           </ProblemSolution>
@@ -282,17 +309,21 @@ export default function TroubleshootPage() {
           <ProblemSolution problem="Article content not appearing in Craft document">
             <ul className="list-disc list-inside space-y-1">
               <li>
-                Enable <strong>Settings &rarr; Craft Docs &rarr; Include Full Article
-                Content</strong> — disabled by default
+                Enable{" "}
+                <strong>
+                  Settings &rarr; Craft Docs &rarr; Include Full Article Content
+                </strong>{" "}
+                — disabled by default
               </li>
               <li>
-                Article content is inserted only on <strong>first sync</strong> of a
-                source. Use <strong>Reset Craft Sync Data</strong> if you want to
-                re-import the body for an existing source
+                Article content is inserted only on <strong>first sync</strong>{" "}
+                of a source. Use <strong>Reset Craft Sync Data</strong> if you
+                want to re-import the body for an existing source
               </li>
               <li>
-                Articles with very short bodies (&lt;100 chars) are inserted as a single
-                block; longer bodies are split into ≈6000-char text blocks
+                Articles with very short bodies (&lt;100 chars) are inserted as
+                a single block; longer bodies are split into ≈6000-char text
+                blocks
               </li>
             </ul>
           </ProblemSolution>
@@ -300,13 +331,15 @@ export default function TroubleshootPage() {
           <ProblemSolution problem="Wrong colors or color names in Craft">
             <ul className="list-disc list-inside space-y-1">
               <li>
-                Craft has a smaller color palette than Unearthed — orange and olive map
-                to <CodeInline>yellow</CodeInline> and <CodeInline>green</CodeInline>
+                Craft has a smaller color palette than Unearthed — orange and
+                olive map to <CodeInline>yellow</CodeInline> and{" "}
+                <CodeInline>green</CodeInline>
                 respectively
               </li>
               <li>
-                Set <strong>Craft Quote Color Mode</strong> to <CodeInline>none</CodeInline>{" "}
-                in Settings if you want plain (uncolored) quotes
+                Set <strong>Craft Quote Color Mode</strong> to{" "}
+                <CodeInline>none</CodeInline> in Settings if you want plain
+                (uncolored) quotes
               </li>
             </ul>
           </ProblemSolution>
@@ -361,14 +394,13 @@ export default function TroubleshootPage() {
                 URL)
               </li>
               <li>
-                Try opening the feed URL directly in a browser &mdash; it
-                should show XML content
+                Try opening the feed URL directly in a browser &mdash; it should
+                show XML content
               </li>
               <li>
                 Some sites require the full feed path (e.g.{" "}
-                <CodeInline>/feed</CodeInline>,{" "}
-                <CodeInline>/rss</CodeInline>, or{" "}
-                <CodeInline>/atom.xml</CodeInline>)
+                <CodeInline>/feed</CodeInline>, <CodeInline>/rss</CodeInline>,
+                or <CodeInline>/atom.xml</CodeInline>)
               </li>
             </ul>
           </ProblemSolution>
@@ -376,9 +408,9 @@ export default function TroubleshootPage() {
           <ProblemSolution problem="Articles reappear after deletion">
             <ul className="list-disc list-inside space-y-1">
               <li>
-                This is expected &mdash; deleting an RSS article removes it
-                from your local database, but the next feed refresh will
-                re-fetch it from the source
+                This is expected &mdash; deleting an RSS article removes it from
+                your local database, but the next feed refresh will re-fetch it
+                from the source
               </li>
               <li>
                 Use <strong>Hide</strong> instead of Delete to permanently
@@ -389,9 +421,7 @@ export default function TroubleshootPage() {
 
           <ProblemSolution problem="Images not loading in article reader">
             <ul className="list-disc list-inside space-y-1">
-              <li>
-                External images require an internet connection to load
-              </li>
+              <li>External images require an internet connection to load</li>
               <li>
                 Some feeds serve images from domains that may be blocked by
                 network restrictions
@@ -401,12 +431,10 @@ export default function TroubleshootPage() {
 
           <ProblemSolution problem="YouTube video not playing in article">
             <ul className="list-disc list-inside space-y-1">
+              <li>YouTube embeds require an internet connection</li>
               <li>
-                YouTube embeds require an internet connection
-              </li>
-              <li>
-                If the transcript fails to load, the app retries up to 3
-                times with exponential backoff
+                If the transcript fails to load, the app retries up to 3 times
+                with exponential backoff
               </li>
               <li>
                 Repeated rate limiting (HTTP 429) may require waiting a few
@@ -575,9 +603,8 @@ export default function TroubleshootPage() {
                 sometimes assign a new IP, so copy the freshest one
               </li>
               <li>
-                Confirm the port is{" "}
-                <CodeInline>6543</CodeInline> and the token matches exactly
-                (case-sensitive)
+                Confirm the port is <CodeInline>6543</CodeInline> and the token
+                matches exactly (case-sensitive)
               </li>
               <li>
                 Make sure Unearthed is open and running on the desktop — the
@@ -602,8 +629,8 @@ export default function TroubleshootPage() {
           <ProblemSolution problem="Sync completes but some content is missing">
             <ul className="list-disc list-inside space-y-1">
               <li>
-                Run a second sync — the first sync may have timed out on a
-                large library
+                Run a second sync — the first sync may have timed out on a large
+                library
               </li>
               <li>
                 Check that the desktop app is not in the middle of another
@@ -619,17 +646,17 @@ export default function TroubleshootPage() {
           <ProblemSolution problem="Changes made on mobile don't appear on desktop">
             <ul className="list-disc list-inside space-y-1">
               <li>
-                Trigger a manual sync from the mobile app (sync icon in the
-                RSS header or Settings page)
+                Trigger a manual sync from the mobile app (sync icon in the RSS
+                header or Settings page)
               </li>
               <li>
                 The desktop shows a toast notification when a mobile sync
-                completes — if you don&apos;t see it, the sync did not reach
-                the desktop
+                completes — if you don&apos;t see it, the sync did not reach the
+                desktop
               </li>
               <li>
-                Confirm the desktop is reachable (Test Connection) and that
-                the Wi-Fi connection hasn&apos;t dropped
+                Confirm the desktop is reachable (Test Connection) and that the
+                Wi-Fi connection hasn&apos;t dropped
               </li>
             </ul>
           </ProblemSolution>
