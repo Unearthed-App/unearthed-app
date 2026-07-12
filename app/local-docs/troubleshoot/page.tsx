@@ -129,7 +129,22 @@ export default function TroubleshootPage() {
               <li>Amazon may temporarily block rapid requests</li>
               <li>Wait a few minutes and try again</li>
               <li>Reduce sync frequency if using auto-sync</li>
+              <li>
+                For large libraries, mark inactive Kindle books as{" "}
+                <strong>Skip Kindle Refresh</strong> so Unearthed skips their
+                per-book annotation fetches on future refreshes
+              </li>
             </ul>
+          </ProblemSolution>
+
+          <ProblemSolution problem="Deleted Kindle highlight still appears in Unearthed or Obsidian">
+            <p>
+              This is expected. Kindle refresh is not treated as a deletion
+              sync. If Kindle stops returning a highlight, Unearthed keeps the
+              local copy so historical highlights are not removed
+              automatically. Obsidian and Craft exports are generated from the
+              local database, not directly from Kindle.
+            </p>
           </ProblemSolution>
         </Accordion>
       </TroubleshootSection>

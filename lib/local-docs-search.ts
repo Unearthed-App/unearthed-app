@@ -94,7 +94,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Connect to Amazon Kindle through built-in browser. Fetches books and annotations from two Kindle endpoints in parallel. Merges and deduplicates results. Stores in local SQLite database. Auto-sync every hour when enabled.",
+      "Connect to Amazon Kindle through built-in browser. Fetches books and annotations from two Kindle endpoints in parallel. Merges and deduplicates results. Stores in local SQLite database. Kindle refresh is one-way: Unearthed pulls from Kindle but does not update Kindle. The first Kindle sync imports locally but does not automatically export to Obsidian or Craft, so users can review sources before sending. After the first sync, manual Kindle refresh only auto-exports to Obsidian when Auto Export to Obsidian is enabled. Auto-sync every hour when enabled.",
     href: "/local-docs/features#kindle-sync",
     keywords: [
       "kindle",
@@ -103,6 +103,25 @@ export const searchIndex: SearchItem[] = [
       "highlights",
       "annotations",
       "auto-sync",
+    ],
+  },
+  {
+    id: "feature-skip-kindle-refresh",
+    title: "Skip Kindle Refresh",
+    section: "Features",
+    category: "Features",
+    content:
+      "For Kindle-origin sources, Skip Kindle Refresh keeps the source in your local database but skips per-book Kindle annotation fetches on future refreshes. This is separate from Ignored: ignored excludes a source from Obsidian/Craft export, while Skip Kindle Refresh only reduces Kindle refresh work. Skipped sources still export unless they are also ignored.",
+    href: "/local-docs/features#kindle-sync",
+    keywords: [
+      "kindle",
+      "skip kindle refresh",
+      "refresh",
+      "large library",
+      "ignored",
+      "export",
+      "throttle",
+      "rate limit",
     ],
   },
   {
@@ -129,7 +148,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Export highlights as Markdown files into Obsidian vault. YAML front-matter with metadata. Customisable templates for filenames, quotes, and sources. Color-coded highlights. Zero-width space markers for duplicate detection.",
+      "Export highlights as Markdown files into Obsidian vault from Unearthed's local database. The first Kindle sync does not automatically export to Obsidian, giving users a chance to review new Kindle sources first. Manual Kindle refresh only auto-exports to Obsidian when Auto Export to Obsidian is enabled. YAML front-matter with metadata. Customisable templates for filenames, quotes, and sources. Color-coded highlights. Obsidian is an export target, not a source of truth for Kindle highlights, and edits are not written back to Kindle.",
     href: "/local-docs/features#obsidian-export",
     keywords: ["obsidian", "export", "markdown", "yaml", "template", "vault"],
   },
@@ -139,7 +158,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Sync highlights to Craft Docs alongside Obsidian. Each source type (Books, Articles, Videos) becomes a Craft collection in your root folder; each source is a row whose page contains the highlights and optionally the full article body. Resumable sync — re-runs only insert new quotes (per-quote Craft block IDs are persisted). Throttled to 2 requests/second with exponential backoff retry on rate limits. Cancel button stops a long-running export mid-way without losing already-synced quotes. Per-type collections (Books, Articles, etc.) plus an Authors collection populated first so the relation column is available.",
+      "Sync highlights to Craft Docs alongside Obsidian from Unearthed's local database. The first Kindle sync does not automatically export to Craft, giving users a chance to review new Kindle sources first. Craft is an export target and edits there are not written back to Kindle. Each source type (Books, Articles, Videos) becomes a Craft collection in your root folder; each source is a row whose page contains the highlights and optionally the full article body. Resumable sync — re-runs only insert new quotes (per-quote Craft block IDs are persisted). Throttled to 2 requests/second with exponential backoff retry on rate limits. Cancel button stops a long-running export mid-way without losing already-synced quotes. Per-type collections (Books, Articles, etc.) plus an Authors collection populated first so the relation column is available.",
     href: "/local-docs/features#craft-export",
     keywords: [
       "craft",
@@ -278,7 +297,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Toggle Auto-export to Craft in Settings → Craft Docs to sync new highlights every hour. Runs in the background alongside the Obsidian auto-export and is toggled independently. Requires Keep App Running to continue syncing while the window is closed.",
+      "Toggle Auto-export to Craft in Settings → Craft Docs to sync new highlights every hour. Runs in the background alongside the Obsidian auto-export and is toggled independently. The first Kindle sync is imported locally only and is not automatically exported to Craft. Requires Keep App Running to continue syncing while the window is closed.",
     href: "/local-docs/features#craft-export",
     keywords: ["craft", "auto export", "hourly", "background", "auto sync"],
   },
@@ -403,7 +422,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "View, search, filter, and manage all sources. Filter by All, Active, or Ignored. Filter by type (Book, Article, Collection, Video) or origin (Kindle, KOReader, RSS, Manual). Toggle ignored status. Batch select and delete. View quotes per source with color-coded accent bars.",
+      "View, search, filter, and manage all sources. Filter by All, Active, Ignored, or Kindle Skipped. Filter by type (Book, Article, Collection, Video) or origin (Kindle, KOReader, RSS, Manual). Toggle ignored status for export routing and Skip Kindle Refresh for Kindle refresh cost control. Batch select and delete. View quotes per source with color-coded accent bars.",
     href: "/local-docs/features#library",
     keywords: [
       "library",
@@ -491,9 +510,9 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "Configure Obsidian vault location with Browse button. Root Folder name (default: Unearthed) for organizing books and articles inside vault.",
+      "Configure Obsidian vault location, Root Folder, auto export, article content export, optional personal notes section, personal notes title, and Rebuild Obsidian Notes. Auto Export to Obsidian runs hourly and also controls automatic Obsidian export after manual Kindle refresh. Rebuild is opt-in and regenerates Unearthed-managed highlight sections from the local database while preserving user-authored content outside managed blocks.",
     href: "/local-docs/settings#obsidian",
-    keywords: ["obsidian", "vault", "location", "browse", "root", "folder"],
+    keywords: ["obsidian", "vault", "location", "browse", "root", "folder", "personal notes", "rebuild", "article content"],
   },
   {
     id: "settings-craft",
@@ -592,7 +611,7 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "Craft Quote Color Mode controls how highlight colors are rendered inside Craft. 'highlight' (default) maps each Unearthed color to the nearest Craft palette color (yellow, blue, pink, red, green, cyan, purple, gray). 'none' applies no color styling. Orange and olive map to yellow and green respectively (Craft has no exact equivalents).",
+      "Craft Quote Color Mode controls how highlight colors are rendered inside Craft. 'highlight' (default) maps each Unearthed color to the nearest Craft palette color (yellow, blue, pink, red, green, cyan, purple, gray). Aqua maps to cyan; orange and olive map to yellow and green. Fallback is used for unknown quote colors. 'none' applies no color styling.",
     href: "/local-docs/settings#craft",
     keywords: ["craft", "color", "color mode", "highlight", "palette", "none"],
   },
@@ -1066,7 +1085,7 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "When enabled, Unearthed includes the full article body alongside your quotes and notes when exporting to Obsidian. Disabled by default so exported files stay focused on your highlights. Turn it on in Settings → Obsidian if you want a complete record of the original text in your vault.",
+      "When enabled, Unearthed includes the full article body alongside your quotes and notes when exporting to Obsidian. Article HTML is converted to readable Markdown before export. Disabled by default so exported files stay focused on your highlights. Turn it on in Settings → Obsidian if you want a complete record of the original text in your vault.",
     href: "/local-docs/settings#include-article-content",
     keywords: [
       "obsidian",

@@ -125,14 +125,76 @@ export default function FeaturesPage() {
                     color, page/location
                   </li>
                 </ol>
+                <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 mt-3 space-y-2">
+                  <div>
+                    <p className="text-xs font-medium mb-1">
+                      Kindle is one-way
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Kindle refresh pulls books, highlights, and notes from
+                      Kindle into Unearthed&apos;s local database. Unearthed does
+                      not update Kindle, and edits made in Obsidian or Craft are
+                      not written back to Kindle.
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium mb-1">
+                      First Kindle sync waits for review
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      The first Kindle sync imports books and highlights locally,
+                      but does not automatically export them to Obsidian or Craft.
+                      Review the new sources first, mark anything ignored if
+                      needed, then send them manually when ready. Later syncs and
+                      manual Kindle refresh can auto-export when the relevant export setting is enabled.
+                    </p>
+                  </div>
+                </div>
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="auto-sync">
               <AccordionTrigger className="text-sm">Auto-Sync</AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  Enable in Settings to automatically fetch new highlights every
+                  hour. Auto Export to Obsidian also controls whether manual
+                  Kindle refresh sends refreshed Kindle data to Obsidian automatically.
+                </p>
+                <p>
+                  If this is the first Kindle sync, Unearthed imports the books
+                  locally but skips automatic Obsidian/Craft export for that run
+                  so you can review the new sources first.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="skip-kindle-refresh">
+              <AccordionTrigger className="text-sm">
+                Skip Kindle Refresh
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  On Kindle-origin sources, <strong>Skip Kindle Refresh</strong>{" "}
+                  keeps the source in your local library but skips that book
+                  before Unearthed fetches per-book Kindle annotations. This can
+                  reduce refresh time and Kindle requests for large libraries.
+                </p>
+                <p>
+                  This is separate from <strong>Ignored</strong>. Ignored means
+                  the source is excluded from exports; Skip Kindle Refresh only
+                  affects future Kindle refresh work. Skipped sources can still
+                  export to Obsidian and Craft unless they are also ignored.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="kindle-deletions">
+              <AccordionTrigger className="text-sm">
+                Deleted Kindle highlights
+              </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground">
-                Enable in Settings to automatically fetch new highlights every
-                hour. The sync runs in the background and updates your library
-                without interaction.
+                If Kindle stops returning a highlight, Unearthed keeps the
+                local copy instead of treating that as a deletion command.
+                Refreshing Kindle adds and updates returned annotations, but it
+                does not automatically remove local historical highlights.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="book-merging">
@@ -236,25 +298,28 @@ export default function FeaturesPage() {
                   <li>
                     Optional full article content export (enable in Settings
                     &rarr;{" "}
-                    <strong>Include Article Content in Obsidian Export</strong>)
+                    <strong>Include Article Content in Obsidian Export</strong>),
+                    converted from article HTML into readable Markdown
                   </li>
                 </ul>
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="smart-export">
               <AccordionTrigger className="text-sm">
-                Smart Export (Only Missing Quotes)
+                Smart Export
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground space-y-2">
                 <p>
-                  When you re-export, Unearthed intelligently detects which
-                  quotes are already in your Obsidian files and only adds the
-                  new ones.
+                  Obsidian export is generated from Unearthed&apos;s local
+                  database. Re-exporting updates Unearthed-managed highlight
+                  blocks where possible and adds new highlights without writing
+                  anything back to Kindle.
                 </p>
                 <p>
-                  This is done using invisible zero-width space markers. You can
-                  safely edit your Obsidian files without worrying about
-                  duplicates on re-export.
+                  Keep your own summaries or notes outside Unearthed-managed
+                  highlight sections, or in the protected personal notes
+                  section when enabled. Unearthed treats Obsidian as an export
+                  target, not as the source of truth for Kindle highlights.
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -278,8 +343,10 @@ export default function FeaturesPage() {
                     <CodeInline>{`{{color}}`}</CodeInline>
                   </li>
                   <li>Source template (YAML front-matter)</li>
+                  <li>Optional personal notes section for new source files, with a custom heading title</li>
+                  <li>Manual rebuild for one source or all Obsidian notes</li>
                   <li>Color mode: none, background, or text</li>
-                  <li>Custom color hex values for all 10 highlight colors</li>
+                  <li>Custom color hex values for all 12 highlight colors, including Aqua and Fallback</li>
                 </ul>
               </AccordionContent>
             </AccordionItem>
@@ -478,8 +545,10 @@ export default function FeaturesPage() {
                         ["Green", "green"],
                         ["Olive", "green"],
                         ["Cyan", "cyan"],
+                        ["Aqua", "cyan"],
                         ["Purple", "purple"],
                         ["Gray / Grey", "gray"],
+                        ["Fallback / unknown", "gray"],
                       ].map(([from, to]) => (
                         <tr key={from} className="border-b last:border-0">
                           <td className="px-3 py-2">{from}</td>
@@ -492,8 +561,9 @@ export default function FeaturesPage() {
                   </table>
                 </div>
                 <p className="text-xs">
-                  Set color mode to <CodeInline>none</CodeInline> to skip color
-                  styling in Craft entirely.
+                  Color names are matched case-insensitively. Set color mode to{" "}
+                  <CodeInline>none</CodeInline> to skip color styling in Craft
+                  entirely.
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -519,8 +589,8 @@ export default function FeaturesPage() {
                     <CodeInline>&lt;callout&gt;</CodeInline> block
                   </li>
                   <li>
-                    Zero-width-space dedup markers (an Obsidian-only artifact)
-                    are stripped
+                    Invisible Obsidian management markers are stripped before
+                    sending content to Craft
                   </li>
                   <li>
                     <CodeInline>&lt;script&gt;</CodeInline> tags are stripped as
@@ -1146,7 +1216,7 @@ export default function FeaturesPage() {
                     </tbody>
                   </table>
                 </div>
-                <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 mt-3">
+                <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 mt-3 space-y-2">
                   <p className="text-xs font-medium mb-1">
                     Quick Import Dialog Features
                   </p>

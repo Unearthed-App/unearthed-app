@@ -272,11 +272,14 @@ export default function SettingsPage() {
           <SettingItem
             name="Auto Export to Obsidian"
             defaultValue={true}
-            description="Automatically export all highlights and notes to your Obsidian vault every hour."
+            description="Automatically export all highlights and notes to your Obsidian vault every hour and after manual Kindle refresh."
             tips={[
               "Requires an Obsidian vault location to be configured",
-              "Only new or changed highlights are written on each export (smart export)",
-              "Runs alongside Auto Fetch from Kindle for a fully automated pipeline",
+              "Exports are generated from Unearthed's local database; Obsidian edits are not sent back to Kindle",
+              "Unearthed-managed highlight sections may be updated on export while user-authored sections are preserved",
+              "Runs alongside Auto Fetch from Kindle for a fully automated pipeline after the first Kindle sync",
+              "Also controls whether manual Refresh Kindle Books sends refreshed Kindle data to Obsidian automatically",
+              "The first Kindle sync is imported locally only and is not automatically exported, so you can review new Kindle sources before sending them to Obsidian",
             ]}
           />
 
@@ -287,7 +290,42 @@ export default function SettingsPage() {
             tips={[
               "Only applies to articles (RSS / Web Page imports), not Kindle books",
               "Disabled by default : enable if you want a full local copy of article text in your vault",
+              "Article HTML is converted to readable Markdown before export",
               "Article content is appended after the quotes section in the exported Markdown file",
+            ]}
+          />
+
+          <SettingItem
+            name="Add a personal notes section to new Obsidian source files"
+            defaultValue={false}
+            description="Adds a protected user-written notes section to newly created Obsidian source files."
+            tips={[
+              "Disabled by default",
+              "Use it for summaries, personal commentary, or reading notes that should not be regenerated from Kindle",
+              "Only added to new source files; existing files are not rewritten automatically",
+              "You can choose the section title with the Personal Notes Section Title setting",
+            ]}
+          />
+
+          <SettingItem
+            name="Personal Notes Section Title"
+            defaultValue="Personal Notes"
+            description="The heading used for the optional personal notes section in new Obsidian source files."
+            tips={[
+              "Only appears when the personal notes section setting is enabled",
+              "Falls back to Personal Notes if left blank",
+              "Content in this section is preserved during normal exports and rebuilds",
+            ]}
+          />
+
+          <SettingItem
+            name="Rebuild Obsidian Notes"
+            description="Regenerates Unearthed-managed highlight sections from the local database while preserving content outside managed highlight blocks."
+            tips={[
+              "Run manually from Settings → Obsidian when you want to repair old formatting or regenerate all notes",
+              "Per-source rebuild is also available from the source row in the Library/Sources tab",
+              "Rebuild is opt-in and does not run automatically on upgrade",
+              "Useful after changing templates, color settings, or note formatting behavior",
             ]}
           />
         </SettingSection>
@@ -396,6 +434,8 @@ export default function SettingsPage() {
             tips={[
               "Toggled independently from Obsidian auto-export",
               "Requires 'Keep App Running' to continue syncing in the background",
+              "Generated from Unearthed's local database; Craft edits are not sent back to Kindle",
+              "The first Kindle sync is imported locally only and is not automatically exported, so you can review new Kindle sources before sending them to Craft",
               "Only new or changed quotes are sent on each run (resumable sync)",
             ]}
           />
@@ -407,7 +447,8 @@ export default function SettingsPage() {
             tips={[
               "highlight: maps each Unearthed color to the nearest Craft palette color (yellow, blue, pink, red, green, cyan, purple, gray)",
               "none: no color styling applied",
-              "Orange and olive map to yellow and green respectively (Craft has no exact equivalents)",
+              "Aqua maps to Craft cyan; orange and olive map to yellow and green respectively (Craft has no exact equivalents)",
+              "Fallback is used when Unearthed receives an unknown quote color",
             ]}
           />
 
@@ -538,7 +579,11 @@ export default function SettingsPage() {
             tips={[
               "Requires 'Keep App Running' to be enabled",
               "Syncs silently without interrupting your work",
-              "Manual sync always available via 'Refresh Kindle Books' button",
+              "Manual Kindle refresh is always available; Obsidian export after refresh only runs when Auto Export to Obsidian is enabled",
+              "The first Kindle sync imports locally but does not automatically export to Obsidian or Craft, giving you a chance to review and ignore sources first",
+              "Kindle refresh is one-way: Unearthed pulls from Kindle into the local database and does not update Kindle",
+              "Use Skip Kindle Refresh on individual Kindle sources to keep them local while avoiding future per-book annotation fetches",
+              "Deleting a highlight in Kindle does not automatically delete the local Unearthed copy",
             ]}
           />
         </SettingSection>
@@ -768,7 +813,7 @@ by [[{{author}}]]`}
             <p className="text-xs font-medium mb-2">Custom Color Values</p>
             <p className="text-xs text-muted-foreground mb-3">
               Override the default hex color values for each highlight color.
-              All 10 colors are customizable.
+              All 12 colors are customizable.
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
               {[
@@ -780,8 +825,10 @@ by [[{{author}}]]`}
                 { name: "Green", hex: "#52c41a" },
                 { name: "Olive", hex: "#b5b35c" },
                 { name: "Cyan", hex: "#13c2c2" },
+                { name: "Aqua", hex: "#05B8B8" },
                 { name: "Purple", hex: "#a259d9" },
                 { name: "Gray", hex: "#888888" },
+                { name: "Fallback", hex: "#888888" },
               ].map((color) => (
                 <div
                   key={color.name}

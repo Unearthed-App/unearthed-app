@@ -285,7 +285,11 @@ export default function InstallPage() {
           <StepItem step={3} title="Fetch Highlights">
             <p>
               Click <strong>Refresh Kindle Books</strong> to import all your
-              highlights and annotations.
+              highlights and annotations. After the first Kindle sync, this can
+              also export to Obsidian automatically when <strong>Auto Export to Obsidian</strong> is enabled.
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              <strong>First Kindle sync:</strong> Unearthed imports the books and highlights into the local database, but does not automatically send them to Obsidian or Craft. Review the new sources first, mark anything ignored if needed, then use <strong>Send to Obsidian</strong> or <strong>Send to Craft</strong> when ready.
             </p>
           </StepItem>
           <StepItem step={4} title="Connect KOReader (Optional)">
@@ -325,9 +329,9 @@ export default function InstallPage() {
           </StepItem>
           <StepItem step={5} title="Done!" last>
             <p>
-              Your highlights are now in your configured destination — as Markdown
-              files in your Obsidian vault, and/or as collection rows in your Craft
-              space. They update automatically on each sync.
+              After your first Kindle sync, review the imported sources and send
+              them to Obsidian and/or Craft when ready. Later syncs can update
+              your configured destinations automatically.
             </p>
             <div className="flex items-center gap-1.5 mt-2 text-green-600 dark:text-green-400">
               <CheckCircle className="h-4 w-4" />
