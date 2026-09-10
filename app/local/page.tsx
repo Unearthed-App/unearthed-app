@@ -43,6 +43,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CompatibilityChecker } from "@/components/marketing/CompatibilityChecker";
 import Image from "next/image";
 
 export const dynamic = "force-static";
@@ -404,6 +405,7 @@ const UnearthedLocal = () => {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
+              <CompatibilityChecker product="local" />
             </div>
           </header>
 

@@ -40,6 +40,11 @@ interface NavLink {
 const navLinks: NavLink[] = [
   { href: "/", label: "", icon: true },
   {
+    href: "/which-unearthed",
+    label: "Which Unearthed?",
+    mobileTextColor: "text-foreground",
+  },
+  {
     href: "/local",
     label: "Local",
     bgHint:

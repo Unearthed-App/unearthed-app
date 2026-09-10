@@ -19,6 +19,7 @@ import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
 import { Button } from "@/components/ui/button";
+import { CompatibilityChecker } from "@/components/marketing/CompatibilityChecker";
 import { Crown, LogIn, Cloud, Sparkles } from "lucide-react";
 import { NonPremiumNavigation } from "@/components/NonPremiumNavigation";
 
@@ -206,6 +207,7 @@ export default function UnearthedOnline() {
                 Sign In/Up
               </Button>
             </Link>
+            <CompatibilityChecker product="online" />
           </div>
         </header>
 

@@ -1,1448 +1,629 @@
 "use client";
-
-import { useState } from "react";
-import { Crimson_Pro } from "next/font/google";
-import { useTheme } from "next-themes";
-import {
-  Terminal,
-  RefreshCw,
-  PuzzleIcon,
-  Sparkles,
-  Rss,
-  PlayCircle,
-  Globe,
-  Network,
-  ShieldCheck,
-  PlusCircle,
-  Cloud,
-  Monitor,
-  BookOpen,
-  Scan,
-  PuzzleIcon as Puzzle,
-  Smartphone,
-} from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
-
-const crimsonPro = Crimson_Pro({
+import { CompatibilityChecker } from "@/components/marketing/CompatibilityChecker";
+import { Crimson_Pro } from "next/font/google";
+import {
+  ArrowRight,
+  BookOpen,
+  Check,
+  Cloud,
+  FileText,
+  Github,
+  KeyRound,
+  Laptop,
+  Search,
+  ShieldCheck,
+  Smartphone,
+  Sparkles,
+  SunMedium,
+  UploadCloud,
+} from "lucide-react";
+const serif = Crimson_Pro({
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
   style: ["normal", "italic"],
-  weight: ["400", "500", "600", "700", "800"],
 });
-
-const LIGHT = {
-  bg: "#fff8f7",
-  surface: "#fff8f7",
-  surfaceContainerLowest: "#ffffff",
-  surfaceContainerLow: "#fff0f1",
-  surfaceContainer: "#f5cdd0",
-  surfaceContainerHigh: "#f8e3e4",
-  surfaceContainerHighest: "#f2dedf",
-  onSurface: "#23191a",
-  onSurfaceVariant: "#3d4947",
-  primary: "#006a64",
-  primaryContainer: "#2daca3",
-  onPrimaryContainer: "#003a36",
-  secondary: "#695b5c",
-  secondaryContainer: "#f2dedf",
-  onSecondaryContainer: "#6f6162",
-  inverseSurface: "#392d2f",
-  outline: "#6d7a78",
-  outlineVariant: "#bcc9c7",
-  cardBg: "rgba(255,255,255,0.5)",
-  cardBgStrong: "rgba(255,255,255,0.6)",
-  border: "rgba(26,26,26,0.12)",
-  borderLight: "rgba(26,26,26,0.1)",
-  borderSubtle: "rgba(26,26,26,0.08)",
-  borderStrong: "rgba(26,26,26,0.15)",
-  kindleBg: "#1a6fbf22",
-  kindleBorder: "#1a6fbf",
-  kindleColor: "#1a5fa8",
-  obsidianBg: "#7c3aed22",
-  obsidianBorder: "#7c3aed",
-  obsidianColor: "#6d28d9",
-  glowLocal: "0 0 80px -20px rgba(45,172,163,0.2)",
-  glowOnline: "0 0 80px -20px rgba(242,222,223,0.8)",
-  dashedOnline: "#c0505066",
-  mobileScreenshot: "/mobile/mobile-home-light.webp",
-  buttonText: "white",
-  tagWhiteBg: "white",
-  tagWhiteColor: "#006a64",
-};
-
-const DARK = {
-  bg: "#180f10",
-  surface: "#180f10",
-  surfaceContainerLowest: "#0f0809",
-  surfaceContainerLow: "#221315",
-  surfaceContainer: "#2e1b1e",
-  surfaceContainerHigh: "#382124",
-  surfaceContainerHighest: "#40272a",
-  onSurface: "#f0dfe0",
-  onSurfaceVariant: "#bcc9c7",
-  primary: "#4dd4cc",
-  primaryContainer: "#2daca3",
-  onPrimaryContainer: "#a0e8e4",
-  secondary: "#c4a8a9",
-  secondaryContainer: "#40272a",
-  onSecondaryContainer: "#c4a8a9",
-  inverseSurface: "#f0dfe0",
-  outline: "#8a9896",
-  outlineVariant: "#3d4947",
-  cardBg: "rgba(255,255,255,0.05)",
-  cardBgStrong: "rgba(255,255,255,0.07)",
-  border: "rgba(255,255,255,0.12)",
-  borderLight: "rgba(255,255,255,0.08)",
-  borderSubtle: "rgba(255,255,255,0.06)",
-  borderStrong: "rgba(255,255,255,0.15)",
-  kindleBg: "#60a5fa22",
-  kindleBorder: "#60a5fa",
-  kindleColor: "#93c5fd",
-  obsidianBg: "#a78bfa22",
-  obsidianBorder: "#a78bfa",
-  obsidianColor: "#c4b5fd",
-  glowLocal: "0 0 80px -20px rgba(45,172,163,0.12)",
-  glowOnline: "0 0 80px -20px rgba(45,172,163,0.08)",
-  dashedOnline: "#c4a8a966",
-  mobileScreenshot: "/mobile/mobile-home-dark.webp",
-  buttonText: "#0f0809",
-  tagWhiteBg: "#2e1b1e",
-  tagWhiteColor: "#4dd4cc",
-};
-
-type Colors = typeof LIGHT;
-
-type InputId =
-  | "kindle"
-  | "koreader"
-  | "physical"
-  | "youtube"
-  | "rss"
-  | "webpage";
-type OutputId = "obsidian" | "notion" | "supernotes" | "capacities" | "craft";
-
-const INPUTS: { id: InputId; label: string }[] = [
-  { id: "kindle", label: "Kindle Highlights" },
-  { id: "koreader", label: "KOReader Highlights" },
-  { id: "physical", label: "Physical Books" },
-  { id: "youtube", label: "YouTubes" },
-  { id: "rss", label: "RSS / Articles" },
-  { id: "webpage", label: "Web Pages" },
+const features = [
+  [
+    "DAILY REFLECTIONS",
+    "One idea, every day.",
+    "Open Unearthed to a highlight you once thought was worth saving. Add a note or send it to your daily note—so useful ideas become part of how you think.",
+    SunMedium,
+  ],
+  [
+    "GLOBAL SEARCH",
+    "Find any idea in seconds.",
+    "Search across books, authors, highlights, notes, tags, articles and saved sources—even when you cannot remember where an idea came from.",
+    Search,
+  ],
+  [
+    "AUTOMATIC SYNC",
+    "Your reading, where you work.",
+    "Bring in highlights from Kindle and KOReader, then keep your library moving to Obsidian, Notion, Capacities, Supernotes and more.",
+    UploadCloud,
+  ],
 ];
-
-const OUTPUTS: {
-  id: OutputId;
-  label: string;
-  logoLight: string;
-  logoDark: string;
-}[] = [
-  {
-    id: "obsidian",
-    label: "Obsidian",
-    logoLight: "/obsidian.svg",
-    logoDark: "/obsidian.svg",
-  },
-  {
-    id: "craft",
-    label: "Craft",
-    logoLight: "/craft_app_icon.png",
-    logoDark: "/craft_app_icon.png",
-  },
-  {
-    id: "notion",
-    label: "Notion",
-    logoLight: "/notion-logo.svg",
-    logoDark: "/notion-logo-no-background.png",
-  },
-  {
-    id: "supernotes",
-    label: "Supernotes",
-    logoLight: "/supernotes.png",
-    logoDark: "/supernotes.png",
-  },
-  {
-    id: "capacities",
-    label: "Capacities",
-    logoLight: "/capacities-logo.png",
-    logoDark: "/capacities-logo.png",
-  },
+const plans = [
+  [
+    "Local",
+    "One-time purchase",
+    "Maximum privacy and desktop ownership",
+    "macOS, Windows & Linux",
+    Laptop,
+    "/local",
+  ],
+  [
+    "Online",
+    "$5 / month",
+    "The simplest setup, available anywhere",
+    "Web app",
+    Cloud,
+    FileText,
+    "/online",
+  ],
+  [
+    "Mobile",
+    "One-time purchase",
+    "Your library and book capture in your pocket",
+    "Android & iOS PWA",
+    Smartphone,
+    "/mobile",
+  ],
 ];
-
-const COMBO_INFO: Record<
-  string,
-  { tagline: string; localHighlight?: string; neither?: boolean }
-> = {
-  // Kindle
-  "kindle-obsidian": {
-    tagline:
-      "Both options work : Local runs silently in the background, Online uses the browser extension",
-  },
-  "kindle-notion": {
-    tagline: "Kindle → Browser extension → Unearthed Online → Notion",
-  },
-  "kindle-supernotes": {
-    tagline: "Kindle → Browser extension → Unearthed Online → Supernotes",
-  },
-  "kindle-capacities": {
-    tagline: "Kindle → Browser extension → Unearthed Online → Capacities",
-  },
-  "kindle-craft": {
-    tagline:
-      "Unearthed Local syncs Kindle highlights to Craft automatically. Online doesn't support Craft",
-  },
-  // KOReader
-  "koreader-obsidian": {
-    tagline:
-      "Both options work. You'll also need the KOReader plugin for either path",
-    localHighlight:
-      "Requires the KOReader plugin — github.com/Unearthed-App/unearthed-koreader",
-  },
-  "koreader-notion": {
-    tagline: "KOReader plugin + Unearthed Online → Notion",
-  },
-  "koreader-supernotes": {
-    tagline: "KOReader plugin + Unearthed Online → Supernotes",
-  },
-  "koreader-capacities": {
-    tagline: "KOReader plugin + Unearthed Online → Capacities",
-  },
-  "koreader-craft": {
-    tagline:
-      "Unearthed Local + KOReader plugin → Craft. Online doesn't support Craft",
-    localHighlight:
-      "Requires the KOReader plugin — github.com/Unearthed-App/unearthed-koreader",
-  },
-  // Physical Books
-  "physical-obsidian": {
-    tagline:
-      "Capture with Unearthed Mobile (OCR camera), then Unearthed Local syncs to Obsidian. Unearthed Online is more manual",
-    localHighlight:
-      "Pairs with Unearthed Mobile : physical quotes captured there sync here then go to Obsidian",
-  },
-  "physical-notion": {
-    tagline: "Manually add quotes, then Online syncs to Notion",
-  },
-  "physical-supernotes": {
-    tagline: "Manually add quotes, then Online syncs to Supernotes",
-  },
-  "physical-capacities": {
-    tagline: "Manually add quotes, then Online syncs to Capacities",
-  },
-  "physical-craft": {
-    tagline:
-      "Capture with Unearthed Mobile (OCR camera), Local syncs to Craft. Online doesn't support Craft",
-    localHighlight:
-      "Pairs with Unearthed Mobile — captured quotes land here then go to Craft",
-  },
-  // YouTube
-  "youtube-obsidian": {
-    tagline:
-      "Unearthed Local : subscribe to channels, pull transcripts, highlight. Send to Obsidian",
-  },
-  "youtube-craft": {
-    tagline:
-      "Unearthed Local : subscribe to channels, pull transcripts, highlight. Send to Craft",
-  },
-  "youtube-notion": {
-    tagline:
-      "Not supported yet. Unless you add them manually in Unearthed Online",
-    neither: true,
-  },
-  "youtube-supernotes": {
-    tagline:
-      "Not supported yet. Unless you add them manually in Unearthed Online",
-    neither: true,
-  },
-  "youtube-capacities": {
-    tagline:
-      "Not supported yet. Unless you add them manually in Unearthed Online",
-    neither: true,
-  },
-  // RSS / Articles
-  "rss-obsidian": {
-    tagline:
-      "Unearthed Local : auto pull full articles, highlight them. Send to Obsidian.",
-  },
-  "rss-craft": {
-    tagline:
-      "Unearthed Local : auto pull full articles, highlight them. Send to Craft.",
-  },
-  "rss-notion": {
-    tagline:
-      "Not supported yet. RSS sync is a Local only feature. Online doesn't support it.",
-    neither: true,
-  },
-  "rss-supernotes": {
-    tagline:
-      "Not supported yet. RSS sync is a Local only feature. Online doesn't support it.",
-    neither: true,
-  },
-  "rss-capacities": {
-    tagline:
-      "Not supported yet. RSS sync is a Local only feature. Online doesn't support it.",
-    neither: true,
-  },
-  // Web Pages
-  "webpage-obsidian": {
-    tagline:
-      "Unearthed Local : save full webpages, highlight them. Send to Obsidian.",
-  },
-  "webpage-craft": {
-    tagline:
-      "Unearthed Local : save full webpages, highlight them. Send to Craft.",
-  },
-  "webpage-notion": {
-    tagline:
-      "Not supported yet. Webpage capture is a Local only feature. Online doesn't support it.",
-    neither: true,
-  },
-  "webpage-supernotes": {
-    tagline:
-      "Not supported yet. Webpage capture is a Local only feature. Online doesn't support it.",
-    neither: true,
-  },
-  "webpage-capacities": {
-    tagline:
-      "Not supported yet. Webpage capture is a Local only feature. Online doesn't support it.",
-    neither: true,
-  },
-};
-
-function FeatureItem({
-  icon,
-  children,
-  colors,
-}: {
-  icon: React.ReactNode;
-  children: React.ReactNode;
-  colors: Colors;
-}) {
+function SearchCard() {
   return (
-    <li className="flex items-start gap-4">
-      <span style={{ color: colors.primary, marginTop: "2px", flexShrink: 0 }}>
-        {icon}
-      </span>
-      <span style={{ color: colors.onSurface, fontSize: "1.05rem" }}>
-        {children}
-      </span>
-    </li>
-  );
-}
-
-function SectionTag({
-  children,
-  variant = "primary",
-  colors,
-}: {
-  children: React.ReactNode;
-  variant?: "primary" | "secondary" | "white";
-  colors: Colors;
-}) {
-  const bg =
-    variant === "primary"
-      ? colors.primary
-      : variant === "secondary"
-        ? colors.secondaryContainer
-        : colors.tagWhiteBg;
-  const color =
-    variant === "primary"
-      ? colors.buttonText
-      : variant === "secondary"
-        ? colors.onSecondaryContainer
-        : colors.tagWhiteColor;
-  return (
-    <div
-      className="inline-block px-4 py-1 rounded-full font-bold text-xs tracking-widest uppercase mb-6"
-      style={{ background: bg, color }}
-    >
-      {children}
+    <div className="rounded-xl border-[3px] border-[#1d2926] dark:border-[#9edbd1] bg-[#fffdf8] dark:bg-[#18231f] p-4 shadow-[8px_8px_0_#1d2926] dark:shadow-[8px_8px_0_#075f58]">
+      <div className="mb-4 flex text-[9px] text-stone-400 dark:text-stone-400">
+        ●　●　● <span className="mx-auto">Search everything</span>
+      </div>
+      <div className="flex items-center gap-3 rounded-xl border border-[#075f5850] bg-[#f7faf7] dark:bg-[#121d1a] p-3 text-[#075f58] dark:text-[#67d7c9]">
+        <Search size={18} />
+        <b>attention</b>
+        <kbd className="ml-auto text-[10px]">⌘ K</kbd>
+      </div>
+      <p className="my-4 text-[9px] tracking-[.16em] text-stone-400 dark:text-stone-400">
+        12 IDEAS FOUND ACROSS YOUR LIBRARY
+      </p>
+      {[
+        [
+          "BOOK",
+          "Stolen Focus",
+          "Our attention did not collapse. It was stolen.",
+        ],
+        [
+          "ARTICLE",
+          "The Shape of Attention",
+          "Protecting attention is a form of choosing a life.",
+        ],
+        ["NOTE", "Deep work", "Attention is the beginning of devotion."],
+      ].map((x) => (
+        <div
+          className="flex gap-3 border-t border-stone-200 dark:border-stone-700 py-3"
+          key={x[1]}
+        >
+          <span className="h-fit rounded bg-teal-50 dark:bg-[#173b34] px-2 py-1 text-[8px] text-[#075f58] dark:text-[#67d7c9]">
+            {x[0]}
+          </span>
+          <div>
+            <b className="text-xs">{x[1]}</b>
+            <p className="font-serif text-xs text-stone-600 dark:text-stone-300">
+              {x[2]}
+            </p>
+            <small className="text-[9px] text-stone-400 dark:text-stone-400">
+              Saved with source context
+            </small>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
-
 export function HomePagePublic() {
-  const { resolvedTheme } = useTheme();
-  const C = resolvedTheme === "dark" ? DARK : LIGHT;
-
-  const [selectedInput, setSelectedInput] = useState<InputId>("kindle");
-  const [selectedOutput, setSelectedOutput] = useState<OutputId>("obsidian");
-
-  const comboKey = `${selectedInput}-${selectedOutput}`;
-  const combo = COMBO_INFO[comboKey];
-  const localSupported =
-    selectedOutput === "obsidian" || selectedOutput === "craft";
-  const onlineSupported =
-    (selectedInput === "kindle" ||
-      selectedInput === "koreader" ||
-      selectedInput === "physical") &&
-    selectedOutput !== "craft";
-  const neitherSupported = !localSupported && !onlineSupported;
-  const inputLabel = INPUTS.find((i) => i.id === selectedInput)!.label;
-  const outputLabel = OUTPUTS.find((o) => o.id === selectedOutput)!.label;
-
   return (
-    <div
-      style={{
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-        background: C.bg,
-        color: C.onSurface,
-        minHeight: "100vh",
-        position: "relative",
-      }}
-    >
-      <div className="absolute mt-3 top-0 right-0 flex items-center justify-center space-x-2 p-3">
-        <div className="flex justify-center">
-          <svg
-            className="text-red-500 motion-blur-in-xl motion-duration-[6000ms] h-8 w-8"
-            fill="currentColor"
-            version="1.2"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 400 400"
-            width="400"
-            height="400"
-          >
-            <title>Unearthed Logo</title>
-            <g id="g4">
-              <path
-                id="path2"
-                fillRule="evenodd"
-                className="s0"
-                d="m101.8 41.3c12.3-12.8 32.7-13.2 45.5-0.9 12.9 12.3 13.3 32.7 0.9 45.6-37.4 38.9-61.1 93.1-60.9 139.8 0.1 25.3 7.3 48.3 26.3 62.4 18.3 13.6 36.8 18.3 53.7 15 27.4-5.3 49.6-29.1 61.5-59.5 6.5-16.5 25.2-24.7 41.8-18.1 16.5 6.5 24.7 25.2 18.2 41.7-20.6 52.3-62 89.9-109.2 99.1-32.8 6.3-69-0.2-104.3-26.4-35.3-26.1-52.3-67.2-52.4-114-0.2-61.4 29.6-133.4 78.9-184.7z"
-              />
-            </g>
-            <g id="g8">
-              <path
-                id="path6"
-                fillRule="evenodd"
-                className="s0"
-                d="m243.3 189.6c-7.6-3.2-11.1-11.8-8-19.3 3.1-7.5 11.8-11.1 19.3-8 22.1 9.2 59.7 28.8 80.7 45.1 6.4 5 7.6 14.2 2.6 20.7-5 6.4-14.2 7.6-20.7 2.6-19.2-14.8-53.7-32.7-73.9-41.1z"
-              />
-            </g>
-            <g id="g12">
-              <path
-                id="path10"
-                fillRule="evenodd"
-                className="s0"
-                d="m280 107.1c-7.5-3.1-11.1-11.8-7.9-19.3 3.1-7.5 11.8-11.1 19.3-7.9 22.1 9.2 59.7 28.8 80.7 45 6.4 5 7.6 14.3 2.6 20.7-5 6.5-14.3 7.6-20.7 2.7-19.2-14.9-53.8-32.7-74-41.2z"
-              />
-            </g>
-            <g id="g16">
-              <path
-                id="path14"
-                fillRule="evenodd"
-                className="s0"
-                d="m261.1 148.6c-7.5-3.1-11.1-11.8-7.9-19.3 3.1-7.5 11.8-11.1 19.3-7.9 22.1 9.2 59.7 28.8 80.7 45 6.4 5 7.6 14.3 2.6 20.7-5 6.5-14.3 7.6-20.7 2.7-19.2-14.9-53.8-32.7-74-41.2z"
-              />
-            </g>
-          </svg>
-        </div>
-      </div>
-      <main className="pt-28 pb-20 px-6 max-w-7xl mx-auto">
-        {/* ── Hero ──────────────────────────────────────────────────── */}
-        <header className="mb-8 text-center max-w-4xl mx-auto">
-          <h1
-            className={`${crimsonPro.className} text-4xl md:text-6xl font-bold leading-tight mb-10`}
-          >
-            Ok, so you&apos;re probably just here to get your{" "}
-            <span
-              style={{
-                background: C.kindleBg,
-                borderBottom: `3px solid ${C.kindleBorder}`,
-                paddingBottom: "2px",
-                paddingLeft: "4px",
-                paddingRight: "4px",
-                color: C.kindleColor,
-              }}
-            >
-              {inputLabel}
-            </span>{" "}
-            into{" "}
-            <span
-              style={{
-                background: C.obsidianBg,
-                borderBottom: `3px solid ${C.obsidianBorder}`,
-                paddingBottom: "2px",
-                paddingLeft: "4px",
-                paddingRight: "4px",
-                color: C.obsidianColor,
-              }}
-            >
-              {outputLabel}
-            </span>
-          </h1>
-
-          {/* Input picker */}
-          <div className="mb-5">
-            <p
-              className="text-xs font-bold tracking-widest uppercase mb-3"
-              style={{ color: C.outline }}
-            >
-              Your source
+    <div className="overflow-hidden bg-[#f8f3e9] text-[#1d2926] dark:bg-[#101815] dark:text-[#f3ece2]">
+      <section className="relative min-h-[780px] bg-[radial-gradient(circle_at_78%_30%,#d4e9df_0,transparent_32%),linear-gradient(115deg,#fffaf1,#f3ede2)] dark:bg-[radial-gradient(circle_at_78%_30%,#16443a_0,transparent_34%),linear-gradient(115deg,#14211d,#0d1512)] px-5 pb-24 pt-40">
+        <div className="mx-auto grid max-w-[1180px] items-center gap-16 lg:grid-cols-[5fr_7fr]">
+          <div>
+            <p className="text-xs font-bold tracking-[.19em] text-[#075f58] dark:text-[#67d7c9]">
+              — READING HIGHLIGHTS, REMEMBERED
             </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {INPUTS.map(({ id, label }) => {
-                const active = selectedInput === id;
-                return (
-                  <button
-                    key={id}
-                    onClick={() => setSelectedInput(id)}
-                    className="px-4 py-2 rounded-full text-sm font-semibold transition-all hover:scale-105 active:scale-95"
-                    style={
-                      active
-                        ? {
-                            background: C.kindleBg,
-                            border: `2px solid ${C.kindleBorder}`,
-                            color: C.kindleColor,
-                          }
-                        : {
-                            background: C.surfaceContainerLowest,
-                            border: `2px solid ${C.borderSubtle}`,
-                            color: C.onSurfaceVariant,
-                            opacity: 0.65,
-                          }
-                    }
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Output picker */}
-          <div className="mb-8">
-            <p
-              className="text-xs font-bold tracking-widest uppercase mb-3"
-              style={{ color: C.outline }}
-            >
-              Your destination
-            </p>
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 max-w-2xl mx-auto">
-              {OUTPUTS.map(({ id, label, logoLight, logoDark }) => {
-                const active = selectedOutput === id;
-                const logo = resolvedTheme === "dark" ? logoDark : logoLight;
-                return (
-                  <button
-                    key={id}
-                    onClick={() => setSelectedOutput(id)}
-                    aria-pressed={active}
-                    aria-label={label}
-                    className="group relative flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all hover:scale-105 active:scale-95"
-                    style={
-                      active
-                        ? {
-                            background: C.obsidianBg,
-                            border: `2px solid ${C.obsidianBorder}`,
-                            color: C.obsidianColor,
-                            boxShadow: `0 0 0 4px ${C.obsidianBg}, 0 6px 20px ${C.obsidianBorder}33`,
-                          }
-                        : {
-                            background: C.surfaceContainerLowest,
-                            border: `2px solid ${C.borderSubtle}`,
-                            color: C.onSurfaceVariant,
-                            opacity: 0.55,
-                          }
-                    }
-                  >
-                    <div
-                      className="relative w-12 h-12 flex items-center justify-center overflow-hidden"
-                      style={{
-                        borderRadius: id === "capacities" ? "22%" : undefined,
-                      }}
-                    >
-                      <Image
-                        src={logo}
-                        alt={`${label} logo`}
-                        fill
-                        sizes="48px"
-                        style={{
-                          objectFit: "contain",
-                          filter: active ? "none" : "grayscale(0.6)",
-                          transition: "filter 0.2s",
-                        }}
-                      />
-                    </div>
-                    <span className="text-xs font-semibold tracking-wide">
-                      {label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div
-            className={`${crimsonPro.className} text-3xl md:text-4xl font-bold italic`}
-            style={{ color: neitherSupported ? C.outline : C.primary }}
-          >
-            {localSupported && onlineSupported
-              ? "Unearthed provides 2 options..."
-              : localSupported
-                ? "Unearthed Local is your path..."
-                : onlineSupported
-                  ? "Unearthed Online is your path..."
-                  : "This combination isn't supported yet"}
-          </div>
-
-          {/* Combo tagline */}
-          {combo && (
-            <div
-              className="mt-6 text-sm px-6 py-3 rounded-2xl inline-block"
-              style={
-                neitherSupported
-                  ? {
-                      background: `${C.secondaryContainer}88`,
-                      border: `1px solid ${C.borderSubtle}`,
-                      color: C.onSurfaceVariant,
-                    }
-                  : {
-                      background: C.surfaceContainerLow,
-                      border: `1px solid ${C.borderSubtle}`,
-                      color: C.onSurfaceVariant,
-                    }
+            <h1
+              className={
+                serif.className +
+                " my-6 text-6xl font-semibold leading-[.92] tracking-[-.04em] sm:text-7xl"
               }
             >
-              {combo.tagline}
+              Remember more of{" "}
+              <em className="text-[#075f58] dark:text-[#67d7c9]">
+                what you read.
+              </em>
+            </h1>
+            <p className="max-w-xl text-lg leading-8 text-stone-600 dark:text-stone-300">
+              Unearthed brings highlights from Kindle, KOReader, articles,
+              YouTube and physical books into one searchable library. Revisit a
+              meaningful idea every day and sync everything to the tools you
+              already use.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a
+                href="#choose-your-setup"
+                className="flex items-center justify-center gap-3 rounded-lg border-[3px] border-[#1d2926] dark:border-[#9edbd1] bg-[#25b1a6] px-6 py-4 text-sm font-black text-[#102521] shadow-[5px_5px_0_#1d2926] dark:shadow-[5px_5px_0_#075f58] transition-transform hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
+              >
+                Get Unearthed <ArrowRight size={17} />
+              </a>
+              <a
+                href="#features"
+                className="rounded-lg border-[3px] border-[#1d2926] dark:border-[#9edbd1] bg-[#fffdf8] dark:bg-[#18231f] px-6 py-4 text-center text-sm font-black shadow-[5px_5px_0_#1d2926] dark:shadow-[5px_5px_0_#075f58] transition-transform hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none"
+              >
+                See how it works
+              </a>
             </div>
-          )}
-        </header>
-
-        {/* ── Two Column ────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-4">
-          {/* ── OPTION 1: LOCAL ─────────────────────────────── */}
-          <section className="flex flex-col gap-6">
-            {!localSupported && (
-              <div
-                className="px-4 py-3 rounded-2xl text-center text-sm font-bold"
-                style={{
-                  background: C.surfaceContainerHighest,
-                  border: `2px solid ${C.borderSubtle}`,
-                  color: C.onSurfaceVariant,
-                }}
-              >
-                Not applicable — Local only syncs to Obsidian &amp; Craft, not{" "}
-                {outputLabel}
-              </div>
-            )}
-            <div
-              className="pt-10 p-6 md:p-10 rounded-3xl relative overflow-hidden flex-1"
-              style={{
-                background: C.surfaceContainerLow,
-                border: `4px solid ${C.border}`,
-                boxShadow: C.glowLocal,
-                ...(!localSupported
-                  ? { opacity: 0.4, filter: "grayscale(0.3)" }
-                  : {}),
-              }}
-            >
-              <div className="absolute top-0 right-0 p-8 opacity-10">
-                <Monitor size={96} />
-              </div>
-              <p
-                className={`${crimsonPro.className} italic text-base absolute`}
-                style={{
-                  color: C.primary,
-                  top: "0.7rem",
-                  left: "1.2rem",
-                  transform: "rotate(-1.5deg)",
-                  transformOrigin: "left center",
-                }}
-              >
-                the one I&apos;m most excited about
+            <div className="mt-7 flex flex-wrap gap-4 text-[11px] text-stone-500 dark:text-stone-400">
+              <span>Open source</span>
+              <span>Privacy first</span>
+              <span>No Amazon credentials stored</span>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="absolute -left-5 -top-12 z-10 w-56 rounded-2xl border border-[#d07b6560] bg-[#f7dcd3] dark:border-[#e77962] dark:bg-[#39251f] p-5 shadow-xl">
+              <small className="tracking-widest">TODAY'S REFLECTION</small>
+              <p className="my-3 font-serif text-lg">
+                “What we remember changes what we become.”
               </p>
-              <SectionTag colors={C}>Option 1</SectionTag>
-              <h2 className={`${crimsonPro.className} text-4xl font-bold mb-2`}>
-                Unearthed{" "}
-                <span
-                  style={{
-                    textDecoration: "underline",
-                    textDecorationStyle: "wavy",
-                    textDecorationColor: C.primaryContainer,
-                    textDecorationThickness: "3px",
-                    textUnderlineOffset: "6px",
-                  }}
-                >
-                  Local
-                </span>
+              <span className="text-[10px]">
+                The Art of Stillness · Pico Iyer
+              </span>
+            </div>
+            <SearchCard />
+            <div className="absolute -bottom-9 right-0 rounded-xl bg-[#075f58] px-5 py-4 text-xs font-bold text-white shadow-xl">
+              ●　All caught up
+              <br />
+              <small className="font-normal text-teal-100">
+                Obsidian · Notion · Capacities
+              </small>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        aria-labelledby="reading-flow-title"
+        className="border-y border-[#1d2926]/15 bg-[#fffdf8] px-5 py-16 dark:border-[#9edbd1]/20 dark:bg-[#18231f]"
+      >
+        <div className="mx-auto max-w-[1180px]">
+          <div className="mb-10 grid items-end gap-4 md:grid-cols-[1fr_auto]">
+            <div>
+              <p className="text-[10px] font-bold tracking-[.2em] text-[#dc755f]">
+                ONE LIBRARY · EVERYWHERE YOU READ AND WRITE
+              </p>
+              <h2
+                id="reading-flow-title"
+                className={
+                  serif.className +
+                  " mt-2 text-4xl font-semibold leading-none text-[#1d2926] dark:text-[#f3ece2] md:text-5xl"
+                }
+              >
+                From scattered highlights to{" "}
+                <em className="text-[#075f58] dark:text-[#67d7c9]">
+                  useful ideas.
+                </em>
               </h2>
-              <p
-                className={`${crimsonPro.className} text-xl mb-8`}
-                style={{ color: C.onSurfaceVariant }}
-              >
-                — install it on your machine
-              </p>
-              <ul className="space-y-6">
-                <FeatureItem colors={C} icon={<Terminal size={22} />}>
-                  Runs on: MacOS, Windows, Linux
-                </FeatureItem>
-                {selectedInput === "kindle" && (
-                  <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                    Runs in the background pulling in your Kindle Highlights
-                  </FeatureItem>
-                )}
-                {selectedInput === "koreader" && (
-                  <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                    Runs in the background pulling in your KOReader Highlights
-                  </FeatureItem>
-                )}
-                {selectedInput === "physical" && (
-                  <FeatureItem colors={C} icon={<Smartphone size={22} />}>
-                    Capture physical book quotes using Unearthed Mobile (OCR
-                    camera)
-                  </FeatureItem>
-                )}
-                {selectedInput === "youtube" && (
-                  <FeatureItem colors={C} icon={<PlayCircle size={22} />}>
-                    Subscribe to YouTube channels and pull transcripts in-app
-                  </FeatureItem>
-                )}
-                {selectedInput === "rss" && (
-                  <FeatureItem colors={C} icon={<Rss size={22} />}>
-                    Pull in full RSS articles to read and highlight
-                  </FeatureItem>
-                )}
-                {selectedInput === "webpage" && (
-                  <FeatureItem colors={C} icon={<Globe size={22} />}>
-                    Save full webpages to read and highlight
-                  </FeatureItem>
-                )}
-                {selectedInput === "koreader" && (
-                  <FeatureItem colors={C} icon={<PuzzleIcon size={22} />}>
-                    Install the free KOReader plugin —{" "}
-                    <Link
-                      href="https://github.com/Unearthed-App/unearthed-koreader"
-                      target="_blank"
-                      className="underline break-all"
-                      style={{ color: C.primary }}
-                    >
-                      github.com/Unearthed-App/unearthed-koreader
-                    </Link>
-                  </FeatureItem>
-                )}
-                {selectedOutput === "obsidian" && (
-                  <>
-                    <FeatureItem colors={C} icon={<PuzzleIcon size={22} />}>
-                      No extra Obsidian plugin needed — Local handles the sync
-                      directly
-                    </FeatureItem>
-                    <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                      Syncs your full library to your vault — books, articles,
-                      highlights, notes, tags and the daily reflection
-                    </FeatureItem>
-                  </>
-                )}
-                {selectedOutput === "craft" && (
-                  <>
-                    <FeatureItem colors={C} icon={<PuzzleIcon size={22} />}>
-                      Connects to Craft automatically via its API
-                    </FeatureItem>
-                    <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                      Syncs your full library into a Craft folder tree — books,
-                      articles, highlights, notes, tags and the daily reflection
-                    </FeatureItem>
-                  </>
-                )}
-                {selectedInput === "kindle" && (
-                  <FeatureItem colors={C} icon={<ShieldCheck size={22} />}>
-                    No Amazon credentials required
-                  </FeatureItem>
-                )}
-              </ul>
+            </div>
+            <p className="max-w-xs text-sm leading-6 text-stone-500 dark:text-stone-400">
+              Unearthed connects the places you read with the places you think.
+            </p>
+          </div>
 
-              <div
-                className="mt-10 p-6 rounded-2xl border-2 text-center"
-                style={{
-                  background: C.surfaceContainerHighest,
-                  borderColor: `${C.primary}44`,
-                }}
-              >
-                <span
-                  className={`${crimsonPro.className} font-black text-3xl tracking-widest`}
-                  style={{ color: C.primary }}
-                >
-                  DONE!
+          <div className="relative overflow-hidden rounded-2xl border border-[#1d2926]/15 bg-[#f8f3e9] p-6 shadow-[0_20px_60px_-40px_rgba(29,41,38,.55)] dark:border-[#9edbd1]/20 dark:bg-[#111b18] md:p-10">
+            <div className="absolute inset-x-16 top-1/2 hidden border-t border-dashed border-[#075f58]/35 md:block" />
+
+            <div className="relative grid items-center gap-6 md:grid-cols-[1fr_auto_220px_auto_1fr]">
+              <div>
+                <p className="mb-4 flex items-center gap-2 text-[9px] font-bold tracking-[.18em] text-stone-500 dark:text-stone-400">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#fff0d5] text-[9px] text-[#1d2926] dark:bg-[#30291c] dark:text-[#f3ece2]">
+                    1
+                  </span>
+                  READ & CAPTURE
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {["Kindle", "KOReader", "Articles", "YouTube"].map(
+                    (source) => (
+                      <span
+                        className="rounded-lg border border-[#1d2926]/15 bg-white/70 px-3 py-3 text-center text-xs font-semibold text-[#1d2926] shadow-sm backdrop-blur dark:border-[#9edbd1]/15 dark:bg-[#1b2925] dark:text-[#f3ece2]"
+                        key={source}
+                      >
+                        {source}
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-center">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#075f58]/25 bg-white text-[#075f58] shadow-sm dark:bg-[#18231f] dark:text-[#67d7c9]">
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="rotate-90 md:rotate-0"
+                    size={17}
+                    strokeWidth={2}
+                  />
                 </span>
               </div>
 
-              {/* Extra features — inside the same card */}
-              <div
-                className="mt-10 pt-10"
-                style={{ borderTop: `3px dashed ${C.primaryContainer}55` }}
-              >
-                <h3
-                  className={`${crimsonPro.className} italic text-2xl font-bold mb-8`}
+              <div className="relative rounded-2xl bg-[#075f58] px-6 py-7 text-center text-white shadow-[0_16px_35px_-20px_#075f58] ring-1 ring-white/10">
+                <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/12">
+                  <Sparkles size={19} />
+                </div>
+                <b
+                  className={serif.className + " block text-3xl font-semibold"}
                 >
-                  Stick around for extra features that are included but are
-                  optional...
-                </h3>
+                  Unearthed
+                </b>
+                <p className="mt-2 text-[9px] font-bold tracking-[.16em] text-teal-100">
+                  SEARCH · REVISIT · SYNC
+                </p>
+              </div>
 
-                <div className="space-y-8">
-                  {/* KOReader */}
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <span style={{ color: C.primary }}>
-                        <BookOpen size={22} />
-                      </span>
-                      <h4 className="font-bold text-lg">
-                        KOReader sync as well
-                      </h4>
-                    </div>
-                    <p
-                      className="leading-relaxed mb-2"
-                      style={{ color: C.onSurfaceVariant }}
-                    >
-                      Get your KOReader highlights in the same place as your
-                      Kindle ones. They all get merged nicely too. You&apos;ll
-                      need this fella:
-                    </p>
-                    <Link
-                      href="https://github.com/Unearthed-App/unearthed-koreader"
-                      target="_blank"
-                      className="text-sm underline break-all"
-                      style={{ color: C.primary }}
-                    >
-                      github.com/Unearthed-App/unearthed-koreader
-                    </Link>
-                  </div>
+              <div className="flex justify-center">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#075f58]/25 bg-white text-[#075f58] shadow-sm dark:bg-[#18231f] dark:text-[#67d7c9]">
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="rotate-90 md:rotate-0"
+                    size={17}
+                    strokeWidth={2}
+                  />
+                </span>
+              </div>
 
-                  {[
-                    {
-                      icon: <Sparkles size={22} />,
-                      title: "Daily Reflections",
-                      body: "Every day unearthed will show you a random quote for you to re-digest. This also gets added to your Obsidian Daily note.",
-                    },
-                    {
-                      icon: <Rss size={22} />,
-                      title: "RSS Feed",
-                      body: "Pull in FULL articles even if the RSS feed restricts it. Articles can be treated as sources, just like Kindle Books. Highlight them in the app and send them to obsidian (in full if you want).",
-                    },
-                    {
-                      icon: <PlayCircle size={22} />,
-                      title: "Youtube",
-                      body: "Subscribe to youtube channels like an RSS feed. Pull in individual Youtube videos. Get their transcripts with just a click. Youtube videos are treated the same as RSS articles, you can highlight etc.",
-                    },
-                    {
-                      icon: <Globe size={22} />,
-                      title: "Webpages",
-                      body: "Save entire webpages as an article that you can highlight and comment on.",
-                    },
-                  ].map(({ icon, title, body }) => (
-                    <div key={title}>
-                      <div className="flex items-center gap-3 mb-2">
-                        <span style={{ color: C.primary }}>{icon}</span>
-                        <h4 className="font-bold text-lg">{title}</h4>
-                      </div>
-                      <p
-                        className="leading-relaxed"
-                        style={{ color: C.onSurfaceVariant }}
+              <div>
+                <p className="mb-4 flex items-center gap-2 text-[9px] font-bold tracking-[.18em] text-stone-500 dark:text-stone-400">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#f8ded6] text-[9px] text-[#1d2926] dark:bg-[#35231f] dark:text-[#f3ece2]">
+                    2
+                  </span>
+                  THINK & CREATE
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {["Obsidian", "Notion", "Capacities", "Craft"].map(
+                    (destination) => (
+                      <span
+                        className="rounded-lg border border-[#1d2926]/15 bg-white/70 px-3 py-3 text-center text-xs font-semibold text-[#1d2926] shadow-sm backdrop-blur dark:border-[#9edbd1]/15 dark:bg-[#1b2925] dark:text-[#f3ece2]"
+                        key={destination}
                       >
-                        {body}
-                      </p>
-                    </div>
-                  ))}
-
-                  {/* Local screenshot */}
-                  <div
-                    className="rounded-2xl overflow-hidden shadow-lg"
-                    style={{ border: `4px solid ${C.border}` }}
-                  >
-                    <Image
-                      src="/mockups/local_light.webp"
-                      alt="Unearthed Local app screenshot"
-                      width={900}
-                      height={560}
-                      className="w-full h-auto"
-                      priority
-                    />
-                  </div>
-
-                  <div
-                    className="pt-6"
-                    style={{ borderTop: `2px solid ${C.secondaryContainer}` }}
-                  >
-                    <p className="font-bold mb-2" style={{ color: C.primary }}>
-                      Don&apos;t forget, this all gets sent to {outputLabel} too
-                    </p>
-                    <p className={`${crimsonPro.className} italic text-lg`}>
-                      I love this because all the highlights from every source
-                      that I consume is now in one spot.
-                    </p>
-                  </div>
-                  <Link
-                    href="/local"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all hover:scale-95 active:scale-90 shadow-md mt-2"
-                    style={{ background: C.primary, color: C.buttonText }}
-                  >
-                    Unearthed Local →
-                  </Link>
+                        {destination}
+                      </span>
+                    )
+                  )}
                 </div>
               </div>
             </div>
-          </section>
-
-          {/* ── OPTION 2: ONLINE ────────────────────────────── */}
-          <section className="flex flex-col gap-6">
-            {!onlineSupported && (
-              <div
-                className="px-4 py-3 rounded-2xl text-center text-sm font-bold"
-                style={{
-                  background: C.surfaceContainerHighest,
-                  border: `2px solid ${C.borderSubtle}`,
-                  color: C.onSurfaceVariant,
-                }}
-              >
-                {selectedOutput === "craft"
-                  ? "Not applicable — Online doesn't support Craft sync"
-                  : `Not applicable — Online doesn't support ${inputLabel} as a source`}
-              </div>
-            )}
-            <div
-              className="p-6 md:p-10 rounded-3xl relative overflow-hidden flex-1"
-              style={{
-                background: C.surfaceContainer,
-                border: `4px solid ${C.borderLight}`,
-                boxShadow: C.glowOnline,
-                ...(!onlineSupported
-                  ? { opacity: 0.4, filter: "grayscale(0.3)" }
-                  : {}),
-              }}
-            >
-              <div className="absolute top-0 right-0 p-8 opacity-10">
-                <Cloud size={96} />
-              </div>
-              <SectionTag variant="secondary" colors={C}>
-                Option 2
-              </SectionTag>
-              <h2 className={`${crimsonPro.className} text-4xl font-bold mb-8`}>
-                Unearthed{" "}
-                <span
-                  style={{
-                    textDecoration: "underline",
-                    textDecorationStyle: "wavy",
-                    textDecorationColor: C.onSecondaryContainer,
-                    textDecorationThickness: "3px",
-                    textUnderlineOffset: "6px",
-                  }}
-                >
-                  Online
-                </span>
-              </h2>
-              <ul className="space-y-6">
-                <FeatureItem colors={C} icon={<Globe size={22} />}>
-                  Sign up at unearthed.app
-                </FeatureItem>
-                {selectedInput === "kindle" && (
-                  <FeatureItem colors={C} icon={<Puzzle size={22} />}>
-                    <div>
-                      <p>
-                        Install the browser extension — it pulls your Kindle
-                        highlights
-                      </p>
-                      <Link
-                        href="https://github.com/Unearthed-App/unearthed-web-extension"
-                        className="text-sm underline break-all"
-                        style={{ color: C.primary }}
-                        target="_blank"
-                      >
-                        github.com/Unearthed-App/unearthed-web-extension
-                      </Link>
-                    </div>
-                  </FeatureItem>
-                )}
-                {selectedInput === "koreader" && (
-                  <FeatureItem colors={C} icon={<Puzzle size={22} />}>
-                    <div>
-                      <p>
-                        Install the free KOReader plugin — it syncs your
-                        highlights to Unearthed Online
-                      </p>
-                      <Link
-                        href="https://github.com/Unearthed-App/unearthed-koreader"
-                        className="text-sm underline break-all"
-                        style={{ color: C.primary }}
-                        target="_blank"
-                      >
-                        github.com/Unearthed-App/unearthed-koreader
-                      </Link>
-                    </div>
-                  </FeatureItem>
-                )}
-                {selectedInput === "physical" && (
-                  <FeatureItem colors={C} icon={<BookOpen size={22} />}>
-                    Add physical book quotes manually via the Unearthed Online
-                    interface — no OCR here, just type them in
-                  </FeatureItem>
-                )}
-                {selectedOutput === "obsidian" && (
-                  <>
-                    <FeatureItem colors={C} icon={<Network size={22} />}>
-                      <div>
-                        <p>
-                          Install the Obsidian plugin to sync highlights across
-                        </p>
-                        <Link
-                          href="https://github.com/Unearthed-App/unearthed-obsidian"
-                          className="text-sm underline break-all"
-                          style={{ color: C.primary }}
-                          target="_blank"
-                        >
-                          github.com/Unearthed-App/unearthed-obsidian
-                        </Link>
-                      </div>
-                    </FeatureItem>
-                    <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                      Plugin pulls your full library into your vault — books,
-                      articles, highlights, notes, tags and the daily reflection
-                    </FeatureItem>
-                  </>
-                )}
-                {selectedOutput === "notion" && (
-                  <>
-                    <FeatureItem colors={C} icon={<Network size={22} />}>
-                      Connect your Notion account via the Unearthed Online
-                      settings
-                    </FeatureItem>
-                    <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                      Each book and article becomes a Notion page with its
-                      highlights and notes attached
-                    </FeatureItem>
-                  </>
-                )}
-                {selectedOutput === "supernotes" && (
-                  <>
-                    <FeatureItem colors={C} icon={<Network size={22} />}>
-                      Connect your Supernotes account via the Unearthed Online
-                      settings
-                    </FeatureItem>
-                    <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                      Only the daily reflection is sent — added each day to your
-                      Supernotes daily card
-                    </FeatureItem>
-                  </>
-                )}
-                {selectedOutput === "capacities" && (
-                  <>
-                    <FeatureItem colors={C} icon={<Network size={22} />}>
-                      Connect your Capacities account via the Unearthed Online
-                      settings
-                    </FeatureItem>
-                    <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                      Only the daily reflection is sent — appended each day to
-                      your Capacities daily note
-                    </FeatureItem>
-                  </>
-                )}
-                {selectedInput === "kindle" && (
-                  <FeatureItem colors={C} icon={<ShieldCheck size={22} />}>
-                    No Amazon credentials required
-                  </FeatureItem>
-                )}
+          </div>
+        </div>
+      </section>{" "}
+      <main id="features" className="mx-auto max-w-[1180px] px-5 py-28">
+        <header className="mx-auto mb-24 max-w-3xl text-center">
+          <p className="text-xs tracking-[.2em] text-[#075f58] dark:text-[#67d7c9]">
+            BUILT FOR REMEMBERING
+          </p>
+          <h2
+            className={
+              serif.className +
+              " mt-5 text-5xl font-semibold leading-none sm:text-6xl"
+            }
+          >
+            Your highlights deserve a life{" "}
+            <em className="text-[#075f58] dark:text-[#67d7c9]">
+              beyond the last page.
+            </em>
+          </h2>
+        </header>
+        {features.map(([tag, title, text, Icon]: any, i) => (
+          <section
+            className="mb-32 grid items-center gap-14 lg:grid-cols-2"
+            key={title}
+          >
+            <div className={i % 2 ? "lg:order-2" : ""}>
+              <Icon className="mb-6 text-[#dc755f]" size={42} />
+              <p className="text-xs font-bold tracking-[.18em] text-[#075f58] dark:text-[#67d7c9]">
+                {tag}
+              </p>
+              <h3 className={serif.className + " my-4 text-5xl font-semibold"}>
+                {title}
+              </h3>
+              <p className="max-w-lg leading-7 text-stone-600 dark:text-stone-300">
+                {text}
+              </p>
+              <ul className="my-6 space-y-3 text-sm">
+                {[
+                  "Everything stays attached to its source",
+                  "Designed for your real reading workflow",
+                  "Private, portable and fast",
+                ].map((p) => (
+                  <li className="flex gap-2" key={p}>
+                    <Check
+                      size={18}
+                      className="text-[#075f58] dark:text-[#67d7c9]"
+                    />
+                    {p}
+                  </li>
+                ))}
               </ul>
-
-              {/* DONE badge */}
-              <div
-                className="mt-10 p-6 rounded-2xl border-2 text-center"
-                style={{
-                  background: C.surfaceContainerHighest,
-                  borderColor: `${C.onSecondaryContainer}44`,
-                }}
+              <Link
+                href="/local-docs/features"
+                className="inline-flex items-center gap-2 border-b border-teal-700 dark:border-[#5ed0c2] text-sm font-bold text-[#075f58] dark:text-[#67d7c9]"
               >
-                <span
-                  className={`${crimsonPro.className} font-black text-3xl tracking-widest`}
-                  style={{ color: C.secondary }}
-                >
-                  DONE!
-                </span>
-              </div>
-
-              <div
-                className="mt-10 pt-10"
-                style={{ borderTop: `3px dashed ${C.dashedOnline}` }}
-              >
-                <h3 className="font-bold text-xl mb-8 flex items-center gap-2">
-                  <PlusCircle size={22} />
-                  Extra Features:
-                </h3>
-                <div className="space-y-10">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <span style={{ color: C.primary }}>
-                        <BookOpen size={22} />
-                      </span>
-                      <h4 className="font-bold text-lg">
-                        KOReader sync as well
-                      </h4>
+                Explore this feature <ArrowRight size={16} />
+              </Link>
+            </div>
+            <div className="rounded-xl border-[3px] border-[#1d2926] dark:border-[#9edbd1] bg-[#bfe6df] dark:bg-[#173b34] p-4 shadow-[10px_10px_0_#1d2926] dark:shadow-[10px_10px_0_#075f58] sm:p-10">
+              {i === 0 ? (
+                <div className="rounded-lg border-[3px] border-[#1d2926] dark:border-[#9edbd1] bg-[#fffdf8] dark:bg-[#18231f] p-8 shadow-[6px_6px_0_#e77962] dark:shadow-[6px_6px_0_#e77962]">
+                  <Sparkles className="text-[#dc755f]" />
+                  <blockquote className="my-6 font-serif text-3xl">
+                    “The things you think about determine the quality of your
+                    mind.”
+                  </blockquote>
+                  <p>
+                    — Marcus Aurelius, <i>Meditations</i>
+                  </p>
+                  <div className="mt-8 border-l-2 border-[#dc755f] bg-[#f6efe3] dark:bg-[#28271f] p-4 font-serif italic">
+                    What does this change about today?
+                  </div>
+                </div>
+              ) : i === 1 ? (
+                <SearchCard />
+              ) : (
+                <div className="rounded-lg border-[3px] border-[#1d2926] dark:border-[#9edbd1] bg-[#fffdf8] dark:bg-[#18231f] p-5 shadow-[6px_6px_0_#e77962] dark:shadow-[6px_6px_0_#e77962] sm:p-7">
+                  <div className="flex items-center justify-between border-b-[3px] border-[#1d2926] dark:border-[#9edbd1] pb-4">
+                    <div>
+                      <p className="text-[9px] font-black tracking-[.18em] text-stone-400 dark:text-stone-400">
+                        LIVE SYNC ACTIVITY
+                      </p>
+                      <b className={serif.className + " text-2xl"}>
+                        Your library is up to date
+                      </b>
                     </div>
-                    <p
-                      className="leading-relaxed mb-3"
-                      style={{ color: C.onSurfaceVariant }}
-                    >
-                      Get your KOReader highlights in the same place as your
-                      Kindle ones. They all get merged nicely too. You&apos;ll
-                      need this fella
-                    </p>
-                    <Link
-                      href="https://github.com/Unearthed-App/unearthed-koreader"
-                      className="text-sm underline break-all"
-                      style={{ color: C.primary }}
-                      target="_blank"
-                    >
-                      https://github.com/Unearthed-App/unearthed-koreader
-                    </Link>
+                    <span className="flex items-center gap-2 rounded-full border-2 border-[#1d2926] dark:border-[#9edbd1] bg-[#bfe6df] dark:bg-[#173b34] px-3 py-1 text-[9px] font-black">
+                      <i className="h-2 w-2 rounded-full bg-[#075f58]" />
+                      LIVE
+                    </span>
                   </div>
-
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <span style={{ color: C.primary }}>
-                        <Sparkles size={22} />
-                      </span>
-                      <h4 className="font-bold text-lg">Daily Reflections</h4>
-                    </div>
-                    <p
-                      className="leading-relaxed"
-                      style={{ color: C.onSurfaceVariant }}
-                    >
-                      Every day unearthed will show you a random quote for you
-                      to re-digest. This also gets added to your Obsidian Daily
-                      note.
-                    </p>
-                  </div>
-
-                  <div
-                    className="p-6 rounded-2xl"
-                    style={{ background: C.cardBg }}
-                  >
-                    <h4 className="font-bold text-lg mb-2 flex items-center gap-2">
-                      AI{" "}
-                      <span className="text-sm font-normal italic opacity-60">
-                        — I know 😫 but it&apos;s optional (opt in).
-                      </span>
-                    </h4>
-                    <p
-                      className="leading-relaxed"
-                      style={{ color: C.onSurfaceVariant }}
-                    >
-                      The intent behind this was to help with question prompting
-                      and blind spot detection in my reading. I did not intend
-                      for it to replace my brain.{" "}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="relative my-5 space-y-3 before:absolute before:bottom-6 before:left-[19px] before:top-6 before:w-[3px] before:bg-[#1d2926] dark:before:bg-[#9edbd1]">
                     {[
-                      { title: "Tags", body: "You can inline tag" },
-                      {
-                        title: "Graph view",
-                        body: "See connections between books",
-                      },
-                    ].map(({ title, body }) => (
+                      [
+                        BookOpen,
+                        "Imported from Kindle",
+                        "246 highlights",
+                        "#fff0d5",
+                      ],
+                      [
+                        UploadCloud,
+                        "Organised in Unearthed",
+                        "Notes & locations kept",
+                        "#bfe6df",
+                      ],
+                      [
+                        FileText,
+                        "Delivered to Obsidian",
+                        "Vault updated",
+                        "#f8ded6",
+                      ],
+                    ].map(([Icon, title, detail, color]: any) => (
                       <div
+                        className="relative flex items-center gap-4 rounded-lg border-2 border-[#1d2926] dark:border-[#9edbd1] bg-white p-3 dark:bg-[#111b18]"
                         key={title}
-                        className="p-6 rounded-2xl"
-                        style={{ background: C.cardBg }}
                       >
-                        <h4 className="font-bold text-lg mb-2">{title}</h4>
-                        <p
-                          className="text-sm"
-                          style={{ color: C.onSurfaceVariant }}
+                        <span
+                          className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-md border-2 border-[#1d2926] dark:border-[#9edbd1]"
+                          style={{ backgroundColor: color }}
                         >
-                          {body}
-                        </p>
+                          <Icon size={18} strokeWidth={2.5} />
+                        </span>
+                        <div className="min-w-0">
+                          <b className="block text-sm">{title}</b>
+                          <small className="text-stone-500 dark:text-stone-400">
+                            {detail}
+                          </small>
+                        </div>
+                        <span className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#075f58] text-white">
+                          <Check size={14} strokeWidth={3} />
+                        </span>
                       </div>
                     ))}
                   </div>
-
-                  {/* Blind spot video */}
-                  <div>
-                    <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
-                      <PlayCircle size={20} style={{ color: C.primary }} />
-                      Blind Spot Detection
-                    </h4>
-                    <div
-                      className="rounded-2xl overflow-hidden border-4 shadow-md"
-                      style={{ borderColor: C.border }}
-                    >
-                      <video
-                        src="/videos/blind-spot.mp4"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-auto"
-                      />
-                    </div>
+                  <div className="flex items-center justify-between gap-3 rounded-md bg-[#1d2926] px-4 py-3 text-white">
+                    <span className="text-xs font-bold">
+                      Next sync runs automatically
+                    </span>
+                    <small className="text-right text-[#9edbd1]">
+                      No manual export needed
+                    </small>
                   </div>
-
-                  {/* Transparency */}
-                  <div
-                    className="p-6 rounded-2xl"
-                    style={{ background: C.cardBg }}
-                  >
-                    <h4 className="font-bold text-lg mb-3">
-                      Built with transparency in mind
-                    </h4>
-                    <p
-                      className="leading-relaxed text-sm mb-4"
-                      style={{ color: C.onSurfaceVariant }}
-                    >
-                      Everything is <strong>open source</strong>, including the
-                      web app, browser extension, and Obsidian plugin. Feel free
-                      to inspect the code, run it yourself, or contribute to
-                      make it better.
-                    </p>
-                    <p
-                      className="leading-relaxed text-sm mb-4"
-                      style={{ color: C.onSurfaceVariant }}
-                    >
-                      When linking accounts, Amazon login credentials are never
-                      stored or even seen. If you delete your account, it is
-                      gone.
-                    </p>
-                    <Link
-                      href="https://github.com/Unearthed-App"
-                      target="_blank"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-opacity hover:opacity-80"
-                      style={{ background: C.onSurface, color: C.bg }}
-                    >
-                      View on GitHub
-                    </Link>
-                  </div>
-
-                  {/* Sync to these apps */}
-                  <div
-                    className="p-6 rounded-2xl"
-                    style={{ background: C.cardBg }}
-                  >
-                    <p
-                      className="text-xs font-bold tracking-widest uppercase text-center mb-6 flex items-center justify-center gap-2"
-                      style={{ color: C.primaryContainer }}
-                    >
-                      <span>✦</span> Sync to these apps <span>✦</span>
-                    </p>
-                    <div className="grid grid-cols-4 gap-4">
-                      {[
-                        {
-                          src: "/notion-logo-no-background.png",
-                          label: "Notion",
-                        },
-                        { src: "/obsidian.svg", label: "Obsidian" },
-                        { src: "/supernotes.png", label: "Supernotes" },
-                        { src: "/capacities-logo.png", label: "Capacities" },
-                      ].map(({ src, label }) => (
-                        <div
-                          key={label}
-                          className="flex flex-col items-center gap-2"
-                        >
-                          <div
-                            className="w-14 h-14 rounded-2xl flex items-center justify-center p-2 shadow-sm"
-                            style={{
-                              background: C.surfaceContainerLowest,
-                              border: `2px solid ${C.borderSubtle}`,
-                            }}
-                          >
-                            <Image
-                              src={src}
-                              alt={label}
-                              width={40}
-                              height={40}
-                              className="w-full h-full object-contain"
-                            />
-                          </div>
-                          <span
-                            className="text-xs font-medium"
-                            style={{ color: C.onSurfaceVariant }}
-                          >
-                            {label}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <Link
-                    href="/online"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all hover:scale-95 active:scale-90 shadow-md mt-2"
-                    style={{ background: C.secondary, color: C.buttonText }}
-                  >
-                    Unearthed Online →
-                  </Link>
                 </div>
-              </div>
+              )}
             </div>
           </section>
-        </div>
-
-        {/* ── Local → Mobile connector ─────────────────────────────── */}
-        <div className="flex items-center justify-center py-4">
-          <div
-            className="flex items-center gap-3 px-5 py-2.5 rounded-full text-sm tracking-wide border"
-            style={{
-              color: C.primary,
-              borderColor: `${C.primaryContainer}80`,
-              background: `${C.primaryContainer}18`,
-            }}
-          >
-            <span>
-              <strong>Unearthed Local</strong> pairs with{" "}
-              <strong>Unearthed Mobile</strong>
-            </span>
-          </div>
-        </div>
-
-        {/* ── Mobile Section ───────────────────────────────────────────── */}
-        <section className="mt-4 max-w-5xl mx-auto">
-          <div
-            className="rounded-3xl p-6 md:p-12 lg:p-20 relative overflow-hidden"
-            style={{
-              background: C.surfaceContainerLow,
-              border: `4px solid ${C.borderLight}`,
-            }}
-          >
-            <div
-              className="absolute -right-20 -top-20 w-96 h-96 rounded-full blur-3xl"
-              style={{ background: `${C.primary}0d` }}
-            />
-            <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-              {/* text */}
-              <div className="order-2 md:order-1">
-                <SectionTag variant="white" colors={C}>
-                  highlights in your pocket
-                </SectionTag>
-                <h2
-                  className={`${crimsonPro.className} text-5xl font-bold mb-4`}
-                >
-                  Unearthed Mobile
-                </h2>
-                <p
-                  className={`${crimsonPro.className} italic text-2xl mb-8`}
-                  style={{ color: C.primary }}
-                >
-                  I use this the most
-                </p>
-                <div
-                  className="space-y-6 text-lg"
-                  style={{ color: C.onSurfaceVariant }}
-                >
-                  <p>
-                    A companion app that let&apos;s you quickly capture quotes
-                    from physical books, allowing them to join the rest of your
-                    library.
-                  </p>
-                  <p>
-                    It does nearly everything Unearthed Local does, but lives on
-                    your phone (Android &amp; iOS).
-                  </p>
-                  <p>
-                    Mainly relies on Unearthed Local for Kindle and KOReader
-                    highlights.
-                  </p>
-                </div>
-
-                {/* OCR feature callout */}
-                <div
-                  className="mt-8 p-6 rounded-2xl"
-                  style={{
-                    background: `${C.primary}12`,
-                    border: `2px solid ${C.primary}30`,
-                  }}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <span style={{ color: C.primary }}>
-                      <Scan size={22} />
-                    </span>
-                    <h4
-                      className="font-bold text-lg"
-                      style={{ color: C.onSurface }}
-                    >
-                      OCR : for physical books
-                    </h4>
-                  </div>
-                  <p
-                    className="leading-relaxed"
-                    style={{ color: C.onSurfaceVariant }}
-                  >
-                    Point your camera at any page and select the text you want
-                    to capture. Quotes from physical books land in the same
-                    place as everything else.
-                  </p>
-                  <p
-                    className={`${crimsonPro.className} italic text-lg mt-4`}
-                    style={{ color: C.primary }}
-                  >
-                    This was a big motivation for me to create the mobile app
-                  </p>
-                </div>
-                <Link
-                  href="/mobile"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all hover:scale-95 active:scale-90 shadow-md mt-6"
-                  style={{ background: C.primary, color: C.buttonText }}
-                >
-                  Unearthed Mobile →
-                </Link>
-              </div>
-
-              {/* Mobile screenshot */}
-              <div className="order-1 md:order-2 flex justify-center">
-                <div
-                  className="rounded-[2.5rem] overflow-hidden shadow-2xl"
-                  style={{
-                    border: `4px solid ${C.borderStrong}`,
-                    maxWidth: "260px",
-                  }}
-                >
-                  <Image
-                    src={C.mobileScreenshot}
-                    alt="Unearthed Mobile app screenshot"
-                    width={390}
-                    height={844}
-                    className="w-full h-auto"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* How does it do it */}
-            <div
-              className="mt-20 pt-12"
-              style={{ borderTop: `2px solid ${C.secondaryContainer}` }}
-            >
-              <h3 className={`${crimsonPro.className} text-3xl font-bold mb-8`}>
-                How does it do it?
-              </h3>
-              <p
-                className="text-xl leading-relaxed mb-10 max-w-3xl"
-                style={{ color: C.onSurface }}
-              >
-                It is a PWA that talks to Unearthed Local over your wifi. Grabs
-                everything that Unearthed Local has and adds to it. E.g. you can
-                manage your RSS feeds on mobile. It also maintains a database on
-                the phone itself so that it is accessible offline and you
-                don&apos;t fully rely on your computer.
-              </p>
-              <div
-                className="p-6 md:p-10 rounded-2xl"
-                style={{ background: C.cardBgStrong }}
-              >
-                <p className={`${crimsonPro.className} italic text-2xl mb-6`}>
-                  &ldquo;The initial motivation for this was to have my daily
-                  reflection with me, capture physical book content quickly, and
-                  have my complete highlighting history on me.&rdquo;
-                </p>
-                <p
-                  className="text-lg leading-relaxed"
-                  style={{ color: C.onSurfaceVariant }}
-                >
-                  I like this because my pocket contains every quote that
-                  I&apos;ve ever thought was worth saving, ready to share with
-                  someone. If I need to quickly remember something from a past
-                  book, I can find it instantly, ready for whatever conversation
-                  that I&apos;m in. The Daily reflection is also most useful to
-                  me in my pocket too.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        ))}
       </main>
+      <section className="bg-[#075f58] px-5 py-24 text-white">
+        <div className="mx-auto max-w-[1180px]">
+          <p className="text-xs tracking-[.2em] text-teal-200">A SIMPLE LOOP</p>
+          <h2
+            className={
+              serif.className + " my-6 max-w-2xl text-6xl leading-none"
+            }
+          >
+            From saved highlight to{" "}
+            <em className="text-[#f3aa96]">useful idea.</em>
+          </h2>
+          <div className="mt-16 grid border-t border-white/20 md:grid-cols-3">
+            {[
+              ["01", "Bring it in"],
+              ["02", "Find it"],
+              ["03", "Use it again"],
+            ].map((x) => (
+              <article
+                className="border-b border-white/20 py-8 md:border-b-0 md:border-r md:pr-10"
+                key={x[0]}
+              >
+                <small className="text-[#f3aa96]">{x[0]}</small>
+                <h3 className={serif.className + " my-4 text-3xl"}>{x[1]}</h3>
+                <p className="text-sm leading-6 text-teal-100">
+                  Move from a saved passage to a searchable, useful part of the
+                  way you think.
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section
+        id="choose-your-setup"
+        className="mx-auto max-w-[1180px] px-5 py-28"
+        tabIndex={-1}
+      >
+        <header className="mx-auto mb-20 max-w-3xl text-center">
+          <p className="text-xs tracking-[.2em] text-[#075f58] dark:text-[#67d7c9]">
+            CHOOSE YOUR SETUP
+          </p>
+          <h2 className={serif.className + " my-5 text-6xl"}>
+            The same goal.{" "}
+            <em className="text-[#075f58] dark:text-[#67d7c9]">Your way.</em>
+          </h2>
+          <p className="text-stone-500 dark:text-stone-400">
+            Pick the balance of privacy, convenience and mobile access that
+            feels right for you.
+          </p>
+          <div className="mt-7">
+            <CompatibilityChecker
+              product="online"
+              triggerLabel="Check which Unearthed version fits your setup"
+            />
+          </div>
+        </header>
+        <div className="grid gap-5 md:grid-cols-3">
+          {plans.map(([name, price, best, runs, Icon, href]: any, i) => (
+            <article
+              className={
+                "relative flex flex-col rounded-xl border-[3px] border-[#1d2926] dark:border-[#9edbd1] p-8 shadow-[8px_8px_0_#1d2926] dark:shadow-[8px_8px_0_#075f58] transition-transform hover:-translate-y-1 " +
+                (i === 0
+                  ? "bg-[#fff0d5] dark:bg-[#30291c]"
+                  : i === 1
+                    ? "bg-[#d7f0eb] dark:bg-[#173b34]"
+                    : "bg-[#f8ded6] dark:bg-[#35231f]")
+              }
+              key={name}
+            >
+              <Icon className="text-[#dc755f]" />
+              <h3 className={serif.className + " mt-5 text-3xl"}>
+                Unearthed {name}
+              </h3>
+              <b className="my-2 text-sm text-[#075f58] dark:text-[#67d7c9]">
+                {price}
+              </b>
+              <p className="min-h-14 text-sm text-stone-500 dark:text-stone-400">
+                {best}
+              </p>
+              {name === "Mobile" && (
+                <p className="mt-3 border-l-[3px] border-[#1d2926] dark:border-[#9edbd1] bg-white/60 dark:bg-[#101815]/70 px-3 py-2 text-xs font-bold text-[#1d2926] dark:text-[#f3ece2]">
+                  Unearthed Local is required for Kindle and KOReader syncing,
+                  and gives you the best overall Mobile experience.
+                </p>
+              )}
+              <dl className="my-6 border-t text-sm">
+                <dt className="mt-4 text-[9px] uppercase tracking-widest text-stone-400 dark:text-stone-400">
+                  Runs on
+                </dt>
+                <dd>{runs}</dd>
+              </dl>
+              <Link
+                href={href}
+                className="mt-auto flex justify-between rounded-lg border-[3px] border-[#1d2926] dark:border-[#9edbd1] bg-[#25b1a6] px-5 py-4 text-sm font-black text-[#102521] shadow-[4px_4px_0_#1d2926] dark:shadow-[4px_4px_0_#075f58] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none"
+              >
+                Choose {name}
+                <ArrowRight size={17} />
+              </Link>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="bg-[#ece5d9] dark:bg-[#151f1c] px-5 py-24">
+        <div className="mx-auto grid max-w-[1180px] gap-16 md:grid-cols-2">
+          <div>
+            <p className="text-xs tracking-[.2em] text-[#075f58] dark:text-[#67d7c9]">
+              TRUST & OWNERSHIP
+            </p>
+            <h2 className={serif.className + " my-5 text-6xl leading-none"}>
+              Your highlights should{" "}
+              <em className="text-[#075f58] dark:text-[#67d7c9]">
+                stay yours.
+              </em>
+            </h2>
+            <p className="leading-7 text-stone-600 dark:text-stone-300">
+              Unearthed is open source and built to keep you in control. Your
+              Amazon credentials are never stored or seen.
+            </p>
+          </div>
+          <div className="space-y-6">
+            {[
+              [Github, "Open source"],
+              [KeyRound, "No credential collection"],
+              [ShieldCheck, "No lock-in"],
+            ].map(([Icon, t]: any) => (
+              <p
+                className="flex items-center gap-4 border-b border-stone-300 dark:border-stone-700 pb-5"
+                key={t}
+              >
+                <Icon className="text-[#075f58] dark:text-[#67d7c9]" />
+                <b>{t}</b>
+              </p>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="mx-auto max-w-4xl px-5 py-28 text-center">
+        <Sparkles className="mx-auto text-[#dc755f]" />
+        <blockquote
+          className={
+            serif.className + " my-7 text-4xl italic leading-tight sm:text-5xl"
+          }
+        >
+          “I built Unearthed because saving highlights felt productive, but
+          finding and using them later was still too hard.”
+        </blockquote>
+        <p className="text-xs tracking-widest text-stone-500 dark:text-stone-400">
+          — MATT, FOUNDER OF UNEARTHED
+        </p>
+      </section>
+      <section className="bg-[#075f58] px-5 py-24 text-center text-white">
+        <h2 className={serif.className + " mx-auto my-6 max-w-3xl text-6xl"}>
+          Make your highlights <em className="text-[#f3aa96]">useful</em>
+        </h2>
+        <p className="text-teal-100">
+          Build a searchable reading library and revisit one meaningful idea
+          each day.
+        </p>
+        <a
+          href="#choose-your-setup"
+          className="mx-auto mt-8 inline-flex items-center gap-3 rounded-full bg-white px-6 py-4 text-sm font-bold text-[#075f58] dark:text-[#075f58]"
+        >
+          Choose your setup <ArrowRight size={17} />
+        </a>
+      </section>
+      <footer className="bg-[#17332f] px-5 py-12 text-teal-50">
+        <div className="mx-auto flex max-w-[1180px] flex-wrap items-center gap-7">
+          <b className={serif.className + " text-3xl"}>
+            Unearthed<span className="text-[#f3aa96]">.</span>
+          </b>
+          <p className="text-xs text-teal-200">
+            Remember more of what you read.
+          </p>
+          <nav className="ml-auto flex gap-5 text-xs">
+            <Link href="/local">Local</Link>
+            <Link href="/online">Online</Link>
+            <Link href="/mobile">Mobile</Link>
+            <Link href="/local-docs">Docs</Link>
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }

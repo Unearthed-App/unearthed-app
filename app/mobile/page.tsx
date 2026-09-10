@@ -37,6 +37,7 @@ const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 import Link from "next/link";
 import { PhoneMockupSection } from "@/components/PhoneMockup";
 import { PwaInstructions } from "@/components/PwaInstructions";
+import { CompatibilityChecker } from "@/components/marketing/CompatibilityChecker";
 
 const MOBILE_FEATURES = [
   {
@@ -228,6 +229,7 @@ export default function MobilePage() {
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
+          <CompatibilityChecker product="mobile" />
         </div>
         <p className="mt-6 text-sm text-muted-foreground">
           One time payment · Unlimited personal devices · No subscription
