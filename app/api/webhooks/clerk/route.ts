@@ -100,7 +100,6 @@ export async function POST(req: Request) {
           secret: newSecret,
         },
       });
-      console.log("Encryption key set successfully");
     } catch (error) {
       console.error("Error setting encryption key:", error);
       return new Response("Error", { status: 500 });
@@ -119,7 +118,6 @@ export async function POST(req: Request) {
         .values(validatedProfileData)
         .onConflictDoNothing();
 
-      console.log("API key set successfully");
     } catch (error) {
       console.error("Error setting API key:", error);
       return new Response("Error", { status: 500 });

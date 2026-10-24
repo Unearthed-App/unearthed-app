@@ -16,63 +16,26 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
-import MobilePurchaseConfirmation from "@/emails/mobile-purchase-confirmation";
+import Stripe from "stripe";
+import { PurchaseConfirmationError, sendPurchaseConfirmation } from "@/server/purchase-confirmation";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(req: NextRequest) {
   try {
-    const { sessionId } = await req.json();
-    if (!sessionId) {
-      return NextResponse.json({ error: "Missing sessionId" }, { status: 400 });
+    const { sessionId } = await req.json().catch(() => ({}));
+    if (typeof sessionId !== "string" || !sessionId || sessionId.length > 255) {
+      return NextResponse.json({ error: "Invalid sessionId" }, { status: 400 });
     }
 
     const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-    const metadata = session.metadata || {};
-    const productName = metadata.productName ?? "Unearthed Mobile";
-    const purchaseId = metadata.purchaseId ?? "";
-
-    const email = session.customer_details?.email
-      ? session.customer_details.email
-      : typeof session.customer === "object" && session.customer?.email
-        ? session.customer.email
-        : undefined;
-
-    if (!email) {
-      return NextResponse.json(
-        { error: "Customer email not found" },
-        { status: 400 }
-      );
+    await sendPurchaseConfirmation(session, "mobile");
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    if (error instanceof PurchaseConfirmationError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
     }
-
-    const subject = `Your ${productName} Purchase Confirmation`;
-
-    const { data, error } = await resend.emails.send({
-      from: "Unearthed <contact@unearthed.app>",
-      to: [email],
-      subject,
-      react: MobilePurchaseConfirmation({
-        productName,
-        purchaseId,
-      }),
-    });
-
-    if (error) {
-      return NextResponse.json(
-        { error: error instanceof Error ? error.message : "Resend error" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true }, { status: 200 });
-  } catch (err) {
-    console.error("mobile-purchase-success-email error", err);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    console.error("Could not send mobile purchase confirmation");
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

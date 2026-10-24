@@ -23,7 +23,7 @@ import { eq, sql } from "drizzle-orm";
 
 const ALLOWED_ORIGINS = [
   "https://mobile.unearthed.app",
-  "http://localhost:5173",
+  ...(process.env.NODE_ENV === "development" ? ["http://localhost:5173"] : []),
 ];
 
 function getCorsHeaders(req: NextRequest) {
@@ -34,6 +34,7 @@ function getCorsHeaders(req: NextRequest) {
       : ALLOWED_ORIGINS[0],
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    Vary: "Origin",
   };
 }
 

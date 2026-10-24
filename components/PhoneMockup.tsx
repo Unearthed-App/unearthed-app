@@ -1,3 +1,20 @@
+/**
+ * Copyright (C) 2026 Unearthed App
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -114,19 +131,9 @@ const SinglePhone = ({
 export const PhoneMockup = ({
   screens,
   initialLandscape = false,
-  rotateButtonClassName,
-  themeButtonClassName,
-  tabButtonClassName,
-  activeTabFillClassName,
-  inactiveTabFillClassName,
 }: {
   screens: PhoneScreen[];
   initialLandscape?: boolean;
-  rotateButtonClassName?: string;
-  themeButtonClassName?: string;
-  tabButtonClassName?: string;
-  activeTabFillClassName?: string;
-  inactiveTabFillClassName?: string;
 }) => {
   const [isLandscape, setIsLandscape] = useState(initialLandscape);
   const [isRotating, setIsRotating] = useState(false);
@@ -164,7 +171,7 @@ export const PhoneMockup = ({
               onClick={handleRotate}
               disabled={isRotating}
               variant="brutal"
-              className={`h-auto px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base font-semibold tracking-tight ${rotateButtonClassName ?? ""}`}
+              size="default"
               title="Rotate phone"
             >
               <span className="flex items-center gap-2">
@@ -180,7 +187,7 @@ export const PhoneMockup = ({
               type="button"
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
               variant="brutalprimary"
-              className={`h-auto px-5 py-2.5 md:px-6 md:py-3 rounded-2xl text-sm md:text-base font-semibold tracking-tight ${themeButtonClassName ?? ""}`}
+              size="default"
             >
               <span className="flex items-center gap-2">
                 {isDark ? <Sun size={18} /> : <Moon size={18} />}
@@ -193,35 +200,19 @@ export const PhoneMockup = ({
             {screens.map((screen, index) => {
               const isActive = index === activeScreen;
               return (
-                <button
+                <Button
                   key={screen.label}
                   type="button"
                   onClick={() => setActiveScreen(index)}
-                  className={`relative px-4 py-2 md:px-5 md:py-2.5 rounded-full text-sm md:text-base font-semibold tracking-tight transition-all duration-200 border-2 border-black dark:border-neutral-600 shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_rgba(255,255,255,0.15)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_rgba(255,255,255,0.15)] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-[1px_1px_0px_rgba(0,0,0,1)] dark:active:shadow-[1px_1px_0px_rgba(255,255,255,0.15)] active:translate-x-[3px] active:translate-y-[3px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-black ${tabButtonClassName ?? ""} ${
-                    isActive
-                      ? 'text-white dark:text-neutral-900'
-                      : 'text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-white'
-                  }`}
+                  variant={isActive ? "brutalprimary" : "brutal"}
+                  size="default"
                   aria-pressed={isActive}
                 >
-                  <span
-                    className={`absolute inset-0 rounded-full transition-all duration-300 ${
-                      isActive
-                        ? activeTabFillClassName ??
-                          'bg-gradient-to-br from-primary/95 via-primary to-primary/80'
-                        : inactiveTabFillClassName ??
-                          'bg-gradient-to-br from-white/95 via-white/80 to-white/60 dark:from-white/10 dark:via-white/5 dark:to-white/5'
-                    }`}
-                  />
-                  <span className="relative z-10 flex items-center gap-2">
-                    <span
-                      className={`h-2 w-2 rounded-full transition-all duration-300 ${
-                        isActive ? 'bg-white shadow-[0_0_10px_rgba(255,255,255,0.6)]' : 'bg-neutral-400/70 dark:bg-neutral-500/70'
-                      }`}
-                    />
+                  <span className="flex items-center gap-2">
+                    <span className={`h-2 w-2 rounded-full ${isActive ? 'bg-[#25372e]' : 'bg-neutral-400'}`} />
                     {screen.label}
                   </span>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -245,19 +236,9 @@ export const PhoneMockup = ({
 export function PhoneMockupSection({
   teaser = true,
   id,
-  rotateButtonClassName,
-  themeButtonClassName,
-  tabButtonClassName,
-  activeTabFillClassName,
-  inactiveTabFillClassName,
 }: {
   teaser?: boolean;
   id?: string;
-  rotateButtonClassName?: string;
-  themeButtonClassName?: string;
-  tabButtonClassName?: string;
-  activeTabFillClassName?: string;
-  inactiveTabFillClassName?: string;
 }) {
   const screens: PhoneScreen[] = [
     {
@@ -317,11 +298,6 @@ export function PhoneMockupSection({
       <div className="w-full flex flex-col items-center">
         <PhoneMockup
           screens={screens}
-          rotateButtonClassName={rotateButtonClassName}
-          themeButtonClassName={themeButtonClassName}
-          tabButtonClassName={tabButtonClassName}
-          activeTabFillClassName={activeTabFillClassName}
-          inactiveTabFillClassName={inactiveTabFillClassName}
         />
       </div>
     </section>

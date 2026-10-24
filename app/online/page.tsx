@@ -15,6 +15,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { capacitiesText } from "@/lib/capacities-availability";
+import { DiscoveryLinks } from "@/components/marketing/DiscoveryLinks";
+import { pageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/marketing/JsonLd";
+import { softwareApplicationSchema } from "@/lib/structured-data";
+
+
 import { Crimson_Pro } from "next/font/google";
 const crimsonPro = Crimson_Pro({ subsets: ["latin"] });
 
@@ -25,7 +32,6 @@ import { NonPremiumNavigation } from "@/components/NonPremiumNavigation";
 
 import Link from "next/link";
 import { UnearthedInAndOut } from "@/components/UnearthedInAndOut";
-// import { AnimatedCards } from "@/components/AnimatedCards";
 import { HomeHeader } from "@/components/HomeHeader";
 import { HomeCarousel } from "@/components/HomeCarousel";
 import { FeaturePremiumCard } from "@/components/FeaturePremiumCard";
@@ -36,74 +42,14 @@ import FeatureSection from "@/components/FeatureSection";
 export const dynamic = "force-static";
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Unearthed Online - AI-Powered Reading Insights with Cloud Sync",
-  description:
-    "Cloud-based open-source reading platform. Automatically sync Kindle and KOReader highlights. Discover forgotten insights, detect blind spots, chat with books, and export to Notion, Obsidian, Capacities, and Supernotes.",
-  keywords: [
-    "readwise alternative",
-    "kindle highlights cloud sync",
-    "AI reading analysis",
-    "chat with books",
-    "blind spot detection",
-    "reading insights",
-    "book analytics",
-    "digital notes",
-    "knowledge management",
-    "personal library",
-    "daily reflections",
-    "open source",
-    "productivity tool",
-    "notion integration",
-    "obsidian integration",
-    "kindle to notion",
-    "kindle to obsidian",
-    "kindle to capacities",
-    "capacities integration",
-    "supernotes integration",
-    "kindle sync",
-    "KOReader sync",
-    "KOReader highlights",
-    "reading patterns",
-    "book recommendations",
-    "note-taking apps",
-    "kindle notebook sync",
-    "past insights new revelations",
-    "connected knowledge",
-    "reading history analysis",
-  ],
-  openGraph: {
-    title: "Unearthed Online - AI-Powered Reading Insights with Cloud Sync",
-    description:
-      "Cloud-based open-source reading platform. Automatically sync Kindle and KOReader highlights. Discover forgotten insights, detect blind spots, and export to Notion, Obsidian, Capacities, and Supernotes.",
-    type: "website",
-    url: "https://unearthed.app/online",
-    siteName: "Unearthed",
-    locale: "en_US",
-    images: [
-      {
-        url: "https://unearthed.app/images/banner.webp",
-        width: 1200,
-        height: 630,
-        alt: "Unearthed Online - AI-powered reading insights with cloud sync",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@unearthedapp",
-    title: "Unearthed Online - AI-Powered Reading Insights",
-    description:
-      "Cloud-based platform that transforms your Kindle highlights into connected knowledge with AI analysis.",
-    images: ["https://unearthed.app/images/banner.webp"],
-  },
-};
+export const metadata: Metadata = pageMetadata("/online");
 
 export default function UnearthedOnline() {
   return (
     <>
+      <JsonLd data={softwareApplicationSchema("/online")} />
       {/* <PublicNavbar /> */}
-      <main className="w-full flex flex-wrap items-center justify-center pt-32 relative">
+      <main className="relative flex w-full flex-col items-center pt-32">
         {/* Primary top gradient */}
         <div className="absolute inset-x-0 top-0 h-[600px] bg-gradient-to-b from-primary/[0.13] to-transparent pointer-events-none -z-10" />
         <NonPremiumNavigation currentPage="online" />
@@ -160,7 +106,7 @@ export default function UnearthedOnline() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/50 bg-primary/10 text-primary dark:text-primary text-sm font-bold tracking-widest uppercase mb-8">
             <Cloud className="h-4 w-4" />
-            Unearthed Online · Sync From Anywhere
+            Unearthed Online · Open source
           </div>
 
           <h1
@@ -168,7 +114,7 @@ export default function UnearthedOnline() {
           >
             <span className="relative inline-block">
               <span className="bg-gradient-to-br from-primary via-primary to-primary/80 bg-clip-text text-transparent drop-shadow-sm relative z-10">
-                Flexibility
+                Your book highlights, in one place
               </span>
               <span className="absolute -inset-2 bg-primary/10 blur-2xl -z-10 rounded-full" />
             </span>
@@ -186,27 +132,28 @@ export default function UnearthedOnline() {
           </h1>
 
           <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto mb-8 leading-relaxed">
-            Cloud-synced Kindle and KOReader highlights with AI-powered
-            insights. <strong>Chat with your books, detect blind spots</strong>,
-            and discover forgotten ideas. Export to Notion, Obsidian,
-            Capacities, and Supernotes.{" "}
+            Collect Kindle and KOReader highlights, search your library, and
+            sync your reading notes to Obsidian or Notion. Send a daily
+            {capacitiesText("reflection to Capacities or Supernotes to revisit what you’ve read.", "reflection to Supernotes to revisit what you’ve read. Capacities is coming soon.")}
+            The web app is <strong>open source under GPL-3.0</strong>; the
+            hosted service has a monthly subscription.
           </p>
 
           {/* Callout pills */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
             <span className="flex items-center gap-2 px-4 py-2 rounded-full border border-secondary/40 bg-secondary/10 text-sm text-secondary dark:text-secondary font-medium">
               <Sparkles className="h-4 w-4 shrink-0" />
-              AI-powered reading insights (optional)
+              Optional AI summaries and book chat
             </span>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/sign-in">
-              <Button variant="brutalprimary">
+            <Button variant="marketing" asChild>
+              <Link href="/sign-in">
                 <LogIn className="mr-2 h-4 w-4" />
                 Sign In/Up
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             <CompatibilityChecker product="online" />
           </div>
         </header>
@@ -223,7 +170,7 @@ export default function UnearthedOnline() {
           <UnearthedInAndOut />
         </div>
 
-        <div className="my-12 px-4 md:px-16">
+        <div className="my-12 w-full max-w-6xl px-4 md:px-16">
           <div className="mt-4 mb-10">
             <FeaturePremiumCard showButtons />
           </div>
@@ -232,6 +179,7 @@ export default function UnearthedOnline() {
             <HomeCarousel />
           </div>
         </div>
+        <DiscoveryLinks />
       </main>
     </>
   );

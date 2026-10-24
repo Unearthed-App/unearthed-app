@@ -31,7 +31,7 @@ const IOS_STEPS = [
     step: "1",
     title: "Open in Safari",
     detail:
-      "Visit mobile.unearthed.app in Safari on your iPhone or iPad. Safari is required — other iOS browsers cannot install the security certificate needed for desktop sync.",
+      "Visit mobile.unearthed.app in Safari on your iPhone or iPad. Safari is required: other iOS browsers cannot install the security certificate needed for desktop sync.",
   },
   {
     step: "2",
@@ -43,7 +43,7 @@ const IOS_STEPS = [
     step: "3",
     title: "Connect to your desktop",
     detail:
-      "Tap Settings and enter your desktop IP and sync token. When prompted, follow the certificate setup steps — you'll download and install a security certificate so your iPhone can talk to your desktop over your local network.",
+      "Tap Settings and enter your desktop IP and sync token. When prompted, follow the certificate setup steps: you'll download and install a security certificate so your iPhone can talk to your desktop over your local network.",
   },
   {
     step: "4",
@@ -55,13 +55,13 @@ const IOS_STEPS = [
     step: "5",
     title: "Add to Home Screen",
     detail:
-      'Back in Safari, tap the Share icon (the box with an arrow pointing up) and select "Add to Home Screen". Complete this step after the certificate is installed — the app needs Safari permissions to work correctly.',
+      'Back in Safari, tap the Share icon (the box with an arrow pointing up) and select "Add to Home Screen". Complete this step after the certificate is installed: the app needs Safari permissions to work correctly.',
   },
   {
     step: "6",
     title: "Confirm",
     detail:
-      'Optionally rename the app, then tap "Add" in the top-right corner.',
+      'Optionally rename the app, then tap "Add" in the top right corner.',
   },
   {
     step: "7",
@@ -82,7 +82,7 @@ const ANDROID_STEPS = [
   {
     step: "2",
     title: "Tap the menu",
-    detail: "Tap the three-dot menu (⋮) in the top-right corner of Chrome.",
+    detail: "Tap the three dot menu (⋮) in the top right corner of Chrome.",
   },
   {
     step: "3",

@@ -18,8 +18,6 @@
 import { z } from "zod";
 
 export const schema = z.object({
-  capacitiesSpaceId: z.string(),
-  capacitiesApiKey: z.string().optional(),
   supernotesApiKey: z.string().optional(),
   aiApiKey: z.string().optional(),
   aiApiUrl: z.string().optional(),

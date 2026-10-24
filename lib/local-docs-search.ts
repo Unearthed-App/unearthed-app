@@ -1,3 +1,20 @@
+/**
+ * Copyright (C) 2026 Unearthed App
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import Fuse, { FuseResult, IFuseOptions } from "fuse.js";
 
 export interface SearchItem {
@@ -54,7 +71,7 @@ export const searchIndex: SearchItem[] = [
     section: "Installation",
     category: "Install",
     content:
-      "Download the .zip file. Extract and drag Unearthed.app to Applications. Right-click Open on first launch to bypass Gatekeeper. Grant file access permissions when prompted.",
+      "Download the .zip file. Extract and drag Unearthed.app to Applications. Right click Open on first launch to bypass Gatekeeper. Grant file access permissions when prompted.",
     href: "/local-docs/install#macos",
     keywords: ["macos", "mac", "gatekeeper", "permissions", "applications"],
   },
@@ -94,7 +111,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Connect to Amazon Kindle through built-in browser. Fetches books and annotations from two Kindle endpoints in parallel. Merges and deduplicates results. Stores in local SQLite database. Kindle refresh is one-way: Unearthed pulls from Kindle but does not update Kindle. The first Kindle sync imports locally but does not automatically export to Obsidian or Craft, so users can review sources before sending. After the first sync, manual Kindle refresh only auto-exports to Obsidian when Auto Export to Obsidian is enabled. Auto-sync every hour when enabled.",
+      "Connect your Amazon account in Unearthed’s built in browser to import books, highlights and notes from Kindle Notebook. Repeat imports keep each book’s highlights together. Your first import stays in Unearthed so you can review it before exporting to Obsidian or Craft. Enable hourly sync and automatic export in settings to keep your notes up to date. Changes in Unearthed, Obsidian or Craft are not sent back to Kindle.",
     href: "/local-docs/features#kindle-sync",
     keywords: [
       "kindle",
@@ -111,7 +128,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "For Kindle-origin sources, Skip Kindle Refresh keeps the source in your local database but skips per-book Kindle annotation fetches on future refreshes. This is separate from Ignored: ignored excludes a source from Obsidian/Craft export, while Skip Kindle Refresh only reduces Kindle refresh work. Skipped sources still export unless they are also ignored.",
+      "For Kindle-origin sources, Skip Kindle Refresh keeps the source in your local database but skips per book Kindle annotation fetches on future refreshes. This is separate from Ignored: ignored excludes a source from Obsidian/Craft export, while Skip Kindle Refresh only reduces Kindle refresh work. Skipped sources still export unless they are also ignored.",
     href: "/local-docs/features#kindle-sync",
     keywords: [
       "kindle",
@@ -148,7 +165,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Export highlights as Markdown files into Obsidian vault from Unearthed's local database. The first Kindle sync does not automatically export to Obsidian, giving users a chance to review new Kindle sources first. Manual Kindle refresh only auto-exports to Obsidian when Auto Export to Obsidian is enabled. YAML front-matter with metadata. Customisable templates for filenames, quotes, and sources. Color-coded highlights. Obsidian is an export target, not a source of truth for Kindle highlights, and edits are not written back to Kindle.",
+      "Export highlights as Markdown files into Obsidian vault from Unearthed's local database. The first Kindle sync does not automatically export to Obsidian, giving users a chance to review new Kindle sources first. Manual Kindle refresh only auto exports to Obsidian when Auto Export to Obsidian is enabled. YAML frontmatter with metadata. Customisable templates for filenames, quotes, and sources. Color coded highlights. Obsidian is an export target, not a source of truth for Kindle highlights, and edits are not written back to Kindle.",
     href: "/local-docs/features#obsidian-export",
     keywords: ["obsidian", "export", "markdown", "yaml", "template", "vault"],
   },
@@ -158,7 +175,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Sync highlights to Craft Docs alongside Obsidian from Unearthed's local database. The first Kindle sync does not automatically export to Craft, giving users a chance to review new Kindle sources first. Craft is an export target and edits there are not written back to Kindle. Each source type (Books, Articles, Videos) becomes a Craft collection in your root folder; each source is a row whose page contains the highlights and optionally the full article body. Resumable sync — re-runs only insert new quotes (per-quote Craft block IDs are persisted). Throttled to 2 requests/second with exponential backoff retry on rate limits. Cancel button stops a long-running export mid-way without losing already-synced quotes. Per-type collections (Books, Articles, etc.) plus an Authors collection populated first so the relation column is available.",
+      "Export highlights and notes to Craft, with a collection for each source type and a linked Authors collection. Open a source to read its highlights and, if enabled, saved article text. Repeat exports add new highlights without duplicating those already sent. Large libraries may take several minutes. You can cancel and resume an export without losing highlights already sent.",
     href: "/local-docs/features#craft-export",
     keywords: [
       "craft",
@@ -181,7 +198,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Set up Craft Docs export by creating an API Connection in Craft → Imagine → API Connection with Permission Level 'Read and Write' and Access Mode 'API Key'. Generate an API Key (Craft displays it once), then paste the Connection URL and API Key into Settings → Craft Docs. Click Test Connection to verify — successful tests show the connected space name. The API key is encrypted at rest with Electron safeStorage. Use Replace to swap the saved token, Clear to remove it.",
+      "Set up Craft Docs export by creating an API Connection in Craft → Imagine → API Connection with Permission Level 'Read and Write' and Access Mode 'API Key'. Generate an API Key (Craft displays it once), then paste the Connection URL and API Key into Settings → Craft Docs. Click Test Connection to verify: successful tests show the connected space name. The API key is encrypted at rest with Electron safeStorage. Use Replace to swap the saved token, Clear to remove it.",
     href: "/local-docs/features#craft-export",
     keywords: [
       "craft",
@@ -199,11 +216,11 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "feature-craft-collections",
-    title: "Craft Collection-Based Export",
+    title: "Craft Collection Based Export",
     section: "Features",
     category: "Features",
     content:
-      "Craft sources are grouped by type into a Craft collection document. Each row has Type, Quotes, Notes, and (for Books) an Author relation column linking back to the Authors collection. Tap any row to open its page — highlights live there as text blocks. With Combine Sources on (default), one collection per type; off creates separate collections for finer organisation.",
+      "Craft sources are grouped by type into a Craft collection document. Each row has Type, Quotes, Notes, and (for Books) an Author relation column linking back to the Authors collection. Tap any row to open its page: highlights live there as text blocks. With Combine Sources on (default), one collection per type; off creates separate collections for finer organisation.",
     href: "/local-docs/features#craft-export",
     keywords: [
       "craft",
@@ -223,7 +240,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "When Include Full Article Content is enabled, RSS / web article bodies are prepended to the Craft page on first sync, followed by a Highlights heading. YouTube article URLs are inserted as a richUrl block above the article text. Long article text is split into ~6000-char text blocks to stay within Craft's per-block limit. Inserted only on first sync — re-syncing the same source will not duplicate the content.",
+      "Enable Include Full Article Content to add saved RSS and web article text to Craft above your highlights. YouTube links appear above the article text. Content is added on the first export and is not duplicated on later syncs. This does not export the full text of Kindle books.",
     href: "/local-docs/features#craft-export",
     keywords: [
       "craft",
@@ -262,7 +279,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Craft uses the same Quote, Source, and Daily Reflection templates as Obsidian (or the built-in defaults). Wikilinks [[Page]] / [[Page|Display]] are flattened to plain text. YAML frontmatter is converted to a Craft <callout> block. Zero-width-space dedup markers are stripped (Obsidian-only artifact). <script> tags are stripped as defense-in-depth.",
+      "Craft uses your Quote, Source and Daily Reflection templates, or the default layouts. Obsidian links are shown as readable text and source properties appear in a Craft callout. You can use the same reading notes in both apps.",
     href: "/local-docs/features#craft-export",
     keywords: [
       "craft",
@@ -280,7 +297,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Append today's random highlight to your Craft daily note alongside Obsidian (if configured) — both targets receive the same quote independently. Auto-appends as soon as Unearthed opens — no need to press 'New Reflection'. Per-destination success is recorded in the database, so the reflection is appended at most once per day across restarts. Compact pills ('Appended to Obsidian', 'Appended to Craft') confirm which destinations received the quote.",
+      "Send today’s highlight to your Craft daily note and, if enabled, Obsidian. Your reflection is added when Unearthed opens. Each day’s reflection is sent once to each app, even if you restart Unearthed. A message confirms which apps received it.",
     href: "/local-docs/features#craft-export",
     keywords: [
       "craft",
@@ -293,11 +310,11 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "feature-craft-auto-export",
-    title: "Craft Hourly Auto-Export",
+    title: "Craft Hourly Auto Export",
     section: "Features",
     category: "Features",
     content:
-      "Toggle Auto-export to Craft in Settings → Craft Docs to sync new highlights every hour. Runs in the background alongside the Obsidian auto-export and is toggled independently. The first Kindle sync is imported locally only and is not automatically exported to Craft. Requires Keep App Running to continue syncing while the window is closed.",
+      "Toggle Auto export to Craft in Settings → Craft Docs to sync new highlights every hour. Runs in the background alongside the Obsidian auto export and is toggled independently. The first Kindle sync is imported locally only and is not automatically exported to Craft. Requires Keep App Running to continue syncing while the window is closed.",
     href: "/local-docs/features#craft-export",
     keywords: ["craft", "auto export", "hourly", "background", "auto sync"],
   },
@@ -307,7 +324,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "If a Craft document is permanently deleted, the next export recreates it and re-uploads all quotes in a single pass. Individual deleted blocks are detected and re-synced automatically. For a full reset, use Settings → Craft Docs → Reset Craft Sync Data — clears Unearthed's ID mapping but does NOT delete anything in Craft. If you deleted a Craft document and want it recreated cleanly, empty Craft's Trash first so Unearthed can reuse the same name.",
+      "If a Craft document is permanently deleted, the next export recreates it and reuploads all quotes in a single pass. Individual deleted blocks are detected and resynced automatically. For a full reset, use Settings → Craft Docs → Reset Craft Sync Data: clears Unearthed's ID mapping but does NOT delete anything in Craft. If you deleted a Craft document and want it recreated cleanly, empty Craft's Trash first so Unearthed can reuse the same name.",
     href: "/local-docs/features#craft-export",
     keywords: [
       "craft",
@@ -326,7 +343,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Export entire library as CSV files. One file per book with columns: Quote, Note, Location, Color, CreatedAt. Auto-incrementing folder names to avoid overwrites.",
+      "Export entire library as CSV files. One file per book with columns: Quote, Note, Location, Color, CreatedAt. Auto incrementing folder names to avoid overwrites.",
     href: "/local-docs/features#csv-export",
     keywords: ["csv", "export", "spreadsheet", "columns"],
   },
@@ -336,7 +353,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Subscribe to RSS feeds, browse articles newest-first with filtering by feed, import status, and search. Import articles into local database as sources. Both RSS 2.0 and Atom formats supported. Auto-refresh on app startup.",
+      "Subscribe to RSS feeds, browse articles newest first with filtering by feed, import status, and search. Import articles into local database as sources. Both RSS 2.0 and Atom formats supported. Auto refresh on app startup.",
     href: "/local-docs/features#rss-feeds",
     keywords: [
       "rss",
@@ -374,7 +391,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "RSS articles containing YouTube links display embedded video players. Video transcripts are fetched and injected into article content. Retries on rate limiting with exponential backoff. Playback position is saved automatically and resumes where you left off — syncs between desktop and mobile.",
+      "Watch YouTube videos inside saved articles and read transcripts when available. Your playback position is saved so you can pick up where you left off on desktop or mobile. Watching videos requires an internet connection.",
     href: "/local-docs/features#youtube",
     keywords: [
       "youtube",
@@ -392,7 +409,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Random quote displayed on dashboard. Optionally append to Obsidian daily note. Full moment.js-compatible date format tokens. Append Under Heading to insert under a specific markdown heading. Auto-create daily note if not exists.",
+      "Random quote displayed on dashboard. Optionally append to Obsidian daily note. Full moment.js-compatible date format tokens. Append Under Heading to insert under a specific markdown heading. Auto create daily note if not exists.",
     href: "/local-docs/features#daily-reflection",
     keywords: [
       "daily",
@@ -412,7 +429,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Full-text search across all books, quotes, and notes with Ctrl+K or Cmd+K. Results grouped by source with match type indicators. Keyboard navigation with arrow keys and Enter.",
+      "Full text search across all books, quotes, and notes with Ctrl+K or Cmd+K. Results grouped by source with match type indicators. Keyboard navigation with arrow keys and Enter.",
     href: "/local-docs/features#global-search",
     keywords: ["search", "ctrl+k", "find", "query", "keyboard"],
   },
@@ -422,7 +439,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "View, search, filter, and manage all sources. Filter by All, Active, Ignored, or Kindle Skipped. Filter by type (Book, Article, Collection, Video) or origin (Kindle, KOReader, RSS, Manual). Toggle ignored status for export routing and Skip Kindle Refresh for Kindle refresh cost control. Batch select and delete. View quotes per source with color-coded accent bars.",
+      "View, search, filter, and manage all sources. Filter by All, Active, Ignored, or Kindle Skipped. Filter by type (Book, Article, Collection, Video) or origin (Kindle, KOReader, RSS, Manual). Toggle ignored status for export routing and Skip Kindle Refresh for Kindle refresh cost control. Batch select and delete. View quotes per source with color coded accent bars.",
     href: "/local-docs/features#library",
     keywords: [
       "library",
@@ -445,7 +462,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Toggle between dark and light themes. Preference persisted across sessions. Uses Tailwind dark: prefix for all styling.",
+      "Switch between light and dark themes. Unearthed remembers your choice the next time you open the app.",
     href: "/local-docs/features#dark-mode",
     keywords: ["dark", "light", "theme", "mode", "toggle"],
   },
@@ -455,7 +472,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Keep App Running minimizes Unearthed to the system tray instead of quitting, so it stays ready to accept global shortcuts even when all windows are closed. Run on Startup launches the app automatically at OS login. Combined with the Quick Import shortcut (Ctrl/Cmd+Shift+I) you can save content to Unearthed at any moment without ever opening the main window. Platform-specific: Windows taskbar tray, macOS menu bar, Linux .desktop autostart file.",
+      "Keep App Running minimizes Unearthed to the system tray instead of quitting, so it stays ready to accept global shortcuts even when all windows are closed. Run on Startup launches the app automatically at OS login. Combined with the Quick Import shortcut (Ctrl/Cmd+Shift+I) you can save content to Unearthed at any moment without ever opening the main window. Platform specific: Windows taskbar tray, macOS menu bar, Linux .desktop autostart file.",
     href: "/local-docs/features#tray",
     keywords: [
       "tray",
@@ -486,7 +503,7 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "Two local servers for device connections. KOReader and iOS use port 6543 (HTTPS) with a self-signed certificate. Android uses port 6545 (HTTP) — no certificate required. Auto-detected IP address with copy buttons. Secret token for authentication.",
+      "Two local servers for device connections. KOReader and iOS use port 6543 (HTTPS) with a self signed certificate. Android uses port 6545 (HTTP): no certificate required. Auto detected IP address with copy buttons. Secret token for authentication.",
     href: "/local-docs/settings#api",
     keywords: [
       "api",
@@ -510,7 +527,7 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "Configure Obsidian vault location, Root Folder, auto export, article content export, optional personal notes section, personal notes title, and Rebuild Obsidian Notes. Auto Export to Obsidian runs hourly and also controls automatic Obsidian export after manual Kindle refresh. Rebuild is opt-in and regenerates Unearthed-managed highlight sections from the local database while preserving user-authored content outside managed blocks.",
+      "Configure Obsidian vault location, Root Folder, auto export, article content export, optional personal notes section, personal notes title, and Rebuild Obsidian Notes. Auto Export to Obsidian runs hourly and also controls automatic Obsidian export after manual Kindle refresh. Rebuild is opt in and regenerates Unearthed managed highlight sections from the local database while preserving user authored content outside managed blocks.",
     href: "/local-docs/settings#obsidian",
     keywords: ["obsidian", "vault", "location", "browse", "root", "folder", "personal notes", "rebuild", "article content"],
   },
@@ -520,7 +537,7 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "Configure the Craft Docs export integration. Connection URL (https://connect.craft.do/links/XXXXX/api/v1) and API Token (encrypted via Electron safeStorage) from Craft → Settings → Connect to API. Test Connection verifies and shows the connected space name. Root Folder (default 'Unearthed') is the top-level folder in your Craft space.",
+      "Connect Craft using the Connection URL and API key from your Craft connection page. Paste them into Unearthed’s Craft Docs settings and select Test Connection to check the space. Choose a root folder for your exported notes. Your API key is saved securely on your computer.",
     href: "/local-docs/settings#craft",
     keywords: [
       "craft",
@@ -541,7 +558,7 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "When 'Combine Sources' is enabled (default), all sources of the same type share a single collection (Books, Articles, etc.). When disabled, separate collections are created per type for finer-grained organisation. Recommended on for most users — keeps your Craft folder tidy.",
+      "When 'Combine Sources' is enabled (default), all sources of the same type share a single collection (Books, Articles, etc.). When disabled, separate collections are created per type for finer grained organisation. Recommended on for most users: keeps your Craft folder tidy.",
     href: "/local-docs/settings#craft",
     keywords: [
       "craft",
@@ -555,11 +572,11 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "settings-craft-include-article-content",
-    title: "Craft — Include Full Article Content",
+    title: "Craft: Include Full Article Content",
     section: "Settings",
     category: "Settings",
     content:
-      "When enabled, the full article body is prepended to the Craft document on first sync, followed by a Highlights heading. Only applies to articles (RSS / Web Page imports), not Kindle books. YouTube article URLs are inserted as a richUrl block above the article text. Long article text is split into ~6000-char text blocks. Inserted only on first sync — re-syncing the same source will not duplicate the content.",
+      "Add saved RSS and web article text above your highlights in Craft. YouTube links appear above the text. Article content is added on the first export and is not duplicated by later syncs. This setting does not include the full text of Kindle books.",
     href: "/local-docs/settings#craft",
     keywords: [
       "craft",
@@ -573,11 +590,11 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "settings-craft-daily-reflection",
-    title: "Craft — Append Daily Reflection",
+    title: "Craft: Append Daily Reflection",
     section: "Settings",
     category: "Settings",
     content:
-      "Enable 'Append daily reflection to Craft daily note' to send today's random highlight to your Craft daily note alongside Obsidian. Auto-appends as soon as Unearthed opens. Recorded in the database so the reflection is appended at most once per day, even after restarts. A compact 'Appended to Craft' pill confirms success.",
+      "Enable Append daily reflection to Craft daily note to send today’s highlight when Unearthed opens. You can send the same reflection to Obsidian too. Each day’s reflection is sent only once to each app, even after a restart. A message confirms when it arrives.",
     href: "/local-docs/settings#craft",
     keywords: [
       "craft",
@@ -590,11 +607,11 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "settings-craft-auto-export",
-    title: "Craft — Auto-Export Hourly",
+    title: "Craft: Auto Export Hourly",
     section: "Settings",
     category: "Settings",
     content:
-      "Toggle 'Auto-export to Craft (hourly)' to sync new highlights to Craft every hour, alongside Obsidian. Toggled independently from Obsidian auto-export. Requires Keep App Running to continue syncing in the background. Only new or changed quotes are sent on each run (resumable sync).",
+      "Toggle 'Auto export to Craft (hourly)' to sync new highlights to Craft every hour, alongside Obsidian. Toggled independently from Obsidian auto export. Requires Keep App Running to continue syncing in the background. Only new or changed quotes are sent on each run (resumable sync).",
     href: "/local-docs/settings#craft",
     keywords: [
       "craft",
@@ -607,7 +624,7 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "settings-craft-color-mode",
-    title: "Craft — Quote Color Mode",
+    title: "Craft: Quote Color Mode",
     section: "Settings",
     category: "Settings",
     content:
@@ -617,11 +634,11 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "settings-craft-reset-sync",
-    title: "Craft — Reset Sync Data",
+    title: "Craft: Reset Sync Data",
     section: "Settings",
     category: "Settings",
     content:
-      "Reset Craft Sync Data clears Unearthed's internal mapping of which Craft documents and blocks it previously created. Forces a clean re-export on the next run. Does NOT delete anything in Craft itself. Use this if documents ended up in the wrong location, or if you deleted individual quotes in Craft and want them re-synced. If you deleted a document in Craft, empty it from Craft's Trash first so Unearthed can recreate it.",
+      "Reset Craft Sync Data starts a fresh export the next time you sync. Use it to restore missing highlights or reconnect exported pages. It does not delete anything in Craft. If you deleted a Craft document and want Unearthed to recreate it, empty Craft’s Trash first.",
     href: "/local-docs/settings#craft",
     keywords: [
       "craft",
@@ -689,7 +706,7 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "Customise exported Markdown format. Source template for YAML front-matter. Quote template for highlights. Daily reflection template with bookTitle, author, fileName variables.",
+      "Customise exported Markdown format. Source template for YAML frontmatter. Quote template for highlights. Daily reflection template with bookTitle, author, fileName variables.",
     href: "/local-docs/settings#templates",
     keywords: [
       "template",
@@ -734,7 +751,7 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "Show database file path for manual backups. Delete Database to permanently remove all local data and reinitialize. Purge Soft-Deleted permanently removes any articles and feeds that are currently in a soft-deleted state, with a confirmation dialog summarising the count. Reset All Settings restores defaults without affecting database.",
+      "Show database file path for manual backups. Delete Database to permanently remove all local data and reinitialize. Purge Soft Deleted permanently removes any articles and feeds that are currently in a soft deleted state, with a confirmation dialog summarising the count. Reset All Settings restores defaults without affecting database.",
     href: "/local-docs/settings#database",
     keywords: [
       "database",
@@ -755,7 +772,7 @@ export const searchIndex: SearchItem[] = [
     section: "Troubleshooting",
     category: "Troubleshoot",
     content:
-      "Not Connected status: complete Amazon login, click Check Status, re-open browser. No books: verify highlights exist on read.amazon.com. Rate limited: wait a few minutes.",
+      "Not Connected status: complete Amazon login, click Check Status, reopen browser. No books: verify highlights exist on read.amazon.com. Rate limited: wait a few minutes.",
     href: "/local-docs/troubleshoot#kindle",
     keywords: [
       "kindle",
@@ -772,7 +789,7 @@ export const searchIndex: SearchItem[] = [
     section: "Troubleshooting",
     category: "Troubleshoot",
     content:
-      "Vault not configured: open Settings Obsidian Browse. Permission denied on macOS: re-select vault folder. Duplicates: zero-width markers detect existing quotes.",
+      "Vault not configured: open Settings Obsidian Browse. Permission denied on macOS: reselect vault folder. Duplicates: zero width markers detect existing quotes.",
     href: "/local-docs/troubleshoot#obsidian",
     keywords: [
       "obsidian",
@@ -789,7 +806,7 @@ export const searchIndex: SearchItem[] = [
     section: "Troubleshooting",
     category: "Troubleshoot",
     content:
-      "Connection URL or API token rejected: verify URL format https://connect.craft.do/links/XXXXX/api/v1, generate a new API key (Craft only displays it once), confirm Permission Level is 'Read and Write', click Test Connection. Documents in wrong folder or deleted: Settings → Craft Docs → Reset Craft Sync Data (does NOT delete in Craft). If you deleted a Craft document, empty Craft's Trash first. Quotes deleted in Craft: detected on next export and re-synced automatically. Slow export or rate limits: Craft API allows ~2 req/sec, throttled with exponential backoff retry on HTTP 429. Article content missing: enable Include Full Article Content (only inserted on first sync — use Reset Craft Sync Data to re-import). Wrong colors: orange→yellow, olive→green; set Color Mode to 'none' for plain quotes.",
+      "If Craft rejects the connection, check the Connection URL and API key, allow Read and Write access and select Test Connection. For missing notes or pages in the wrong location, use Reset Craft Sync Data. Leave Unearthed running while large exports finish. To include saved article text, enable Include Full Article Content. If a color looks different, Craft may not have an exact match.",
     href: "/local-docs/troubleshoot#craft",
     keywords: [
       "craft",
@@ -863,7 +880,7 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "troubleshoot-platform",
-    title: "Platform-Specific Issues",
+    title: "Platform Specific Issues",
     section: "Troubleshooting",
     category: "Troubleshoot",
     content:
@@ -885,7 +902,7 @@ export const searchIndex: SearchItem[] = [
     section: "Troubleshooting",
     category: "Troubleshoot",
     content:
-      "Delete Database in Settings to completely reset Unearthed. Deletes local SQLite database and reinitializes fresh. Requires re-sync from Kindle/KOReader. Obsidian files, Craft documents, and source data not affected.",
+      "Delete Database in Settings to completely reset Unearthed. Deletes local SQLite database and reinitializes fresh. Requires resync from Kindle/KOReader. Obsidian files, Craft documents, and source data not affected.",
     href: "/local-docs/troubleshoot#reset",
     keywords: [
       "reset",
@@ -904,7 +921,7 @@ export const searchIndex: SearchItem[] = [
     section: "Advanced Usage",
     category: "Advanced",
     content:
-      "Source template with YAML front-matter variables: title, subtitle, author, type, origin, asin. Quote template variables: content, note, location, color. Daily reflection template with bookTitle, author, fileName.",
+      "Source template with YAML frontmatter variables: title, subtitle, author, type, origin, asin. Quote template variables: content, note, location, color. Daily reflection template with bookTitle, author, fileName.",
     href: "/local-docs/features#templates",
     keywords: ["template", "yaml", "custom", "variables", "format"],
   },
@@ -924,7 +941,7 @@ export const searchIndex: SearchItem[] = [
     section: "Advanced Usage",
     category: "Advanced",
     content:
-      "55+ fully customisable keyboard shortcuts across 8 contexts. System-wide (any app): Ctrl/Cmd+Shift+I Quick Import (URL or Add Quote), Ctrl/Cmd+Shift+O Go to RSS Feeds. In-app global: Ctrl/Cmd+I Add Entry, Ctrl/Cmd+K search, Ctrl/Cmd+1-4 tabs, Ctrl/Cmd+D dark mode, Ctrl/Cmd+/ help, Ctrl/Cmd+R Read It Later. Home tab: Z new reflection, C copy, D/A navigate, Space open, E import, Q hide, X delete, R read later. RSS tab: D/A navigate, Space open, E import, Q hide, X delete, R read later, Ctrl/Cmd+L read-later filter. Kindle: Ctrl/Cmd+Shift+S sync. Library: Ctrl/Cmd+A select all. Article Reader: E import, Q hide, X delete, R read later, W/S scroll, A/D prev/next, Space play video. Article Highlighter: Ctrl/Cmd+F search, W/S scroll, A/D prev/next, Space play video. All shortcuts remappable in Settings → Keyboard Shortcuts.",
+      "55+ fully customisable keyboard shortcuts across 8 contexts. System wide (any app): Ctrl/Cmd+Shift+I Quick Import (URL or Add Quote), Ctrl/Cmd+Shift+O Go to RSS Feeds. In app global: Ctrl/Cmd+I Add Entry, Ctrl/Cmd+K search, Ctrl/Cmd+1-4 tabs, Ctrl/Cmd+D dark mode, Ctrl/Cmd+/ help, Ctrl/Cmd+R Read It Later. Home tab: Z new reflection, C copy, D/A navigate, Space open, E import, Q hide, X delete, R read later. RSS tab: D/A navigate, Space open, E import, Q hide, X delete, R read later, Ctrl/Cmd+L read-later filter. Kindle: Ctrl/Cmd+Shift+S sync. Library: Ctrl/Cmd+A select all. Article Reader: E import, Q hide, X delete, R read later, W/S scroll, A/D prev/next, Space play video. Article Highlighter: Ctrl/Cmd+F search, W/S scroll, A/D prev/next, Space play video. All shortcuts remappable in Settings → Keyboard Shortcuts.",
     href: "/local-docs/features#keyboard",
     keywords: [
       "keyboard",
@@ -965,7 +982,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Add your own quotes and sources directly in Unearthed without Kindle or KOReader. Click the purple + Add button in the header or press Ctrl/Cmd+I. Quote fields: content, note, location, highlight color, and source. Source types: Book, Article, Collection (for thematic groups like 'Wisdom'). If no source is selected, the quote is saved to an auto-created Misc Collection. New sources can be added inline without leaving the form. Manual sources are tagged with origin 'Manual' and filterable in the Library.",
+      "Add your own quotes and sources directly in Unearthed without Kindle or KOReader. Click the purple + Add button in the header or press Ctrl/Cmd+I. Quote fields: content, note, location, highlight color, and source. Source types: Book, Article, Collection (for thematic groups like 'Wisdom'). If no source is selected, the quote is saved to an auto created Misc Collection. New sources can be added inline without leaving the form. Manual sources are tagged with origin 'Manual' and filterable in the Library.",
     href: "/local-docs/features#manual-entry",
     keywords: [
       "manual",
@@ -1007,7 +1024,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Import any article or blog post from the web directly into your library. Paste a URL in the RSS tab and Unearthed fetches the full text using the same Reader View technology as Firefox — stripping ads, sidebars, and clutter. The clean article is saved to your database, ready for highlighting and annotation. Works with the Quick Import shortcut too: press Ctrl/Cmd+Shift+I, paste a link, and the page is saved instantly even while the app is in the background.",
+      "Import any article or blog post from the web directly into your library. Paste a URL in the RSS tab and Unearthed fetches the full text using the same Reader View technology as Firefox: stripping ads, sidebars, and clutter. The clean article is saved to your database, ready for highlighting and annotation. Works with the Quick Import shortcut too: press Ctrl/Cmd+Shift+I, paste a link, and the page is saved instantly even while the app is in the background.",
     href: "/local-docs/features#web-import",
     keywords: [
       "web",
@@ -1023,7 +1040,7 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "feature-quick-import-shortcut",
-    title: "Quick Import — System-wide Shortcut",
+    title: "Quick Import: System wide Shortcut",
     section: "Features",
     category: "Features",
     content:
@@ -1042,7 +1059,7 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "feature-global-rss-shortcut",
-    title: "Go to RSS Feeds — System-wide Shortcut",
+    title: "Go to RSS Feeds: System wide Shortcut",
     section: "Features",
     category: "Features",
     content:
@@ -1065,7 +1082,7 @@ export const searchIndex: SearchItem[] = [
     section: "Features",
     category: "Features",
     content:
-      "Many RSS feeds only publish a teaser or short summary. With Unearthed you can fetch the complete article text directly from the source website with one click. The full content is stored locally and available for offline reading, highlighting, and export to Obsidian — no need to leave the app or open a browser.",
+      "Many RSS feeds only publish a teaser or short summary. With Unearthed you can fetch the complete article text directly from the source website with one click. The full content is stored locally and available for offline reading, highlighting, and export to Obsidian: no need to leave the app or open a browser.",
     href: "/local-docs/features#get-full-article",
     keywords: [
       "full article",
@@ -1098,11 +1115,11 @@ export const searchIndex: SearchItem[] = [
   },
   {
     id: "settings-rss-auto-delete",
-    title: "Auto-Delete Old RSS Articles",
+    title: "Auto Delete Old RSS Articles",
     section: "Settings",
     category: "Settings",
     content:
-      "Keep your feed tidy by automatically removing unread articles after a set number of days. Only articles you have not imported are deleted — anything you have saved to your library is kept forever. Set the threshold (default 7 days) in Settings → RSS Articles, or set it to 0 to keep all articles indefinitely.",
+      "Keep your feed tidy by automatically removing unread articles after a set number of days. Only articles you have not imported are deleted: anything you have saved to your library is kept forever. Set the threshold (default 7 days) in Settings → RSS Articles, or set it to 0 to keep all articles indefinitely.",
     href: "/local-docs/settings#rss-auto-delete",
     keywords: [
       "auto delete",
@@ -1120,7 +1137,7 @@ export const searchIndex: SearchItem[] = [
     section: "Settings",
     category: "Settings",
     content:
-      "Turn on system-wide keyboard shortcuts so Unearthed responds even when the app is minimized or in the background. Enabling this unlocks Quick Import (Ctrl/Cmd+Shift+I) and Go to RSS Feeds (Ctrl/Cmd+Shift+O) from any application. Toggle in Settings → General. Individual shortcuts can be customised in Settings → Keyboard Shortcuts.",
+      "Turn on system wide keyboard shortcuts so Unearthed responds even when the app is minimized or in the background. Enabling this unlocks Quick Import (Ctrl/Cmd+Shift+I) and Go to RSS Feeds (Ctrl/Cmd+Shift+O) from any application. Toggle in Settings → General. Individual shortcuts can be customised in Settings → Keyboard Shortcuts.",
     href: "/local-docs/settings#global-shortcuts",
     keywords: [
       "global shortcuts",
@@ -1139,7 +1156,7 @@ export const searchIndex: SearchItem[] = [
     section: "Advanced Usage",
     category: "Advanced",
     content:
-      "System-wide shortcuts (work from any app): Ctrl+Shift+I / Cmd+Shift+I = Quick Import dialog; Ctrl+Shift+O / Cmd+Shift+O = Open RSS Feeds tab. In-app global shortcuts: Ctrl+K / Cmd+K = Search; Ctrl+1-4 / Cmd+1-4 = Switch tabs; Ctrl+D / Cmd+D = Toggle dark mode; Ctrl+/ / Cmd+/ = Keyboard Shortcuts reference; Ctrl+R / Cmd+R = Read It Later feed; Ctrl+, / Cmd+, = Settings. All shortcuts customisable in Settings → Keyboard Shortcuts.",
+      "System wide shortcuts (work from any app): Ctrl+Shift+I / Cmd+Shift+I = Quick Import dialog; Ctrl+Shift+O / Cmd+Shift+O = Open RSS Feeds tab. In app global shortcuts: Ctrl+K / Cmd+K = Search; Ctrl+1-4 / Cmd+1-4 = Switch tabs; Ctrl+D / Cmd+D = Toggle dark mode; Ctrl+/ / Cmd+/ = Keyboard Shortcuts reference; Ctrl+R / Cmd+R = Read It Later feed; Ctrl+, / Cmd+, = Settings. All shortcuts customisable in Settings → Keyboard Shortcuts.",
     href: "/local-docs/features#keyboard",
     keywords: [
       "global",
@@ -1158,7 +1175,7 @@ export const searchIndex: SearchItem[] = [
     section: "Troubleshooting",
     category: "Troubleshoot",
     content:
-      "If Ctrl/Cmd+Shift+I or Ctrl/Cmd+Shift+O do nothing: make sure 'Enable System Global Shortcuts' is turned on in Settings → General. On macOS, grant Accessibility permissions when prompted (System Preferences → Privacy & Security → Accessibility). Conflicts with other apps using the same shortcut can prevent registration — reassign the shortcut in Settings → Keyboard Shortcuts.",
+      "If Ctrl/Cmd+Shift+I or Ctrl/Cmd+Shift+O do nothing: make sure 'Enable System Global Shortcuts' is turned on in Settings → General. On macOS, grant Accessibility permissions when prompted (System Preferences → Privacy & Security → Accessibility). Conflicts with other apps using the same shortcut can prevent registration: reassign the shortcut in Settings → Keyboard Shortcuts.",
     href: "/local-docs/troubleshoot#global-shortcuts",
     keywords: [
       "global shortcut",
@@ -1178,7 +1195,7 @@ export const searchIndex: SearchItem[] = [
     section: "Mobile App",
     category: "Mobile",
     content:
-      "Unearthed is available as a native Android app (APK). Your entire reading life — RSS feeds, saved articles, Kindle highlights, KOReader notes, and personal quotes — is always with you. The mobile app works beautifully on its own, and when you are at your desk it stays perfectly in sync with Unearthed on your desktop over your home Wi-Fi. Everything you save, highlight, or bookmark on your phone appears on your computer, and vice versa.",
+      "Unearthed is available as a native Android app (APK). Your entire reading life: RSS feeds, saved articles, Kindle highlights, KOReader notes, and personal quotes: is always with you. The mobile app works beautifully on its own, and when you are at your desk it stays perfectly in sync with Unearthed on your desktop over your home Wi-Fi. Everything you save, highlight, or bookmark on your phone appears on your computer, and vice versa.",
     href: "/local-docs/mobile#overview",
     keywords: ["mobile", "android", "app", "phone", "tablet"],
   },
@@ -1188,7 +1205,7 @@ export const searchIndex: SearchItem[] = [
     section: "Mobile App",
     category: "Mobile",
     content:
-      "Unearthed Local (desktop) and Unearthed Mobile are designed to work hand-in-hand. Subscribe to a feed on your phone and it appears on your desktop. Import a Kindle book on your computer and your highlights are ready to browse on your phone during your commute. Read Later bookmarks, hidden articles, and imported sources all sync bidirectionally — you are always looking at the same library, regardless of which device you are on. Sync happens automatically over your local network, so your data never leaves your home.",
+      "Unearthed Local (desktop) and Unearthed Mobile are designed to work hand in hand. Subscribe to a feed on your phone and it appears on your desktop. Import a Kindle book on your computer and your highlights are ready to browse on your phone during your commute. Read Later bookmarks, hidden articles, and imported sources all sync bidirectionally: you are always looking at the same library, regardless of which device you are on. Sync happens automatically over your local network, so your data never leaves your home.",
     href: "/local-docs/mobile#companion",
     keywords: [
       "sync",
@@ -1206,7 +1223,7 @@ export const searchIndex: SearchItem[] = [
     section: "Mobile App",
     category: "Mobile",
     content:
-      "To connect the mobile app to your desktop: open Unearthed on your desktop and go to Settings → API Endpoint — you will see your local IP address and sync token. In the mobile app, go to Settings and enter the IP address and token. iOS uses port 6543 (HTTPS); Android uses port 6545 (HTTP, no certificate required). Tap Test Connection to confirm. Both devices must be on the same Wi-Fi network.",
+      "To connect the mobile app to your desktop: open Unearthed on your desktop and go to Settings → API Endpoint: you will see your local IP address and sync token. In the mobile app, go to Settings and enter the IP address and token. iOS uses port 6543 (HTTPS); Android uses port 6545 (HTTP, no certificate required). Tap Test Connection to confirm. Both devices must be on the same Wi-Fi network.",
     href: "/local-docs/mobile#setup",
     keywords: [
       "setup",
@@ -1249,7 +1266,7 @@ export const searchIndex: SearchItem[] = [
     section: "Mobile App",
     category: "Mobile",
     content:
-      "The mobile app's Feed tab shows all your RSS articles in a clean, distraction-free layout optimised for small screens. Swipe left or right between articles, pull down to refresh, and tap any article to open the full-text reader. Videos from YouTube channels you follow play inline with a single tap. Articles synced from the desktop — including Kindle chapters and web imports — are available to read offline once synced.",
+      "The mobile app's Feed tab shows all your RSS articles in a clean, distraction free layout optimised for small screens. Swipe left or right between articles, pull down to refresh, and tap any article to open the full text reader. Videos from YouTube channels you follow play inline with a single tap. Articles synced from the desktop: including Kindle chapters and web imports: are available to read offline once synced.",
     href: "/local-docs/mobile#reading",
     keywords: [
       "reading",
@@ -1268,7 +1285,7 @@ export const searchIndex: SearchItem[] = [
     section: "Mobile App",
     category: "Mobile",
     content:
-      "Never lose a great passage from a physical book again. The Capture button (camera icon) in the mobile app lets you photograph highlighted text and Unearthed reads it automatically using OCR — no typing required. You can also type quotes manually. Attach a note and a colour, choose which book it belongs to, and save. Captured quotes sync to your desktop library and can be exported to Obsidian just like Kindle highlights.",
+      "Never lose a great passage from a physical book again. The Capture button (camera icon) in the mobile app lets you photograph highlighted text and Unearthed reads it automatically using OCR: no typing required. You can also type quotes manually. Attach a note and a colour, choose which book it belongs to, and save. Captured quotes sync to your desktop library and can be exported to Obsidian just like Kindle highlights.",
     href: "/local-docs/mobile#capture",
     keywords: [
       "capture",
@@ -1288,7 +1305,7 @@ export const searchIndex: SearchItem[] = [
     section: "Mobile App",
     category: "Mobile",
     content:
-      "Unearthed Mobile is built for one-handed use. Swipe left between adjacent articles without going back to the list. Configure what a left or right swipe does on article cards — hide the article or bookmark it for Read Later — in Settings → Gestures. Pull down on the feed list to refresh all subscribed feeds at once. The app respects your phone's notch, home bar, and screen edges so nothing is hidden behind hardware cutouts.",
+      "Unearthed Mobile is built for one handed use. Swipe left between adjacent articles without going back to the list. Configure what a left or right swipe does on article cards: hide the article or bookmark it for Read Later: in Settings → Gestures. Pull down on the feed list to refresh all subscribed feeds at once. The app respects your phone's notch, home bar, and screen edges so nothing is hidden behind hardware cutouts.",
     href: "/local-docs/mobile#gestures",
     keywords: [
       "swipe",
@@ -1308,7 +1325,7 @@ export const searchIndex: SearchItem[] = [
     section: "Mobile App",
     category: "Mobile",
     content:
-      "Open the mobile app to your Home screen and find a handpicked quote waiting for you each morning — drawn from your entire library of Kindle highlights, KOReader notes, and captured passages. Tap the refresh icon to shuffle to a different quote, or select a specific book from the 'Currently Reading' picker to focus reflections on one source. A running count shows how many highlights you have collected so far.",
+      "Open the mobile app to your Home screen and find a handpicked quote waiting for you each morning: drawn from your entire library of Kindle highlights, KOReader notes, and captured passages. Tap the refresh icon to shuffle to a different quote, or select a specific book from the 'Currently Reading' picker to focus reflections on one source. A running count shows how many highlights you have collected so far.",
     href: "/local-docs/mobile#daily-reflection",
     keywords: [
       "daily",
@@ -1327,7 +1344,7 @@ export const searchIndex: SearchItem[] = [
     section: "Mobile App",
     category: "Mobile",
     content:
-      "The Sources tab on mobile shows your entire reading library — every book, article, and web page you have collected highlights from. Search by title or author, filter by source type (Kindle, KOReader, web, manual), and tap any source to browse its quotes. Everything synced from the desktop is available here, alongside quotes you captured directly on your phone.",
+      "The Sources tab on mobile shows your entire reading library: every book, article, and web page you have collected highlights from. Search by title or author, filter by source type (Kindle, KOReader, web, manual), and tap any source to browse its quotes. Everything synced from the desktop is available here, alongside quotes you captured directly on your phone.",
     href: "/local-docs/mobile#library",
     keywords: [
       "library",
@@ -1368,7 +1385,7 @@ export const searchIndex: SearchItem[] = [
     section: "Mobile App",
     category: "Mobile",
     content:
-      "Can't connect mobile to desktop: both devices must be on the same Wi-Fi network. Double-check the IP address in desktop Settings → API Endpoint (it can change when your router assigns a new address). Verify the token matches exactly — it is case-sensitive. Make sure Unearthed is running on the desktop and not blocked by a firewall on port 6543. Tap 'Test Connection' in mobile Settings to diagnose the issue. On Windows, allow Unearthed through Windows Defender Firewall if prompted.",
+      "Can't connect mobile to desktop: both devices must be on the same Wi-Fi network. Double-check the IP address in desktop Settings → API Endpoint (it can change when your router assigns a new address). Verify the token matches exactly: it is case sensitive. Make sure Unearthed is running on the desktop and not blocked by a firewall on port 6543. Tap 'Test Connection' in mobile Settings to diagnose the issue. On Windows, allow Unearthed through Windows Defender Firewall if prompted.",
     href: "/local-docs/mobile#troubleshoot",
     keywords: [
       "mobile sync",

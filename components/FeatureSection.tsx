@@ -16,13 +16,14 @@
  */
 
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { PackageOpen } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Crimson_Pro } from "next/font/google";
 import { Button } from "./ui/button";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { DemoVideo } from "@/components/DemoVideo";
 
 type Feature = {
   id: string;
@@ -43,157 +44,13 @@ const FeatureSection = ({
 }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [activeTab, setActiveTab] = useState("contrary");
-  const [loadedVideos, setLoadedVideos] = useState<string[]>(["contrary"]);
-  const [visibleVideos, setVisibleVideos] = useState<string[]>(["contrary"]);
-  const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
-  const videoContainerRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-  const fallbackTimeout = useRef<NodeJS.Timeout | null>(null);
-  const [videoLoadError, setVideoLoadError] = useState<Record<string, boolean>>(
-    {}
-  );
-  const [erroredVideos, setErroredVideos] = useState<Set<string>>(new Set());
-
-  const handleVideoError = (featureId: string) => {
-    // Add to errored videos set to prevent retry attempts
-    setErroredVideos((prev) => new Set(prev).add(featureId));
-
-    // Update other states
-    setVideoLoadError((prevErrors) => ({
-      ...prevErrors,
-      [featureId]: true,
-    }));
-
-    setLoadedVideos((prev) => prev.filter((id) => id !== featureId));
-
-    // Remove video element from refs to prevent further attempts
-    videoRefs.current.delete(featureId);
-  };
-
-  const resetVideoError = (featureId: string) => {
-    setVideoLoadError((prevErrors) => {
-      const newState = { ...prevErrors };
-      delete newState[featureId];
-      return newState;
-    });
-  };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const featureId = entry.target.getAttribute("data-feature-id");
-          if (!featureId) return;
-
-          setVisibleVideos((prev) =>
-            entry.isIntersecting
-              ? [...prev, featureId]
-              : prev.filter((id) => id !== featureId)
-          );
-
-          if (entry.isIntersecting) {
-            if (!loadedVideos.includes(featureId)) {
-              setLoadedVideos((prev) => [...prev, featureId]);
-            }
-
-            // Play video when it comes into view (desktop only)
-            if (isDesktop) {
-              const video = videoRefs.current.get(featureId);
-              if (
-                video &&
-                video.readyState >= 2 &&
-                !videoLoadError[featureId]
-              ) {
-                video.play().catch(() => {});
-              } else if (video && !videoLoadError[featureId]) {
-                const handleCanPlay = () => {
-                  video.play().catch(() => {});
-                  video.removeEventListener("canplay", handleCanPlay);
-                };
-                video.addEventListener("canplay", handleCanPlay);
-              }
-            }
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    videoContainerRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-
-    return () => {
-      observer.disconnect();
-      if (fallbackTimeout.current) {
-        clearTimeout(fallbackTimeout.current);
-      }
-      videoRefs.current.forEach((video) => {
-        video.removeEventListener("canplay", () => {});
-        video.removeEventListener("error", () => {});
-      });
-    };
-  }, [loadedVideos, isDesktop, videoLoadError]);
-
-  useEffect(() => {
-    visibleVideos.forEach((featureId) => {
-      const video = videoRefs.current.get(featureId);
-      if (
-        video &&
-        loadedVideos.includes(featureId) &&
-        !videoLoadError[featureId]
-      ) {
-        if (video.readyState >= 2) {
-          video.play().catch((error) => {
-            console.warn(`Video playback failed: ${error.message}`);
-            handleVideoError(featureId);
-          });
-        } else {
-          const handleCanPlay = () => {
-            video.play().catch((error) => {
-              console.warn(`Video playback failed: ${error.message}`);
-              handleVideoError(featureId);
-            });
-            video.removeEventListener("canplay", handleCanPlay);
-          };
-          video.addEventListener("canplay", handleCanPlay);
-        }
-      }
-    });
-
-    const videosToPause = loadedVideos.filter(
-      (id) => !visibleVideos.includes(id)
-    );
-    videosToPause.forEach((featureId) => {
-      const video = videoRefs.current.get(featureId);
-      if (video) video.pause();
-    });
-
-    return () => {
-      videoRefs.current.forEach((video) => {
-        video.removeEventListener("canplay", () => {});
-        video.removeEventListener("error", () => {});
-      });
-      if (fallbackTimeout.current) {
-        clearTimeout(fallbackTimeout.current);
-      }
-    };
-  }, [visibleVideos, loadedVideos, videoLoadError]);
-
-  const handleTabClick = (featureId: string) => {
-    setActiveTab(featureId);
-    if (!loadedVideos.includes(featureId)) {
-      setLoadedVideos((prev) => [...prev, featureId]);
-    }
-    resetVideoError(featureId); // Reset error state when tab is clicked
-  };
-
   const features: Feature[] = [
     {
       id: "contrary",
       title: "Blind Spot Detection",
       image: "/images/eye.png",
       description:
-        "Your entire reading history is analysed to identify potential knowledge gaps and areas for improvement.",
+        "Ask AI to suggest topics or viewpoints that are missing from your reading library.",
       videoUrl: "/videos/blind-spot.mp4",
       fallbackImageUrl: "/images/blind-spot.webp",
     },
@@ -202,7 +59,7 @@ const FeatureSection = ({
       title: "Generate Reflection Questions",
       image: "/images/question.png",
       description:
-        "Unearthed generates thought-provoking questions about your book, prompting deeper reflection. Answer the questions, and the AI will rate your response and provide an alternative perspective, enhancing your understanding and critical thinking.",
+        "Generate questions about a book. Write an answer to get AI feedback and another interpretation to consider.",
       videoUrl: "/videos/question.mp4",
       fallbackImageUrl: "/images/question.webp",
     },
@@ -211,7 +68,7 @@ const FeatureSection = ({
       title: "Book Analysis",
       image: "/images/microscope.png",
       description:
-        "Get comprehensive AI-generated analysis including book summaries, major themes, key takeaways, and an attempt and at the reader's perspective. Perfect for deeper understanding or quick refreshers.",
+        "Generate a book summary, themes and key points to review alongside your highlights.",
       videoUrl: "/videos/deep.mp4",
       fallbackImageUrl: "/images/deep.webp",
     },
@@ -220,7 +77,7 @@ const FeatureSection = ({
       title: "Book Recommendations",
       image: "/images/hat.png",
       description:
-        "Discover books outside of your library that align with your interests based on your reading patterns and highlights. Also receive recommendations that challenge your current viewpoints.",
+        "Get book suggestions based on your library, including similar books and books with opposing viewpoints.",
       videoUrl: "/videos/similar-contrasting.mp4",
       fallbackImageUrl: "/images/similar-contrasting.webp",
     },
@@ -229,11 +86,13 @@ const FeatureSection = ({
       title: "Auto Extract Key Ideas",
       image: "/images/sparkles.png",
       description:
-        "Unearthed identifies and extracts the most important ideas from your highlights. You can edit these later, but it can be a good starting point.",
+        "Generate a draft list of ideas from your highlights, then edit it in your own words.",
       videoUrl: "/videos/generating-tags.mp4",
       fallbackImageUrl: "/images/generating-tags.webp",
     },
   ];
+  const activeFeature =
+    features.find((feature) => feature.id === activeTab) ?? features[0];
 
   return (
     <section className="bg-popover py-16 shadow-cyan-300/10 shadow-xl">
@@ -256,12 +115,11 @@ const FeatureSection = ({
           <h3
             className={`${crimsonPro.className} text-4xl font-bold text-secondary`}
           >
-            <span className="text-foreground text-bold">Unearth </span> Deeper
-            Meaning
+            Optional AI tools for your reading
           </h3>
           <p className="text-lg max-w-2xl mx-auto mt-2">
-            These features are optional and completely opt-in. AI is helpful if
-            used correctly. Use it to help you learn, not to be lazy.
+            Generate summaries, questions and book suggestions when you want
+            them. These tools are optional.
           </p>
         </div>
 
@@ -270,14 +128,17 @@ const FeatureSection = ({
           <div className="flex gap-8">
             <div className="w-1/2">
               {features.map((feature) => (
-                <div
+                <button
                   key={feature.id}
-                  className={`p-6 mb-4 cursor-pointer border-2 rounded-2xl transition-all duration-200 ${
+                  type="button"
+                  aria-label={`Show ${feature.title} demo`}
+                  aria-pressed={activeTab === feature.id}
+                  className={`w-full p-6 mb-4 cursor-pointer border-2 rounded-2xl text-left transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary ${
                     activeTab === feature.id
                       ? "bg-primary-lighter border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_rgba(255,255,255,1)]"
                       : "bg-card border-black hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] dark:border-white dark:hover:shadow-[2px_2px_0px_rgba(255,255,255,1)]"
                   }`}
-                  onClick={() => handleTabClick(feature.id)}
+                  onClick={() => setActiveTab(feature.id)}
                 >
                   <div className="flex items-center">
                     {feature.icon ? (
@@ -296,80 +157,20 @@ const FeatureSection = ({
                   <p className="mt-4 text-alternate font-semibold">
                     {feature.description}
                   </p>
-                </div>
+                </button>
               ))}
             </div>
 
             <div className="w-1/2">
-              {features.map((feature) => (
-                <div
-                  key={feature.id}
-                  ref={(el) => {
-                    if (el) videoContainerRefs.current.set(feature.id, el);
-                    else videoContainerRefs.current.delete(feature.id);
-                  }}
-                  data-feature-id={feature.id}
-                  className={activeTab === feature.id ? "block" : "hidden"}
-                >
-                  {erroredVideos.has(feature.id) ||
-                  !loadedVideos.includes(feature.id) ||
-                  videoLoadError[feature.id] ? (
-                    <Image
-                      src={
-                        feature.fallbackImageUrl || "/images/falling-books.webp"
-                      }
-                      alt={`${feature.title} fallback`}
-                      layout="responsive"
-                      width={16}
-                      height={9}
-                      className="rounded-2xl border-2"
-                    />
-                  ) : (
-                    <video
-                      ref={(el) => {
-                        if (el && !erroredVideos.has(feature.id)) {
-                          videoRefs.current.set(feature.id, el);
-                          el.loop = true;
-                          el.preload = "auto";
-
-                          const handleError = () => {
-                            console.log("Error event fired for:", feature.id);
-                            handleVideoError(feature.id);
-                          };
-
-                          el.onerror = handleError;
-                          el.addEventListener("error", handleError, {
-                            once: true,
-                          });
-
-                          const source = el.querySelector("source");
-                          if (source) {
-                            source.onerror = handleError;
-                          }
-                        } else {
-                          videoRefs.current.delete(feature.id);
-                        }
-                      }}
-                      muted
-                      playsInline
-                      className="w-full h-full object-cover rounded-2xl border-2"
-                    >
-                      <source
-                        src={feature.videoUrl}
-                        type="video/mp4"
-                        onError={(e) => {
-                          console.log(
-                            "Source error event fired for:",
-                            feature.id
-                          );
-                          handleVideoError(feature.id);
-                        }}
-                      />
-                      Your browser does not support the video tag.
-                    </video>
-                  )}
-                </div>
-              ))}
+              <DemoVideo
+                key={activeFeature.id}
+                src={activeFeature.videoUrl}
+                poster={
+                  activeFeature.fallbackImageUrl || "/images/falling-books.webp"
+                }
+                title={activeFeature.title}
+                className="border-2"
+              />
             </div>
           </div>
         )}
@@ -381,11 +182,6 @@ const FeatureSection = ({
               <div
                 key={feature.id}
                 className="mb-8 bg-primary-lighter p-6 rounded-2xl"
-                ref={(el) => {
-                  if (el) videoContainerRefs.current.set(feature.id, el);
-                  else videoContainerRefs.current.delete(feature.id);
-                }}
-                data-feature-id={feature.id}
               >
                 <div className="flex items-center mb-4">
                   {feature.icon ? (
@@ -404,63 +200,14 @@ const FeatureSection = ({
                 <p className="mb-4 text-alternate font-semibold">
                   {feature.description}
                 </p>
-                {erroredVideos.has(feature.id) ||
-                !loadedVideos.includes(feature.id) ||
-                videoLoadError[feature.id] ? (
-                  <Image
-                    src={
-                      feature.fallbackImageUrl || "/images/falling-books.webp"
-                    }
-                    alt={`${feature.title} fallback`}
-                    layout="responsive"
-                    width={16}
-                    height={9}
-                    className="rounded-2xl border-2"
-                  />
-                ) : (
-                  <video
-                    ref={(el) => {
-                      if (el && !erroredVideos.has(feature.id)) {
-                        videoRefs.current.set(feature.id, el);
-                        el.loop = true;
-                        el.preload = "auto";
-
-                        const handleError = () => {
-                          console.log("Error event fired for:", feature.id);
-                          handleVideoError(feature.id);
-                        };
-
-                        el.onerror = handleError;
-                        el.addEventListener("error", handleError, {
-                          once: true,
-                        });
-
-                        const source = el.querySelector("source");
-                        if (source) {
-                          source.onerror = handleError;
-                        }
-                      } else {
-                        videoRefs.current.delete(feature.id);
-                      }
-                    }}
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover rounded-2xl border-2"
-                  >
-                    <source
-                      src={feature.videoUrl}
-                      type="video/mp4"
-                      onError={(e) => {
-                        console.log(
-                          "Source error event fired for:",
-                          feature.id
-                        );
-                        handleVideoError(feature.id);
-                      }}
-                    />
-                    Your browser does not support the video tag.
-                  </video>
-                )}
+                <DemoVideo
+                  src={feature.videoUrl}
+                  poster={
+                    feature.fallbackImageUrl || "/images/falling-books.webp"
+                  }
+                  title={feature.title}
+                  className="border-2"
+                />
               </div>
             ))}
           </div>
@@ -485,19 +232,18 @@ const PromoBanner = ({ buttonClassName }: { buttonClassName?: string }) => (
           {/* Open Source */}
         </div>
         <h4 className={`${crimsonPro.className} text-3xl font-semibold mb-4`}>
-          Built with transparency in mind
+          Read the source code
         </h4>
         <p className="mb-4">
-          Everything is{" "}
+          Unearthed Online is{" "}
           <span className="font-bold text-secondary">open source</span>,
-          including the web app, browser extension, and Obsidian plugin. Feel
-          free to inspect the code, run it yourself, or contribute to make it
-          better.
+          including the web app, browser extension, Obsidian plugin and KOReader
+          plugin. Feel free to inspect the code, run it yourself, or contribute
+          to make it better.
         </p>
         <p className="mb-6 text-sm text-muted-foreground">
-          When linking accounts, we never store or even see your Amazon login
-          credentials. If you delete your account, we completely remove all your
-          data without leaving any trace of you.
+          Kindle imports use your signed in Amazon browser session. You do not
+          give your Amazon password to Unearthed Online.
         </p>
         <Link
           href="https://github.com/Unearthed-App"

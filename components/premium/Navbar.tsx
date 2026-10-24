@@ -120,7 +120,7 @@ export function Navbar() {
   return (
     <div className="z-50 fixed w-full ">
       <div className=" flex justify-center">
-        <div className="mt-2 bg-card rounded-lg border-2 border-black inset-0 flex space-x-2 p-4 justify-center">
+        <div className="mt-2 bg-card rounded-lg border-2 border-black inset-0 flex items-center space-x-2 p-4 justify-center">
           <SignedIn>
             <SearchDialog />
             <QuoteFormDialog onQuoteAdded={() => {}} />

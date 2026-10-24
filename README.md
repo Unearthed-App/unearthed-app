@@ -24,7 +24,7 @@ Unearthed bridges the gap between reading and knowledge retention by automatical
 - **Kindle Integration**: Automatically sync all highlights and notes from your Amazon Kindle Notebook
 - **KOReader Support**: Wireless sync from KOReader devices and apps
 - **Smart Merging**: Combines highlights from the same book across different sources
-- **Platform Connectivity**: Sync to Obsidian, Notion, Capacities, and Supernotes
+- **Platform Connectivity**: Sync to Obsidian, Notion, Capacities (coming soon), and Supernotes
 
 ### Intelligent Analysis (Unearthed Online)
 
@@ -104,7 +104,7 @@ Unearthed Mobile is a Progressive Web App (PWA), designed as a mobile companion 
 
 - **Obsidian**: Direct vault integration with custom templates
 - **Notion**: Sync to databases with rich formatting
-- **Capacities**: Integration with objects and tags
+- **Capacities**: Coming Soon
 - **Supernotes**: Sync with card-based note system
 
 ### Import Sources

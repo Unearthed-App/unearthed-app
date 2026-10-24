@@ -178,7 +178,6 @@ Please provide recommendations for NEW books that are NOT in the user's existing
     // Parse the response
     let parsedRecommendations;
     try {
-      console.log("Raw response:", result.response.text());
       const cleanedResponse = cleanAIResponse(result.response.text());
       parsedRecommendations = JSON.parse(cleanedResponse);
     } catch (e) {

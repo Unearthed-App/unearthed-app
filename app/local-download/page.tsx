@@ -91,7 +91,6 @@ export default function UnearthedLocalDownload() {
       });
 
       const data = await res.json();
-      console.log("data", data);
       if (!res.ok || !data?.success) {
         setError(data?.error || "Unable to fetch versions. Please try again.");
         return;

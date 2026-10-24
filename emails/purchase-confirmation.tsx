@@ -92,7 +92,7 @@ export default function PurchaseConfirmation({
             </Text>
             <Section style={{ textAlign: "center", marginTop: 16 }}>
               <Text style={{ fontSize: 14, lineHeight: 1.6 }}>
-                This is a <strong>one-time payment</strong> for this version of
+                This is a <strong>one time payment</strong> for this version of
                 Unearthed Local. You can download updates from{" "}
                 <code>1.0.0</code> up to <code>1.9.9</code> by returning to{" "}
                 <Link href="https://unearthed.app/local-download">

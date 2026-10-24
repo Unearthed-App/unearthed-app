@@ -15,10 +15,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { CAPACITIES_ENABLED, CAPACITIES_COMING_SOON } from "@/lib/capacities-availability";
+
+
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/db";
-import { and, eq, inArray, isNotNull, not } from "drizzle-orm";
+import { and, eq, isNotNull, not } from "drizzle-orm";
 import PostHogClient from "@/app/posthog";
 import { clerkClient } from "@clerk/nextjs/server";
 import { getTodaysDate } from "@/lib/utils";
@@ -37,7 +40,7 @@ import {
 } from "@/db/schema";
 import { decrypt } from "@/lib/auth/encryptionKey";
 import { z } from "zod";
-import { capacitiesFormatDaily } from "@/server/actions";
+import { deliverCapacitiesDaily } from "@/server/capacities";
 
 type QuoteWithRelations = z.infer<typeof selectQuoteWithRelationsSchema>;
 type Source = z.infer<typeof selectSourceSchema>;
@@ -53,7 +56,6 @@ interface DailyReflection {
 }
 
 export async function GET() {
-  const posthogClient = PostHogClient();
   const headersList = await headers();
   const authHeader = headersList.get("authorization");
 
@@ -65,10 +67,13 @@ export async function GET() {
 
   const token = authHeader.split(" ")[1];
 
-  if (token !== validToken) {
+  if (!validToken || token !== validToken) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  if (!CAPACITIES_ENABLED) return NextResponse.json({ success: true, skipped: true, status: "coming-soon", message: CAPACITIES_COMING_SOON }, { headers: { "Cache-Control": "no-store" } });
+
+  const posthogClient = PostHogClient();
   const profileResults = await db.query.profiles.findMany({
     where: and(
       isNotNull(profiles.capacitiesApiKey),
@@ -79,7 +84,8 @@ export async function GET() {
     ),
   });
 
-  let dailyQuoteIdsToUpdate: string[] = [];
+  let accepted = 0;
+  let failed = 0;
 
   for (const profile of profileResults) {
     try {
@@ -92,7 +98,7 @@ export async function GET() {
         continue;
       }
 
-      if (!profile || !profile.utcOffset) {
+      if (!profile || profile.utcOffset == null) {
         continue;
       }
 
@@ -123,41 +129,23 @@ export async function GET() {
         continue;
       }
 
-      profile.capacitiesApiKey = profile.capacitiesApiKey
-        ? await decrypt(profile.capacitiesApiKey as string, encryptionKey)
-        : "";
-
-      profile.capacitiesSpaceId = profile.capacitiesSpaceId
-        ? await decrypt(profile.capacitiesSpaceId as string, encryptionKey)
-        : "";
-
-      await addDailyToCapacities(profile, dailyReflection);
-
-      dailyQuoteIdsToUpdate.push(dailyReflection.id);
+      const result = await deliverCapacitiesDaily(profile.userId, encryptionKey, dailyReflection.id);
+      if (result.ok) accepted++;
+      else failed++;
     } catch (error) {
-      console.log("error", error);
+      failed++;
 
       posthogClient.capture({
         distinctId: profile.userId,
         event: `capacities ERROR`,
         properties: {
-          message:
-            error instanceof Error ? error.message : "Unknown error occurred",
+          message: "Capacities delivery failed",
         },
       });
       continue;
     }
   }
-  if (dailyQuoteIdsToUpdate.length > 0) {
-    await db
-      .update(dailyQuotes)
-      .set({
-        capacitiesUpdated: true,
-      })
-      .where(inArray(dailyQuotes.id, dailyQuoteIdsToUpdate));
-  }
-
-  return NextResponse.json({ success: true }, { status: 200 });
+  return NextResponse.json({ success: failed === 0, accepted, failed }, { status: 200 });
 }
 
 const getDailyReflection = async (
@@ -171,7 +159,7 @@ const getDailyReflection = async (
     let dailyQuoteWithRelationsResult = (await db
       .select()
       .from(dailyQuotes)
-      .where(and(eq(dailyQuotes.day, todaysDate), eq(sources.userId, userId)))
+      .where(and(eq(dailyQuotes.day, todaysDate), eq(dailyQuotes.userId, userId), eq(sources.userId, userId)))
       .leftJoin(quotes, eq(quotes.id, dailyQuotes.quoteId))
       .leftJoin(sources, eq(sources.id, quotes.sourceId))
       .leftJoin(media, eq(media.id, sources.mediaId))) as any;
@@ -271,6 +259,8 @@ const createDailyReflection = async (
       .onConflictDoNothing()
       .returning();
 
+    if (!newDailyQuote[0]) return getDailyReflection(profile.userId, profile.utcOffset ?? 0, encryptionKey);
+
     randomQuote.note = randomQuote.note
       ? await decrypt(randomQuote.note, encryptionKey)
       : "";
@@ -280,56 +270,6 @@ const createDailyReflection = async (
       source: randomSource,
       quote: randomQuote,
     };
-  } catch (error) {
-    console.error(error);
-    return {};
-  }
-};
-
-const addDailyToCapacities = async (
-  profile: Profile,
-  dailyReflection: DailyReflection
-) => {
-  const { source, quote } = dailyReflection;
-  const sourceTitle = source.title;
-  const sourceAuthor = source.author;
-  const quoteContent = quote.content;
-  const quoteNote = quote.note;
-  const quoteLocation = quote.location;
-
-  if (!profile.capacitiesSpaceId) {
-    return false;
-  }
-
-  const mdText = await capacitiesFormatDaily(
-    sourceTitle as string,
-    sourceAuthor as string,
-    quoteContent as string,
-    quoteNote as string,
-    quoteLocation as string
-  );
-
-  const body = {
-    spaceId: profile.capacitiesSpaceId,
-    mdText: mdText,
-    origin: "commandPalette",
-    noTimeStamp: true,
-  };
-  try {
-    const response = await fetch(
-      "https://api.capacities.io/save-to-daily-note",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${profile.capacitiesApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    );
-    const data = await response.text();
-    return { mdText: mdText };
   } catch (error) {
     console.error(error);
     return {};

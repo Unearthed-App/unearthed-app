@@ -94,6 +94,7 @@ export const profiles = pgTable("profiles", {
   aiApiKey: text("ai_api_key"),
   aiApiUrl: text("ai_url"),
   aiApiModel: text("ai_model"),
+  // Encrypted versioned OAuth envelope; legacy tokens require reconnecting.
   capacitiesApiKey: text("capacities_api_key"),
   capacitiesSpaceId: text("capacities_space_id"),
   notionDatabaseId: text("notion_database_id"),
@@ -393,7 +394,7 @@ export const insertNotionSourceJobsOneSchema =
 export const selectNotionSourceJobsOneSchema = createSelectSchema(
   notionSourceJobsOne,
   {
-    createdAt: z.coerce.date(),
+    createdAt: () => z.coerce.date(),
   }
 );
 
@@ -402,7 +403,7 @@ export const insertNotionSourceJobsTwoSchema =
 export const selectNotionSourceJobsTwoSchema = createSelectSchema(
   notionSourceJobsTwo,
   {
-    createdAt: z.coerce.date(),
+    createdAt: () => z.coerce.date(),
   }
 );
 
@@ -412,7 +413,7 @@ export const insertNotionSourceJobsThreeSchema = createInsertSchema(
 export const selectNotionSourceJobsThreeSchema = createSelectSchema(
   notionSourceJobsThree,
   {
-    createdAt: z.coerce.date(),
+    createdAt: () => z.coerce.date(),
   }
 );
 
@@ -421,7 +422,7 @@ export const insertNotionSourceJobsFourSchema =
 export const selectNotionSourceJobsFourSchema = createSelectSchema(
   notionSourceJobsFour,
   {
-    createdAt: z.coerce.date(),
+    createdAt: () => z.coerce.date(),
   }
 );
 
@@ -438,11 +439,11 @@ export const insertSourceSchema = createInsertSchema(sources);
 export const insertQuoteSchema = createInsertSchema(quotes);
 
 export const selectSourceSchema = createSelectSchema(sources, {
-  createdAt: z.coerce.date(),
+  createdAt: () => z.coerce.date(),
 });
 
 export const selectQuoteSchema = createSelectSchema(quotes, {
-  createdAt: z.coerce.date(),
+  createdAt: () => z.coerce.date(),
 });
 export const selectQuoteWithRelationsSchema = selectQuoteSchema.extend({
   source: selectSourceSchema,
@@ -450,7 +451,7 @@ export const selectQuoteWithRelationsSchema = selectQuoteSchema.extend({
 
 export const insertProfileSchema = createInsertSchema(profiles);
 export const selectProfileSchema = createSelectSchema(profiles, {
-  createdAt: z.coerce.date(),
+  createdAt: () => z.coerce.date(),
 });
 
 export const insertDailyQuotesSchema = createInsertSchema(dailyQuotes);
@@ -460,12 +461,12 @@ export const selectDailyQuotesSchema = createSelectSchema(dailyQuotes, {
 
 export const insertMediaSchema = createInsertSchema(media);
 export const selectMediaSchema = createSelectSchema(media, {
-  createdAt: z.coerce.date(),
+  createdAt: () => z.coerce.date(),
 });
 
 export const insertTagSchema = createInsertSchema(tags);
 export const selectTagSchema = createSelectSchema(tags, {
-  createdAt: z.coerce.date(),
+  createdAt: () => z.coerce.date(),
 });
 
 export const insertSourceTagSchema = createInsertSchema(sourceTags);

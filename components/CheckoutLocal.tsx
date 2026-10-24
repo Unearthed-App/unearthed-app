@@ -41,7 +41,8 @@ export function CheckoutLocal({ className }: { className?: string }) {
 
   return (
     <Button
-      variant="brutalprimary"
+      variant="marketing"
+      tone="local"
       onClick={handleCheckout}
       className={className}
     >

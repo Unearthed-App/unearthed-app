@@ -730,7 +730,7 @@ export const ConnectionsGraph = () => {
       graphRef.current = null;
       currentlyHoveredNode = null;
     };
-  }, [mindMapSigmaData, isMindMapSigmaDialogOpen, dynamicQuoteColor]);
+  }, [mindMapSigmaData, isMindMapSigmaDialogOpen, dynamicQuoteColor, dynamicSourceColor, dynamicTagColor]);
 
   useEffect(() => {
     const observer = new MutationObserver((mutations) => {

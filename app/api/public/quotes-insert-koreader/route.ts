@@ -16,6 +16,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { ownsSources } from "@/server/source-ownership";
 import { headers } from "next/headers";
 import { db } from "@/db/index";
 import {
@@ -174,6 +175,10 @@ export async function POST(request: NextRequest) {
         userId,
       }))
     );
+    if (!(await ownsSources(userId, toInsert.map((row) => row.sourceId)))) {
+      return NextResponse.json({ error: "Source not found" }, { status: 404 });
+    }
+
     const batches: any[] = [];
 
     for (let i = 0; i < toInsert.length; i += BATCH_SIZE) {

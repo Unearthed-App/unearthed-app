@@ -263,7 +263,7 @@ export default function Books() {
                 onOpenChange={(open) => setIsIgnoreAllDialogOpen(open)}
                 onConfirm={handleConfirmIgnoreAll}
                 title="Ignore All Books"
-                description="Are you sure you want to ignore all books? You can always un-ignore them later."
+                description="Are you sure you want to ignore all books? You can always unignore them later."
                 confirmText="Ignore"
                 cancelText="Cancel"
               >

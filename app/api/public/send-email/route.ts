@@ -63,7 +63,6 @@ export async function GET() {
 
   const processEmails = async () => {
     const startTime = Date.now();
-    console.log(`[${new Date().toISOString()}] Starting email processing job`);
 
     const posthogClient = PostHogClient();
 
@@ -78,7 +77,7 @@ export async function GET() {
 
     const token = authHeader.split(" ")[1];
 
-    if (token !== validToken) {
+    if (!validToken || token !== validToken) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -87,9 +86,6 @@ export async function GET() {
     });
 
     const userIds = profileResults.map((profile) => profile.userId);
-    console.log(
-      `[${new Date().toISOString()}] Found ${profileResults.length} active profiles`
-    );
 
     // Fetch all users in parallel with timeout
     const userPromises = userIds.map(async (userId) => {
@@ -105,7 +101,6 @@ export async function GET() {
 
         return isPremium ? user : null;
       } catch (error) {
-        console.log(`Error fetching user ${userId}:`, error);
         return null;
       }
     });
@@ -120,9 +115,6 @@ export async function GET() {
     const failedUserFetches = userResults.filter(
       (result) => result.status === "rejected"
     ).length;
-    console.log(
-      `[${new Date().toISOString()}] Found ${premiumUsers.length} premium users, ${failedUserFetches} failed user fetches`
-    );
 
     // Process users in parallel with concurrency limit
     const BATCH_SIZE = 5; // Process 5 users at a time to avoid overwhelming APIs
@@ -133,9 +125,6 @@ export async function GET() {
         const encryptionKey = user.privateMetadata.encryptionKey as string;
 
         if (!encryptionKey) {
-          console.log(
-            `[${new Date().toISOString()}] User ${user.id} missing encryption key`
-          );
           return null;
         }
 
@@ -144,9 +133,6 @@ export async function GET() {
         );
 
         if (!profile || profile.utcOffset == null || !profile.dailyEmails) {
-          console.log(
-            `[${new Date().toISOString()}] User ${user.id} profile invalid or daily emails disabled`
-          );
           return null;
         }
 
@@ -187,9 +173,6 @@ export async function GET() {
         }
 
         if (!dailyReflection || !dailyReflection.source) {
-          console.log(
-            `[${new Date().toISOString()}] User ${user.id} no source available for daily reflection`
-          );
           return null;
         }
 
@@ -254,7 +237,6 @@ export async function GET() {
           return reflection.id;
         }
       } catch (error) {
-        console.log("error", error);
 
         posthogClient.capture({
           distinctId: user.id,
@@ -289,9 +271,6 @@ export async function GET() {
       ).length;
       const batchDuration = Date.now() - batchStartTime;
 
-      console.log(
-        `[${new Date().toISOString()}] Batch ${Math.floor(i / BATCH_SIZE) + 1}: ${successfulIds.length} emails sent, ${failedEmails} failed, took ${batchDuration}ms`
-      );
 
       dailyQuoteIdsToUpdate.push(...successfulIds);
     }
@@ -304,15 +283,9 @@ export async function GET() {
         })
         .where(inArray(dailyQuotes.id, dailyQuoteIdsToUpdate));
 
-      console.log(
-        `[${new Date().toISOString()}] Updated ${dailyQuoteIdsToUpdate.length} daily quotes as emailSent=true`
-      );
     }
 
     const totalDuration = Date.now() - startTime;
-    console.log(
-      `[${new Date().toISOString()}] Email processing job completed in ${totalDuration}ms`
-    );
 
     return NextResponse.json(
       {

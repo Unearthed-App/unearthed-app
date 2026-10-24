@@ -24,6 +24,7 @@ import { db } from "@/db";
 import { quotes, insertQuoteSchema } from "@/db/schema";
 type Quote = z.infer<typeof insertQuoteSchema>;
 import { encrypt, getOrCreateEncryptionKey } from "@/lib/auth/encryptionKey";
+import { ownsSources } from "@/server/source-ownership";
 
 export async function onSubmitAction(data: any) {
   const { userId }: { userId: string | null } = await auth();
@@ -77,6 +78,9 @@ export async function onSubmitAction(data: any) {
     }
 
     const validatedInsert = insertQuoteSchema.parse(toInsert);
+    if (!(await ownsSources(userId, [validatedInsert.sourceId]))) {
+      return { success: false, message: "Source not found" };
+    }
     await db.insert(quotes).values(validatedInsert).returning();
 
     return {

@@ -55,7 +55,7 @@ export async function onSubmitAction(data: any) {
   posthogClient.capture({
     distinctId: `${userId ? userId : toSend.from}`,
     event: `contact email`,
-    properties: toSend,
+    properties: { signedIn: Boolean(userId) },
   });
 
   return mg.messages

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+import { capacitiesText } from "@/lib/capacities-availability";
 import React, { useState, useRef, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -93,9 +94,9 @@ const Einkle = () => {
           <div
             className={`${crimsonPro.className} p-4 text-black text-2xl leading-tight pb-12`}
           >
-            <h1 className="text-6xl font-bold">UNEARTHED</h1>
-            <h1 className="text-6xl font-bold">ONLINE</h1>
-            <h1 className="text-sm mb-4">Scroll me...</h1>
+            <p className="text-6xl font-bold">UNEARTHED</p>
+            <p className="text-6xl font-bold">ONLINE</p>
+            <p className="text-sm mb-4">Scroll me...</p>
             <div className="border-2 border-black border-dashed p-4 rounded-lg mb-4">
               <h2 className="text-3xl font-semibold italic mb-2">
                 Kindle and KOReader together ⚆_⚆
@@ -104,7 +105,7 @@ const Einkle = () => {
                 KOReader highlights can now be synced and merged with your
                 Kindle highlights!
               </h2>
-              <h1 className="text-sm">
+              <p className="text-sm">
                 <a
                   href="https://github.com/Unearthed-App/unearthed-koreader"
                   className="hover:underline font-bold"
@@ -113,25 +114,21 @@ const Einkle = () => {
                 >
                   Check it out on GitHub
                 </a>{" "}
-              </h1>
+              </p>
             </div>
             <p className=" mb-4">
-              Transform your Kindle/KOReader highlights into daily revelations.
-              Unearthed analyses your reading history to surface forgotten
-              insights, detect blind spots, generate personalised reflection
-              questions, and deliver daily reflections to your favorite
-              platforms.
+              Import your Kindle and KOReader highlights into the same library.
+              Search across books, add your own notes, and revisit saved passages
+              with daily reflections.
             </p>
             <p className=" mb-4">
-              With automatic Kindle/KOReader sync, instant global search, and
-              integration with note-taking apps like Notion, Obsidian,
-              Supernotes, and Capacities, your past knowledge becomes a constant
-              stream of inspiration.
+              Connect Obsidian or Notion to export books and highlights.
+              {capacitiesText("Capacities and Supernotes can receive your daily reflections.", "Supernotes can receive your daily reflections. Capacities is coming soon.")}
             </p>
             <p className="mb-4 font-black italic uppercase text-4xl">
-              NO AMAZON CREDENTIALS
+              Your Amazon password
               <br />
-              REQUIRED!
+              stays with Amazon.
             </p>
             <h2 className="text-lg font-semibold mb-2">STEPS</h2>
             <div className="flex justify-center items-center gap-4 mb-4">
@@ -156,12 +153,11 @@ const Einkle = () => {
               <li className="flex items-center gap-2">
                 <span className="font-bold text-3xl">2.</span>{" "}
                 <span className="font-bold">Install extension or plugin</span>-
-                for auto-sync
+                for auto sync
               </li>
               <li className="flex items-center gap-2">
                 <span className="font-bold text-3xl">3.</span>{" "}
-                <span className="font-bold">Enjoy daily insights</span> - dive
-                deep
+                <span className="font-bold">Import your highlights</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="font-bold text-3xl">4.</span>{" "}

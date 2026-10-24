@@ -112,12 +112,8 @@ export function QuoteForm({ onQuoteAdded, source }: AddQuoteFormProps) {
     isPending: isPendingSourceTitles,
   } = useMutation({
     mutationFn: getSourceTitles,
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
+
+
   });
 
   const transformSourceTitles = (sources: Source[]) => {

@@ -19,11 +19,8 @@ import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: ["/dashboard/", "/premium/", "https://clerk.unearthed.app/"],
-    },
+    // Allow crawling so engines can read noindex. Authentication protects data.
+    rules: { userAgent: "*", allow: "/" },
     sitemap: "https://unearthed.app/sitemap.xml",
   };
 }

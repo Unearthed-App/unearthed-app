@@ -39,7 +39,7 @@ export async function POST() {
   }
 
   const token = authHeader.split(" ")[1];
-  if (token !== validToken) {
+  if (!validToken || token !== validToken) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

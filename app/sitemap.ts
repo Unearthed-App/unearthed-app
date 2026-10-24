@@ -14,28 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 import type { MetadataRoute } from "next";
+import { publicPages, SITE_URL } from "@/lib/seo";
+import { readingGuides } from "@/lib/reading-guides";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  // Guides have explicit editorial dates; do not invent dates on every deploy.
   return [
-    {
-      url: "https://unearthed.app",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 1,
-    },
-    {
-      url: "https://unearthed.app/local",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: "https://unearthed.app/privacy",
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.8,
-    },
+    ...[...Object.keys(publicPages), "/guides"].map((path) => ({
+      url: new URL(path, SITE_URL).href,
+    })),
+    ...readingGuides.map((guide) => ({
+      url: new URL(`/guides/${guide.slug}`, SITE_URL).href,
+      lastModified: guide.updatedAt,
+    })),
   ];
 }

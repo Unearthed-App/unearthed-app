@@ -19,7 +19,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/db";
 import { purchases, unearthedLocalVersions } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 const RequestSchema = z.object({
   distinctId: z.string().min(3, "distinctId is required"),
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     const { distinctId } = parse.data;
 
     const purchase = await db.query.purchases.findFirst({
-      where: eq(purchases.distinctId, distinctId),
+      where: and(eq(purchases.distinctId, distinctId), eq(purchases.status, "paid")),
       orderBy: (p, { desc }) => [desc(p.createdAt)],
     });
 

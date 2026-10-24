@@ -97,9 +97,6 @@ export async function POST(req: NextRequest) {
 
           if (isMobilePurchase) {
             // Handle mobile purchase - no user account required
-            console.log(
-              `Processing completed mobile checkout for email ${customerEmail}`
-            );
 
             posthogClient.capture({
               distinctId: session.metadata?.purchaseId || generateUUID(),
@@ -125,17 +122,12 @@ export async function POST(req: NextRequest) {
                 })
                 .onConflictDoNothing();
 
-              console.log(`Mobile purchase recorded for ${customerEmail}`);
             } catch (error) {
               console.error("Failed to record mobile purchase:", error);
             }
 
-            console.log(`Mobile purchase completed for ${customerEmail}`);
           } else if (isLocalPurchase) {
             // Handle local purchase - no user account required
-            console.log(
-              `Processing completed local checkout for email ${customerEmail}`
-            );
 
             posthogClient.capture({
               distinctId: session.metadata?.distinctId || generateUUID(),
@@ -163,7 +155,6 @@ export async function POST(req: NextRequest) {
                 })
                 .onConflictDoNothing();
 
-              console.log(`Purchase recorded for ${customerEmail}`);
             } catch (error) {
               console.error("Failed to record purchase:", error);
               // Don't throw here - the payment was successful even if we can't record it
@@ -171,10 +162,8 @@ export async function POST(req: NextRequest) {
 
             // For local purchases, we don't need to update user profiles or Clerk metadata
             // The purchase is complete and the user will receive their download link
-            console.log(`Local purchase completed for ${customerEmail}`);
           } else {
             // Handle premium subscription purchase - requires userId
-            console.log(`Processing completed checkout for user ${userId}`);
             const clerkUser = await client.users.getUser(userId!);
 
             posthogClient.capture({
@@ -211,7 +200,6 @@ export async function POST(req: NextRequest) {
                   .returning();
 
                 if (result.length > 0) {
-                  console.log(`Updated existing profile for user ${userId}`);
                 } else {
                   // If no existing profile, create new one
                   const resultNew = await tx
@@ -221,7 +209,6 @@ export async function POST(req: NextRequest) {
                     .returning();
 
                   if (resultNew.length > 0) {
-                    console.log(`Created new profile for user ${userId}`);
                   } else {
                     throw new Error(
                       `Failed to create or update profile for user ${userId}`
@@ -252,9 +239,6 @@ export async function POST(req: NextRequest) {
       case "customer.subscription.deleted":
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-        console.log(
-          `Processing subscription ${subscription.id} update/deletion. Sub status: ${subscription.status}`
-        );
 
         const profileResult = await db
           .select()
@@ -281,9 +265,6 @@ export async function POST(req: NextRequest) {
           try {
             const customer = await stripe.customers.retrieve(
               subscription.customer as string
-            );
-            console.log(
-              `Customer information for missing profile - ID: ${customer.id}`
             );
           } catch (e) {
             console.error("Could not fetch customer information:", e);
@@ -354,7 +335,6 @@ export async function POST(req: NextRequest) {
               },
             });
           } catch (error) {
-            console.log("Clerk user has already been deleted");
             clerkUserGone = true;
           }
 
@@ -395,7 +375,6 @@ export async function POST(req: NextRequest) {
               },
             });
           } catch (error) {
-            console.log("Clerk user has already been deleted");
             clerkUserGone = true;
           }
 
@@ -431,9 +410,6 @@ export async function POST(req: NextRequest) {
         const invoice = event.data.object as Stripe.Invoice;
         const subscription = invoice.subscription as string;
 
-        console.log(
-          `Processing failed payment for subscription ${subscription}`
-        );
 
         const profileResult = await db
           .select()

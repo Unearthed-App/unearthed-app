@@ -21,61 +21,71 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-2xl text-xs font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+const raisedButton =
+  "border-2 border-[color:var(--button-ink)] shadow-[4px_4px_0_var(--button-ink)] transition-[transform,box-shadow] duration-150 ease-[ease] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_var(--button-ink)] active:translate-x-1 active:translate-y-1 active:shadow-none";
+const paperButton = "bg-[#fbf6ec] text-[#25372e] dark:bg-[#26352c] dark:text-[#ece8dd]";
+const primaryButton = "bg-[#8cd5bb] text-[#172c23]";
+const destructiveButton = "bg-[#f3a49b] text-[#541c17]";
+
+const buttonStyles = cva(
+  "inline-flex items-center justify-center gap-2 rounded-[4px] bg-none text-center text-xs font-bold leading-normal no-underline whitespace-normal [--button-ink:#25372e] dark:[--button-ink:#0c1510] transition-colors motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-offset-[5px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border-2 bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        brutal: `h-12 border-2 p-2.5 transition-all duration-200
-          bg-card border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
-          hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
-          active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
-          dark:hover:bg-accent dark:bg-[hsl(175,35%,28%)] dark:text-white
-        `,
-        brutalprimary: `bg-primary h-12 border-2 p-2.5 transition-all duration-200
-          hover:bg-muted border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
-          hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
-          active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
-          dark:hover:bg-muted dark:text-black
-        `,
-        destructivebrutal: `bg-destructive h-12 border-2 p-2.5 transition-all duration-200
-          hover:bg-muted border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
-          hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
-          active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
-          dark:hover:bg-muted dark:text-black
-        `,
-        brutalshimmer: `
-          animate-shimmer bg-[linear-gradient(70deg,#e7d0ca,45%,#ffffff,55%,#e7d0ca)] dark:bg-[linear-gradient(70deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] transition-colors
-          bg-primary h-12 border-2 p-2.5 transition-all
-          hover:bg-muted border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] 
-          hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]
-          active:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px]
-          dark:hover:bg-muted dark:text-muted hover:dark:text-white
-        `,
+        marketing: cn(raisedButton, primaryButton),
+        marketingSecondary: cn(raisedButton, "bg-[#fbf6ec] text-[color:var(--button-ink)] dark:bg-[#e8e4d7] dark:text-[#25372e]"),
+        default: cn(raisedButton, primaryButton),
+        destructive: cn(raisedButton, destructiveButton),
+        outline: cn(raisedButton, paperButton),
+        secondary: cn(raisedButton, paperButton),
+        ghost: "border-0 shadow-none hover:bg-accent hover:text-accent-foreground",
+        link: "border-0 shadow-none text-primary underline-offset-4 hover:underline",
+        brutal: cn(raisedButton, paperButton),
+        brutalprimary: cn(raisedButton, primaryButton),
+        destructivebrutal: cn(raisedButton, destructiveButton),
+        brutalshimmer: cn(raisedButton, primaryButton),
       },
+      tone: { online: "", local: "", mobile: "" },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
-        tiny: "w-6 h-6 p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_rgba(0,0,0,1)] active:shadow-[0px_0px_0px_rgba(0,0,0,1)]",
+        default: "min-h-12 px-5 py-3",
+        sm: "min-h-9 px-3 py-2",
+        lg: "min-h-12 px-8 py-3",
+        icon: "h-10 w-10 p-2",
+        tiny: "h-6 w-6 p-1",
+        compact: "min-h-9 px-3 py-1.5",
+        natural: "p-2",
       },
     },
-    defaultVariants: {
-      variant: "brutal",
-      size: "default",
-    },
+    compoundVariants: [
+      {
+        variant: ["marketing", "marketingSecondary"],
+        className: "h-auto gap-2.5 leading-5 focus-visible:outline-offset-[6px] [&_svg]:h-[17px] [&_svg]:w-[17px] [&_svg]:shrink-0",
+      },
+      {
+        variant: ["marketing", "marketingSecondary"],
+        size: "default",
+        className: "px-[19px]",
+      },
+      {
+        variant: ["marketing", "marketingSecondary"],
+        tone: "local",
+        className: "[--button-ink:#5e301d]",
+      },
+      {
+        variant: ["marketing", "marketingSecondary"],
+        tone: "mobile",
+        className: "[--button-ink:#41315d]",
+      },
+      { variant: "marketing", tone: "local", className: "bg-[#f4a36c] text-[#382010]" },
+      { variant: "marketing", tone: "mobile", className: "bg-[#c5b2e9] text-[#2e2044]" },
+    ],
+    defaultVariants: { variant: "brutal", size: "default" },
   }
 );
+
+function buttonVariants(props: Parameters<typeof buttonStyles>[0] = {}) {
+  return cn(buttonStyles(props));
+}
 
 export interface ButtonProps
   extends
@@ -85,11 +95,11 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, tone, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, tone, size, className }))}
         ref={ref}
         {...props}
       />

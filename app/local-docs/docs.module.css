@@ -1,0 +1,70 @@
+/**
+ * Copyright (C) 2026 Unearthed App
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+.docs {
+  --background: 43 47% 93%;
+  --foreground: 143 10% 16%;
+  --card: 43 55% 96%;
+  --card-foreground: 143 10% 16%;
+  --muted: 43 20% 86%;
+  --muted-foreground: 90 5% 38%;
+  --border: 60 12% 76%;
+  --primary: 167 64% 24%;
+  --accent: 145 23% 86%;
+  --accent-foreground: 143 10% 16%;
+  color: hsl(var(--foreground));
+  background: #e6e2d6;
+  padding:112px 24px 40px;
+}
+:global(.dark) .docs {
+  --background: 143 13% 13%;
+  --foreground: 47 28% 88%;
+  --card: 143 14% 16%;
+  --card-foreground: 47 28% 88%;
+  --muted: 135 8% 24%;
+  --muted-foreground: 86 9% 69%;
+  --border: 120 6% 30%;
+  --primary: 154 37% 66%;
+  --accent: 143 16% 23%;
+  --accent-foreground: 47 28% 88%;
+  background:#121813;
+}
+.toolbar { background:hsl(var(--background)); }
+.sheet {
+  background:hsl(var(--background));
+  border:1px solid hsl(var(--foreground));
+  box-shadow:7px 7px 0 hsl(var(--foreground));
+}
+.article { max-width:760px; padding:12px 0 48px; line-height:1.8; }
+.article h1,.article h2,.article h3 {
+  font-family:var(--docs-serif),Georgia,serif;
+  font-weight:600; letter-spacing:-.025em; line-height:1.15;
+}
+.article h1 { font-size:clamp(2.6rem,5vw,3.6rem); margin-bottom:20px; }
+.article h2 { font-size:2rem; margin-top:32px; margin-bottom:18px; }
+.article h3 { font-size:1.5rem; }
+.article p,.article li { line-height:1.8; }
+.article :global(.rounded-lg),.article :global(.rounded-xl) { border-radius:4px; }
+.article :global(.bg-card) { background:hsl(var(--card)); }
+.article section { scroll-margin-top:100px; }
+.article :global([id]) { scroll-margin-top:100px; }
+.article pre { max-width:100%; overflow-x:auto; }
+@media(max-width:1023px) {
+  .docs { padding:96px 12px 24px; }
+  .sheet { box-shadow:4px 4px 0 hsl(var(--foreground)); }
+  .article { margin:auto; }
+}

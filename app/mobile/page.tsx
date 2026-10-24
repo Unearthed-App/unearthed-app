@@ -15,6 +15,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { DiscoveryLinks } from "@/components/marketing/DiscoveryLinks";
+import { pageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/marketing/JsonLd";
+import { softwareApplicationSchema } from "@/lib/structured-data";
+
+
 import { Metadata } from "next";
 import React from "react";
 import { Crimson_Pro } from "next/font/google";
@@ -92,33 +98,12 @@ const MOBILE_FEATURES = [
 export const dynamic = "force-static";
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Unearthed Mobile – Highlights on Your Phone | One-Time Purchase",
-  description:
-    "Access your Kindle and KOReader highlights on any device. Unearthed Mobile is a PWA : works offline, installs like an app, no App Store required. One time payment, unlimited devices.",
-  keywords: [
-    "unearthed mobile",
-    "kindle highlights mobile",
-    "highlight manager pwa",
-    "readwise mobile alternative",
-    "offline highlights app",
-    "one-time purchase mobile app",
-  ],
-};
+export const metadata: Metadata = pageMetadata("/mobile");
 
 export default function MobilePage() {
-  const mobilePrimaryButtonClassName =
-    "border-2 border-purple-900 bg-none bg-purple-600 text-white shadow-[4px_4px_0px_rgb(88,28,135)] hover:bg-purple-700 hover:shadow-[2px_2px_0px_rgb(88,28,135)] dark:text-white dark:hover:bg-purple-700";
-  const mobileSecondaryButtonClassName =
-    "border-2 border-purple-800 bg-none bg-purple-50 text-purple-800 shadow-[4px_4px_0px_rgb(107,33,168)] hover:bg-purple-100 hover:text-purple-900 hover:shadow-[2px_2px_0px_rgb(107,33,168)] dark:border-purple-700 dark:bg-purple-950/60 dark:text-purple-300 dark:hover:bg-purple-900/80 dark:hover:text-purple-200 dark:shadow-[4px_4px_0px_rgb(88,28,135)] dark:hover:shadow-[2px_2px_0px_rgb(88,28,135)]";
-  const mobileTabButtonClassName =
-    "border-purple-900 dark:border-purple-700 shadow-[4px_4px_0px_rgb(88,28,135)] dark:shadow-[4px_4px_0px_rgb(88,28,135)] hover:shadow-[2px_2px_0px_rgb(88,28,135)] dark:hover:shadow-[2px_2px_0px_rgb(88,28,135)] active:shadow-[1px_1px_0px_rgb(88,28,135)] dark:active:shadow-[1px_1px_0px_rgb(88,28,135)] focus-visible:ring-purple-400/70";
-  const mobileActiveTabFillClassName = "bg-purple-600";
-  const mobileInactiveTabFillClassName =
-    "bg-gradient-to-br from-purple-50 via-white to-purple-100 dark:from-purple-950/80 dark:via-purple-950/60 dark:to-purple-900/60";
-
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-32 pb-16 relative">
+      <JsonLd data={softwareApplicationSchema("/mobile")} />
       {/* Purple top gradient */}
       <div className="absolute left-1/2 -translate-x-1/2 top-0 w-screen h-[600px] bg-gradient-to-b from-purple-500/[0.13] to-transparent pointer-events-none -z-10" />
       <div className="fixed mt-3 top-0 right-0 flex items-center justify-center space-x-2 p-3">
@@ -176,7 +161,7 @@ export default function MobilePage() {
       </div>
 
       <div className="mb-12 text-center px-4 relative z-10 w-full max-w-4xl mx-auto">
-        <h2
+        <h1
           className={`${crimsonPro.className} text-4xl md:text-5xl lg:text-7xl font-black tracking-tight mb-6 flex flex-col items-center justify-center gap-2`}
         >
           <span className="relative inline-block">
@@ -196,7 +181,7 @@ export default function MobilePage() {
           >
             Use your phone for better things
           </span>
-        </h2>
+        </h1>
 
         <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto leading-relaxed mb-8">
           Your library : Your pocket : No cloud
@@ -208,21 +193,16 @@ export default function MobilePage() {
       </div>
       <div className="-mx-4 sm:-mx-6">
         <PhoneMockupSection
-          rotateButtonClassName={mobileSecondaryButtonClassName}
-          themeButtonClassName={mobilePrimaryButtonClassName}
-          tabButtonClassName={mobileTabButtonClassName}
-          activeTabFillClassName={mobileActiveTabFillClassName}
-          inactiveTabFillClassName={mobileInactiveTabFillClassName}
         />
       </div>
 
       <div className="my-16 text-center">
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <CheckoutMobile className={mobilePrimaryButtonClassName} />
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 justify-center items-center">
+          <CheckoutMobile />
           <Button
-            variant="outline"
+            variant="marketingSecondary"
             asChild
-            className={mobileSecondaryButtonClassName}
+            tone="mobile"
           >
             <Link href="/mobile-download">
               Already purchased?
@@ -236,12 +216,12 @@ export default function MobilePage() {
         </p>
         <p className="mt-2 text-xs text-muted-foreground flex items-center justify-center gap-1.5">
           <Smartphone className="h-3 w-3 inline-block" />
-          PWA — installs from your browser · no App Store required
+          PWA: installs from your browser · no App Store required
         </p>
         <PwaInstructions className="mt-4 max-w-2xl mx-auto text-left" />
       </div>
       {/* Mobile App Section */}
-      <section id="mobile-mockup" className="w-full max-w-4xl mb-20 px-4">
+      <section id="mobile-mockup" className="w-full max-w-4xl mx-auto mb-20 px-4">
         <div className="border-2 border-purple-500 rounded-2xl p-8 bg-purple-500/10 relative overflow-hidden">
           {/* Badge */}
           <div className="absolute top-4 right-4">
@@ -297,8 +277,7 @@ export default function MobilePage() {
                 Obsidian.
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Everything else — RSS feeds, read-it-later, physical book
-                capture — works without it.
+                RSS feeds, read it later and physical book capture work without it.
               </p>
             </Link>
             <div className="rounded-xl border border-purple-500/30 bg-card p-4">
@@ -492,16 +471,19 @@ export default function MobilePage() {
 
       {/* Pricing CTA */}
       <div className="border-2 border-black rounded-md shadow-[6px_6px_0px_rgba(0,0,0,1)] bg-card p-8 mb-12 text-center">
-        <h2 className="text-3xl font-black mb-2">One-Time Purchase</h2>
+        <h2 className="text-3xl font-black mb-2">One Time Purchase</h2>
         <p className="text-muted-foreground mb-4">
           Pay once. Use on all your personal devices. No subscription.
         </p>
         <p className="text-xs text-muted-foreground mb-6 flex items-center justify-center gap-1.5">
           <Smartphone className="h-3 w-3 inline-block" />
-          PWA — installs from your browser · no App Store required
+          PWA: installs from your browser · no App Store required
         </p>
-        <CheckoutMobile className={mobilePrimaryButtonClassName} />
+        <CheckoutMobile />
         <PwaInstructions className="mt-6 text-left" />
+      </div>
+      <div className="relative left-1/2 w-screen -translate-x-1/2">
+        <DiscoveryLinks />
       </div>
     </main>
   );

@@ -1,11 +1,33 @@
+/**
+ * Copyright (C) 2026 Unearthed App
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 "use client";
 
-import { useMemo, useState } from "react";
+import { buttonVariants } from "@/components/ui/button";
+import { CAPACITIES_ENABLED, CAPACITIES_LABEL, CAPACITIES_COMING_SOON, capacitiesText } from "@/lib/capacities-availability";
+import { useId, useMemo, useState } from "react";
 import { Crimson_Pro } from "next/font/google";
 import {
   ArrowRight,
   BookOpen,
+  Check,
   CheckCircle2,
+  Info,
+  PencilLine,
   Cloud,
   FileText,
   Globe,
@@ -25,6 +47,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import styles from "./CompatibilityChecker.module.css";
 
 const serif = Crimson_Pro({ subsets: ["latin"], weight: ["600", "700"] });
 
@@ -42,7 +65,7 @@ type Destination =
   | "notion"
   | "supernotes"
   | "capacities";
-type Status = "supported" | "requires" | "manual" | "unavailable";
+type Status = "supported" | "requires" | "manual" | "unavailable" | "coming-soon";
 
 const sources: { id: Source; label: string; Icon: typeof BookOpen }[] = [
   { id: "kindle", label: "Kindle", Icon: BookOpen },
@@ -58,7 +81,7 @@ const destinations: { id: Destination; label: string }[] = [
   { id: "craft", label: "Craft" },
   { id: "notion", label: "Notion" },
   { id: "supernotes", label: "Supernotes" },
-  { id: "capacities", label: "Capacities" },
+  { id: "capacities", label: CAPACITIES_LABEL },
 ];
 
 const productNames = {
@@ -71,30 +94,6 @@ const productIcons = {
   local: Monitor,
   online: Cloud,
   mobile: Smartphone,
-};
-
-const accents = {
-  local: {
-    button:
-      "border-orange-900 bg-orange-500 text-white shadow-[4px_4px_0_#7c2d12] hover:bg-orange-600",
-    soft: "bg-orange-50 dark:bg-orange-950/35",
-    border: "border-orange-300 dark:border-orange-800",
-    text: "text-orange-700 dark:text-orange-400",
-  },
-  online: {
-    button:
-      "border-teal-900 bg-[#25b1a6] text-[#102521] shadow-[4px_4px_0_#064e3b] hover:bg-[#35c2b6]",
-    soft: "bg-teal-50 dark:bg-teal-950/35",
-    border: "border-teal-300 dark:border-teal-800",
-    text: "text-teal-700 dark:text-teal-400",
-  },
-  mobile: {
-    button:
-      "border-purple-900 bg-purple-500 text-white shadow-[4px_4px_0_#581c87] hover:bg-purple-600",
-    soft: "bg-purple-50 dark:bg-purple-950/35",
-    border: "border-purple-300 dark:border-purple-800",
-    text: "text-purple-700 dark:text-purple-400",
-  },
 };
 
 type Result = {
@@ -114,20 +113,22 @@ function getCompatibility(
     (item) => item.id === destination
   )!.label;
 
+  if (destination === "capacities" && !CAPACITIES_ENABLED) return { status: "coming-soon", title: "Capacities · Coming soon", description: CAPACITIES_COMING_SOON, path: [] };
+
   if (product === "local") {
     if (destination !== "obsidian" && destination !== "craft") {
       return {
         status: "unavailable",
         title: `Local does not currently export to ${destinationLabel}`,
         description:
-          "Unearthed Local exports directly to Obsidian and Craft. Choose Unearthed Online for Notion, Supernotes, or Capacities.",
+          capacitiesText("Unearthed Local exports directly to Obsidian and Craft. Choose Unearthed Online for Notion, Supernotes, or Capacities.", "Unearthed Local exports directly to Obsidian and Craft. Choose Unearthed Online for Notion or Supernotes. Capacities coming soon."),
         path: [sourceLabel, "Unearthed Online", destinationLabel],
       };
     }
     if (source === "koreader") {
       return {
         status: "requires",
-        title: "Yes—with the KOReader plugin",
+        title: "Yes, with the KOReader plugin",
         description:
           "The Unearthed KOReader plugin sends your highlights to Local, which can then export them automatically.",
         path: ["KOReader plugin", "Unearthed Local", destinationLabel],
@@ -136,7 +137,7 @@ function getCompatibility(
     if (source === "physical") {
       return {
         status: "requires",
-        title: "Yes—with Unearthed Mobile",
+        title: "Yes, with Unearthed Mobile",
         description:
           "Capture the passage with Mobile's OCR camera. It syncs to Local over your network, then Local exports it.",
         path: ["Unearthed Mobile", "Unearthed Local", destinationLabel],
@@ -144,7 +145,7 @@ function getCompatibility(
     }
     return {
       status: "supported",
-      title: "Yes—this works with Unearthed Local",
+      title: "Yes, this works with Unearthed Local",
       description:
         source === "kindle"
           ? "Local imports your Kindle highlights in the background and exports them without storing your Amazon credentials."
@@ -159,7 +160,7 @@ function getCompatibility(
         status: "unavailable",
         title: "Online does not currently export to Craft",
         description:
-          "Unearthed Local supports Craft. Online supports Obsidian, Notion, Supernotes, and Capacities.",
+          capacitiesText("Unearthed Local supports Craft. Online supports Obsidian, Notion, Supernotes, and Capacities.", "Unearthed Local supports Craft. Online supports Obsidian, Notion and Supernotes. Capacities coming soon."),
         path: [sourceLabel, "Unearthed Local", "Craft"],
       };
     }
@@ -167,9 +168,11 @@ function getCompatibility(
       return {
         status: source === "koreader" ? "requires" : "supported",
         title:
-          source === "koreader"
-            ? "Yes—with the KOReader plugin"
-            : "Yes—this works with Unearthed Online",
+          destination === "supernotes" || destination === "capacities"
+            ? `Yes, daily reflections go to ${destinationLabel}`
+            : source === "koreader"
+            ? "Yes, with the KOReader plugin"
+            : "Yes, this works with Unearthed Online",
         description:
           source === "koreader"
             ? "Use the Unearthed KOReader plugin to bring highlights into your Online library."
@@ -194,7 +197,7 @@ function getCompatibility(
       status: "manual",
       title: "Not automated in Online",
       description:
-        "You can add this content manually, but automatic YouTube, RSS, and web-page capture are features of Unearthed Local.",
+        "You can add this content manually, but automatic YouTube, RSS, and web page capture are features of Unearthed Local.",
       path: ["Manual addition", "Unearthed Online", destinationLabel],
     };
   }
@@ -202,7 +205,7 @@ function getCompatibility(
   if (destination === "obsidian" || destination === "craft") {
     return {
       status: "requires",
-      title: "Yes—when Mobile is paired with Local",
+      title: "Yes, when Mobile is paired with Local",
       description:
         source === "physical"
           ? "Capture the passage with Mobile's OCR camera. Mobile sends it to Local, which exports it to your destination."
@@ -218,21 +221,60 @@ function getCompatibility(
     status: "unavailable",
     title: `Mobile does not directly sync to ${destinationLabel}`,
     description:
-      "Mobile is a local companion for capture, search, and reflection. For cloud destinations such as Notion, Supernotes, and Capacities, choose Unearthed Online.",
+      capacitiesText("Mobile is a local companion for capture, search, and reflection. For cloud destinations such as Notion, Supernotes, and Capacities, choose Unearthed Online.", "Mobile is a local companion for capture, search and reflection. Choose Unearthed Online for Notion or Supernotes. Capacities coming soon."),
     path: [sourceLabel, "Unearthed Online", destinationLabel],
   };
 }
 
-const statusStyles: Record<Status, string> = {
-  supported:
-    "border-emerald-300 bg-emerald-50 text-emerald-950 dark:border-emerald-800 dark:bg-emerald-950/45 dark:text-emerald-100",
-  requires:
-    "border-sky-300 bg-sky-50 text-sky-950 dark:border-sky-800 dark:bg-sky-950/45 dark:text-sky-100",
-  manual:
-    "border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-800 dark:bg-amber-950/45 dark:text-amber-100",
-  unavailable:
-    "border-rose-300 bg-rose-50 text-rose-950 dark:border-rose-800 dark:bg-rose-950/45 dark:text-rose-100",
-};
+function getConfigurationNotes(
+  product: UnearthedProduct,
+  source: Source,
+  destination: Destination,
+  status: Status
+): string[] {
+  if (destination === "capacities" && !CAPACITIES_ENABLED) return [];
+  const notes: string[] = [];
+  const destinationLabel = destinations.find((item) => item.id === destination)!.label;
+
+  if (destination === "supernotes" || destination === "capacities") {
+    notes.push(
+      `Only the daily reflection is sent to ${destinationLabel}. This does not sync your full library, whole books or all their highlights.`
+    );
+    notes.push(
+      destination === "capacities"
+        ? "Online adds the reflection to a Capacities daily note. Connect through Capacities’ approval screen in Online settings and choose a space."
+        : "Connect your Supernotes API key and enable daily reflections in Online settings."
+    );
+  }
+
+  if (status === "unavailable") {
+    notes.push("The selected combination has no direct export. The alternative below uses a different Unearthed edition.");
+  }
+  const pathProduct = status === "unavailable"
+    ? destination === "craft" ? "local" : "online"
+    : product;
+
+  if (source === "kindle") {
+    notes.push("Kindle sync imports highlights available in Amazon Kindle Notebook. Books or documents you copied onto your Kindle yourself may be missing there.");
+  }
+  if (source === "koreader") {
+    notes.push("Install and connect the Unearthed KOReader plugin to send your highlights.");
+  }
+  if (pathProduct === "online") {
+    if (destination === "obsidian") {
+      notes.push("Obsidian exports require the Unearthed Obsidian plugin, connected to your Online account.");
+    }
+    if (source === "physical") {
+      notes.push("Online has no camera capture for physical books. Add the passage and its book details by hand.");
+    } else if (source === "youtube" || source === "rss" || source === "webpage") {
+      notes.push("Online does not automatically import this source. Add the passages you want to keep by hand.");
+    }
+  }
+  if (pathProduct === "mobile" || (pathProduct === "local" && source === "physical")) {
+    notes.push("This setup needs both Unearthed Local and Mobile, which are separate purchases. Mobile connects to Local over your network; Local handles the export.");
+  }
+  return notes;
+}
 
 export function CompatibilityChecker({
   product,
@@ -251,139 +293,129 @@ export function CompatibilityChecker({
     () => getCompatibility(selectedProduct, source, destination),
     [selectedProduct, source, destination]
   );
+  const configurationNotes = getConfigurationNotes(selectedProduct, source, destination, result.status);
+  const reflectionOnly = destination === "supernotes" || destination === "capacities";
+  const readingPath = reflectionOnly && result.path.length > 0
+    ? [...result.path.slice(0, -1), "Daily reflection", result.path[result.path.length - 1]]
+    : result.path;
   const ProductIcon = productIcons[selectedProduct];
-  const accent = accents[selectedProduct];
-  const triggerAccent = accents[product];
+  const id = useId();
+  const StatusIcon =
+    result.status === "coming-soon"
+      ? Info
+      : result.status === "unavailable"
+      ? XCircle
+      : result.status === "manual"
+        ? PencilLine
+        : result.status === "requires"
+          ? Info
+          : CheckCircle2;
+  const statusLabel = {
+    supported: "Supported",
+    requires: "One extra step",
+    manual: "Manual workflow",
+    unavailable: "Not supported",
+    "coming-soon": "Coming soon",
+  }[result.status];
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         <button
-          className={cn(
-            "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border-2 px-4 py-2 text-sm font-black transition-transform hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none",
-            triggerAccent.button,
-            className
-          )}
+          className={buttonVariants({ variant: "marketingSecondary", tone: product, className: className })}
         >
           <Puzzle className="h-4 w-4" />
-          {triggerLabel ?? `Check if ${productNames[product]} is right for you`}
+          {triggerLabel ?? "Check my reading setup"}
         </button>
       </DialogTrigger>
 
-      <DialogContent className="!h-auto !max-h-[90vh] !block max-w-4xl overflow-y-auto rounded-2xl border-2 border-foreground/70 bg-background p-0 shadow-[8px_8px_0_hsl(var(--foreground))]">
-        <DialogHeader
-          className={cn(
-            "border-b p-5 pr-14 sm:p-6 sm:pr-14",
-            accent.soft,
-            accent.border
-          )}
-        >
-          <div
-            className={cn(
-              "mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[.16em]",
-              accent.text
-            )}
-          >
-            <ProductIcon className="h-4 w-4" />
-            Compatibility checker
+      <DialogContent
+        data-product={selectedProduct}
+        className={cn(
+          "!h-auto !max-h-[90dvh] !block overflow-y-auto p-0",
+          styles.dialog
+        )}
+      >
+        <DialogHeader className={styles.header}>
+          <div className={styles.eyebrow}>
+            <ProductIcon size={16} aria-hidden="true" /> Compatibility checker
           </div>
-          <DialogTitle className={serif.className + " text-2xl sm:text-3xl"}>
-            Is {productNames[selectedProduct]} right for your reading setup?
+          <DialogTitle className={cn(serif.className, styles.title)}>
+            Is {productNames[selectedProduct]} right for you?
           </DialogTitle>
-          <DialogDescription className="max-w-2xl pt-1 text-sm leading-5">
-            Choose where your content comes from and where you want it to go.
-            We’ll show the exact path and any extra requirements.
+          <DialogDescription className={styles.description}>
+            Choose what you read and where your quotes belong. We’ll show you how
+            they connect.
           </DialogDescription>
         </DialogHeader>
 
-        <div
-          role="group"
-          aria-labelledby="product-version-label"
-          className="grid gap-3 border-b border-border/70 px-5 py-5 sm:px-6 md:grid-cols-[180px_1fr] md:items-center md:gap-6"
-        >
-          <div>
-            <p
-              id="product-version-label"
-              className="text-[10px] font-black uppercase tracking-[.16em] text-muted-foreground"
-            >
-              Unearthed version
-            </p>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">
-              Compare any version
-            </p>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {(["local", "online", "mobile"] as UnearthedProduct[]).map(
-              (option) => {
-                const OptionIcon = productIcons[option];
-                const optionAccent = accents[option];
-
-                return (
-                  <button
-                    type="button"
-                    aria-pressed={selectedProduct === option}
-                    onClick={() => setSelectedProduct(option)}
-                    className={cn(
-                      "flex min-h-11 items-center justify-center gap-2 rounded-lg border-2 px-3 py-2 text-xs font-black transition sm:text-sm",
-                      selectedProduct === option
-                        ? cn(
-                            optionAccent.soft,
-                            optionAccent.border,
-                            optionAccent.text,
-                            "shadow-[3px_3px_0_hsl(var(--foreground))]"
-                          )
-                        : "border-border bg-card hover:border-foreground/40"
-                    )}
-                    key={option}
-                  >
-                    <OptionIcon className="h-4 w-4 shrink-0" />
-                    <span className="hidden sm:inline">Unearthed</span>{" "}
-                    {option[0].toUpperCase() + option.slice(1)}
-                  </button>
-                );
-              }
-            )}
-          </div>
-        </div>
-
-        <div className="space-y-5 p-5 sm:p-6">
+        <div className={styles.body}>
           <div
             role="group"
-            aria-labelledby="reading-source-label"
-            className="grid gap-4 border-b border-border/60 pb-5 md:grid-cols-[180px_1fr] md:items-start md:gap-6"
+            aria-labelledby={`${id}-edition`}
+            className={styles.row}
           >
-            <div className="pt-1">
-              <p
-                id="reading-source-label"
-                className="text-xs font-black uppercase tracking-[.16em] text-muted-foreground"
-              >
-                1. Where are you reading?
-              </p>
-              <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                Pick the source of your highlights or saved content.
-              </p>
+            <div className={styles.rowLabel}>
+              <span className={styles.number}>01</span>
+              <div>
+                <p id={`${id}-edition`}>Your edition</p>
+                <small>Compare any version</small>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {sources.map(({ id, label, Icon }) => (
+            <div className={styles.editions}>
+              {(["local", "online", "mobile"] as UnearthedProduct[]).map(
+                (option) => {
+                  const Icon = productIcons[option];
+                  return (
+                    <button
+                      type="button"
+                      aria-pressed={selectedProduct === option}
+                      onClick={() => setSelectedProduct(option)}
+                      className={cn(styles.choice, styles.edition)}
+                      key={option}
+                    >
+                      <Icon size={17} aria-hidden="true" />
+                      <span>{option[0].toUpperCase() + option.slice(1)}</span>
+                      <Check
+                        size={14}
+                        aria-hidden="true"
+                        className={styles.selectedMark}
+                      />
+                    </button>
+                  );
+                }
+              )}
+            </div>
+          </div>
+
+          <div
+            role="group"
+            aria-labelledby={`${id}-source`}
+            className={styles.row}
+          >
+            <div className={styles.rowLabel}>
+              <span className={styles.number}>02</span>
+              <div>
+                <p id={`${id}-source`}>What you read</p>
+                <small>Pick a highlight source</small>
+              </div>
+            </div>
+            <div className={styles.sources}>
+              {sources.map(({ id: sourceId, label, Icon }) => (
                 <button
                   type="button"
-                  aria-pressed={source === id}
-                  onClick={() => setSource(id)}
-                  className={cn(
-                    "flex min-h-12 items-center gap-3 rounded-xl border-2 p-3 text-left text-sm font-bold transition",
-                    source === id
-                      ? cn(
-                          accent.soft,
-                          accent.border,
-                          accent.text,
-                          "shadow-[3px_3px_0_hsl(var(--foreground))]"
-                        )
-                      : "border-border bg-card hover:border-foreground/40"
-                  )}
-                  key={id}
+                  aria-pressed={source === sourceId}
+                  onClick={() => setSource(sourceId)}
+                  className={styles.choice}
+                  key={sourceId}
                 >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  {label}
+                  <Icon size={17} aria-hidden="true" />
+                  <span>{label}</span>
+                  <Check
+                    size={14}
+                    aria-hidden="true"
+                    className={styles.selectedMark}
+                  />
                 </button>
               ))}
             </div>
@@ -391,40 +423,31 @@ export function CompatibilityChecker({
 
           <div
             role="group"
-            aria-labelledby="sync-destination-label"
-            className="grid gap-4 md:grid-cols-[180px_1fr] md:items-start md:gap-6"
+            aria-labelledby={`${id}-destination`}
+            className={cn(styles.row, styles.lastRow)}
           >
-            <div className="pt-1">
-              <p
-                id="sync-destination-label"
-                className="text-xs font-black uppercase tracking-[.16em] text-muted-foreground"
-              >
-                2. Where should it go?
-              </p>
-              <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                Choose the tool where you want to use your highlights.
-              </p>
+            <div className={styles.rowLabel}>
+              <span className={styles.number}>03</span>
+              <div>
+                <p id={`${id}-destination`}>Where it goes</p>
+                <small>Your notes, your tools</small>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-              {destinations.map(({ id, label }) => (
+            <div className={styles.destinations}>
+              {destinations.map(({ id: destinationId, label }) => (
                 <button
                   type="button"
-                  aria-pressed={destination === id}
-                  onClick={() => setDestination(id)}
-                  className={cn(
-                    "min-h-12 rounded-xl border-2 px-3 py-2 text-sm font-bold transition",
-                    destination === id
-                      ? cn(
-                          accent.soft,
-                          accent.border,
-                          accent.text,
-                          "shadow-[3px_3px_0_hsl(var(--foreground))]"
-                        )
-                      : "border-border bg-card hover:border-foreground/40"
-                  )}
-                  key={id}
+                  aria-pressed={destination === destinationId}
+                  onClick={() => setDestination(destinationId)}
+                  className={cn(styles.choice, styles.destination)}
+                  key={destinationId}
                 >
-                  {label}
+                  <span>{label}</span>
+                  <Check
+                    size={12}
+                    aria-hidden="true"
+                    className={styles.selectedMark}
+                  />
                 </button>
               ))}
             </div>
@@ -432,48 +455,57 @@ export function CompatibilityChecker({
 
           <section
             aria-live="polite"
-            className={cn(
-              "rounded-2xl border-2 p-4 sm:p-5",
-              statusStyles[result.status]
-            )}
+            aria-atomic="true"
+            data-status={result.status}
+            className={styles.result}
           >
-            <div className="flex items-start gap-3">
-              {result.status === "unavailable" ? (
-                <XCircle className="mt-0.5 h-6 w-6 shrink-0" />
-              ) : (
-                <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0" />
-              )}
-              <div>
-                <p className="text-xs font-black uppercase tracking-[.15em] opacity-65">
-                  {result.status === "supported"
-                    ? "Supported"
-                    : result.status === "requires"
-                      ? "Supported with a requirement"
-                      : result.status === "manual"
-                        ? "Manual workflow"
-                        : "Not supported by this version"}
-                </p>
-                <h3 className={serif.className + " mt-1 text-2xl font-bold"}>
-                  {result.title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 opacity-80">
-                  {result.description}
-                </p>
-              </div>
+            <div className={styles.resultHeading}>
+              <StatusIcon size={21} aria-hidden="true" />
+              <span className={styles.status}>{statusLabel}</span>
             </div>
-
-            <div className="mt-5 flex flex-col items-stretch gap-2 border-t border-current/15 pt-5 sm:flex-row sm:items-center">
-              {result.path.map((step, index) => (
-                <div className="contents" key={`${step}-${index}`}>
-                  <span className="rounded-lg border border-current/20 bg-white/45 px-3 py-2 text-center text-xs font-bold dark:bg-black/15">
-                    {step}
-                  </span>
-                  {index < result.path.length - 1 && (
-                    <ArrowRight className="mx-auto h-4 w-4 rotate-90 opacity-50 sm:rotate-0" />
-                  )}
+            <h3 className={cn(serif.className, styles.resultTitle)}>
+              {result.title}
+            </h3>
+            <p className={styles.resultDescription}>{result.description}</p>
+            {configurationNotes.length > 0 && (
+              <div className={styles.limitations}>
+                <div className={styles.limitationsHeading}>
+                  <Info size={17} aria-hidden="true" />
+                  <strong>{result.status === "coming-soon" ? "Integration update" : reflectionOnly ? "Daily reflections only" : "What to know about this setup"}</strong>
                 </div>
-              ))}
+                <ul>
+                  {configurationNotes.map((note) => <li key={note}>{note}</li>)}
+                </ul>
+              </div>
+            )}
+            {readingPath.length > 0 && <>
+            <div className={styles.routeLabel}>
+              {result.status === "unavailable"
+                ? "Alternative to explore"
+                : "Your reading path"}
             </div>
+            <ol
+              className={styles.path}
+              aria-label={
+                result.status === "unavailable"
+                  ? "Alternative reading path"
+                  : "Your reading path"
+              }
+            >
+              {readingPath.map((step, index) => (
+                <li key={`${step}-${index}`}>
+                  {index > 0 && (
+                    <ArrowRight
+                      size={16}
+                      aria-hidden="true"
+                      className={styles.pathArrow}
+                    />
+                  )}
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+            </>}
           </section>
         </div>
       </DialogContent>

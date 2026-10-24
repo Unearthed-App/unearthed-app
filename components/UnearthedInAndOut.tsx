@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2026 Unearthed App
  *
  * This program is free software: you can redistribute it and/or modify
@@ -8,15 +8,16 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 "use client";
 
+import { CAPACITIES_ENABLED, CAPACITIES_LABEL, CAPACITIES_COMING_SOON, capacitiesText } from "@/lib/capacities-availability";
 import {
   ArrowBigDownDash,
   ArrowBigRightDash,
@@ -90,11 +91,11 @@ export function UnearthedInAndOut() {
               </div>
               <div className="w-full flex justify-center">
                 <DisclosureCard
-                  videoUrl="https://www.youtube.com/embed/0gm0d3-EC7A?si=7V9Hr9hmV8q8RiYh"
+                  videoUrl={CAPACITIES_ENABLED ? "https://www.youtube.com/embed/0gm0d3-EC7A?si=7V9Hr9hmV8q8RiYh" : undefined}
                   videoTitle="Capacities Instructions"
                   videoDescription="Instructions for getting your Daily Reflection into Capacities"
-                  title="Capacities"
-                  content="Wake up to a new Daily Reflection added automatically to your Daily Note in Capacities."
+                  title={CAPACITIES_LABEL}
+                  content={capacitiesText("Wake up to a new Daily Reflection added automatically to your Daily Note in Capacities.", CAPACITIES_COMING_SOON)}
                   image={{
                     src: "/capacities-logo.png",
                     alt: "Capacities Logo",

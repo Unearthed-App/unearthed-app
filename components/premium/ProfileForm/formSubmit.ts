@@ -58,14 +58,6 @@ export async function onSubmitAction(data: any, utcOffset: number) {
     ? await encrypt(parsed.data.supernotesApiKey as string, encryptionKey)
     : "";
 
-  const capacitiesApiKeyEncyrpted = parsed.data.capacitiesApiKey
-    ? await encrypt(parsed.data.capacitiesApiKey as string, encryptionKey)
-    : "";
-
-  const capacitiesSpaceIdEncyrpted = parsed.data.capacitiesSpaceId
-    ? await encrypt(parsed.data.capacitiesSpaceId as string, encryptionKey)
-    : "";
-
   const aiApiKeyEncyrpted = parsed.data.aiApiKey
     ? await encrypt(parsed.data.aiApiKey as string, encryptionKey)
     : "";
@@ -78,15 +70,12 @@ export async function onSubmitAction(data: any, utcOffset: number) {
       .set({
         dailyEmails: parsed.data.dailyEmails,
         supernotesApiKey: supernotesApiKeyEncyrpted,
-        capacitiesApiKey: capacitiesApiKeyEncyrpted,
-        capacitiesSpaceId: capacitiesSpaceIdEncyrpted,
         aiApiKey: aiApiKeyEncyrpted,
         aiApiUrl: parsed.data.aiApiUrl,
         aiApiModel: parsed.data.aiApiModel,
         utcOffset,
       })
       .where(eq(profiles.userId, userId));
-    console.log(result);
     if (result.length === 0) {
       couldNotUpdate = true;
     }
@@ -102,8 +91,6 @@ export async function onSubmitAction(data: any, utcOffset: number) {
         .values({
           dailyEmails: parsed.data.dailyEmails,
           supernotesApiKey: supernotesApiKeyEncyrpted,
-          capacitiesApiKey: capacitiesApiKeyEncyrpted,
-          capacitiesSpaceId: capacitiesSpaceIdEncyrpted,
           aiApiKey: aiApiKeyEncyrpted,
           aiApiUrl: parsed.data.aiApiUrl,
           aiApiModel: parsed.data.aiApiModel,

@@ -16,7 +16,7 @@
  */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { applyTagGlobally } from "@/server/actions-premium";
@@ -39,6 +39,11 @@ export function ApplyTagGloballyDialog({
   const [isDismissed, setIsDismissed] = useState(false);
   const [taggedCount, setTaggedCount] = useState<number | null>(null);
 
+  const handleDismiss = useCallback(() => {
+    setIsDismissed(true);
+    onDismiss?.();
+  }, [onDismiss]);
+
   // Add escape key handler
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
@@ -49,7 +54,7 @@ export function ApplyTagGloballyDialog({
 
     window.addEventListener("keydown", handleEscapeKey);
     return () => window.removeEventListener("keydown", handleEscapeKey);
-  }, []); // Empty dependency array since handleDismiss doesn't change
+  }, [handleDismiss]);
 
   const applyTagMutation = useMutation({
     mutationFn: async () => {
@@ -97,10 +102,6 @@ export function ApplyTagGloballyDialog({
     return null;
   }
 
-  const handleDismiss = () => {
-    setIsDismissed(true);
-    onDismiss?.();
-  };
 
   if (taggedCount !== null) {
     return (
@@ -109,7 +110,7 @@ export function ApplyTagGloballyDialog({
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
-              <h3 className="text-lg font-semibold">Auto-Tag Complete</h3>
+              <h3 className="text-lg font-semibold">Auto Tag Complete</h3>
             </div>
             <Button variant="ghost" size="sm" onClick={handleDismiss}>
               Dismiss
@@ -134,7 +135,7 @@ export function ApplyTagGloballyDialog({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Wand2 className="h-5 w-5" />
-            <h3 className="text-lg font-semibold">Auto-Tag Quotes</h3>
+            <h3 className="text-lg font-semibold">Auto Tag Quotes</h3>
           </div>
           <Button variant="ghost" size="sm" onClick={handleDismiss}>
             Dismiss
@@ -160,7 +161,7 @@ export function ApplyTagGloballyDialog({
           ) : (
             <>
               <Wand2 className="h-4 w-4 mr-2" />
-              Auto-Tag Quotes Globally
+              Auto Tag Quotes Globally
             </>
           )}
         </Button>

@@ -74,7 +74,6 @@ export function UploadForm({ onUpload }: UploadFormProps) {
         });
       }
     } catch (error) {
-      console.log("Failed to add:", error);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",

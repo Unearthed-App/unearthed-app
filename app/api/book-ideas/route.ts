@@ -286,7 +286,6 @@ Do not use single quotes or smart quotes. Use \\" for quotes within the text. Do
           });
 
           const responseContent = completion.choices[0].message.content;
-          console.log(`OpenAI raw response (chunk ${i + 1}):`, responseContent);
           return cleanAndParseJSON(responseContent);
         })
       );
@@ -353,7 +352,6 @@ Do not use single quotes or smart quotes. Use \\" for quotes within the text. Do
             generationConfig: { temperature: 0.7 },
           });
 
-          console.log(`Gemini raw response (chunk ${i + 1}):`, result.response.text());
 
           totalInputTokens += result.response.usageMetadata?.promptTokenCount || 0;
           totalOutputTokens += result.response.usageMetadata?.candidatesTokenCount || 0;

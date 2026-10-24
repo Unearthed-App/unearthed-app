@@ -1,5 +1,25 @@
+/**
+ * Copyright (C) 2026 Unearthed App
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 "use client";
 
+import { buttonVariants } from "@/components/ui/button";
+import { CapacitiesComingSoon } from "./CapacitiesComingSoon";
+import { CAPACITIES_ENABLED, CAPACITIES_LABEL, CAPACITIES_COMING_SOON } from "@/lib/capacities-availability";
 import { useState } from "react";
 import { Crimson_Pro } from "next/font/google";
 import { useTheme } from "next-themes";
@@ -23,11 +43,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { DemoVideo } from "@/components/DemoVideo";
 
 const crimsonPro = Crimson_Pro({
   subsets: ["latin"],
   style: ["normal", "italic"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: "variable",
 });
 
 const LIGHT = {
@@ -162,7 +183,7 @@ const OUTPUTS: {
   },
   {
     id: "capacities",
-    label: "Capacities",
+    label: CAPACITIES_LABEL,
     logoLight: "/capacities-logo.png",
     logoDark: "/capacities-logo.png",
   },
@@ -195,7 +216,7 @@ const COMBO_INFO: Record<
     tagline:
       "Both options work. You'll also need the KOReader plugin for either path",
     localHighlight:
-      "Requires the KOReader plugin — github.com/Unearthed-App/unearthed-koreader",
+      "Requires the KOReader plugin. github.com/Unearthed-App/unearthed-koreader",
   },
   "koreader-notion": {
     tagline: "KOReader plugin + Unearthed Online → Notion",
@@ -210,7 +231,7 @@ const COMBO_INFO: Record<
     tagline:
       "Unearthed Local + KOReader plugin → Craft. Online doesn't support Craft",
     localHighlight:
-      "Requires the KOReader plugin — github.com/Unearthed-App/unearthed-koreader",
+      "Requires the KOReader plugin. github.com/Unearthed-App/unearthed-koreader",
   },
   // Physical Books
   "physical-obsidian": {
@@ -232,7 +253,7 @@ const COMBO_INFO: Record<
     tagline:
       "Capture with Unearthed Mobile (OCR camera), Local syncs to Craft. Online doesn't support Craft",
     localHighlight:
-      "Pairs with Unearthed Mobile — captured quotes land here then go to Craft",
+      "Pairs with Unearthed Mobile. Captured quotes land here then go to Craft",
   },
   // YouTube
   "youtube-obsidian": {
@@ -368,14 +389,15 @@ export function WhichUnearthedPage() {
   const [selectedOutput, setSelectedOutput] = useState<OutputId>("obsidian");
 
   const comboKey = `${selectedInput}-${selectedOutput}`;
-  const combo = COMBO_INFO[comboKey];
+  const capacitiesPaused = selectedOutput === "capacities" && !CAPACITIES_ENABLED;
+  const combo = capacitiesPaused ? { tagline: CAPACITIES_COMING_SOON } : COMBO_INFO[comboKey];
   const localSupported =
     selectedOutput === "obsidian" || selectedOutput === "craft";
   const onlineSupported =
     (selectedInput === "kindle" ||
       selectedInput === "koreader" ||
       selectedInput === "physical") &&
-    selectedOutput !== "craft";
+    selectedOutput !== "craft" && !capacitiesPaused;
   const neitherSupported = !localSupported && !onlineSupported;
   const inputLabel = INPUTS.find((i) => i.id === selectedInput)!.label;
   const outputLabel = OUTPUTS.find((o) => o.id === selectedOutput)!.label;
@@ -486,7 +508,8 @@ export function WhichUnearthedPage() {
                   <button
                     key={id}
                     onClick={() => setSelectedInput(id)}
-                    className="px-4 py-2 rounded-full text-sm font-semibold transition-all hover:scale-105 active:scale-95"
+                    aria-pressed={active}
+                    className={buttonVariants({ variant: "marketing", size: "compact" })}
                     style={
                       active
                         ? {
@@ -527,14 +550,14 @@ export function WhichUnearthedPage() {
                     onClick={() => setSelectedOutput(id)}
                     aria-pressed={active}
                     aria-label={label}
-                    className="group relative flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all hover:scale-105 active:scale-95"
+                    className={buttonVariants({ variant: "marketing", className: "group relative flex-col" })}
                     style={
                       active
                         ? {
                             background: C.obsidianBg,
                             border: `2px solid ${C.obsidianBorder}`,
                             color: C.obsidianColor,
-                            boxShadow: `0 0 0 4px ${C.obsidianBg}, 0 6px 20px ${C.obsidianBorder}33`,
+                            boxShadow: `4px 4px 0 ${C.obsidianBorder}`,
                           }
                         : {
                             background: C.surfaceContainerLowest,
@@ -575,7 +598,7 @@ export function WhichUnearthedPage() {
             className={`${crimsonPro.className} text-3xl md:text-4xl font-bold italic`}
             style={{ color: neitherSupported ? C.outline : C.primary }}
           >
-            {localSupported && onlineSupported
+            {capacitiesPaused ? "Capacities · Coming soon" : localSupported && onlineSupported
               ? "Unearthed provides 2 options..."
               : localSupported
                 ? "Unearthed Local is your best bet..."
@@ -620,7 +643,7 @@ export function WhichUnearthedPage() {
                   color: C.onSurfaceVariant,
                 }}
               >
-                Not applicable — Local only syncs to Obsidian &amp; Craft, not{" "}
+                Not applicable. Local only syncs to Obsidian &amp; Craft, not{" "}
                 {outputLabel}
               </div>
             )}
@@ -669,7 +692,7 @@ export function WhichUnearthedPage() {
                 className={`${crimsonPro.className} text-xl mb-8`}
                 style={{ color: C.onSurfaceVariant }}
               >
-                — install it on your machine
+               . install it on your machine
               </p>
               <ul className="space-y-6">
                 <FeatureItem colors={C} icon={<Terminal size={22} />}>
@@ -693,7 +716,7 @@ export function WhichUnearthedPage() {
                 )}
                 {selectedInput === "youtube" && (
                   <FeatureItem colors={C} icon={<PlayCircle size={22} />}>
-                    Subscribe to YouTube channels and pull transcripts in-app
+                    Subscribe to YouTube channels and pull transcripts in app
                   </FeatureItem>
                 )}
                 {selectedInput === "rss" && (
@@ -708,7 +731,7 @@ export function WhichUnearthedPage() {
                 )}
                 {selectedInput === "koreader" && (
                   <FeatureItem colors={C} icon={<PuzzleIcon size={22} />}>
-                    Install the free KOReader plugin —{" "}
+                    Install the free KOReader plugin ,{" "}
                     <Link
                       href="https://github.com/Unearthed-App/unearthed-koreader"
                       target="_blank"
@@ -722,11 +745,11 @@ export function WhichUnearthedPage() {
                 {selectedOutput === "obsidian" && (
                   <>
                     <FeatureItem colors={C} icon={<PuzzleIcon size={22} />}>
-                      No extra Obsidian plugin needed — Local handles the sync
+                      No extra Obsidian plugin needed. Local handles the sync
                       directly
                     </FeatureItem>
                     <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                      Syncs your full library to your vault — books, articles,
+                      Syncs your full library to your vault: books, articles,
                       highlights, notes, tags and the daily reflection
                     </FeatureItem>
                   </>
@@ -737,7 +760,7 @@ export function WhichUnearthedPage() {
                       Connects to Craft automatically via its API
                     </FeatureItem>
                     <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                      Syncs your full library into a Craft folder tree — books,
+                      Syncs your full library into a Craft folder tree: books,
                       articles, highlights, notes, tags and the daily reflection
                     </FeatureItem>
                   </>
@@ -749,6 +772,7 @@ export function WhichUnearthedPage() {
                 )}
               </ul>
 
+              {localSupported && (
               <div
                 className="mt-10 p-6 rounded-2xl border-2 text-center"
                 style={{
@@ -763,8 +787,9 @@ export function WhichUnearthedPage() {
                   DONE!
                 </span>
               </div>
+              )}
 
-              {/* Extra features — inside the same card */}
+              {/* Extra features. inside the same card */}
               <div
                 className="mt-10 pt-10"
                 style={{ borderTop: `3px dashed ${C.primaryContainer}55` }}
@@ -809,7 +834,7 @@ export function WhichUnearthedPage() {
                     {
                       icon: <Sparkles size={22} />,
                       title: "Daily Reflections",
-                      body: "Every day unearthed will show you a random quote for you to re-digest. This also gets added to your Obsidian Daily note.",
+                      body: "Every day unearthed will show you a random quote for you to redigest. This also gets added to your Obsidian Daily note.",
                     },
                     {
                       icon: <Rss size={22} />,
@@ -860,9 +885,9 @@ export function WhichUnearthedPage() {
                     className="pt-6"
                     style={{ borderTop: `2px solid ${C.secondaryContainer}` }}
                   >
-                    <p className="font-bold mb-2" style={{ color: C.primary }}>
+                    {localSupported && (<p className="font-bold mb-2" style={{ color: C.primary }}>
                       Don&apos;t forget, this all gets sent to {outputLabel} too
-                    </p>
+                    </p>)}
                     <p className={`${crimsonPro.className} italic text-lg`}>
                       I love this because all the highlights from every source
                       that I consume is now in one spot.
@@ -870,7 +895,7 @@ export function WhichUnearthedPage() {
                   </div>
                   <Link
                     href="/local"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all hover:scale-95 active:scale-90 shadow-md mt-2"
+                    className={buttonVariants({ variant: "marketing" })}
                     style={{ background: C.primary, color: C.buttonText }}
                   >
                     Unearthed Local →
@@ -882,6 +907,8 @@ export function WhichUnearthedPage() {
 
           {/* ── OPTION 2: ONLINE ────────────────────────────── */}
           <section className="flex flex-col gap-6">
+            {capacitiesPaused ? <CapacitiesComingSoon /> : <>
+
             {!onlineSupported && (
               <div
                 className="px-4 py-3 rounded-2xl text-center text-sm font-bold"
@@ -892,8 +919,8 @@ export function WhichUnearthedPage() {
                 }}
               >
                 {selectedOutput === "craft"
-                  ? "Not applicable — Online doesn't support Craft sync"
-                  : `Not applicable — Online doesn't support ${inputLabel} as a source`}
+                  ? "Not applicable. Online doesn't support Craft sync"
+                  : `Not applicable. Online doesn't support ${inputLabel} as a source`}
               </div>
             )}
             <div
@@ -935,7 +962,7 @@ export function WhichUnearthedPage() {
                   <FeatureItem colors={C} icon={<Puzzle size={22} />}>
                     <div>
                       <p>
-                        Install the browser extension — it pulls your Kindle
+                        Install the browser extension. It pulls your Kindle
                         highlights
                       </p>
                       <Link
@@ -953,7 +980,7 @@ export function WhichUnearthedPage() {
                   <FeatureItem colors={C} icon={<Puzzle size={22} />}>
                     <div>
                       <p>
-                        Install the free KOReader plugin — it syncs your
+                        Install the free KOReader plugin. It syncs your
                         highlights to Unearthed Online
                       </p>
                       <Link
@@ -970,7 +997,7 @@ export function WhichUnearthedPage() {
                 {selectedInput === "physical" && (
                   <FeatureItem colors={C} icon={<BookOpen size={22} />}>
                     Add physical book quotes manually via the Unearthed Online
-                    interface — no OCR here, just type them in
+                    interface. Type them in manually; there is no OCR here
                   </FeatureItem>
                 )}
                 {selectedOutput === "obsidian" && (
@@ -991,7 +1018,7 @@ export function WhichUnearthedPage() {
                       </div>
                     </FeatureItem>
                     <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                      Plugin pulls your full library into your vault — books,
+                      Plugin pulls your full library into your vault: books,
                       articles, highlights, notes, tags and the daily reflection
                     </FeatureItem>
                   </>
@@ -1015,7 +1042,7 @@ export function WhichUnearthedPage() {
                       settings
                     </FeatureItem>
                     <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                      Only the daily reflection is sent — added each day to your
+                      Only the daily reflection is added each day to your
                       Supernotes daily card
                     </FeatureItem>
                   </>
@@ -1027,7 +1054,7 @@ export function WhichUnearthedPage() {
                       settings
                     </FeatureItem>
                     <FeatureItem colors={C} icon={<RefreshCw size={22} />}>
-                      Only the daily reflection is sent — appended each day to
+                      Only the daily reflection is appended each day to
                       your Capacities daily note
                     </FeatureItem>
                   </>
@@ -1103,7 +1130,7 @@ export function WhichUnearthedPage() {
                       style={{ color: C.onSurfaceVariant }}
                     >
                       Every day unearthed will show you a random quote for you
-                      to re-digest. This also gets added to your Obsidian Daily
+                      to redigest. This also gets added to your Obsidian Daily
                       note.
                     </p>
                   </div>
@@ -1115,7 +1142,7 @@ export function WhichUnearthedPage() {
                     <h4 className="font-bold text-lg mb-2 flex items-center gap-2">
                       AI{" "}
                       <span className="text-sm font-normal italic opacity-60">
-                        — I know 😫 but it&apos;s optional (opt in).
+                       . I know 😫 but it&apos;s optional (opt in).
                       </span>
                     </h4>
                     <p
@@ -1162,13 +1189,10 @@ export function WhichUnearthedPage() {
                       className="rounded-2xl overflow-hidden border-4 shadow-md"
                       style={{ borderColor: C.border }}
                     >
-                      <video
+                      <DemoVideo
                         src="/videos/blind-spot.mp4"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-auto"
+                        poster="/images/blind-spot.webp"
+                        title="Blind Spot Detection"
                       />
                     </div>
                   </div>
@@ -1185,10 +1209,10 @@ export function WhichUnearthedPage() {
                       className="leading-relaxed text-sm mb-4"
                       style={{ color: C.onSurfaceVariant }}
                     >
-                      Everything is <strong>open source</strong>, including the
-                      web app, browser extension, and Obsidian plugin. Feel free
-                      to inspect the code, run it yourself, or contribute to
-                      make it better.
+                      Unearthed Online is <strong>open source</strong>,
+                      including the web app, browser extension, and Obsidian
+                      plugin. Feel free to inspect the code, run it yourself, or
+                      contribute to make it better.
                     </p>
                     <p
                       className="leading-relaxed text-sm mb-4"
@@ -1201,7 +1225,7 @@ export function WhichUnearthedPage() {
                     <Link
                       href="https://github.com/Unearthed-App"
                       target="_blank"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-opacity hover:opacity-80"
+                      className={buttonVariants({ variant: "marketing" })}
                       style={{ background: C.onSurface, color: C.bg }}
                     >
                       View on GitHub
@@ -1227,7 +1251,7 @@ export function WhichUnearthedPage() {
                         },
                         { src: "/obsidian.svg", label: "Obsidian" },
                         { src: "/supernotes.png", label: "Supernotes" },
-                        { src: "/capacities-logo.png", label: "Capacities" },
+                        { src: "/capacities-logo.png", label: CAPACITIES_LABEL },
                       ].map(({ src, label }) => (
                         <div
                           key={label}
@@ -1260,7 +1284,7 @@ export function WhichUnearthedPage() {
                   </div>
                   <Link
                     href="/online"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all hover:scale-95 active:scale-90 shadow-md mt-2"
+                    className={buttonVariants({ variant: "marketing" })}
                     style={{ background: C.secondary, color: C.buttonText }}
                   >
                     Unearthed Online →
@@ -1268,6 +1292,7 @@ export function WhichUnearthedPage() {
                 </div>
               </div>
             </div>
+                      </>}
           </section>
         </div>
 
@@ -1370,14 +1395,14 @@ export function WhichUnearthedPage() {
                   >
                     This was a big motivation for me to create the mobile app
                   </p>
+                  <Link
+                    href="/mobile"
+                    className={buttonVariants({ variant: "marketing", className: "mt-6" })}
+                    style={{ background: C.primary, color: C.buttonText }}
+                  >
+                    Unearthed Mobile →
+                  </Link>
                 </div>
-                <Link
-                  href="/mobile"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all hover:scale-95 active:scale-90 shadow-md mt-6"
-                  style={{ background: C.primary, color: C.buttonText }}
-                >
-                  Unearthed Mobile →
-                </Link>
               </div>
 
               {/* Mobile screenshot */}

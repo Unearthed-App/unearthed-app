@@ -28,6 +28,7 @@ import {
 import { motion, Transition, useMotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 
 type CarouselContextType = {
   index: number;
@@ -153,7 +154,7 @@ function CarouselNavigation({
       <button
         type="button"
         className={cn(
-          "pointer-events-auto h-fit w-fit rounded-full bg-zinc-50 p-2 transition-opacity duration-300 dark:bg-zinc-950",
+          buttonVariants({ variant: "brutal", size: "natural", className: "pointer-events-auto h-fit w-fit p-2" }),
           alwaysShow
             ? "opacity-100"
             : "opacity-0 group-hover/hover:opacity-100",
@@ -177,7 +178,7 @@ function CarouselNavigation({
       <button
         type="button"
         className={cn(
-          "pointer-events-auto h-fit w-fit rounded-full bg-zinc-50 p-2 transition-opacity duration-300 dark:bg-zinc-950",
+          buttonVariants({ variant: "brutal", size: "natural", className: "pointer-events-auto h-fit w-fit p-2" }),
           alwaysShow
             ? "opacity-100"
             : "opacity-0 group-hover/hover:opacity-100",

@@ -15,16 +15,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/db";
-// import { purchases, unearthedLocalVersions } from "@/db/schema";
-// import { eq } from "drizzle-orm";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 
-// const RequestSchema = z.object({
-//   distinctId: z.string().min(3, "distinctId is required"),
-// });
 
 async function checkPremiumStatus(userId: string): Promise<boolean> {
   try {
@@ -38,7 +33,7 @@ async function checkPremiumStatus(userId: string): Promise<boolean> {
 }
 
 // GET endpoint - Premium users get ALL versions without needing Purchase ID
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     // Check if user is authenticated and has premium status
     const { userId } = await auth();
@@ -94,71 +89,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
-// // POST endpoint - For backward compatibility with Purchase ID
-// export async function POST(req: NextRequest) {
-//   try {
-//     // Check if user is authenticated and has premium status
-//     const { userId } = await auth();
-//     if (!userId) {
-//       return NextResponse.json(
-//         { error: "Authentication required" },
-//         { status: 401 }
-//       );
-//     }
-
-//     const isPremium = await checkPremiumStatus(userId);
-//     if (!isPremium) {
-//       return NextResponse.json(
-//         { error: "Premium subscription required" },
-//         { status: 403 }
-//       );
-//     }
-
-//     const json = await req.json().catch(() => ({}));
-//     const parse = RequestSchema.safeParse(json);
-//     if (!parse.success) {
-//       return NextResponse.json(
-//         { error: "Invalid request body", details: parse.error.format() },
-//         { status: 400 }
-//       );
-//     }
-
-//     const { distinctId } = parse.data;
-
-//     const purchase = await db.query.purchases.findFirst({
-//       where: eq(purchases.distinctId, distinctId),
-//       orderBy: (p, { desc }) => [desc(p.createdAt)],
-//     });
-
-//     if (!purchase) {
-//       return NextResponse.json(
-//         { error: "No purchase found for this Purchase ID" },
-//         { status: 404 }
-//       );
-//     }
-
-//     // Premium users get ALL versions, ordered by newest first
-//     const versions = await db.query.unearthedLocalVersions.findMany({
-//       where: eq(unearthedLocalVersions.productName, purchase.productName),
-//       orderBy: (t, { desc }) => [desc(t.version)], // Newest first
-//     });
-
-//     return NextResponse.json(
-//       {
-//         success: true,
-//         data: {
-//           productName: purchase.productName,
-//           versions,
-//         },
-//       },
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     console.error("/api/premium/local-versions POST error", error);
-//     return NextResponse.json(
-//       { error: "Internal Server Error" },
-//       { status: 500 }
-//     );
-//   }
-// }

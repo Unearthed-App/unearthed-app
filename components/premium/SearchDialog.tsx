@@ -146,7 +146,6 @@ export function SearchDialog() {
         setSearchResults({ books: [], quotes: [], tags: [] }); // Add tags: []
       }
     } catch (error) {
-      console.log("error", error);
 
       setIsLoading(false);
 
@@ -224,7 +223,7 @@ export function SearchDialog() {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button className="">
+          <Button className="h-12 min-h-0 py-2">
             <Search />
             <div className="hidden lg:flex items-center space-x-4 ml-4">
               <span>Search</span>

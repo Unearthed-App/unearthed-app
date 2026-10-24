@@ -348,7 +348,6 @@ export default function BookPage({
         }
 
         const result = await response.json();
-        console.log("result:", result);
         setReflection(result);
         setIsReflectionOpen(true);
       } else {
@@ -452,12 +451,8 @@ export default function BookPage({
     isPending: isPendingBookTitles,
   } = useMutation<BasicBookData[], Error>({
     mutationFn: getBookTitles,
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
+
+
   });
 
   const displayQuotes = book && !("error" in book) ? book.quotes : [];
@@ -983,7 +978,7 @@ export default function BookPage({
                     </summary>
                     <CardHeader className="pt-2">
                       <CardDescription>
-                        Engage with your reading through AI-powered reflection
+                        Engage with your reading through AI powered reflection
                         questions, receive personalised feedback, and deepen
                         your understanding.
                       </CardDescription>
@@ -1666,7 +1661,6 @@ export default function BookPage({
                           }
                         }}
                         onUploadError={(error: Error) => {
-                          console.log(`ERROR! ${error.message}`);
                           toast({
                             title: `Error`,
                             description: `Make sure the file is an Image under the file size limit`,

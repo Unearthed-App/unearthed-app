@@ -1,0 +1,411 @@
+/**
+ * Copyright (C) 2026 Unearthed App
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+.dialog.dialog {
+  --ink: #29342c;
+  --muted: #697267;
+  --paper: #faf7ef;
+  --line: #d9ddd1;
+  --choice: #fffdf7;
+  --accent: #9e471e;
+  --tint: #f9e5d4;
+  width: calc(100vw - 32px);
+  max-width: 880px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+.dialog[data-product="online"] {
+  --accent: #176152;
+  --tint: #deeee5;
+}
+.dialog[data-product="mobile"] {
+  --accent: #68458e;
+  --tint: #eae1f5;
+}
+:global(.dark) .dialog {
+  --ink: #e4e9de;
+  --muted: #abb5a8;
+  --paper: #1b241f;
+  --line: #404c43;
+  --choice: #222d26;
+  --accent: #f2b07f;
+  --tint: #3f3025;
+  box-shadow: 6px 6px 0 #0d1510;
+}
+:global(.dark) .dialog[data-product="online"] {
+  --accent: #89d4ba;
+  --tint: #243e33;
+}
+:global(.dark) .dialog[data-product="mobile"] {
+  --accent: #cdb3ef;
+  --tint: #352d44;
+}
+.header {
+  text-align: left;
+  padding: 26px 52px 23px 28px;
+  border-bottom: 1px solid var(--line);
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.title {
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.description {
+  max-width: 620px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+  padding-top: 5px;
+}
+.body {
+  padding: 0 28px 28px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 166px minmax(0, 1fr);
+  gap: 22px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.lastRow {
+  border: 0;
+  padding-bottom: 26px;
+}
+.rowLabel {
+  display: flex;
+  gap: 10px;
+  padding-top: 9px;
+}
+.number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 23px;
+  height: 23px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.rowLabel p {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 23px;
+}
+.rowLabel small {
+  display: block;
+  font-size: 10px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.editions,
+.sources,
+.destinations {
+  display: grid;
+  gap: 9px;
+}
+.editions,
+.sources {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.destinations {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.choice {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+  min-height: 45px;
+  padding: 10px 11px;
+  background: var(--choice);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+.choice > svg {
+  flex-shrink: 0;
+}
+.choice:hover {
+  border-color: var(--accent);
+}
+.choice[aria-pressed="true"] {
+  background: var(--tint);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 2px 2px 0 var(--accent);
+}
+.choice:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.selectedMark {
+  margin-left: auto;
+  opacity: 0;
+}
+.choice[aria-pressed="true"] .selectedMark {
+  opacity: 1;
+}
+.edition {
+  min-height: 46px;
+}
+.destination {
+  justify-content: space-between;
+}
+.result {
+  --result-ink: #285445;
+  --result-bg: #edf3e9;
+  --result-line: #cadbc7;
+  border: 1px solid var(--result-line);
+  border-left: 4px solid var(--result-ink);
+  border-radius: 5px;
+  background: var(--result-bg);
+  color: var(--result-ink);
+  padding: 20px 22px;
+}
+.result[data-status="requires"],
+.result[data-status="coming-soon"] {
+  --result-ink: #315b70;
+  --result-bg: #ecf1f3;
+  --result-line: #ccdbe2;
+}
+.result[data-status="manual"] {
+  --result-ink: #775a22;
+  --result-bg: #f5f0df;
+  --result-line: #e2d7b5;
+}
+.result[data-status="unavailable"] {
+  --result-ink: #914d43;
+  --result-bg: #f7ede7;
+  --result-line: #e5cfc7;
+}
+:global(.dark) .result {
+  --result-ink: #a6d6b6;
+  --result-bg: #23352a;
+  --result-line: #3b5541;
+}
+:global(.dark) .result[data-status="requires"],
+:global(.dark) .result[data-status="coming-soon"] {
+  --result-ink: #b5d5e7;
+  --result-bg: #25343d;
+  --result-line: #405563;
+}
+:global(.dark) .result[data-status="manual"] {
+  --result-ink: #e3ce99;
+  --result-bg: #373226;
+  --result-line: #615637;
+}
+:global(.dark) .result[data-status="unavailable"] {
+  --result-ink: #efb8a7;
+  --result-bg: #3b2a25;
+  --result-line: #634239;
+}
+.resultHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.status {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.resultTitle {
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin-top: 9px;
+}
+.resultDescription {
+  font-size: 12px;
+  line-height: 1.8;
+  margin-top: 9px;
+  max-width: 690px;
+}
+.limitations {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--result-ink);
+  border-left-width: 3px;
+  border-radius: 3px;
+  background: var(--paper);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.limitationsHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.limitationsHeading svg {
+  flex-shrink: 0;
+}
+.limitations ul {
+  list-style: disc;
+  padding-left: 18px;
+}
+.limitations li + li {
+  margin-top: 6px;
+}
+.limitations li:first-child {
+  font-weight: 600;
+}
+.routeLabel {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin-top: 18px;
+  border-top: 1px solid var(--result-line);
+  padding-top: 13px;
+  color: var(--result-ink);
+}
+.path {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 9px;
+}
+.path li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.path li span {
+  padding: 6px 10px;
+  border: 1px solid var(--result-line);
+  background: var(--paper);
+  border-radius: 3px;
+  font-size: 10px;
+  line-height: 1.6;
+  font-weight: 600;
+}
+.pathArrow {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+@media (min-width: 840px) {
+  .destinations {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 7px;
+  }
+  .destination {
+    gap: 4px;
+    padding: 11px 8px;
+    font-size: 10px;
+  }
+  .destination .selectedMark {
+    width: 10px;
+  }
+}
+@media (max-width: 640px) {
+  .header {
+    padding: 23px 42px 20px 20px;
+  }
+  .title {
+    font-size: 28px;
+  }
+  .body {
+    padding: 0 20px 20px;
+  }
+  .row {
+    grid-template-columns: 1fr;
+    gap: 13px;
+    padding: 18px 0;
+  }
+  .rowLabel {
+    padding: 0;
+    align-items: center;
+  }
+  .rowLabel small {
+    display: none;
+  }
+  .number {
+    width: 21px;
+    height: 21px;
+  }
+  .sources {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .choice {
+    min-height: 44px;
+    font-size: 11px;
+  }
+  .edition {
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 7px;
+  }
+  .edition .selectedMark {
+    display: none;
+  }
+  .result {
+    padding: 16px;
+  }
+  .resultTitle {
+    font-size: 24px;
+  }
+  .path {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .path li {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .path li span {
+    text-align: center;
+  }
+  .pathArrow {
+    align-self: center;
+    transform: rotate(90deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .choice {
+    transition: none;
+  }
+}

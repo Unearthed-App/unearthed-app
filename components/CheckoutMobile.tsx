@@ -41,7 +41,8 @@ export function CheckoutMobile({ className }: { className?: string }) {
 
   return (
     <Button
-      variant="brutalprimary"
+      variant="marketing"
+      tone="mobile"
       onClick={handleCheckout}
       className={className}
     >

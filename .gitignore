@@ -10,7 +10,7 @@
 /coverage
 
 # next.js
-/.next/
+/.next*/
 /out/
 
 # production
@@ -26,8 +26,18 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
-.env
+.env*
+!.env.example
+
+# editor settings and local artifacts
+/.vscode/
+/.idea/
+/test-results/
+/playwright-report/
+*.log
+*.bak
+*.orig
+*.rej
 
 # vercel
 .vercel

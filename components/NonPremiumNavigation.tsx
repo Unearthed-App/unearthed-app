@@ -17,6 +17,7 @@
 
 "use client";
 
+import { buttonVariants } from "@/components/ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -118,7 +119,7 @@ export function NonPremiumNavigation({
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className="flex items-center gap-0.5 rounded-full border-[3px] border-foreground/80 bg-background/80 px-1.5 py-1.5 shadow-lg shadow-black/[0.03] backdrop-blur-xl dark:border-white/80 dark:bg-background/60 dark:shadow-black/20">
+        <div className="flex items-center gap-0.5 rounded-[4px] border-[3px] border-foreground/80 bg-background/80 px-1.5 py-1.5 shadow-lg shadow-black/[0.03] backdrop-blur-xl dark:border-white/80 dark:bg-background/60 dark:shadow-black/20">
           {navLinks.map(({ href, label, Icon, bgHint, activeBg, mobileTextColor }) => {
             const isActive = pathname === href;
             return (
@@ -130,7 +131,7 @@ export function NonPremiumNavigation({
               >
                 <div
                   className={`
-                    ${crimsonPro.className} relative z-10 flex items-center justify-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold transition-all duration-200
+                    ${crimsonPro.className} relative z-10 flex items-center justify-center gap-1.5 rounded-[4px] px-3.5 py-1.5 text-sm font-semibold transition-all duration-200
                     ${isActive ? mobileTextColor : "text-foreground/60 hover:text-foreground"}
                     ${isActive && activeBg ? activeBg : ""}
                     ${!isActive && bgHint ? bgHint : ""}
@@ -142,7 +143,7 @@ export function NonPremiumNavigation({
                   {isActive && !activeBg.includes("f66e1b") && (
                     <motion.div
                       layoutId="nonPremiumActiveTab"
-                      className="absolute inset-0 rounded-full bg-foreground/[0.07] dark:bg-white/10"
+                      className="absolute inset-0 rounded-[4px] bg-foreground/[0.07] dark:bg-white/10"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -158,7 +159,7 @@ export function NonPremiumNavigation({
           {mounted && (
             <button
               onClick={toggleTheme}
-              className="relative flex h-8 w-8 items-center justify-center rounded-full text-foreground/50 transition-all duration-200 hover:text-foreground hover:bg-foreground/[0.07]"
+              className="relative flex h-8 w-8 items-center justify-center rounded-[4px] text-foreground/50 transition-all duration-200 hover:text-foreground hover:bg-foreground/[0.07]"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
             >
               <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform duration-300 dark:-rotate-90 dark:scale-0" />
@@ -169,7 +170,7 @@ export function NonPremiumNavigation({
           {/* Get Online CTA */}
           <button
             onClick={handleCheckout}
-            className={`${crimsonPro.className} ml-0.5 flex items-center gap-1.5 rounded-full bg-[#25b1a6] px-3.5 py-1.5 text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 hover:scale-[1.03] active:scale-95`}
+            className={buttonVariants({ variant: "marketing", size: "compact", className: `${crimsonPro.className} ml-0.5 hover:opacity-90` })}
             aria-label="Get Unearthed Online"
           >
             <Crown className="h-3.5 w-3.5" />
@@ -179,7 +180,7 @@ export function NonPremiumNavigation({
           {/* Logout */}
           <SignOutButton>
             <button
-              className={`${crimsonPro.className} ml-0.5 flex items-center gap-1.5 rounded-full bg-foreground px-3.5 py-1.5 text-sm font-semibold text-background transition-all duration-200 hover:opacity-90 hover:scale-[1.03] active:scale-95`}
+              className={buttonVariants({ variant: "marketing", size: "compact", className: `${crimsonPro.className} ml-0.5 hover:opacity-90` })}
               aria-label="Sign out"
             >
               <LogOut className="h-3.5 w-3.5" />
@@ -198,10 +199,10 @@ export function NonPremiumNavigation({
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className="flex items-center gap-2 rounded-full border-[3px] border-foreground/80 bg-background/80 px-2 py-1.5 shadow-lg shadow-black/[0.03] backdrop-blur-xl dark:border-white/80 dark:bg-background/60 dark:shadow-black/20">
+        <div className="flex items-center gap-2 rounded-[4px] border-[3px] border-foreground/80 bg-background/80 px-2 py-1.5 shadow-lg shadow-black/[0.03] backdrop-blur-xl dark:border-white/80 dark:bg-background/60 dark:shadow-black/20">
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-foreground/[0.05]"
+            className="flex h-9 w-9 items-center justify-center rounded-[4px] text-foreground transition-colors hover:bg-foreground/[0.05]"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -214,7 +215,7 @@ export function NonPremiumNavigation({
           {mounted && (
             <button
               onClick={toggleTheme}
-              className="relative flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground hover:bg-foreground/[0.05]"
+              className="relative flex h-9 w-9 items-center justify-center rounded-[4px] text-muted-foreground transition-colors hover:text-foreground hover:bg-foreground/[0.05]"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
             >
               <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform duration-300 dark:-rotate-90 dark:scale-0" />
@@ -224,7 +225,7 @@ export function NonPremiumNavigation({
 
           <button
             onClick={handleCheckout}
-            className={`${crimsonPro.className} flex items-center gap-1.5 rounded-full bg-[#25b1a6] px-3 py-1.5 text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-95`}
+            className={buttonVariants({ variant: "marketing", size: "compact", className: `${crimsonPro.className} hover:opacity-90` })}
           >
             <Crown className="h-3.5 w-3.5" />
             Get Online

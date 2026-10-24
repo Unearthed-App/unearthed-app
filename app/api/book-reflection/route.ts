@@ -139,7 +139,6 @@ Do not use markdown formatting or code blocks in your response. Return only the 
       .join("\n")}`;
 
     if (profile.aiApiModel || profile.aiApiKey) {
-      console.log("Using custom OpenAI configuration");
       posthogClient.capture({
         distinctId: userId,
         event: `book-reflection (BYO) started`,
@@ -166,26 +165,18 @@ Do not use markdown formatting or code blocks in your response. Return only the 
           temperature: 0.7,
         });
 
-        console.log(
-          "OpenAI response structure:",
-          JSON.stringify(completion, null, 2)
-        );
 
         if (!completion.choices?.length) {
-          console.error("OpenAI response missing choices:", completion);
+          console.error("OpenAI response missing choices");
           throw new Error("Invalid API response structure");
         }
 
         const responseContent = completion.choices[0]?.message?.content;
         if (!responseContent) {
-          console.error(
-            "OpenAI response missing content:",
-            completion.choices[0]
-          );
+          console.error("OpenAI response missing content");
           throw new Error("Invalid API response content");
         }
 
-        console.log("OpenAI raw response:", responseContent);
 
         let parsedResponse;
         try {
@@ -229,7 +220,6 @@ Do not use markdown formatting or code blocks in your response. Return only the 
         );
       }
     } else {
-      console.log("Using Gemini configuration");
       const aiPercentageUsed = await calculateAiUsage(profile);
 
       if (aiPercentageUsed >= 100) {
@@ -253,7 +243,6 @@ Do not use markdown formatting or code blocks in your response. Return only the 
         generationConfig: { temperature: 0.7 },
       });
 
-      console.log("Gemini raw response:", result.response.text());
 
       const inputTokens = result.response.usageMetadata?.promptTokenCount || 0;
       const outputTokens =

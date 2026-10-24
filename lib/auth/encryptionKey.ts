@@ -32,7 +32,6 @@ export async function setEncryptionKey(encryptionKey: string) {
         encryptionKey: encryptionKey,
       },
     });
-    console.log("Encryption key set successfully");
   } catch (error) {
     console.error("Error setting encryption key:", error);
     throw error;
@@ -80,8 +79,11 @@ export const generateApiKey = () => {
   let apiKey = "";
 
   for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    apiKey += characters[randomIndex];
+    let randomByte: number;
+    do {
+      randomByte = crypto.getRandomValues(new Uint8Array(1))[0];
+    } while (randomByte >= 248);
+    apiKey += characters[randomByte % characters.length];
   }
 
   return apiKey;

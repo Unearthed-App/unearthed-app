@@ -22,6 +22,7 @@ import { purchases, unearthedLocalVersions } from "@/db/schema";
 import { eq } from "drizzle-orm";
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 import type { Metadata } from "next";
+import { sendPurchaseConfirmation } from "@/server/purchase-confirmation";
 
 import { Button } from "@/components/ui/button";
 import CopyDistinctId from "@/components/CopyDistinctId";
@@ -95,6 +96,12 @@ export default async function UnearthedLocalSuccess({
           </p>
         </main>
       );
+    }
+
+    try {
+      await sendPurchaseConfirmation(session, "local");
+    } catch {
+      console.error("Could not send local purchase confirmation");
     }
 
     const versions = await db.query.unearthedLocalVersions.findMany({
@@ -180,12 +187,12 @@ export default async function UnearthedLocalSuccess({
           <div className="border-2 border-black rounded-md overflow-hidden shadow-[4px_4px_0px_rgba(0,0,0,1)] bg-card">
             <div className="p-4 space-y-4">
               <p className="text-sm text-muted-foreground">
-                Save this Purchase ID in a safe place — you&apos;ll need it for
+                Save this Purchase ID in a safe place: you&apos;ll need it for
                 future updates.
               </p>
               <CopyDistinctId distinctId={distinctId} />
               <p className="text-sm text-muted-foreground leading-relaxed">
-                This is a <strong>one-time payment</strong> for this version of
+                This is a <strong>one time payment</strong> for this version of
                 Unearthed Local. For Example: if you purchase version one, you
                 can download updates from{" "}
                 <code className="text-xs bg-black/10 dark:bg-white/10 px-1 py-0.5 rounded">

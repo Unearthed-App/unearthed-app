@@ -20,8 +20,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SignInButton } from "@clerk/nextjs";
-import { LogIn, Menu, X, Home, Shield, Sun, Moon } from "lucide-react";
+import { Menu, X, Home, Shield, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Crimson_Pro } from "next/font/google";
@@ -99,7 +98,7 @@ export function PublicNavbar() {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="fixed top-0 left-0 right-0 z-50 hidden md:flex justify-center px-4 pt-4"
       >
-        <div className="flex items-center gap-0.5 rounded-full border-[3px] border-foreground/80 bg-background/80 px-1.5 py-1.5 shadow-lg shadow-black/[0.03] backdrop-blur-xl dark:border-white/80 dark:bg-background/60 dark:shadow-black/20">
+        <div className="flex items-center gap-0.5 rounded-[4px] border-[3px] border-foreground/80 bg-background/80 px-1.5 py-1.5 shadow-lg shadow-black/[0.03] backdrop-blur-xl dark:border-white/80 dark:bg-background/60 dark:shadow-black/20">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             const isIcon = link.icon;
@@ -111,11 +110,11 @@ export function PublicNavbar() {
                 onMouseEnter={() => setHoveredPath(link.href)}
                 onMouseLeave={() => setHoveredPath(null)}
                 className="relative"
-                aria-label={isIcon ? link.label : undefined}
+                aria-label={isIcon ? (link.href === "/" ? "Home" : "Privacy") : undefined}
               >
                 <div
                   className={`
-                    ${crimsonPro.className} relative z-10 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-200
+                    ${crimsonPro.className} relative z-10 flex items-center justify-center rounded-[4px] text-sm font-semibold transition-all duration-200
                     ${isIcon && !link.label ? "h-8 w-8" : "gap-1.5 px-3.5 py-1.5"}
                     ${isActive ? (link.mobileTextColor ?? "text-foreground") : "text-foreground/60 hover:text-foreground"}
                     ${isActive && link.activeBg ? link.activeBg : ""}
@@ -130,7 +129,7 @@ export function PublicNavbar() {
                   {isActive && !link.activeBg && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute inset-0 rounded-full bg-foreground/[0.07] dark:bg-white/10"
+                      className="absolute inset-0 rounded-[4px] bg-foreground/[0.07] dark:bg-white/10"
                       transition={{
                         type: "spring",
                         stiffness: 380,
@@ -141,7 +140,7 @@ export function PublicNavbar() {
                   {hoveredPath === link.href && !isActive && !link.bgHint && (
                     <motion.div
                       layoutId="hoverTab"
-                      className="absolute inset-0 rounded-full bg-foreground/[0.05] dark:bg-white/[0.06]"
+                      className="absolute inset-0 rounded-[4px] bg-foreground/[0.05] dark:bg-white/[0.06]"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -164,7 +163,7 @@ export function PublicNavbar() {
           {mounted && (
             <button
               onClick={toggleTheme}
-              className="relative flex h-8 w-8 items-center justify-center rounded-full text-foreground/50 transition-all duration-200 hover:text-foreground hover:bg-foreground/[0.07]"
+              className="relative flex h-8 w-8 items-center justify-center rounded-[4px] text-foreground/50 transition-all duration-200 hover:text-foreground hover:bg-foreground/[0.07]"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
             >
               <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform duration-300 dark:-rotate-90 dark:scale-0" />
@@ -174,14 +173,12 @@ export function PublicNavbar() {
 
           {/* Sign In */}
           <div className="ml-0.5">
-            <SignInButton>
-              <button
-                className={`${crimsonPro.className} flex items-center gap-1.5 rounded-full bg-foreground px-3.5 py-1.5 text-sm font-semibold text-background transition-all duration-200 hover:opacity-90 hover:scale-[1.03] active:scale-95`}
-              >
-                <LogIn className="h-3.5 w-3.5" />
-                Sign In
-              </button>
-            </SignInButton>
+            <Link
+              href="/sign-in"
+              className={`${crimsonPro.className} inline-flex items-center justify-center rounded-[4px] bg-black px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current`}
+            >
+              Sign In
+            </Link>
           </div>
         </div>
       </motion.nav>
@@ -193,10 +190,10 @@ export function PublicNavbar() {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="fixed top-0 left-0 right-0 z-50 flex md:hidden justify-center px-4 pt-4"
       >
-        <div className="flex items-center gap-2 rounded-full border-[3px] border-foreground/80 bg-background/80 px-2 py-1.5 shadow-lg shadow-black/[0.03] backdrop-blur-xl dark:border-white/80 dark:bg-background/60 dark:shadow-black/20">
+        <div className="flex items-center gap-2 rounded-[4px] border-[3px] border-foreground/80 bg-background/80 px-2 py-1.5 shadow-lg shadow-black/[0.03] backdrop-blur-xl dark:border-white/80 dark:bg-background/60 dark:shadow-black/20">
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-foreground/[0.05]"
+            className="flex h-9 w-9 items-center justify-center rounded-[4px] text-foreground transition-colors hover:bg-foreground/[0.05]"
             aria-label="Toggle menu"
           >
             {mobileOpen ? (
@@ -216,7 +213,7 @@ export function PublicNavbar() {
           {mounted && (
             <button
               onClick={toggleTheme}
-              className="relative flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground hover:bg-foreground/[0.05]"
+              className="relative flex h-9 w-9 items-center justify-center rounded-[4px] text-muted-foreground transition-colors hover:text-foreground hover:bg-foreground/[0.05]"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
             >
               <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform duration-300 dark:-rotate-90 dark:scale-0" />
@@ -224,14 +221,12 @@ export function PublicNavbar() {
             </button>
           )}
 
-          <SignInButton>
-            <button
-              className={`${crimsonPro.className} flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-sm font-semibold text-background transition-all duration-200 hover:opacity-90 active:scale-95`}
+          <Link
+              href="/sign-in"
+              className={`${crimsonPro.className} inline-flex items-center justify-center rounded-[4px] bg-black px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current`}
             >
-              <LogIn className="h-3.5 w-3.5" />
               Sign In
-            </button>
-          </SignInButton>
+            </Link>
         </div>
       </motion.nav>
 

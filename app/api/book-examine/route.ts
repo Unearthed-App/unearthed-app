@@ -176,7 +176,6 @@ ${q.note ? `Reader's Note: ${q.note}` : ""}`
       });
 
       const responseContent = completion.choices[0].message.content;
-      console.log("OpenAI raw response:", responseContent);
 
       let parsedResponse = cleanAndParseJSON(responseContent);
       if (!parsedResponse) {
@@ -213,7 +212,6 @@ ${q.note ? `Reader's Note: ${q.note}` : ""}`
         generationConfig: { temperature: 0.7 },
       });
 
-      console.log("Gemini raw response:", result.response.text());
 
       const inputTokens = result.response.usageMetadata?.promptTokenCount || 0;
       const outputTokens =

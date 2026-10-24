@@ -22,6 +22,7 @@ import { purchasesMobile } from "@/db/schema";
 import { eq } from "drizzle-orm";
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 import type { Metadata } from "next";
+import { sendPurchaseConfirmation } from "@/server/purchase-confirmation";
 
 import CopyDistinctId from "@/components/CopyDistinctId";
 import { PwaInstructions } from "@/components/PwaInstructions";
@@ -101,14 +102,12 @@ export default async function MobileSuccess({
       );
     }
 
-    // Trigger confirmation email (fire and forget)
-    fetch("/api/public/mobile-purchase-success-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId }),
-    }).catch((err) =>
-      console.error("Failed to send mobile purchase email:", err)
-    );
+
+    try {
+      await sendPurchaseConfirmation(session, "mobile");
+    } catch {
+      console.error("Could not send mobile purchase confirmation");
+    }
 
     return (
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-32 pb-16">
@@ -131,7 +130,7 @@ export default async function MobileSuccess({
               </p>
               <CopyDistinctId distinctId={purchaseId} />
               <p className="text-sm text-muted-foreground leading-relaxed">
-                This is a <strong>one-time payment</strong>. Your Purchase ID
+                This is a <strong>one time payment</strong>. Your Purchase ID
                 unlocks the app on all your personal devices.
               </p>
             </div>

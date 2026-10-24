@@ -17,6 +17,7 @@
 
 "use client";
 
+import { CAPACITIES_ENABLED } from "@/lib/capacities-availability";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { Crimson_Pro } from "next/font/google";
@@ -203,7 +204,7 @@ export function ProductComparisonCard({
                   className={`${colors.checkBg} rounded-full p-1 flex-shrink-0 mt-0.5 shadow-md group-hover/item:scale-110 transition-transform duration-200`}
                   aria-hidden="true"
                 >
-                  <CheckCircle className={`w-4 h-4 ${colors.checkIcon}`} />
+                  {!CAPACITIES_ENABLED && feature.includes("Capacities") ? <span className="block h-4 w-4 text-center text-xs leading-4">…</span> : <CheckCircle className={`w-4 h-4 ${colors.checkIcon}`} />}
                 </div>
                 <span className="text-sm sm:text-base md:text-base leading-relaxed font-medium text-foreground/90">
                   {feature}

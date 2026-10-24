@@ -16,6 +16,7 @@
  */
 
 import type { Metadata } from "next";
+import { SITE_URL, noIndex } from "@/lib/seo";
 import { Poppins } from "next/font/google";
 import QueryClientContextProvider from "@/components/QueryClientContextProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -40,66 +41,10 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
-  description:
-    "Open-source reading insights platform. AI-powered analysis surfaces forgotten insights from your Kindle and KOReader highlights. Discover blind spots, chat with books, and sync to Notion, Obsidian, Capacities, and Supernotes. No Amazon credentials needed.",
-  keywords: [
-    "readwise alternative",
-    "kindle highlights",
-    "AI reading analysis",
-    "reading insights",
-    "book analytics",
-    "digital notes",
-    "knowledge management",
-    "personal library",
-    "daily reflections",
-    "open source",
-    "productivity tool",
-    "notion integration",
-    "obsidian integration",
-    "kindle to notion",
-    "kindle to obsidian",
-    "kindle to capacities",
-    "capacities integration",
-    "supernotes integration",
-    "kindle sync",
-    "KOReader sync",
-    "KOReader highlights",
-    "reading patterns",
-    "book recommendations",
-    "chat with books",
-    "blind spot detection",
-    "note-taking apps",
-    "kindle notebook sync",
-    "past insights new revelations",
-    "connected knowledge",
-    "reading history analysis",
-  ],
-  openGraph: {
-    title: "Unearthed - Kindle Auto Sync, AI-Powered Reading Insights",
-    description:
-      "Open-source reading insights platform with AI analysis. Discover forgotten insights, blind spots, and connections from your Kindle and KOReader highlights. Sync to Notion, Obsidian, Capacities, and Supernotes.",
-    type: "website",
-    url: "https://unearthed.app",
-    siteName: "Unearthed",
-    locale: "en_US",
-    images: [
-      {
-        url: "https://unearthed.app/images/banner.webp",
-        width: 1200,
-        height: 630,
-        alt: "Unearthed app interface showing AI-powered reading insights and Kindle integration",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@unearthedapp",
-    title: "Unearthed - AI-Powered Reading Insights & Connected Knowledge",
-    description:
-      "Open-source platform that transforms your Kindle highlights into connected knowledge with AI analysis and seamless integrations.",
-    images: ["https://unearthed.app/images/banner.webp"],
-  },
+  metadataBase: new URL(SITE_URL),
+  title: "Unearthed",
+  description: "Reading highlights, remembered.",
+  robots: noIndex,
 };
 
 export default function RootLayout({

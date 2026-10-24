@@ -552,11 +552,11 @@ export function QuoteCardBrutal({
                       <TooltipTrigger asChild>
                         <Button
                           variant="outline"
-                          size="icon"
-                          className="text-alternate h-6 w-6 rounded-full bg-card border-2 border-black"
+                          size="tiny"
+                          className="text-alternate rounded-full bg-card border-2 border-black"
                           onClick={handleTagClick}
                         >
-                          <Tag className="h-3 w-3" />
+                          <Tag className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
@@ -694,11 +694,11 @@ export function QuoteCardBrutal({
                         <TooltipTrigger asChild>
                           <Button
                             variant="outline"
-                            size="icon"
-                            className="text-alternate h-6 w-6 rounded-full bg-card border-2 border-black"
+                            size="tiny"
+                            className="text-alternate rounded-full bg-card border-2 border-black"
                             onClick={handleTagClick}
                           >
-                            <Tag className="h-3 w-3" />
+                            <Tag className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">

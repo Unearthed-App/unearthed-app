@@ -17,6 +17,9 @@
 
 "use server";
 
+import { CAPACITIES_ENABLED, CAPACITIES_COMING_SOON } from "@/lib/capacities-availability";
+import { deliverCapacitiesDaily } from "./capacities";
+import { formatCapacitiesDaily } from "@/lib/capacities-api";
 import PostHogClient from "@/app/posthog";
 import { db } from "@/db";
 import {
@@ -305,12 +308,8 @@ export const getProfile = async (): Promise<Profile> => {
       supernotesApiKey: toReturn.supernotesApiKey
         ? await decrypt(toReturn.supernotesApiKey as string, encryptionKey)
         : "",
-      capacitiesApiKey: toReturn.capacitiesApiKey
-        ? await decrypt(toReturn.capacitiesApiKey as string, encryptionKey)
-        : "",
-      capacitiesSpaceId: toReturn.capacitiesSpaceId
-        ? await decrypt(toReturn.capacitiesSpaceId as string, encryptionKey)
-        : "",
+      capacitiesApiKey: "", // OAuth credentials remain server-only.
+      capacitiesSpaceId: "",
       notionAuthData: toReturn.notionAuthData
         ? await decrypt(toReturn.notionAuthData as string, encryptionKey)
         : "",
@@ -326,41 +325,6 @@ export const getProfile = async (): Promise<Profile> => {
   }
 };
 
-export const capicitiesGetSpaces = async (profile: Profile) => {
-  const { userId }: { userId: string | null } = await auth();
-  if (!userId) {
-    throw new Error("User not authenticated");
-  }
-
-  if (!profile.capacitiesApiKey) {
-    return false;
-  }
-
-  try {
-    const response = await fetch("https://api.capacities.io/spaces", {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${profile.capacitiesApiKey}`,
-      },
-    });
-
-    if (!response.ok) {
-      return [];
-    }
-
-    let data = await response.json();
-    if (data.spaces) {
-      return data.spaces;
-    } else {
-      return [];
-    }
-  } catch (error) {
-    console.error(error);
-    return {};
-  }
-};
-
 export const getSettings = async () => {
   const { userId }: { userId: string | null } = await auth();
   if (!userId) {
@@ -368,14 +332,12 @@ export const getSettings = async () => {
   }
 
   const profile = await getProfile();
-  const capicitiesSpaces = await capicitiesGetSpaces(profile);
-  const unearthedKeys = await getUnearthedKeys(profile);
+  const unearthedKeys = await getUnearthedKeys();
 
   const notionAuthData = JSON.parse(profile.notionAuthData || "{}");
 
   return {
     profile,
-    capicitiesSpaces,
     unearthedKeys,
     notionWorkspace: notionAuthData.workspace_name || "",
     aiPercentageUsed: 100,
@@ -385,7 +347,9 @@ export const getSettings = async () => {
 export const getOrCreateDailyReflection = async ({
   replaceDailyQuote = false,
   utcOffset = 0,
+  sendToCapacities = true,
 }: {
+  sendToCapacities?: boolean;
   replaceDailyQuote?: true | false;
   utcOffset?: number;
 } = {}) => {
@@ -473,6 +437,8 @@ export const getOrCreateDailyReflection = async ({
           )
         : "";
 
+      if (sendToCapacities) await deliverCapacitiesDaily(userId, encryptionKey, dailyQuoteResult.id);
+
       return {
         book: dailyQuoteWithRelationsResult.sources,
         quote: dailyQuoteWithRelationsResult.quotes,
@@ -521,10 +487,10 @@ export const getOrCreateDailyReflection = async ({
         ? await decrypt(randomQuote.note, encryptionKey)
         : "";
 
-      await addPassedDailyToCapacities({
-        book: randomBook,
-        quote: randomQuote,
-      });
+      if (sendToCapacities) {
+        const saved = newDailyQuote[0] || await db.query.dailyQuotes.findFirst({ where: and(eq(dailyQuotes.day, todaysDate), eq(dailyQuotes.userId, userId)) });
+        if (saved) await deliverCapacitiesDaily(userId, encryptionKey, saved.id);
+      }
 
       return { book: randomBook, quote: randomQuote };
     }
@@ -533,6 +499,7 @@ export const getOrCreateDailyReflection = async ({
     if (dailyQuoteResult && replaceDailyQuote) {
       const toSet = {
         quoteId: randomQuote.id,
+        capacitiesUpdated: false,
       };
 
       const updatedDailyQuote = await db
@@ -550,10 +517,7 @@ export const getOrCreateDailyReflection = async ({
         ? await decrypt(randomQuote.note, encryptionKey)
         : "";
 
-      await addPassedDailyToCapacities({
-        book: randomBook,
-        quote: randomQuote,
-      });
+      if (sendToCapacities && updatedDailyQuote[0]) await deliverCapacitiesDaily(userId, encryptionKey, updatedDailyQuote[0].id);
 
       return { book: randomBook, quote: randomQuote };
     }
@@ -566,162 +530,20 @@ export const getOrCreateDailyReflection = async ({
 };
 
 export const addDailyToCapacities = async () => {
-  const { userId }: { userId: string | null } = await auth();
-  if (!userId) {
-    throw new Error("User not authenticated");
-  }
-  const dailyReflection = await getOrCreateDailyReflection();
-  const { book, quote } = dailyReflection;
-  const bookTitle = book.title;
-  const bookAuthor = book.author;
-  const quoteContent = quote.content;
-  const quoteNote = quote.note;
-  const quoteLocation = quote.location;
-  const profile = await getProfile();
-
-  const encryptionKey = await getOrCreateEncryptionKey();
-  if (!encryptionKey) {
-    throw new Error("User not authenticated");
-  }
-
-  if (!profile.capacitiesSpaceId) {
-    return false;
-  }
-
-  const mdText = await capacitiesFormatDaily(
-    bookTitle as string,
-    bookAuthor as string,
-    quoteContent as string,
-    quoteNote as string,
-    quoteLocation as string
-  );
-
-  const body = {
-    spaceId: profile.capacitiesSpaceId,
-    mdText: mdText,
-    origin: "commandPalette",
-    noTimeStamp: true,
-  };
-  try {
-    const response = await fetch(
-      "https://api.capacities.io/save-to-daily-note",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${profile.capacitiesApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    );
-    const data = await response.text();
-    return { status: "OK" };
-  } catch (error) {
-    console.error(error);
-    return {};
-  }
+  const { userId } = await auth();
+  if (!userId) throw new Error("User not authenticated");
+  if (!CAPACITIES_ENABLED) return { status: "COMING_SOON", ok: false, message: CAPACITIES_COMING_SOON };
+  await getOrCreateDailyReflection({ sendToCapacities: false });
+  const key = await getOrCreateEncryptionKey();
+  const profile = await db.query.profiles.findFirst({ where: eq(profiles.userId, userId) });
+  const day = await getTodaysDate(profile?.utcOffset ?? 0);
+  const daily = await db.query.dailyQuotes.findFirst({ where: and(eq(dailyQuotes.day, day), eq(dailyQuotes.userId, userId)) });
+  if (!daily) return { status: "ERROR", ok: false, message: "No daily reflection is available yet." };
+  const result = await deliverCapacitiesDaily(userId, key, daily.id);
+  return { ...result, status: result.ok ? "OK" : "ERROR" };
 };
 
-export const addPassedDailyToCapacities = async (dailyReflection: {
-  book: Source;
-  quote: Quote;
-}) => {
-  const { userId }: { userId: string | null } = await auth();
-  if (!userId) {
-    return false;
-  }
-
-  const profile = await getProfile();
-
-  if (!profile.capacitiesSpaceId) {
-    return false;
-  }
-
-  const encryptionKey = await getOrCreateEncryptionKey();
-  if (!encryptionKey) {
-    throw new Error("No encryption key");
-  }
-
-  const { book, quote } = dailyReflection;
-  const bookTitle = book.title;
-  const bookAuthor = book.author;
-  const quoteContent = quote.content;
-  let quoteNote = quote.note;
-  try {
-    quoteNote = quote.note
-      ? await decrypt(quote.note as string, encryptionKey)
-      : "";
-  } catch (decryptError) {
-    console.error("Decryption error:", decryptError);
-  }
-
-  const quoteLocation = quote.location;
-
-  const mdText = await capacitiesFormatDaily(
-    bookTitle as string,
-    bookAuthor as string,
-    quoteContent as string,
-    quoteNote as string,
-    quoteLocation as string
-  );
-
-  const body = {
-    spaceId: profile.capacitiesSpaceId,
-    mdText: mdText,
-    origin: "commandPalette",
-    noTimeStamp: true,
-  };
-  try {
-    const response = await fetch(
-      "https://api.capacities.io/save-to-daily-note",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${profile.capacitiesApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    );
-    const data = await response.text();
-    return { status: "OK" };
-  } catch (error) {
-    console.error(error);
-    return {};
-  }
-};
-
-export const capacitiesFormatDaily = async (
-  bookTitle?: string,
-  bookAuthor?: string,
-  quoteContent?: string,
-  quoteNote?: string,
-  quoteLocation?: string
-) => {
-  let toReturn = `
----
-## 🔥 Remember This?
-### [[book/${bookTitle}]]
-#### [[person/${bookAuthor}]]
-
-> ${quoteContent}
-
-**Location:** ${quoteLocation}
-`;
-
-  if (quoteNote) {
-    toReturn += `
-
-**My note:** ${quoteNote}
-
----
-`;
-  }
-
-  return toReturn;
-};
+export const capacitiesFormatDaily = async (title?: string, author?: string, content?: string, note?: string, location?: string) => formatCapacitiesDaily(title, author, content, note, location);
 
 export const supernoteFormatDaily = async (
   bookTitle?: string,
@@ -819,6 +641,12 @@ export const syncSourceToNotion = async (sourceId: string) => {
   if (!userId) {
     return { success: false };
   }
+
+  const ownedSource = await db.query.sources.findFirst({
+    where: and(eq(sources.id, sourceId), eq(sources.userId, userId)),
+    columns: { id: true },
+  });
+  if (!ownedSource) return { success: false };
 
   const profile = await getProfile();
 
@@ -972,11 +800,17 @@ export const firstNotionSync = async (): Promise<{
   }
 };
 
-export const getUnearthedKeys = async (profile: Profile) => {
+export const getUnearthedKeys = async () => {
+  const { userId } = await auth();
+  if (!userId) throw new Error("User not authenticated");
+
   const dbResult = await db.query.unearthedKeys.findMany({
-    where: eq(unearthedKeys.userId, profile.userId!),
+    where: eq(unearthedKeys.userId, userId),
+    columns: { key: false },
   });
-  const validatedData = z.array(selectUnearthedKeySchema).parse(dbResult);
+  const validatedData = z.array(selectUnearthedKeySchema).parse(
+    dbResult.map((row) => ({ ...row, key: "" }))
+  );
 
   return validatedData;
 };
@@ -1063,6 +897,12 @@ export const deleteSource = async ({ source }: { source: Source }) => {
   if (!userId) {
     throw new Error("User not authenticated");
   }
+
+  const ownedSource = await db.query.sources.findFirst({
+    where: and(eq(sources.id, source.id), eq(sources.userId, userId)),
+    columns: { id: true },
+  });
+  if (!ownedSource) throw new Error("Source not found");
 
   try {
     await db

@@ -16,7 +16,9 @@
  */
 
 "use client";
-import { useState, useEffect } from "react";
+import { CAPACITIES_ENABLED } from "@/lib/capacities-availability";
+import { CapacitiesConnection } from "@/components/CapacitiesConnection";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -32,13 +34,6 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import {
   createEmptyProfile,
@@ -80,15 +75,13 @@ import {
 import { HeadingBlur } from "@/components/HeadingBlur";
 import { Progress } from "@/components/ui/progress";
 
-type CapacitiesSpaceItem = {
-  id: string;
-  value: string;
-  label: string;
-};
-
 type UnearhtedKey = z.infer<typeof selectUnearthedKeySchema>;
 
 export function ProfileForm() {
+  const [settingsTab, setSettingsTab] = useState("general");
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has("capacities")) setSettingsTab("capacities");
+  }, []);
   const [isDialogNotionOpen, setIsDialogNotionOpen] = useState(false);
   const [isDialogNotionRemoveOpen, setIsDialogNotionRemoveOpen] =
     useState(false);
@@ -100,11 +93,8 @@ export function ProfileForm() {
   const [newKeyName, setNewKeyName] = useState("");
   const [unearthedKeys, setUnearthedKeys] = useState<UnearhtedKey[]>([]);
   const [notionWorkspace, setNotionWorkspace] = useState("");
-  const [displayCapacitiesSpaces, setDisplayCapacitiesSpaces] = useState<
-    CapacitiesSpaceItem[]
-  >([]);
   const [loadingDefaultValues, setLoadingDefaultValues] = useState(true);
-  let isFetched = false;
+  const isFetched = useRef(false);
   const [profileExists, setProfileExists] = useState(false);
   const [aiPercentageUsed, setAiPercentageUsed] = useState(0);
   const [aiDaysLeft, setAiDaysLeft] = useState(0);
@@ -125,8 +115,6 @@ export function ProfileForm() {
     resolver: zodResolver(schema),
     defaultValues: {
       dailyEmails: false,
-      capacitiesSpaceId: "",
-      capacitiesApiKey: "",
       supernotesApiKey: "",
       aiApiKey: "",
       aiApiUrl: "",
@@ -134,7 +122,7 @@ export function ProfileForm() {
     },
   });
 
-  async function fetchProfileData() {
+  const fetchProfileData = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await getSettings();
@@ -142,29 +130,15 @@ export function ProfileForm() {
       if (data) {
         setNotionWorkspace(data.notionWorkspace);
 
-        let toSetCapacitiesSpace: CapacitiesSpaceItem[] = [];
-        if (Array.isArray(data.capicitiesSpaces)) {
-          toSetCapacitiesSpace = data.capicitiesSpaces.map(
-            (space: { id: string; title: string }) => ({
-              id: space.id,
-              value: space.id,
-              label: space.title,
-            })
-          );
-        }
-        setDisplayCapacitiesSpaces(toSetCapacitiesSpace);
         setUnearthedKeys(data.unearthedKeys);
 
         if (data.profile.userId) {
           setProfileExists(true);
           setUserId(data.profile.userId);
         }
-        console.log(data);
 
         form.reset({
           dailyEmails: data.profile.dailyEmails || false,
-          capacitiesSpaceId: data.profile.capacitiesSpaceId || "",
-          capacitiesApiKey: data.profile.capacitiesApiKey || "",
           supernotesApiKey: data.profile.supernotesApiKey || "",
           aiApiKey: data.profile.aiApiKey || "",
           aiApiUrl: data.profile.aiApiUrl || "",
@@ -191,14 +165,14 @@ export function ProfileForm() {
       setLoadingDefaultValues(false);
       setIsLoading(false);
     }
-  }
+  }, [form]);
 
   useEffect(() => {
-    if (!isFetched) {
-      fetchProfileData();
-      isFetched = true;
+    if (!isFetched.current) {
+      isFetched.current = true;
+      void fetchProfileData();
     }
-  }, []);
+  }, [fetchProfileData]);
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
     setIsSaving(true);
@@ -228,9 +202,6 @@ export function ProfileForm() {
     } finally {
       setIsSaving(false);
 
-      if (form.getValues("capacitiesApiKey")) {
-        fetchProfileData();
-      }
     }
   };
   const generateNewKey = async (name: string) => {
@@ -320,7 +291,7 @@ export function ProfileForm() {
 
   const startNewNotionConnection = () => {
     toast({
-      title: "Notion Re-connection Started",
+      title: "Notion Reconnection Started",
       description:
         "Follow the instructions on the Notion page to finish syncing.",
     });
@@ -396,7 +367,7 @@ export function ProfileForm() {
           }}
           className="w-full space-y-6"
         >
-          <Tabs defaultValue="general" className="w-full">
+          <Tabs value={settingsTab} onValueChange={setSettingsTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
               <TabsTrigger className="text-xs" value="general">
                 General
@@ -405,7 +376,7 @@ export function ProfileForm() {
                 Notion
               </TabsTrigger>
               <TabsTrigger className="text-xs" value="capacities">
-                Capacities
+                Capacities{!CAPACITIES_ENABLED && <span className="ml-1 text-[10px]">· Coming soon</span>}
               </TabsTrigger>
               <TabsTrigger className="text-xs" value="supernotes">
                 Supernotes
@@ -480,9 +451,10 @@ export function ProfileForm() {
                                   <Button
                                     type="button"
                                     variant="destructivebrutal"
+                                    size="icon"
                                     onClick={() => toggleDialog(key.id, true)}
                                   >
-                                    <Trash />
+                                    <Trash className="h-4 w-4" />
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
@@ -538,9 +510,10 @@ export function ProfileForm() {
                           <Button
                             type="button"
                             variant="brutal"
+                            size="icon"
                             onClick={copyUnearthedApiKey}
                           >
-                            <Copy />
+                            <Copy className="h-4 w-4" />
                           </Button>
                         </div>
                       </div>
@@ -574,9 +547,10 @@ export function ProfileForm() {
                         <Button
                           type="button"
                           variant="brutal"
+                          size="icon"
                           onClick={copyUserId}
                         >
-                          <Copy />
+                          <Copy className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -734,117 +708,7 @@ export function ProfileForm() {
                 </CardContent>
               </Card>
             </TabsContent>
-            <TabsContent value="capacities">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex">
-                    <div className="w-full">Capacities</div>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            className="-mt-3"
-                            type="button"
-                            onClick={toggleSecrets}
-                          >
-                            {showingSecrets ? <EyeOff /> : <Eye />}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
-                          <p>
-                            {showingSecrets
-                              ? "Hide all secrets"
-                              : "Show all secrets"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </CardTitle>
-                  <CardDescription>
-                    Don&apos;t forget to press{" "}
-                    <span className="text-secondary">Save</span>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="">
-                  <FormField
-                    control={form.control}
-                    name="capacitiesApiKey"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Capacities API Key</FormLabel>
-                        <FormControl>
-                          <Input
-                            type={showingSecrets ? "text" : "password"}
-                            placeholder="Capacities API Key"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Generate an API token in Capacities and paste it here
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="mt-2">
-                    <VideoDialog
-                      videoUrl="https://www.youtube.com/embed/0gm0d3-EC7A?si=7V9Hr9hmV8q8RiYh"
-                      videoTitle="Capacities Instructions"
-                      videoDescription="Instructions for getting your Daily Reflection into Capacities"
-                      videoButtonText="Watch Capacities Video"
-                    />
-                  </div>
-
-                  {displayCapacitiesSpaces.length > 0 && (
-                    <FormField
-                      control={form.control}
-                      name="capacitiesSpaceId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Capacities Space</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value || ""}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a Capacities Space to link to" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {displayCapacitiesSpaces.map((space) => (
-                                <SelectItem key={space.id} value={space.id}>
-                                  {space.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormDescription>
-                            This will be the Capacities space that we link to.
-                            <br />
-                            It is at the top-left in the Capacities App
-                          </FormDescription>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
-                </CardContent>
-                <CardFooter>
-                  <div className="w-full flex justify-end">
-                    <Button
-                      className="w-24"
-                      variant="brutalprimary"
-                      type="submit"
-                      disabled={isSaving}
-                    >
-                      {isSaving ? "Saving..." : "Save"}
-                    </Button>
-                  </div>{" "}
-                </CardFooter>
-              </Card>
-            </TabsContent>{" "}
+            <TabsContent value="capacities"><CapacitiesConnection premium /></TabsContent>{" "}
             <TabsContent value="supernotes">
               <Card>
                 <CardHeader>
@@ -960,8 +824,8 @@ export function ProfileForm() {
                     </TooltipProvider>
                   </CardTitle>
                   <CardDescription>
-                    Use Unearthed&apos;s built in AI or hook up your preferred
-                    AI provider here
+                    Use Unearthed&apos;s built in AI or connect your own
+                    AI provider
                     <br />
                     Don&apos;t forget to press{" "}
                     <span className="text-secondary">Save</span>
@@ -979,7 +843,7 @@ export function ProfileForm() {
                   </div>
                   <div className="flex justify-center">
                     <div className="my-4 w-full flex justify-center max-w-[500px]">
-                      <HeadingBlur content="Your account comes with AI built in, but there is a limit. Your usage gets reset back to 0 every month. Or feel free to use your own OpenAI compatible provider." />
+                      <HeadingBlur content="Your account includes a monthly AI allowance. You can also connect your own provider using the OpenAI Chat Completions format. Your provider’s charges and usage limits will apply." />
                     </div>
                   </div>
 
@@ -992,7 +856,7 @@ export function ProfileForm() {
                     />
                   </div> */}
                   <h3 className="font-bold text-secondary px-0 md:px-24 text-center">
-                    Leave all fields below here empty if you would like to use
+                    Leave these fields empty to use
                     Unearthed&apos;s built in AI
                   </h3>
                   <FormField

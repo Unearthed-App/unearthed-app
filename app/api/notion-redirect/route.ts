@@ -80,9 +80,6 @@ export async function GET(request: NextRequest): Promise<Response> {
   posthogClient.capture({
     distinctId: userId,
     event: `notion-redirect`,
-    properties: {
-      code,
-    },
   });
   if (!code) {
     return NextResponse.json(
@@ -146,10 +143,7 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     posthogClient.capture({
       distinctId: userId,
-      event: `notion-redirect`,
-      properties: {
-        data,
-      },
+      event: `notion-redirect authorised`,
     });
 
     if (!data.access_token) {
@@ -219,14 +213,12 @@ export async function GET(request: NextRequest): Promise<Response> {
 
       const sourceChunks = [sourcesOne, sourcesTwo, sourcesThree, sourcesFour];
 
-      console.log("sourceChunks", sourceChunks);
 
       const nonEmptyChunks = sourceChunks.filter(
         (chunk): chunk is NonNullable<typeof chunk> =>
           Array.isArray(chunk) && chunk.length > 0
       );
 
-      console.log("nonEmptyChunks", nonEmptyChunks);
 
       for (let i = 0; i < nonEmptyChunks.length; i++) {
         const toInsert: NotionSourceJobsOneInsert[] = nonEmptyChunks[i].map(

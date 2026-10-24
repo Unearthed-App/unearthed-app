@@ -17,6 +17,7 @@
 
 "use client";
 
+import { CAPACITIES_REFLECTION_FEATURE } from "@/lib/capacities-availability";
 import { ProductComparisonCard } from "./ProductComparisonCard";
 import { Checkout } from "./Checkout";
 import { CheckoutLocal } from "./CheckoutLocal";
@@ -41,15 +42,15 @@ const MobileNestedCard = () => (
       </span>
     </div>
     <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
-      A companion app for Unearthed Local that keeps your full reading library on your phone — synced locally over Wi-Fi. No cloud. No subscription.
+      A companion app for Unearthed Local that keeps your full reading library on your phone: synced locally over Wi-Fi. No cloud. No subscription.
     </p>
     <ul className="space-y-1.5 mb-4">
       {[
         "Browse Kindle & KOReader highlights offline",
         "Capture physical book quotes with your camera",
-        "RSS feeds & read-it-later",
+        "RSS feeds & read it later",
         "Daily Reflection on your phone",
-        "One-time purchase · unlimited personal devices",
+        "One time purchase · unlimited personal devices",
       ].map((f) => (
         <li key={f} className="flex items-start gap-2 text-sm text-foreground/80">
           <span className="w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0 mt-1.5" />
@@ -72,27 +73,27 @@ const MobileNestedCard = () => (
 export const LoggedInHome = () => {
   const localProduct = {
     title: "Unearthed Local",
-    subtitle: "Privacy-first desktop application",
+    subtitle: "Privacy first desktop application",
     pricing: {
       amount: "$13",
       model: "one-time",
       description: "Buy once, keep forever",
     },
     features: [
-      "Complete privacy — all data stored locally in SQLite, never leaves your machine",
+      "Your library is stored on your computer. You choose what to export or sync",
       "No unearthed.app account required",
       "No monthly fees or subscriptions",
-      "Kindle highlights imported via built-in browser — auto-syncs hourly in background",
-      "KOReader wireless sync — built-in API server, no USB cable needed",
-      "RSS feeds & YouTube channels — subscribe and read full articles in-app",
-      "Article highlighting, notes, and copy-to-clipboard",
-      "Read It Later — bookmark articles, filter to saved-only view",
+      "Kindle highlights imported via built in browser: auto syncs hourly in background",
+      "KOReader wireless sync: built in API server, no USB cable needed",
+      "RSS feeds & YouTube channels: subscribe and read full articles in app",
+      "Article highlighting, notes, and copy to clipboard",
+      "Read It Later: bookmark articles, filter to saved only view",
       "Obsidian export with customisable Markdown templates",
-      "Daily Reflection — random quote inserted into your Obsidian daily note",
-      "Global Search — Cmd+K across all books, quotes, notes, and articles",
-      "System-wide shortcuts — import a URL from anywhere, even when minimised",
+      "Daily Reflection: random quote inserted into your Obsidian daily note",
+      "Global Search: Cmd+K across all books, quotes, notes, and articles",
+      "System wide shortcuts: import a URL from anywhere, even when minimised",
       "55+ keyboard shortcuts for fast navigation and insertion",
-      "Cross-platform: Windows, macOS, Linux",
+      "Cross platform: Windows, macOS, Linux",
       "Run in background or from the menu bar",
       "Free updates within major version",
     ],
@@ -112,7 +113,7 @@ export const LoggedInHome = () => {
 
   const onlineProduct = {
     title: "Unearthed Online",
-    subtitle: "Full-featured cloud solution",
+    subtitle: "Full featured cloud solution",
     pricing: {
       amount: "$5",
       model: "per month",
@@ -128,7 +129,7 @@ export const LoggedInHome = () => {
       "Daily Reflection in Unearthed",
       "Daily Reflection sent to Obsidian",
       "Daily Reflection sent to Supernotes",
-      "Daily Reflection sent to Capacities",
+      CAPACITIES_REFLECTION_FEATURE,
       "Daily Reflection emailed to you",
       "KOReader highlights and notes imported",
       "Interactive map to visualize connections between books, quotes, notes, and tags",

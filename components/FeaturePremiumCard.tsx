@@ -15,6 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { CAPACITIES_ENABLED, CAPACITIES_REFLECTION_FEATURE } from "@/lib/capacities-availability";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SignUpButton } from "@clerk/nextjs";
@@ -37,15 +38,15 @@ export function FeaturePremiumCard({
         <div className="p-4 border-2 rounded-lg md:max-w-[600px] bg-card">
           <div className="flex space-x-2 items-center text-secondary">
             <Crown className="w-8 h-8 text-primary" />
-            <h1 className={crimsonPro.className + " font-extrabold text-4xl"}>
+            <h2 className={crimsonPro.className + " font-extrabold text-4xl"}>
               Unearthed Online
-            </h1>
+            </h2>
           </div>
           <Separator className="bg-muted my-2" />
           <div className="flex">
-            <h1 className={crimsonPro.className + " font-extrabold text-3xl"}>
+            <p className={crimsonPro.className + " font-extrabold text-3xl"}>
               $5/mo
-            </h1>
+            </p>
             <div className="pl-4">
               <p className="text-sm">Secure Stripe payments</p>
               <p className="text-sm">Cancel anytime</p>
@@ -61,7 +62,7 @@ export function FeaturePremiumCard({
           <CheckItemSmall content="Daily Reflection in Unearthed" />
           <CheckItemSmall content="Daily Reflection sent to Obsidian" />
           <CheckItemSmall content="Daily Reflection sent to Supernotes" />
-          <CheckItemSmall content="Daily Reflection sent to Capacities" />
+          {CAPACITIES_ENABLED ? <CheckItemSmall content={CAPACITIES_REFLECTION_FEATURE} /> : <p className="my-2 text-sm font-semibold text-muted-foreground">{CAPACITIES_REFLECTION_FEATURE}</p>}
           <CheckItemSmall content="Daily Reflection emailed to you" />
           <CheckItemSmall content="KOReader highlights and notes imported" />
           <CheckItemSmall content="Interactive map to visualise connections between books, quotes, notes, and tags" />
@@ -85,7 +86,7 @@ export function FeaturePremiumCard({
           {showButtons && (
             <Link href="/dashboard/get-premium">
               <Button
-                variant="brutalprimary"
+                variant="marketing"
                 className={`mt-2 w-full ${buttonClassName ?? ""}`}
               >
                 <span className="hover:motion-preset-confetti">

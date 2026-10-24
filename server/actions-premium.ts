@@ -57,7 +57,7 @@ type Media = z.infer<typeof insertMediaSchema>;
 type Profile = z.infer<typeof insertProfileSchema>;
 import { utapi } from "@/server/uploadthing";
 import { extractNumber, splitArray } from "@/lib/utils";
-import { capicitiesGetSpaces, getProfile, getUnearthedKeys } from "./actions";
+import { getProfile, getUnearthedKeys } from "./actions";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 interface ImageFile {
@@ -349,6 +349,13 @@ export const updateBookImage = async (file: ImageFile, source: Source) => {
     throw new Error("User not allowed");
   }
 
+  const ownedSource = await db.query.sources.findFirst({
+    where: and(eq(sources.id, source.id), eq(sources.userId, userId)),
+    columns: { mediaId: true },
+  });
+  if (!ownedSource) throw new Error("Source not found");
+  source = { ...source, mediaId: ownedSource.mediaId };
+
   try {
     const toInsert: Media = {
       appUrl: file.appUrl,
@@ -419,6 +426,13 @@ export const deleteBookImage = async (source: Source) => {
   if (!isPremium) {
     throw new Error("User not allowed");
   }
+
+  const ownedSource = await db.query.sources.findFirst({
+    where: and(eq(sources.id, source.id), eq(sources.userId, userId)),
+    columns: { mediaId: true },
+  });
+  if (!ownedSource) throw new Error("Source not found");
+  source = { ...source, mediaId: ownedSource.mediaId };
 
   try {
     if (source.mediaId) {
@@ -806,6 +820,24 @@ export const createTagsFromIdeas = async (
       ideas = [];
     }
 
+    if (!ideas.length) return { success: true, tags: [] };
+
+    if (sourceId) {
+      const ownedSource = await db.query.sources.findFirst({
+        where: and(eq(sources.id, sourceId), eq(sources.userId, userId)),
+        columns: { id: true },
+      });
+      if (!ownedSource) throw new Error("Source not found");
+
+      const requestedQuotes = [...new Set(ideas.flatMap((idea) => idea.quoteIds || []))];
+      if (requestedQuotes.length) {
+        const ownedQuotes = await db.select({ id: quotes.id }).from(quotes).where(
+          and(eq(quotes.userId, userId), eq(quotes.sourceId, sourceId), inArray(quotes.id, requestedQuotes))
+        );
+        if (ownedQuotes.length !== requestedQuotes.length) throw new Error("Quote not found");
+      }
+    }
+
     // First, check for existing tags with matching titles
     const ideaTitles = ideas.map((idea) => idea.tag);
     const existingTags = await db
@@ -1064,6 +1096,12 @@ export const updateQuoteTags = async (quoteId: string, tagIds: string[]) => {
   if (!isPremium) {
     throw new Error("User not allowed");
   }
+
+  const ownedQuote = await db.query.quotes.findFirst({
+    where: and(eq(quotes.id, quoteId), eq(quotes.userId, userId)),
+    columns: { id: true },
+  });
+  if (!ownedQuote) throw new Error("Quote not found");
 
   try {
     // Verify that all tags exist and belong to the user
@@ -1361,8 +1399,7 @@ export const getSettings = async () => {
   }
 
   const profile = await getProfile();
-  const capicitiesSpaces = await capicitiesGetSpaces(profile);
-  const unearthedKeys = await getUnearthedKeys(profile);
+  const unearthedKeys = await getUnearthedKeys();
 
   const notionAuthData = JSON.parse(profile.notionAuthData || "{}");
 
@@ -1370,7 +1407,6 @@ export const getSettings = async () => {
 
   return {
     profile,
-    capicitiesSpaces,
     unearthedKeys,
     notionWorkspace: notionAuthData.workspace_name || "",
     aiPercentageUsed,

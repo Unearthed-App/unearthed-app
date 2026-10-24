@@ -1,0 +1,973 @@
+/**
+ * Copyright (C) 2026 Unearthed App
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+"use client";
+
+import React from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import {
+  Cog,
+  FolderDot,
+  Link,
+  Lightbulb,
+  BookUserIcon,
+  FileText,
+  Palette,
+  Sparkles,
+  Monitor,
+  Keyboard,
+  Notebook,
+} from "lucide-react";
+
+function SettingSection({
+  id,
+  icon: Icon,
+  title,
+  children,
+}: {
+  id: string;
+  icon: React.ElementType;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section id={id} className="scroll-mt-20">
+      <div className="flex items-start gap-3 mb-3">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+          <Icon className="h-4 w-4 text-primary" />
+        </div>
+        <div>
+          <h3 className="font-semibold">{title}</h3>
+        </div>
+      </div>
+      <div className="text-sm text-muted-foreground space-y-3 ml-11">
+        {children}
+      </div>
+    </section>
+  );
+}
+
+function CodeInline({ children }: { children: React.ReactNode }) {
+  return (
+    <code className="text-xs bg-primary/10 px-1 py-0.5 rounded font-mono">
+      {children}
+    </code>
+  );
+}
+
+function SettingItem({
+  name,
+  defaultValue,
+  description,
+  tips,
+}: {
+  name: string;
+  defaultValue?: string | boolean;
+  description: string;
+  tips?: string[];
+}) {
+  return (
+    <div className="rounded-lg border bg-card p-3 space-y-1.5">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-sm font-medium">{name}</p>
+        {defaultValue !== undefined && (
+          <Badge variant="outline" className="text-[10px] shrink-0">
+            Default: {String(defaultValue)}
+          </Badge>
+        )}
+      </div>
+      <p className="text-xs text-muted-foreground">{description}</p>
+      {tips && tips.length > 0 && (
+        <ul className="list-disc list-inside text-xs text-muted-foreground space-y-0.5 mt-2">
+          {tips.map((tip, i) => (
+            <li key={i}>{tip}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold tracking-tight mb-2">Settings Guide</h1>
+      <p className="text-muted-foreground mb-8">
+        Complete reference for all Unearthed Local settings and configuration
+        options.
+      </p>
+
+      <div className="space-y-10">
+        {/* General Settings */}
+        <SettingSection id="general" icon={Cog} title="General">
+          <SettingItem
+            name="Keep App Running in Background"
+            defaultValue={true}
+            description="When enabled, closing the window minimizes to system tray instead of quitting the app."
+            tips={[
+              "Useful for auto-sync and keeping the KOReader API server running",
+              "Access the app from the system tray icon",
+              "Right click tray icon to fully quit",
+            ]}
+          />
+
+          <SettingItem
+            name="Private Mode"
+            defaultValue={false}
+            description="Masks sensitive file paths and data in the UI and error messages for screen sharing or recording."
+            tips={[
+              "Hides Obsidian vault paths, API URLs, and database paths",
+              "Useful when creating tutorials or sharing screenshots",
+            ]}
+          />
+
+          <SettingItem
+            name="Run on System Startup"
+            defaultValue={true}
+            description="Automatically launch Unearthed when you log into your computer."
+            tips={[
+              "Windows: Managed via in app toggle",
+              "macOS: Use Dock → Options → Open at Login (no in app setting)",
+              "Linux: Creates .desktop file in ~/.config/autostart/",
+            ]}
+          />
+
+          <SettingItem
+            name="Enable System Global Shortcuts"
+            defaultValue={false}
+            description="Register system wide keyboard shortcuts so Unearthed responds even when the app is minimized or another application is in focus."
+            tips={[
+              "Unlocks Quick Import (Ctrl/Cmd+Shift+I) and Go to RSS Feeds (Ctrl/Cmd+Shift+O) from any app",
+              "macOS: Accessibility permissions required : grant in System Preferences → Privacy & Security → Accessibility",
+              "If a shortcut conflicts with another app, reassign it in Settings → Keyboard Shortcuts",
+              "Works best combined with Keep App Running in Background",
+            ]}
+          />
+        </SettingSection>
+
+        {/* macOS Dock */}
+        <SettingSection id="macos-dock" icon={Monitor} title="macOS Dock">
+          <SettingItem
+            name="Show in Dock"
+            defaultValue={true}
+            description="macOS only. When disabled, the app runs solely from the menu bar without a Dock icon."
+            tips={[
+              "Automatically enables 'Keep App Running in Background' when disabled",
+              "The tray/menu bar icon is used to access the app instead",
+              "This setting only appears on macOS",
+            ]}
+          />
+        </SettingSection>
+
+        {/* Keyboard Shortcuts */}
+        <SettingSection
+          id="keyboard-shortcuts"
+          icon={Keyboard}
+          title="Keyboard Shortcuts"
+        >
+          <p>
+            All keyboard shortcuts in Unearthed Local are fully customisable.
+            Remap any shortcut to your preferred key combination : your custom
+            bindings are saved automatically and take effect immediately.
+          </p>
+
+          <SettingItem
+            name="Custom Keyboard Shortcuts"
+            description="Click any shortcut in the list to remap it. Press your desired key combination (including modifier keys like Ctrl, Shift, or Alt) and save."
+            tips={[
+              "Open via Settings → Keyboard Shortcuts, or press Ctrl/Cmd + /",
+              "Supports modifier combinations: Ctrl/Cmd, Shift, Alt",
+              "Changes apply instantly : no restart required",
+              "Your shortcuts are saved for the next time you open Unearthed",
+              "Use 'Reset' to restore any shortcut to its default binding",
+            ]}
+          />
+
+          <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
+            <p className="text-xs font-medium mb-1">55+ shortcuts available</p>
+            <p className="text-xs text-muted-foreground">
+              Shortcuts cover every part of the app: global navigation, Home
+              tab, RSS Feeds tab, Kindle tab, Library tab, Search Modal, Article
+              Viewer, and Article Highlighter. See the{" "}
+              <a
+                href="/local-docs/features#keyboard"
+                className="text-primary hover:underline"
+              >
+                Features &rarr; Keyboard Shortcuts
+              </a>{" "}
+              page for the complete reference.
+            </p>
+          </div>
+        </SettingSection>
+
+        {/* API Endpoint */}
+        <SettingSection id="api" icon={Link} title="API Endpoint">
+          <p>
+            Unearthed runs two local servers for device connections. Connection
+            details : including IP address, port, and copy buttons : are
+            displayed automatically in Settings based on your network.
+          </p>
+
+          <SettingItem
+            name="KOReader / iOS Connection (Port 6543 : HTTPS)"
+            description="Secure HTTPS endpoint for KOReader e-readers and the Unearthed iOS app: iOS requires HTTPS and a trusted certificate."
+            tips={[
+              "Format: https://[IP_ADDRESS]:6543",
+              "Copy button available next to each URL",
+              "iOS users: download and trust the certificate shown in Settings before connecting",
+              "KOReader users: use this port and URL in the Unearthed plugin settings",
+            ]}
+          />
+
+          <SettingItem
+            name="Android Connection (Port 6545 : HTTP)"
+            description="Plain HTTP endpoint for Android devices. Android Chrome blocks self signed HTTPS certificates, so this separate port avoids the certificate trust step entirely."
+            tips={[
+              "Format: http://[IP_ADDRESS]:6545",
+              "In the Unearthed mobile app on Android, enter port 6545 (not 6543)",
+              "No certificate installation required on Android",
+            ]}
+          />
+
+          <SettingItem
+            name="Secret Token"
+            // defaultValue=""
+            description="Authentication token that KOReader and the mobile app must provide to connect."
+            tips={[
+              "Can be any text you choose",
+              "Must match exactly in KOReader plugin settings and the mobile app",
+              "Use the Generate button to create a secure random token",
+              "Leave empty to disable authentication (not recommended)",
+            ]}
+          />
+        </SettingSection>
+
+        {/* Obsidian Settings */}
+        <SettingSection id="obsidian" icon={FolderDot} title="Obsidian">
+          <SettingItem
+            name="Location"
+            // defaultValue=""
+            description="The folder where your Obsidian vault is located. This is where the Root Folder will be created."
+            tips={[
+              "Use the Browse button to select your vault folder",
+              "Must have write permissions to this location",
+              "Can be any folder, doesn't have to be an Obsidian vault",
+            ]}
+          />
+
+          <SettingItem
+            name="Root Folder"
+            defaultValue="Unearthed"
+            description="The main folder name created inside your vault location where all books will be organized."
+            tips={[
+              "Books are organized as: [Location]/[Root Folder]/Books/",
+              "Articles go in: [Location]/[Root Folder]/Articles/",
+              "Change this to match your vault structure",
+            ]}
+          />
+
+          <SettingItem
+            name="Auto Export to Obsidian"
+            defaultValue={true}
+            description="Automatically export all highlights and notes to your Obsidian vault every hour and after manual Kindle refresh."
+            tips={[
+              "Requires an Obsidian vault location to be configured",
+              "Exports are generated from Unearthed's local database; Obsidian edits are not sent back to Kindle",
+              "Unearthed managed highlight sections may be updated on export while user-authored sections are preserved",
+              "Runs alongside Auto Fetch from Kindle for a fully automated pipeline after the first Kindle sync",
+              "Also controls whether manual Refresh Kindle Books sends refreshed Kindle data to Obsidian automatically",
+              "The first Kindle sync is imported locally only and is not automatically exported, so you can review new Kindle sources before sending them to Obsidian",
+            ]}
+          />
+
+          <SettingItem
+            name="Include Article Content in Obsidian Export"
+            defaultValue={false}
+            description="When enabled, the full article content is exported alongside your quotes and notes when exporting articles to Obsidian."
+            tips={[
+              "Only applies to articles (RSS / Web Page imports), not Kindle books",
+              "Disabled by default : enable if you want a full local copy of article text in your vault",
+              "Article HTML is converted to readable Markdown before export",
+              "Article content is appended after the quotes section in the exported Markdown file",
+            ]}
+          />
+
+          <SettingItem
+            name="Add a personal notes section to new Obsidian source files"
+            defaultValue={false}
+            description="Adds a protected user written notes section to newly created Obsidian source files."
+            tips={[
+              "Disabled by default",
+              "Use it for summaries, personal commentary, or reading notes that should not be regenerated from Kindle",
+              "Only added to new source files; existing files are not rewritten automatically",
+              "You can choose the section title with the Personal Notes Section Title setting",
+            ]}
+          />
+
+          <SettingItem
+            name="Personal Notes Section Title"
+            defaultValue="Personal Notes"
+            description="The heading used for the optional personal notes section in new Obsidian source files."
+            tips={[
+              "Only appears when the personal notes section setting is enabled",
+              "Falls back to Personal Notes if left blank",
+              "Content in this section is preserved during normal exports and rebuilds",
+            ]}
+          />
+
+          <SettingItem
+            name="Rebuild Obsidian Notes"
+            description="Regenerates Unearthed managed highlight sections from the local database while preserving content outside managed highlight blocks."
+            tips={[
+              "Run manually from Settings → Obsidian when you want to repair old formatting or regenerate all notes",
+              "Per-source rebuild is also available from the source row in the Library/Sources tab",
+              "Rebuild is opt-in and does not run automatically on upgrade",
+              "Useful after changing templates, color settings, or note formatting behavior",
+            ]}
+          />
+        </SettingSection>
+
+        {/* Craft Docs */}
+        <SettingSection id="craft" icon={Notebook} title="Craft Docs">
+          <p>
+            Export your highlights to <strong>Craft Docs</strong> alongside
+            Obsidian. Each source type (Books, Articles, etc.) becomes a Craft
+            collection in your chosen root folder, and each source becomes a row
+            whose page holds the highlights and (optionally) the article
+            content.
+          </p>
+
+          <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
+            <p className="text-xs font-medium mb-1">How to connect</p>
+            <ol className="list-decimal list-inside text-xs text-muted-foreground space-y-0.5">
+              <li>Open Craft and the space you want Unearthed to write to</li>
+              <li>
+                Click <strong>Imagine</strong> and add a new{" "}
+                <strong>API Connection</strong>
+              </li>
+              <li>
+                Name it <em>Unearthed</em>, set{" "}
+                <strong>Permission Level</strong> to{" "}
+                <strong>Read and Write</strong>, and{" "}
+                <strong>Access Mode</strong> to <strong>API Key</strong>
+              </li>
+              <li>
+                Under <strong>API Keys</strong>, click <strong>+</strong> to
+                generate a key : Craft shows the value once
+              </li>
+              <li>
+                Copy the <strong>Connection URL</strong> and the{" "}
+                <strong>API Key</strong> into the fields below
+              </li>
+              <li>
+                Click <strong>Test Connection</strong> to verify
+              </li>
+            </ol>
+          </div>
+
+          <SettingItem
+            name="Connection URL"
+            description="The Craft API connection URL from Craft → Settings → Connect to API."
+            tips={[
+              "Format: https://connect.craft.do/links/XXXXX/api/v1",
+              "Each Craft space has its own connection URL",
+            ]}
+          />
+
+          <SettingItem
+            name="API Token"
+            description="Copy the API key from your Craft connection page. Unearthed saves it securely on your computer."
+            tips={[
+              "Treat the token like a password : Craft only displays it once",
+              "Use Replace to swap the saved token, or Clear to remove it",
+              "Test Connection verifies the URL + token combination and shows the connected space name on success",
+            ]}
+          />
+
+          <SettingItem
+            name="Root Folder"
+            defaultValue="Unearthed"
+            description="Top level folder created in your Craft space. Per type collection documents (Books, Articles, etc.) and an Authors document live inside this folder."
+            tips={[
+              "Created automatically on first export if it doesn't exist",
+              "Change this to match your Craft organisation",
+            ]}
+          />
+
+          <SettingItem
+            name="Combine Sources"
+            defaultValue={true}
+            description="When enabled, all sources of the same type share a single collection (Books, Articles, etc.). When disabled, separate collections are created per type."
+            tips={[]}
+          />
+
+          <SettingItem
+            name="Include Full Article Content in Craft Export"
+            defaultValue={false}
+            description="When enabled, the full article body is prepended to the Craft document on first sync, followed by a Highlights heading."
+            tips={[
+              "Only applies to articles (RSS / Web Page imports), not Kindle books",
+              "YouTube links appear above the article text in Craft",
+              "Long articles are divided into smaller sections to fit in Craft",
+              "Content is added on the first export and is not duplicated on later syncs",
+            ]}
+          />
+
+          <SettingItem
+            name="Append Daily Reflection to Craft Daily Note"
+            defaultValue={false}
+            description="Sends today's random highlight to your Craft daily note alongside Obsidian (if configured)."
+            tips={[
+              "Your reflection is added when Unearthed opens, without pressing 'New Reflection'",
+              "Each day's reflection is sent only once, even if you restart Unearthed",
+              "A compact 'Appended to Craft' pill confirms success",
+            ]}
+          />
+
+          <SettingItem
+            name="Auto export to Craft (hourly)"
+            defaultValue={false}
+            description="Automatically sync new highlights to Craft every hour, alongside Obsidian (if configured)."
+            tips={[
+              "Toggled independently from Obsidian auto export",
+              "Requires 'Keep App Running' to continue syncing in the background",
+              "Generated from Unearthed's local database; Craft edits are not sent back to Kindle",
+              "The first Kindle sync is imported locally only and is not automatically exported, so you can review new Kindle sources before sending them to Craft",
+              "Only new or changed quotes are sent on each run (resumable sync)",
+            ]}
+          />
+
+          <SettingItem
+            name="Craft Quote Color Mode"
+            defaultValue="highlight"
+            description="How highlight colors are rendered inside Craft."
+            tips={[
+              "highlight: maps each Unearthed color to the nearest Craft palette color (yellow, blue, pink, red, green, cyan, purple, gray)",
+              "none: no color styling applied",
+              "Aqua maps to Craft cyan; orange and olive map to yellow and green respectively (Craft has no exact equivalents)",
+              "Fallback is used when Unearthed receives an unknown quote color",
+            ]}
+          />
+
+          <SettingItem
+            name="Reset Craft Sync Data"
+            description="Starts a fresh Craft export the next time you sync. Use this to restore missing highlights or reconnect your exported pages."
+            tips={[
+              "Does NOT delete anything in Craft itself",
+              "Use this if documents ended up in the wrong location, or if you deleted individual quotes in Craft and want them re-synced",
+              "If you deleted a document in Craft, empty it from Craft's Trash first so Unearthed can recreate it",
+            ]}
+          />
+
+          <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+            <p className="text-xs font-medium mb-1">Stale recovery</p>
+            <p className="text-xs text-muted-foreground">
+              If a Craft document is permanently deleted, the next export
+              recreates it and reuploads all quotes in a single pass.
+              Individual deleted blocks are detected and resynced automatically
+              : no manual reset required.
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
+            <p className="text-xs font-medium mb-1">Templates</p>
+            <p className="text-xs text-muted-foreground">
+              Craft uses the same Quote, Source, and Daily Reflection templates
+              as Obsidian (or the built in defaults). Wikilinks like{" "}
+              <CodeInline>[[Author]]</CodeInline> are stripped to plain text and
+              YAML frontmatter is converted to a Craft{" "}
+              <CodeInline>&lt;callout&gt;</CodeInline> block automatically.
+            </p>
+          </div>
+        </SettingSection>
+
+        {/* Daily Reflection */}
+        <SettingSection
+          id="daily-reflection"
+          icon={Lightbulb}
+          title="Daily Reflection"
+        >
+          <SettingItem
+            name="Daily Note Date Format"
+            defaultValue="YYYY-MM-DD"
+            description="The date format used for your Obsidian daily note filenames. Supports full moment.js-compatible token replacement."
+            tips={[
+              "Tokens: YYYY, YY, MMMM, MMM, MM, M, DD, D, Do, dddd, ddd, dd, d, DDD, DDDD, w, ww, W, WW, E, e, Q",
+              "Slashes create subfolders: YYYY/MM-MMMM/YYYY-MM-DD-dddd → 2025/02-February/2025-02-10-Monday",
+              "Escaped literals: [Week] WW → Week 06",
+              "Must match your Obsidian daily notes plugin settings",
+            ]}
+          />
+
+          <SettingItem
+            name="Daily Reflection Location"
+            // defaultValue=""
+            description="The folder where your Obsidian daily notes are stored."
+            tips={[
+              "Use Browse button to select the folder",
+              "Typically something like: YourVault/Daily Notes/",
+              "Must match your Obsidian daily notes plugin folder",
+            ]}
+          />
+
+          <SettingItem
+            name="Create Obsidian Daily Note if it doesn't exist"
+            defaultValue={false}
+            description="Automatically create a daily note file if one doesn't exist for today."
+            tips={[
+              "When disabled, Unearthed waits for you to create the note manually",
+              "When enabled, creates the file immediately on startup",
+            ]}
+          />
+
+          <SettingItem
+            name="Add Daily Reflection on Startup"
+            defaultValue={true}
+            description="Automatically append a random quote to your daily note when the app starts."
+            tips={[
+              "Works together with 'Create Daily Note' setting",
+              "If both are disabled, no automatic reflection is added",
+              "If 'Create' is off but 'Add' is on, waits for manual note creation",
+            ]}
+          />
+
+          <SettingItem
+            name="Append Under Heading"
+            description="Optional. Insert daily reflections under a specific markdown heading instead of appending at the end of the file."
+            tips={[
+              "Example: ### Daily Reflection",
+              "Finds the heading in your daily note and inserts content below it",
+              "If the heading is not found, falls back to appending at the end",
+              "Respects heading hierarchy : content is placed before the next same-level heading",
+            ]}
+          />
+
+          <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+            <p className="text-xs font-medium mb-1">
+              💡 How these work together:
+            </p>
+            <p className="text-xs text-muted-foreground">
+              If <strong>&quot;Create Daily Note&quot;</strong> is disabled but{" "}
+              <strong>&quot;Add Reflection on Startup&quot;</strong> is enabled,
+              Unearthed will wait until you create your daily note in Obsidian,
+              then automatically add the reflection to it.
+            </p>
+          </div>
+        </SettingSection>
+
+        {/* Kindle Settings */}
+        <SettingSection id="kindle" icon={BookUserIcon} title="Kindle Settings">
+          <SettingItem
+            name="Kindle URL"
+            defaultValue="https://read.amazon.com"
+            description="The URL where you'll log into Amazon to sync Kindle highlights."
+            tips={[
+              "Default works for most users",
+              "Change to your regional Amazon domain if needed (e.g., amazon.co.uk)",
+              "This is where the in app browser navigates when establishing connection",
+            ]}
+          />
+
+          <SettingItem
+            name="Auto Fetch from Kindle"
+            defaultValue={true}
+            description="Automatically fetch new highlights from Kindle every hour in the background."
+            tips={[
+              "Requires 'Keep App Running' to be enabled",
+              "Syncs silently without interrupting your work",
+              "Manual Kindle refresh is always available; Obsidian export after refresh only runs when Auto Export to Obsidian is enabled",
+              "The first Kindle sync imports locally but does not automatically export to Obsidian or Craft, giving you a chance to review and ignore sources first",
+              "Kindle refresh is one way: Unearthed pulls from Kindle into the local database and does not update Kindle",
+              "Use Skip Kindle Refresh on individual Kindle sources to keep them local while avoiding future per-book annotation fetches",
+              "Deleting a highlight in Kindle does not automatically delete the local Unearthed copy",
+            ]}
+          />
+        </SettingSection>
+
+        {/* RSS Articles */}
+        <SettingSection id="rss-auto-delete" icon={Cog} title="RSS Articles">
+          <SettingItem
+            name="Delete non-imported articles after (days)"
+            defaultValue={"7"}
+            description="Automatically remove unimported RSS articles that are older than the specified number of days to keep your feed tidy."
+            tips={[
+              "Set to 0 to keep all articles indefinitely",
+              "Only articles you have NOT imported are deleted : anything saved to your library is kept forever",
+              "Applies to all subscribed feeds",
+              "Articles are deleted silently in the background",
+            ]}
+          />
+        </SettingSection>
+
+        {/* File Name Settings */}
+        <SettingSection id="filename" icon={FileText} title="File Name">
+          <SettingItem
+            name="Source (Book) Filename Template"
+            // defaultValue="{{title}}"
+            description="Template for generating Markdown filenames from book metadata."
+            tips={[
+              "Available variables: {{title}}, {{subtitle}}, {{author}}, {{type}}, {{origin}}, {{asin}}",
+              "Example: '{{title}} - {{author}}' → 'Atomic Habits - James Clear.md'",
+              "Keep it simple to avoid filesystem issues",
+            ]}
+          />
+
+          <SettingItem
+            name="Replace Spaces In Filename With"
+            // defaultValue=" "
+            description="Character to replace spaces with in generated filenames."
+            tips={[
+              "Common options: space ' ', underscore '_', dash '-'",
+              "Use underscore for wiki-link compatibility",
+              "Leave as space for human-readable names",
+            ]}
+          />
+
+          <SettingItem
+            name="Source (Book) Filename Lowercase"
+            defaultValue={false}
+            description="Convert all filenames to lowercase."
+            tips={[
+              "Useful for consistent naming across platforms",
+              "Example: 'Atomic Habits.md' → 'atomic habits.md'",
+            ]}
+          />
+
+          <SettingItem
+            name="Include ignored books in CSV export"
+            defaultValue={false}
+            description="When exporting to CSV, include books marked as 'ignored' in a separate 'Ignored' subfolder."
+            tips={[
+              "Ignored books are excluded from Obsidian export by default",
+              "This setting only affects CSV exports",
+            ]}
+          />
+        </SettingSection>
+
+        {/* Template Settings */}
+        <SettingSection
+          id="templates"
+          icon={FileText}
+          title="Template Settings"
+        >
+          <p>
+            Customise how your exported Markdown files are formatted using
+            template variables. Leave empty to use the default templates.
+          </p>
+
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="source-template">
+              <AccordionTrigger className="text-sm">
+                Source Template
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  Controls the YAML frontmatter and header section of each book
+                  file.
+                </p>
+                <p className="font-medium">Available variables:</p>
+                <ul className="list-disc list-inside text-xs space-y-0.5">
+                  <li>
+                    <CodeInline>{`{{title}}`}</CodeInline>. Book title
+                  </li>
+                  <li>
+                    <CodeInline>{`{{subtitle}}`}</CodeInline>. Book subtitle
+                  </li>
+                  <li>
+                    <CodeInline>{`{{author}}`}</CodeInline>. Author name
+                  </li>
+                  <li>
+                    <CodeInline>{`{{type}}`}</CodeInline>. Source type (Book,
+                    Article)
+                  </li>
+                  <li>
+                    <CodeInline>{`{{origin}}`}</CodeInline>. Import source
+                    (Kindle, KOReader)
+                  </li>
+                  <li>
+                    <CodeInline>{`{{asin}}`}</CodeInline>. Amazon ASIN
+                    identifier
+                  </li>
+                </ul>
+                <div className="rounded-lg border bg-[hsl(169.4,43.6%,7.6%)] text-gray-100 p-3 mt-2">
+                  <pre className="text-xs overflow-x-auto whitespace-pre-wrap">
+                    {`---
+title: {{title}}
+author: [[{{author}}]]
+type: {{type}}
+origin: {{origin}}
+tags: [books, highlights]
+---
+
+# {{title}}
+by [[{{author}}]]`}
+                  </pre>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="quote-template">
+              <AccordionTrigger className="text-sm">
+                Quote Template
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  Controls how each individual highlight is formatted in the
+                  book file.
+                </p>
+                <p className="font-medium">Available variables:</p>
+                <ul className="list-disc list-inside text-xs space-y-0.5">
+                  <li>
+                    <CodeInline>{`{{content}}`}</CodeInline>. Styled quote with
+                    color formatting
+                  </li>
+                  <li>
+                    <CodeInline>{`{{quote}}`}</CodeInline>. Raw quote text
+                    without styling
+                  </li>
+                  <li>
+                    <CodeInline>{`{{note}}`}</CodeInline>. Your personal
+                    annotation
+                  </li>
+                  <li>
+                    <CodeInline>{`{{location}}`}</CodeInline>. Page number or
+                    location
+                  </li>
+                  <li>
+                    <CodeInline>{`{{color}}`}</CodeInline>. Highlight color
+                    name
+                  </li>
+                </ul>
+                <div className="rounded-lg border bg-[hsl(169.4,43.6%,7.6%)] text-gray-100 p-3 mt-2">
+                  <pre className="text-xs overflow-x-auto whitespace-pre-wrap">
+                    {`{{content}}
+
+{{note}}
+
+*Location: {{location}} • Color: {{color}}*
+
+---`}
+                  </pre>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="daily-template">
+              <AccordionTrigger className="text-sm">
+                Daily Reflection Template
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                <p>
+                  Controls how the random quote is formatted when added to your
+                  daily note.
+                </p>
+                <p className="font-medium">Available variables:</p>
+                <ul className="list-disc list-inside text-xs space-y-0.5">
+                  <li>All quote template variables above, plus:</li>
+                  <li>
+                    <CodeInline>{`{{bookTitle}}`}</CodeInline>. Source book
+                    title
+                  </li>
+                  <li>
+                    <CodeInline>{`{{author}}`}</CodeInline>. Source author
+                  </li>
+                  <li>
+                    <CodeInline>{`{{fileName}}`}</CodeInline>. Generated
+                    filename for linking
+                  </li>
+                </ul>
+                <div className="rounded-lg border bg-[hsl(169.4,43.6%,7.6%)] text-gray-100 p-3 mt-2">
+                  <pre className="text-xs overflow-x-auto whitespace-pre-wrap">
+                    {`---
+{{content}}
+
+**From:** {{bookTitle}} by [[{{author}}]]
+**File:** [[{{fileName}}]]
+
+---`}
+                  </pre>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </SettingSection>
+
+        {/* Quote Colors */}
+        <SettingSection id="colors" icon={Palette} title="Quote Colors">
+          <SettingItem
+            name="Quote Color Mode"
+            defaultValue="background"
+            description="How highlight colors are displayed in exported Markdown files."
+            tips={[
+              "none: No color styling applied",
+              "background: Gradient background behind text",
+              "text: Colored text only",
+            ]}
+          />
+
+          <div className="rounded-lg border bg-card p-3">
+            <p className="text-xs font-medium mb-2">Custom Color Values</p>
+            <p className="text-xs text-muted-foreground mb-3">
+              Override the default hex color values for each highlight color.
+              All 12 colors are customizable.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              {[
+                { name: "Yellow", hex: "#ffd700" },
+                { name: "Blue", hex: "#4682b4" },
+                { name: "Pink", hex: "#ff69b4" },
+                { name: "Orange", hex: "#ffa500" },
+                { name: "Red", hex: "#ff4d4f" },
+                { name: "Green", hex: "#52c41a" },
+                { name: "Olive", hex: "#b5b35c" },
+                { name: "Cyan", hex: "#13c2c2" },
+                { name: "Aqua", hex: "#05B8B8" },
+                { name: "Purple", hex: "#a259d9" },
+                { name: "Gray", hex: "#888888" },
+                { name: "Fallback", hex: "#888888" },
+              ].map((color) => (
+                <div
+                  key={color.name}
+                  className="flex items-center gap-2 rounded border p-2"
+                >
+                  <div
+                    className="h-4 w-4 rounded-sm border shrink-0"
+                    style={{ backgroundColor: color.hex }}
+                  />
+                  <div>
+                    <p className="text-[10px] font-medium">{color.name}</p>
+                    <p className="text-[9px] text-muted-foreground font-mono">
+                      {color.hex}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </SettingSection>
+
+        {/* Values to Clean */}
+        <SettingSection
+          id="clean-values"
+          icon={Sparkles}
+          title="Values to Clean"
+        >
+          <p>
+            Select which metadata fields should have special characters removed
+            or replaced during export. This helps avoid issues with filenames
+            and formatting.
+          </p>
+
+          <div className="rounded-lg border bg-card p-3 space-y-3">
+            <div>
+              <p className="text-xs font-medium mb-2">Book Fields</p>
+              <ul className="list-disc list-inside text-xs text-muted-foreground space-y-0.5">
+                <li>Title</li>
+                <li>Subtitle</li>
+                <li>Author</li>
+                <li>Type</li>
+                <li>Origin</li>
+                <li>ASIN</li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs font-medium mb-2">Quote Fields</p>
+              <ul className="list-disc list-inside text-xs text-muted-foreground space-y-0.5">
+                <li>Content (quote text)</li>
+                <li>Note (personal annotation)</li>
+                <li>Location</li>
+                <li>Color</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3">
+            <p className="text-xs font-medium mb-1">ℹ️ What gets cleaned:</p>
+            <p className="text-xs text-muted-foreground">
+              Special characters like <CodeInline>/</CodeInline>,{" "}
+              <CodeInline>\</CodeInline>, <CodeInline>:</CodeInline>,{" "}
+              <CodeInline>*</CodeInline>, <CodeInline>?</CodeInline>,{" "}
+              <CodeInline>&quot;</CodeInline>, <CodeInline>&lt;</CodeInline>,{" "}
+              <CodeInline>&gt;</CodeInline>, <CodeInline>|</CodeInline> are
+              removed or replaced to ensure compatibility with filesystems and
+              Markdown formatting.
+            </p>
+          </div>
+        </SettingSection>
+
+        {/* Database Utilities */}
+        <SettingSection id="database" icon={Cog} title="Database Utilities">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/5 p-3">
+            <p className="text-xs font-medium mb-1">⚠️ Advanced Settings</p>
+            <p className="text-xs text-muted-foreground mb-3">
+              These utilities are for troubleshooting and advanced users only.
+            </p>
+          </div>
+
+          <SettingItem
+            name="Show Database Path"
+            description="Displays the full file path to your local SQLite database."
+            tips={[
+              "Useful for manual backups or inspection",
+              "Location varies by platform (AppData on Windows, Application Support on macOS)",
+            ]}
+          />
+
+          <SettingItem
+            name="Delete Database"
+            description="Permanently removes all locally stored books and quotes."
+            tips={[
+              "⚠️ This action cannot be undone",
+              "Requires double confirmation",
+              "Use this to start fresh or troubleshoot corruption issues",
+              "You can re-sync from Kindle/KOReader after deletion",
+            ]}
+          />
+
+          <SettingItem
+            name="Purge Soft-Deleted"
+            description="Permanently removes any articles and feeds that are currently in a soft deleted state."
+            tips={[
+              "New button in Settings → General → Database utilities",
+              "Summarises exactly how many of each will be deleted before the action runs",
+              "Helps keep your database size optimized",
+            ]}
+          />
+        </SettingSection>
+
+        {/* Reset to Defaults */}
+        <div className="rounded-lg border bg-card p-4">
+          <h3 className="font-semibold mb-2">Reset All Settings</h3>
+          <p className="text-sm text-muted-foreground mb-3">
+            The settings modal includes a &quot;Reset to Defaults&quot; button
+            that restores all settings to their original values.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            This does not affect your database or exported files, only the
+            configuration settings.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

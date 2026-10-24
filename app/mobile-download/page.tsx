@@ -151,7 +151,7 @@ export default function MobileDownload() {
                 Installing the app
               </p>
               <p className="text-sm text-muted-foreground mb-3">
-                Unearthed Mobile is a PWA — it installs directly from your
+                Unearthed Mobile is a PWA: it installs directly from your
                 browser, no App Store required.
               </p>
               <PwaInstructions />

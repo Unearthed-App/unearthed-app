@@ -66,7 +66,7 @@ export default function PrivacyPolicy() {
               <li>Provide and maintain our service</li>
               <li>Process your reading highlights and notes</li>
               <li>Send you important service updates</li>
-              <li>Improve our AI-powered features</li>
+              <li>Improve our AI powered features</li>
             </ul>
           </section>
 

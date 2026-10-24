@@ -65,12 +65,8 @@ export function BookCard({
     isPending: isPendingToggleIgnoredBook,
   } = useMutation({
     mutationFn: toggleIgnoredBook,
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
+
+
   });
 
   return (

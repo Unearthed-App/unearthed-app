@@ -16,7 +16,7 @@
  */
 
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { motion } from "framer-motion";
@@ -119,6 +119,31 @@ export const ChatBotPopup = ({ book, quotes }: ChatBotPopupProps) => {
     scrollToBottom();
   }, [messages]);
 
+  const initializeNewChat = useCallback(() => {
+    if (book && quotes) {
+      const sm = `Book Context:
+Title: ${book.title}
+Author: ${book.author || "Unknown"}
+Subtitle: ${book.subtitle || "N/A"}
+Quotes:
+${quotes
+  .map(
+    (q, i) => `- "${q.content}"
+  Note: ${q.note || "N/A"}
+  Location: ${q.location || "N/A"}`
+  )
+  .join("\n")}`;
+
+      setSystemMessage(sm);
+      setMessages([
+        {
+          role: "assistant",
+          content: `Hello! I'm here to help you get the most out of "${book.title}."`,
+        },
+      ]);
+    }
+  }, [book, quotes]);
+
   useEffect(() => {
     if (!book?.id || !quotes) return;
 
@@ -142,32 +167,8 @@ export const ChatBotPopup = ({ book, quotes }: ChatBotPopupProps) => {
 
     bookIdRef.current = book.id;
     hasLoadedRef.current = true;
-  }, [book?.id]);
+  }, [book?.id, quotes, initializeNewChat]);
 
-  const initializeNewChat = () => {
-    if (book && quotes) {
-      const sm = `Book Context:
-Title: ${book.title}
-Author: ${book.author || "Unknown"}
-Subtitle: ${book.subtitle || "N/A"}
-Quotes:
-${quotes
-  .map(
-    (q, i) => `- "${q.content}"
-  Note: ${q.note || "N/A"}
-  Location: ${q.location || "N/A"}`
-  )
-  .join("\n")}`;
-
-      setSystemMessage(sm);
-      setMessages([
-        {
-          role: "assistant",
-          content: `Hello! I'm here to help you get the most out of "${book.title}."`,
-        },
-      ]);
-    }
-  };
 
   useEffect(() => {
     if (hasLoadedRef.current && book?.id) {
@@ -180,7 +181,7 @@ ${quotes
         JSON.stringify(systemMessage)
       );
     }
-  }, [messages, book?.id]);
+  }, [messages, book?.id, systemMessage]);
 
   const { mutate: sendMessage, isPending } = useMutation({
     mutationFn: async (userInput: string) => {
@@ -248,7 +249,6 @@ ${quotes
     }
 
     if (input.trim() || typeof e === "string") {
-      console.log("e 1 ", e);
       const userInput = input ? input : (e as string);
       setMessages(() => {
         return [...messages, { role: "user", content: userInput }];
@@ -294,7 +294,6 @@ ${quotes
         console.error("Failed to copy: ", err);
       }
     } else {
-      console.log("preElement not found");
     }
   };
 

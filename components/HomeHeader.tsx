@@ -41,14 +41,11 @@ export const HomeHeader = ({ ctaClassName }: { ctaClassName?: string }) => {
         <div className="grid grid-cols-1 mt-8 max-w-[630px]">
           <SignUpButton forceRedirectUrl="/dashboard/get-premium">
             <Button
-              variant="brutalprimary"
-              className={`w-full mt-2 flex px-8 sm:px-12 py-6 motion-preset-expand motion-duration-1500 motion-delay-[4000ms] min-h-[56px] touch-manipulation ${ctaClassName ?? ""}`}
-              tabIndex={-1}
+              variant="marketing"
+              className={`w-full mt-2 ${ctaClassName ?? ""}`}
             >
               <Crown className="mr-2" aria-hidden="true" />
-              <span className="text-sm sm:text-base md:text-xl uppercase">
-                Get Unearthed Online
-              </span>
+              <span className="">Get Unearthed Online</span>
             </Button>
           </SignUpButton>
         </div>
