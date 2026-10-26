@@ -23,6 +23,7 @@ export const schema = z.object({
   color: z.string().min(1, "Color is required"),
   location: z.string().min(1, "Location is required"),
   sourceId: z.string({
-    required_error: "Please select a source.",
+    error: (issue) =>
+      issue.input === undefined ? "Please select a source." : undefined,
   }),
 });

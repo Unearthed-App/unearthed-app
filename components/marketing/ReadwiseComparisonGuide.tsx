@@ -48,12 +48,12 @@ export function ReadwiseComparisonGuide({ guide }: { guide: ReadingGuide }) {
         "@context": "https://schema.org", "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Unearthed", item: SITE_URL },
-          { "@type": "ListItem", position: 2, name: "Reading guides", item: `${SITE_URL}/guides` },
+          { "@type": "ListItem", position: 2, name: "Guides", item: `${SITE_URL}/guides` },
           { "@type": "ListItem", position: 3, name: guide.title, item: `${SITE_URL}/guides/${guide.slug}` },
         ],
       }} />
       <article className={styles.article}>
-        <nav className={styles.breadcrumb} aria-label="Breadcrumb"><Link href="/" target="_blank" rel="noopener noreferrer">Unearthed</Link><span aria-hidden="true">/</span><Link href="/guides" target="_blank" rel="noopener noreferrer">Reading guides</Link><span aria-hidden="true">/</span><span>Readwise alternative</span></nav>
+        <nav className={styles.breadcrumb} aria-label="Breadcrumb"><Link href="/" target="_blank" rel="noopener noreferrer">Unearthed</Link><span aria-hidden="true">/</span><Link href="/guides" target="_blank" rel="noopener noreferrer">Guides</Link><span aria-hidden="true">/</span><span>Readwise alternative</span></nav>
         <header className={styles.hero}>
           <div className={styles.eyebrow}><span>Unearthed vs Readwise</span><span>Updated <time dateTime={guide.updatedAt}>{new Date(`${guide.updatedAt}T00:00:00Z`).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })}</time></span></div>
           <h1>A Readwise <span>alternative</span></h1>

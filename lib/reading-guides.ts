@@ -169,9 +169,8 @@ export const readingGuides: ReadingGuide[] = [
           columns: ["What you need", "Unearthed Local", "Unearthed Online"],
           rows: [
             ["Unearthed edition", "One time purchase Local app on Windows, macOS or Linux", "Hosted Online subscription"],
-            ["Kindle import", "Sign in with Amazon in Local's built in browser", "Chrome or Firefox extension with Unearthed API key and User ID"],
+            ["Kindle import", "Sign in with Amazon in Local's built in browser", "Chrome or Firefox extension"],
             ["Obsidian export", "Select a writable vault folder on the computer", "Install the Unearthed Obsidian plugin and configure its credentials"],
-            ["Obsidian Sync", "Not required to write into the local vault", "Not required for the plugin to write into its vault"],
           ],
         },
         sources: [{ label: "Amazon Kindle Notebook", href: "https://read.amazon.com/notebook" }],
@@ -189,7 +188,7 @@ export const readingGuides: ReadingGuide[] = [
       },
       {
         heading: "Online: use the open source extension and plugin",
-        text: "Choose Online if you want to keep your highlight library on the web. You’ll need an Online subscription, the browser extension for Kindle imports and the Obsidian plugin for exports.",
+        text: "Choose Online if you want to keep your highlight library on the web. This allows you to sync to Obsidian mobile also. You’ll need an Online subscription, the browser extension for Kindle imports and the Obsidian plugin for exports.",
         steps: [
           "Create an Unearthed Online account and subscribe to Online.",
           "Install the Unearthed extension for Chrome or Firefox and enter your Unearthed API key and User ID from settings. These let the extension connect to your account.",
@@ -253,37 +252,59 @@ export const readingGuides: ReadingGuide[] = [
   },
   {
     slug: "koreader-highlights",
-    updatedAt: "2026-10-24",
+    updatedAt: "2026-10-26",
     title: "Sync KOReader highlights to Obsidian, Craft or Notion",
     description:
-      "Send KOReader highlights over Wi-Fi to Unearthed, then save them in Obsidian, Craft or Notion. See the setup steps for Local and Online.",
+      "Sync KOReader highlights with Unearthed Local for Obsidian or Craft, or Unearthed Online for Obsidian or Notion. Follow separate setup steps for each app.",
     answer:
-      capacitiesText("The Unearthed KOReader plugin sends your highlights and notes wirelessly to Local or Online. From Local, you can export to Obsidian or Craft. Online works with the Obsidian plugin, syncs books to Notion, and sends daily reflections to Capacities and Supernotes.", "The Unearthed KOReader plugin sends your highlights and notes wirelessly to Local or Online. From Local, you can export to Obsidian or Craft. Online works with the Obsidian plugin, syncs books to Notion, and sends daily reflections to Supernotes. Capacities is coming soon."),
+      "The Unearthed KOReader plugin works with both Unearthed Local and Unearthed Online. Choose Unearthed Local to export highlights to Obsidian or Craft from your computer. Choose Unearthed Online to sync highlights to Obsidian through its plugin or send books to Notion. The setup paths below are alternatives: follow the one for the app you use.",
     sections: [
       {
-        heading: "Set up the KOReader plugin",
+        heading: "Choose Unearthed Local or Unearthed Online",
+                text: "Both apps receive highlights and notes made in KOReader, but their export destinations and connection requirements differ. Craft export is available in Unearthed Local; Notion sync is available in Unearthed Online. Obsidian works with either app, using a different export method.",
+                table: {
+                  caption: "KOReader support by app",
+                  columns: ["Feature", "Unearthed Local", "Unearthed Online"],
+                  rows: [
+                    ["Receive KOReader highlights and notes", "Yes, on your computer", "Yes, in your web library"],
+                    ["Obsidian", "Export directly to your vault", "Sync through the Unearthed Obsidian plugin"],
+                    ["Craft", "Direct export", "Not available"],
+                    ["Notion", "Not available", "Book sync"],
+                    ["Connection", "Keep the desktop app running and reachable from your reader", "Internet access required"],
+                    ["Credentials", "Connection URL and Local Secret from Unearthed Local", "API key and User ID from Unearthed Online"],
+                  ],
+                },
+              },
+              {
+                heading: "Install the KOReader plugin for either app",
         text: "Follow the plugin’s installation instructions on GitHub. You need to be reading in KOReader, rather than the default reader that came with your Kindle or Kobo.",
         steps: [
           "Install Unearthed.koplugin in KOReader’s plugins folder and restart KOReader.",
           "Enable Unearthed in Plugin Management if needed.",
           "Set Book Location to the folder containing your books and their .sdr folders, where KOReader saves highlights and reading progress.",
-          "For Online, enter the Unearthed API key and User ID. For Local, copy the connection URL and Local Secret from your desktop setup.",
-          "Close the current book so KOReader saves its highlights and notes, then use Send Books and check the received highlights.",
+          "Choose one of the connection paths below: Unearthed Local or Unearthed Online.",
         ],
       },
       {
-        heading: "Keep the connection working",
-        text: "For Local, keep the desktop app running and make sure your reader can connect to that computer. Copy the connection details from Local settings. Online syncing requires internet access. Startup and hourly sync options are available in the plugin.",
+        heading: "Connect KOReader to Unearthed Online",
+        text: "Use this path for a web library with Obsidian plugin sync or Notion book sync. Your reader needs internet access; the Unearthed Local desktop app is not required for this path.",
+        steps: [
+          "Get your API key and User ID from Unearthed Online.",
+          "Enter the API key and User ID in the KOReader plugin’s settings for Unearthed Online. These are not the connection URL or Local Secret used by Unearthed Local.",
+          "Close the current book so KOReader saves its highlights and notes, then choose Send Books.",
+          "Check that the book and its highlights appear in Unearthed Online.",
+          "Use the Unearthed Obsidian plugin to sync to your vault, or configure the Notion connection in Unearthed Online to sync books to Notion.",
+        ],
       },
       {
-        heading: "Example: a KOReader book into an Obsidian vault",
-        text: "You’ll need KOReader installed on your reader and Unearthed Local running on your computer. Connect both devices to the same local network, then follow these steps to send a highlight to Obsidian.",
+        heading: "Connect KOReader to Unearthed Local",
+        text: "Use this path for direct export to Obsidian or Craft. You’ll need KOReader installed on your reader and Unearthed Local running on your computer. Connect both devices to the same local network. This example exports to Obsidian; for Craft, configure the Craft connection in Unearthed Local instead.",
         steps: [
           "Open a book in KOReader, add a short highlight and a note, then close the book so its metadata is saved.",
-          "In Local, save a secret under API Endpoint and copy the displayed connection URL. Keep Local running.",
+          "In Unearthed Local, save a secret under API Endpoint and copy the displayed connection URL. Keep Unearthed Local running.",
           "In KOReader, open Tools → Unearthed → Local Settings. Enter that URL and the same secret; confirm the book is under General Settings → Book Location.",
-          "Choose Send Books. Your book, highlight and note should now appear in Local.",
-          "In Local, select your Obsidian vault and export the book. Check the Markdown note, then repeat with one additional highlight.",
+          "Choose Send Books. Your book, highlight and note should now appear in Unearthed Local.",
+          "In Unearthed Local, select your Obsidian vault and export the book. Check the Markdown note, then repeat with one additional highlight.",
         ],
       },
       {
@@ -292,16 +313,17 @@ export const readingGuides: ReadingGuide[] = [
       },
       {
         heading: "KOReader connection errors and quick checks",
-        text: "If you’re syncing to Local, start by checking that your reader can reach the computer and that the connection details match Local’s settings. For Online, check the API key and User ID instead.",
+        text: "For Unearthed Local, check that your reader can reach your computer and that the connection URL and Local Secret match the desktop app’s settings. For Unearthed Online, check internet access, the API key and User ID instead. Startup and hourly sync options are available in the plugin.",
         table: {
           caption: "Common KOReader sync problems",
           columns: ["Problem", "Check first"],
           rows: [
             ["Unearthed is missing from the Tools menu", "Keep the Unearthed.koplugin folder inside koreader/plugins, restart KOReader and check Plugin Management."],
-            ["Connection refused or timed out", "Keep Local running; check Wi-Fi, the displayed desktop address, guest network isolation and firewall access for the app."],
-            ["Authentication error with Local", "Save the secret in Local and use exactly the same Local Secret in KOReader. An Online API key is not the Local secret."],
+            ["Connection refused or timed out", "For Unearthed Local, keep the desktop app running and check Wi-Fi, the desktop address and firewall access. For Unearthed Online, check your reader’s internet connection."],
+            ["Authentication error with Unearthed Local", "Save the secret in Unearthed Local and use exactly the same Local Secret in KOReader. An Unearthed Online API key is not the Local Secret."],
+                        ["Authentication error with Unearthed Online", "Check the API key and User ID from Unearthed Online. Do not use the connection URL or Local Secret from Unearthed Local."],
             ["Only some books arrive", "Check the configured Book Location and its metadata folders; close the current book before sending."],
-            ["Sync stops after a network change", "Copy the current connection URL from Local again; the computer's network address may have changed."],
+            ["Sync stops after a network change", "For Unearthed Local, copy the current connection URL again; the computer’s network address may have changed. For Unearthed Online, check internet access."],
           ],
         },
       },
@@ -316,7 +338,7 @@ export const readingGuides: ReadingGuide[] = [
         label: "KOReader plugin and full setup",
         href: "https://github.com/Unearthed-App/unearthed-koreader",
       },
-      { label: "Local connection settings", href: "/local-docs/settings" },
+      { label: "Unearthed Local connection settings", href: "/local-docs/settings" },
       { label: "Obsidian setup guide", href: "/guides/kindle-to-obsidian" },
     ],
   },
@@ -359,9 +381,9 @@ export const readingGuides: ReadingGuide[] = [
           caption: "An exported library in Craft with an optional, manually added To Consume board above the Sources table.",
         },
         bullets: [
-          "The board keeps recommendations together, with views for TV, movies and books. Crime and Punishment and The Gulag Archipelago are waiting in To Consume.",
+          "The board keeps recommendations together, with views for whatever categories that you like.",
           "The columns track To Consume, Obtained and In Unearthed. You can choose your own statuses and move cards as you go; Unearthed doesn’t update the board.",
-          "The table below holds the exported library, grouped by type. Scarcity Brain has 144 quotes and 18 notes here, ready to open and revisit.",
+          "The table below holds the actual exported library from Unearthed, grouped by type.",
         ],
       },
       {
@@ -370,14 +392,14 @@ export const readingGuides: ReadingGuide[] = [
         steps: [
           "Keep a recommendation on the optional Craft board, or add it straight to Unearthed.",
           "When you start something, commit to it or finish it elsewhere, add it as a source in Unearthed. Import highlights from supported Kindle and KOReader books, or add quotes and notes manually for other media.",
-          "Save the passages, lines and observations you want to remember under that source. You don’t need to store or play the original media in Unearthed.",
-          "Export to Craft to add those quotes and notes to your Sources collection. If you’re using a board, move the recommendation to In Unearthed yourself.",
+          "Save the passages, lines and observations you want to remember under that source. You don’t need to store or play the original media in Unearthed, but you can for some source types.",
+          "Export to Craft to add those quotes and notes to your Sources collection.",
           "Come back to the Sources page to reread your notes or choose something new from your recommendations.",
         ],
       },
       {
         heading: "Send articles to Craft too",
-        text: "Local can keep RSS articles and saved web reading alongside your book highlights. You can export the full article to Craft as well as the passages you highlighted.",
+        text: "Unearthed Local can keep RSS articles and saved web reading alongside your book highlights. You can export the full article to Craft as well as the passages you highlighted.",
       },
       {
         heading: "What you need for Craft export",
@@ -466,7 +488,7 @@ export const readingGuides: ReadingGuide[] = [
     description:
       "Save web articles, read RSS and highlight your reading with Unearthed Local and Mobile. A Readwise Reader alternative for desktop and phone.",
     answer:
-      "Unearthed Local combines read it later articles and RSS with Kindle and KOReader highlights in a desktop library. You can read and highlight an article in Local, then send your notes to Obsidian or Craft. Local is a one time purchase desktop app; Unearthed Online is a separate, open source web app.",
+      "Unearthed Local combines read it later articles and RSS with Kindle and KOReader highlights in a desktop library. You can read and highlight an article in Unearthed Local, then send your notes to Obsidian or Craft. Local is a one time purchase desktop app; Unearthed Online is a separate, open source web app.",
     sections: [
       {
         heading: "Save an article and take notes",
@@ -570,7 +592,7 @@ export const readingGuides: ReadingGuide[] = [
       },
       {
         heading: "When is Local the simpler choice?",
-        text: "If you want a library on your computer with Obsidian or Craft export, Local is easier to get started with. Install the app, import your highlights and choose where to export them. You won’t need to set up or maintain a web server. Choose our hosted Online service if you want its web library and integrations without running it yourself.",
+        text: "If you want a library on your computer with Obsidian or Craft export, Local is easier to get started with. Install the app, import your highlights and choose where to export them. Choose Unearthed Online if you want Obsidian on all your devices receiving the same Unearthed data, or if you want its web library and integrations without running it yourself.",
       },
     ],
     links: [

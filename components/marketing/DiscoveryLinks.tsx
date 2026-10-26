@@ -30,7 +30,7 @@ export function DiscoveryLinks({
     >
       <div className="mx-auto max-w-5xl">
         <p className="text-xs font-bold uppercase tracking-widest text-primary">
-          Reading guides
+          Guides
         </p>
         <h2
           id="reading-guides-title"

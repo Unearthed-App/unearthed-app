@@ -28,6 +28,16 @@ function sectionId(heading: string) {
   return heading.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
+function tableColumnClass(column: string) {
+  if (column === "Unearthed Local") {
+    return "bg-[#f66e1b]/[0.10] dark:bg-[#f66e1b]/15";
+  }
+  if (column === "Unearthed Online") {
+    return "bg-[#25b1a6]/[0.10] dark:bg-[#25b1a6]/15";
+  }
+  return "";
+}
+
 export const dynamicParams = false;
 export function generateStaticParams() {
   return readingGuides.map(({ slug }) => ({ slug }));
@@ -48,7 +58,7 @@ export async function generateMetadata({
       ...metadata.openGraph,
       type: "article",
       modifiedTime: guide.updatedAt,
-      section: "Reading guides",
+      section: "Guides",
       ...(slug === "readwise-alternative" ? { images: [{ url: "/og/readwise-alternative", width: 1200, height: 630, alt: "Unearthed: a Readwise alternative for Kindle, KOReader and Obsidian" }] } : {}),
     },
     ...(slug === "readwise-alternative" ? { twitter: { ...metadata.twitter, images: ["/og/readwise-alternative"] } } : {}),
@@ -62,6 +72,12 @@ export default async function ReadingGuidePage({
   const { slug } = await params;
   const guide = readingGuides.find((item) => item.slug === slug);
   if (!guide) notFound();
+  const formatText = (text: string) => slug === "koreader-highlights"
+    ? text.split(/(Unearthed Local|Unearthed Online)/g).map((part, index) =>
+        part === "Unearthed Local" || part === "Unearthed Online"
+          ? <strong key={index}>{part}</strong>
+          : part)
+    : text;
   if (slug === "readwise-alternative") return <ReadwiseComparisonGuide guide={guide} />;
   if (guide.status === "coming-soon") {
     return (
@@ -89,7 +105,7 @@ export default async function ReadingGuidePage({
             {
               "@type": "ListItem",
               position: 2,
-              name: "Reading guides",
+              name: "Guides",
               item: `${SITE_URL}/guides`,
             },
             {
@@ -125,11 +141,11 @@ export default async function ReadingGuidePage({
           </Link>
           <span aria-hidden="true">/</span>
           <Link className="underline" href="/guides">
-            Reading guides
+            Guides
           </Link>
         </nav>
         <p className="text-xs font-bold uppercase tracking-widest text-[#075f58] dark:text-[#67d7c9]">
-          Unearthed · Reading guides
+          Unearthed · Guides
         </p>
         <p className="mt-3 text-sm text-[#1d2926]/70 dark:text-[#f3ece2]/70">
           Updated{" "}
@@ -143,7 +159,7 @@ export default async function ReadingGuidePage({
           {guide.title}
         </h1>
         <p className="border-l-4 border-[#25b1a6] pl-5 text-lg leading-8">
-          {guide.answer}
+          {formatText(guide.answer)}
         </p>
         <nav aria-label="On this page" className="mt-8 border-y border-current/20 py-6">
           <p className="mb-3 text-sm font-bold">On this page</p>
@@ -151,7 +167,7 @@ export default async function ReadingGuidePage({
             {guide.sections.map((section) => (
               <li key={section.heading}>
                 <a className="underline underline-offset-4" href={`#${sectionId(section.heading)}`}>
-                  {section.heading}
+                  {formatText(section.heading)}
                 </a>
               </li>
             ))}
@@ -161,14 +177,14 @@ export default async function ReadingGuidePage({
           <section className="mt-12" key={section.heading}>
             <h2 id={sectionId(section.heading)} className="mb-4 scroll-mt-28 font-serif text-3xl">
               <a href={`#${sectionId(section.heading)}`} className="underline-offset-4 hover:underline">
-                {section.heading}
+                {formatText(section.heading)}
               </a>
             </h2>
-            <p className="leading-8">{section.text}</p>
+            <p className="leading-8">{formatText(section.text)}</p>
             {section.steps && (
               <ol className="mt-5 list-decimal space-y-4 pl-6 leading-7">
                 {section.steps.map((step) => (
-                  <li key={step}>{step}</li>
+                  <li key={step}>{formatText(step)}</li>
                 ))}
               </ol>
             )}
@@ -191,7 +207,7 @@ export default async function ReadingGuidePage({
                   <thead className="bg-black/5 dark:bg-white/5">
                     <tr>
                       {section.table.columns.map((column) => (
-                        <th scope="col" key={column} className="border-t border-current/20 p-4 align-top">{column}</th>
+                        <th scope="col" key={column} className={`border-t border-current/20 p-4 align-top ${tableColumnClass(column)}`}>{formatText(column)}</th>
                       ))}
                     </tr>
                   </thead>
@@ -199,9 +215,9 @@ export default async function ReadingGuidePage({
                     {section.table.rows.map((row) => (
                       <tr key={row[0]}>
                         {row.map((cell, index) => index === 0 ? (
-                          <th scope="row" key={index} className="border-t border-current/20 p-4 align-top font-semibold">{cell}</th>
+                          <th scope="row" key={index} className="border-t border-current/20 p-4 align-top font-semibold">{formatText(cell)}</th>
                         ) : (
-                          <td key={index} className="border-t border-current/20 p-4 align-top">{cell}</td>
+                          <td key={index} className={`border-t border-current/20 p-4 align-top ${tableColumnClass(section.table!.columns[index])}`}>{formatText(cell)}</td>
                         ))}
                       </tr>
                     ))}
@@ -258,7 +274,7 @@ export default async function ReadingGuidePage({
             {guide.links.map((link) => (
               <li key={link.href}>
                 <Link className="underline underline-offset-4" href={link.href}>
-                  {link.label}
+                  {formatText(link.label)}
                 </Link>
               </li>
             ))}

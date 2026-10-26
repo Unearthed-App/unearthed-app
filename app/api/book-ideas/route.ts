@@ -415,7 +415,7 @@ Do not use single quotes or smart quotes. Use \\" for quotes within the text. Do
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Invalid request body", details: error.errors },
+        { error: "Invalid request body", details: error.issues },
         { status: 400 }
       );
     }

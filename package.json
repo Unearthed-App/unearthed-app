@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "node --test tests/*.test.cjs",
     "db:generate": "cross-env DRIZZLE_ENV=development npx drizzle-kit generate",
     "db:migrate-dev": "cross-env DRIZZLE_ENV=development npx drizzle-kit migrate",
     "db:migrate-prod": "cross-env DRIZZLE_ENV=production npx drizzle-kit migrate"
@@ -18,7 +19,7 @@
     "@clerk/nextjs": "^6.3.0",
     "@clerk/themes": "^2.1.42",
     "@google/generative-ai": "^0.24.0",
-    "@hookform/resolvers": "^3.9.1",
+    "@hookform/resolvers": "^5.2.2",
     "@next/env": "15.5.28",
     "@notionhq/client": "^2.2.15",
     "@radix-ui/react-accordion": "^1.2.3",
@@ -47,7 +48,7 @@
     "cmdk": "^1.0.4",
     "csv-parse": "^7.0.3",
     "drizzle-orm": "^0.45.4",
-    "drizzle-zod": "^0.7.1",
+    "drizzle-zod": "^0.8.3",
     "form-data": "^4.0.5",
     "framer-motion": "^11.18.2",
     "fuse.js": "^7.1.0",
@@ -60,7 +61,7 @@
     "next": "15.5.28",
     "next-themes": "^0.4.3",
     "nextjs-toploader": "^3.9.17",
-    "openai": "^4.80.1",
+    "openai": "^6.0.0",
     "postgres": "^3.4.5",
     "posthog-js": "^1.181.0",
     "posthog-node": "^4.2.1",
@@ -79,7 +80,7 @@
     "tailwind-merge": "^2.5.4",
     "uploadthing": "^7.6.0",
     "vaul": "^1.1.1",
-    "zod": "^3.23.8"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

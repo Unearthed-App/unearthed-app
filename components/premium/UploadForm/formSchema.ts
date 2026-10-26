@@ -43,6 +43,7 @@ export const schema = z.object({
             }
           ),
   type: z.enum(["kindle", "csv"], {
-    required_error: "Please select an upload type.",
+    error: (issue) =>
+      issue.input === undefined ? "Please select an upload type." : undefined,
   }),
 });
